@@ -3,3 +3,5 @@
 .cdp_*
 .t_*
 dist/
+tools/test/shots/
+.venv/

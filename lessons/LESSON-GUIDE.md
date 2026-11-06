@@ -55,17 +55,32 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 - Interactive steps must not dead-end: every `w.until` has a visible button or game that can satisfy it.
 
 ## Testing (required before you finish)
-Run every scene of your lesson in a real-time headless Chrome (the auto-player answers questions and plays games):
-
+One-time setup (from the project root):
 ```bash
-PY=/private/tmp/claude-501/-Users-mazen-Library-Application-Support-Claude-scratch-workspaces-b1764ace-7264-453d-a219-29795a7ebf67-059ba234-8500-4904-995b-fb0069298e36-scratch-2026-11-05-5e9a92/3afedcac-86a8-4749-8d4c-7510468ea255/scratchpad/venv/bin/python
-CDP=/private/tmp/claude-501/-Users-mazen-Library-Application-Support-Claude-scratch-workspaces-b1764ace-7264-453d-a219-29795a7ebf67-059ba234-8500-4904-995b-fb0069298e36-scratch-2026-11-05-5e9a92/3afedcac-86a8-4749-8d4c-7510468ea255/scratchpad/lt/cdp.py
-"$PY" -I "$CDP" "/Users/mazen/Documents/GitHub/Grade 7/lessons/<file>.html" <scene-number> /private/tmp/claude-501/-Users-mazen-Library-Application-Support-Claude-scratch-workspaces-b1764ace-7264-453d-a219-29795a7ebf67-059ba234-8500-4904-995b-fb0069298e36-scratch-2026-11-05-5e9a92/3afedcac-86a8-4749-8d4c-7510468ea255/scratchpad/lt/out/<name>-s<scene>.png 10 --fast
+python3 -m venv .venv && .venv/bin/pip install websocket-client
 ```
-It prints `{"errs":[...],"ready":true|false,"text":"..."}` and saves a screenshot. `ready:true` = the scene finished.
-`--fast` speeds animations up 40×; if a long scene is not ready yet, raise the wait (4th arg) to 20.
-For custom interactive steps the auto-player cannot handle, define `window.AUTOPLAY=()=>{...}` *inside the scene*
-only if needed — better: make sure your custom buttons use class `ex-btn` with text containing "Reveal", "Next question",
-"Finish" or "Check" (the auto-player clicks those), or use `ask`/`sortGame`.
-Then LOOK at each screenshot (Read the png) and fix overlaps, overflowing text, things off-stage, empty scenes.
-Every scene must report `errs: []` and `ready: true`.
+Play every scene of a lesson in headless Chrome (an auto-player answers questions, plays sort games and presses
+"Reveal / Next question / Finish / Check" buttons; sound and voice are muted; animations run 40× faster):
+```bash
+.venv/bin/python tools/test/runall.py l07          # one lesson (or several: l07 l08), or no args for all lessons
+```
+It prints `total scenes: N passing: N` plus a `PROBLEM` line for any scene that errors or never finishes, and saves
+each scene's final frame to `tools/test/shots/<lesson>-s<scene>.png`. LOOK at those screenshots (Read the png) and fix
+overlaps, overflowing text, things off-stage or empty scenes.
+
+To check a single scene (e.g. scene 4) and keep its screenshot:
+```bash
+.venv/bin/python tools/test/cdp.py "$PWD/lessons/l07-alloys-rusting.html" 4 /tmp/l07-s4.png 22 --fast
+```
+Prints `{"n":<scenes>,"errs":[...],"ready":true|false,"text":"..."}`. `ready:true` means the scene finished.
+
+For custom interactive steps the auto-player cannot handle, set `window.AUTOPLAY=()=>{...}` inside that scene
+(the engine clears it on every scene change), or use `ask`/`sortGame`/`ex-btn` buttons whose text contains
+"Reveal", "Next question", "Finish" or "Check". Every scene must pass with `errs: []` and `ready: true`.
+
+### Engine gotchas
+- `pop()` and `an()` keep their end state (fill: forwards), so setting `style.opacity`/`transform` afterwards has no
+  effect; animate again with `an()` or remove the element instead.
+- `ask`/`reveal` put the question HTML into the narration bubble too, so put pictures in `src`, not in `q`.
+- Write "amps" in spoken text if you like; the voice already reads "2.2 A" as "2.2 amps" and "____" as "blank".
+- Don't reuse engine class names (`sg-chip`, `ex-opt`, `ex-btn`) for decoration; the auto-player clicks them.

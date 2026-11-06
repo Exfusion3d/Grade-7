@@ -1,0 +1,16 @@
+<script>try{localStorage.setItem("pta_voice","0")}catch(e){};window.AudioContext=undefined;window.webkitAudioContext=undefined;
+(function(){const RN=Date.now.bind(Date),T0=RN();Date.now=()=>T0+(RN()-T0)*40;const st=window.setTimeout;window.__st=st;window.setTimeout=(f,ms,...a)=>st(f,(ms||0)/40,...a);
+const an=Element.prototype.animate;Element.prototype.animate=function(k,o){if(typeof o==='object'&&o&&o.iterations!==Infinity){o=Object.assign({},o);o.duration=(o.duration||0)/40;o.delay=(o.delay||0)/40;}else if(typeof o==='number'){o=o/40;}return an.call(this,k,o);};
+window.speechSynthesis&&(window.speechSynthesis.speak=()=>{});})();
+window.__errs=[];addEventListener('error',e=>__errs.push(e.message));addEventListener('unhandledrejection',e=>__errs.push(String(e.reason)));
+/* auto-player: clicks interactive buttons so scenes can finish */
+setInterval(()=>{try{
+ const q=s=>[...document.querySelectorAll(s)];
+ const opt=q('.ex-opt:not(.locked)');if(opt.length){opt[0].click();return;}
+ const rv=q('.ex-btn').find(b=>/Reveal|Next question|Finish/.test(b.textContent));if(rv){rv.click();return;}
+ const chips=q('.sg-chip').filter(c=>!c.bin);if(chips.length){chips[0].click();q('.sg-bin')[+chips[0].dataset.want].click();return;}
+ const ck=q('.ex-btn').find(b=>/Check/.test(b.textContent));if(ck){ck.click();return;}
+ if(window.AUTOPLAY)window.AUTOPLAY();
+}catch(e){__errs.push('autoplayer '+e.message)}},150);
+__st(()=>{document.title='ERRS:'+JSON.stringify(__errs)+' READY:'+document.querySelector('#next')?.classList.contains('ready');},12000);
+</script>
