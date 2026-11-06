@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "vite": "^8.3.6"
+  },
+  "dependencies": {
+    "convex": "^1.49.0"
   }
 }
