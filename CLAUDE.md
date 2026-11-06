@@ -29,7 +29,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `source/worksheet-by-lesson.md` | Every worksheet question grouped by the lesson that teaches it (the coverage map) |
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
 | `icon-180.png` | Home-screen icon (Professor Atom) |
-| `package.json`, `vite.config.mjs`, `bun.lock` | Vite multi-page build: `bun run dev` previews the site; `bun run build` outputs it to `dist/` (git-ignored), which is what Cortex deploys to tutor.gocortex.app. New pages in the root or `lessons/` are picked up automatically; files only linked with `<a>` or loaded from JS go in the `copied` list in `vite.config.mjs`. The Pages workflow still publishes the repo root |
+| `package.json`, `vite.config.mjs`, `bun.lock` | Vite multi-page build: `bun run dev` previews the site; `bun run build` outputs it to `dist/` (git-ignored), which is what Cortex deploys to tutor.gocortex.app. New pages in the root or `lessons/` are picked up automatically; files only linked with `<a>` or loaded from JS go in the `copied` list in `vite.config.mjs` |
 
 ### The 14 lessons (worksheet coverage)
 Unit 4: 1 Life processes (MRS GREN, plants vs animals) · 2 Viruses · 3 Species & classification · 4 Dichotomous keys.
@@ -52,6 +52,10 @@ Every worksheet question is taught in at least one lesson and asked in that less
   green #18a058, orange #e06a1b, metal orange #f7ad5f, non-metal blue #5d9cf5, yellow #ffd84d, ink #1f2433. Emoji,
   CSS shapes and inline SVG only (no images, no external libraries or fonts). Designed for landscape; on a phone held
   upright, a "turn your phone sideways" screen appears with a "keep it upright anyway" option.
+  **Every landscape screen** (phones held sideways, iPad, Mac, Windows) uses the **side-panel layout** (approved): the stage fills the
+  height and Professor Atom, his words and the buttons sit in a 300 px panel on the right; voice settings are behind ⚙️.
+  Portrait screens (e.g. an upright iPad) keep the stacked layout: header, speech bubble, stage, footer.
+  Lesson stages are unchanged (still 960×520); it is all in `fit()` in `engine.js` and the `body.side` rules in `engine.css`.
 - **Language:** written for a 12-year-old: short spoken sentences, **British spelling** (colour, aluminium, sulfur), and
   memory tricks ("MRS GREN", "I Should Never Cry" for magnetic metals, "AMmeter measures AMps").
 - **Accuracy:** the worksheet's answer key is the authority for exam answers. Where the key simplifies, teach the key's

@@ -6,6 +6,7 @@ document.body.insertAdjacentHTML('afterbegin',`<canvas id="fx"></canvas>
   <header>
     <div class="brand" id="brand"></div>
     <div id="dots"></div>
+    <button class="icon" id="vset" title="Voice settings">⚙️</button>
     <a class="icon home" href="../index.html" title="All activities">🏠</a>
     <button class="icon" id="snd">🔊</button>
   </header>
@@ -272,7 +273,11 @@ $('#vrate').onchange=e=>{rate=+e.target.value;try{localStorage.setItem('pta_rate
 $('#bubble').onclick=()=>{if(lastSay){if(!voiceOn){voiceOn=true;vUI();}speak(lastSay);}};
 vUI();if(HAS_TTS)pickVoice();
 addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft'&&cur)go(cur-1);});
-function fit(){const s=Math.min(innerWidth/980,innerHeight/760);const a=$('#app'),h=$('#holder');a.style.transform=`scale(${s})`;h.style.width=980*s+'px';h.style.height=760*s+'px';}
+/* Landscape screens (phones held sideways, iPad, Mac, Windows) get the side-panel layout: stage full height,
+   narration and buttons in a right-hand panel. Portrait screens keep the stacked layout. */
+function fit(){const side=innerWidth>innerHeight;document.body.classList.toggle('side',side);if(!side)document.body.classList.remove('vopen');
+  const W=side?1286:980,H=side?536:760,s=Math.min(innerWidth/W,innerHeight/H);const a=$('#app'),h=$('#holder');a.style.transform=`scale(${s})`;h.style.width=W*s+'px';h.style.height=H*s+'px';h.style.marginTop=side?Math.max(0,(innerHeight-H*s)/2)+'px':'';}
+$('#vset').onclick=()=>document.body.classList.toggle('vopen');
 addEventListener('resize',fit);fit();
 addEventListener('scroll',()=>{if(scrollX||scrollY)scrollTo(0,0);});$('#holder').addEventListener('scroll',e=>{e.target.scrollLeft=0;e.target.scrollTop=0;});
 function markDone(){try{localStorage.setItem('g7_done_'+LCFG.id,'1');}catch(e){}}

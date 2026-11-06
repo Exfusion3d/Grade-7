@@ -36,6 +36,32 @@ footer .sp{flex:1;text-align:center;color:#8a86a0;font-weight:700;font-size:14px
 .nav{border:none;border-radius:16px;padding:11px 22px;font-size:18px;font-weight:800;background:#fff;box-shadow:0 4px 0 #dcd6f2}
 .nav:active{transform:translateY(3px);box-shadow:0 1px 0 #dcd6f2}
 #next{background:#6a45d8;color:#fff;box-shadow:0 4px 0 #4a2ea6}
+#vset{display:none}
+/* side-panel layout for phones held sideways (body.side, set by fit() in engine.js): 1286x536, stage on the left */
+body.side #app{width:1286px;height:536px;padding:8px;display:grid;grid-template-columns:960px 300px;column-gap:10px;row-gap:8px;
+  grid-template-rows:44px 72px minmax(0,1fr) 16px 64px 48px}
+body.side header,body.side #narr,body.side footer{display:contents}
+body.side #stage{grid-column:1;grid-row:1/-1}
+body.side .brand,body.side #count,body.side #bubble:before{display:none}
+body.side #vset,body.side .home,body.side #snd{display:block;grid-column:2;grid-row:1;align-self:center}
+body.side #vset{justify-self:start}
+body.side .home{justify-self:end;margin-right:58px}
+body.side #snd{justify-self:end}
+body.side #mascot{grid-column:2;grid-row:2;justify-self:center;width:72px;height:72px}
+body.side #bubble{grid-column:2;grid-row:3;min-height:0;justify-content:flex-start;padding:10px 16px 30px;overflow:auto}
+body.side #bubble .again{top:auto;bottom:8px}
+body.side #text{font-size:19px}
+body.side #dots{grid-column:2;grid-row:4;gap:5px;align-self:center}
+body.side #dots button{width:12px;height:12px}
+body.side #dots button.cur{width:24px}
+body.side #next{grid-column:2;grid-row:5;font-size:24px}
+body.side #next.ready{animation:nudge-side 1.2s infinite}
+@keyframes nudge-side{50%{transform:scale(1.025);box-shadow:0 4px 0 #4a2ea6,0 0 0 4px rgba(106,69,216,.22)}}
+body.side #back{grid-column:2;grid-row:6;justify-self:start;width:145px}
+body.side #replay{grid-column:2;grid-row:6;justify-self:end;width:145px}
+body.side .voice{display:none}
+body.side.vopen .voice{display:flex;flex-wrap:wrap;position:absolute;left:978px;top:58px;width:300px;z-index:30;box-shadow:0 8px 24px rgba(80,50,180,.25)}
+body.side.vopen .voice select{max-width:none;flex:1}
 #next.ready{animation:nudge 1.2s infinite}
 @keyframes nudge{50%{transform:scale(1.08);box-shadow:0 4px 0 #4a2ea6,0 0 0 8px rgba(106,69,216,.18)}}
 
