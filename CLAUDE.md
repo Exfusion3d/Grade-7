@@ -29,6 +29,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
 | `.github/workflows/pages.yml` | Publishes the site on every push to `main` |
 | `icon-180.png` | Home-screen icon (Professor Atom) |
+| `package.json`, `dev-server.js`, `build.js` | Added by another tool ("Cortex"): `npm run dev` previews the site at http://localhost:3000; `npm run build` copies the site into `dist/` (git-ignored). The live site does **not** use `dist/`; the Pages workflow publishes the repo root |
 
 ### The 14 lessons (worksheet coverage)
 Unit 4: 1 Life processes (MRS GREN, plants vs animals) · 2 Viruses · 3 Species & classification · 4 Dichotomous keys.
