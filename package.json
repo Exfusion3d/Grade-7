@@ -1,0 +1,8 @@
+{
+  "name": "grade7-science-review",
+  "private": true,
+  "scripts": {
+    "dev": "node dev-server.js",
+    "start": "node dev-server.js"
+  }
+}
