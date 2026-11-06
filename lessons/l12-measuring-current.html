@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Measuring current: ammeters &amp; amps</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* ====================== circuit helpers ====================== */
+const INK='#1f2433';
+/* one circuit symbol centred on (x,y), drawn horizontally (30 px long before scaling) */
+function comp(t,x,y,glow=0,noTxt=false){
+  const m=`<rect x="${x-15}" y="${y-5}" width="30" height="10" fill="#fff"/>`;const w=(a,b)=>`<line x1="${a}" y1="${y}" x2="${b}" y2="${y}" stroke="${INK}" stroke-width="2.5"/>`;
+  switch(t){
+    case 'cell':return m+w(x-15,x-4)+`<line x1="${x-4}" y1="${y-13}" x2="${x-4}" y2="${y+13}" stroke="${INK}" stroke-width="2.5"/><line x1="${x+4}" y1="${y-7}" x2="${x+4}" y2="${y+7}" stroke="${INK}" stroke-width="6"/>`+w(x+4,x+15);
+    case 'sw':return m+w(x-15,x-10)+`<circle cx="${x-10}" cy="${y}" r="2.8" fill="${INK}"/><circle cx="${x+10}" cy="${y}" r="2.8" fill="${INK}"/>`+w(x-10,x+10)+w(x+10,x+15);
+    case 'swo':return m+w(x-15,x-10)+`<circle cx="${x-10}" cy="${y}" r="2.8" fill="${INK}"/><line x1="${x-10}" y1="${y}" x2="${x+8}" y2="${y-12}" stroke="${INK}" stroke-width="2.5"/><circle cx="${x+10}" cy="${y}" r="2.8" fill="${INK}"/>`+w(x+10,x+15);
+    case 'lamp':return m+w(x-15,x-10)+w(x+10,x+15)+
+      `<circle cx="${x}" cy="${y}" r="10" fill="${glow>0?'#fff27a':'#fff'}" stroke="${INK}" stroke-width="2.5"/><line x1="${x-7}" y1="${y-7}" x2="${x+7}" y2="${y+7}" stroke="${INK}" stroke-width="2.2"/><line x1="${x+7}" y1="${y-7}" x2="${x-7}" y2="${y+7}" stroke="${INK}" stroke-width="2.2"/>`;
+    case 'bz':return m+w(x-15,x-10)+w(x+10,x+15)+`<path d="M${x-10},${y} A10,10 0 0 0 ${x+10},${y} Z" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`;
+    case 'amm':return m+w(x-15,x-10)+w(x+10,x+15)+`<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`+(noTxt?'':`<text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="800" font-family="sans-serif" fill="${INK}">A</text>`);
+    case 'gap':return `<rect x="${x-16}" y="${y-6}" width="32" height="12" fill="#fff"/><circle cx="${x-15}" cy="${y}" r="2.8" fill="${INK}"/><circle cx="${x+15}" cy="${y}" r="2.8" fill="${INK}"/>`;
+  }return '';}
+function symSVG(t,k=1,xmlns=false){return `<svg ${xmlns?'xmlns="http://www.w3.org/2000/svg" ':''}width="${70*k}" height="${34*k}" viewBox="0 0 70 34"><line x1="0" y1="17" x2="70" y2="17" stroke="${INK}" stroke-width="2.5"/>${comp(t,35,17)}</svg>`;}
+/* symbol as an <img>, so the voice never reads the letter inside it */
+const symImg=(t,k=1.2)=>`<img alt="" src="data:image/svg+xml;utf8,${encodeURIComponent(symSVG(t,k,true))}" width="${70*k}" height="${34*k}" style="vertical-align:middle">`;
+/* rectangular circuit loop. parts: [{t,side:'top'|'right'|'bottom'|'left',f:0..1}] */
+function circ(par,X,Y,W,H,parts,o={}){
+  const s=o.s||2,pad=o.pad||40,BW=W+2*pad,BH=H+2*pad,dsz=o.dot||12;
+  const box=mk('',`left:${X-pad}px;top:${Y-pad}px;width:${BW}px;height:${BH}px;pointer-events:none`,null,par);
+  mk('','left:0;top:0',`<svg width="${BW}" height="${BH}"><rect x="${pad}" y="${pad}" width="${W}" height="${H}" rx="3" fill="none" stroke="${INK}" stroke-width="${2.5*s}"/></svg>`,box);
+  const fx=mk('','left:0;top:0;width:100%;height:100%',null,box),dl=mk('','left:0;top:0;width:100%;height:100%',null,box),sy=mk('','left:0;top:0',null,box),top=mk('','left:0;top:0;width:100%;height:100%',null,box);
+  const P=p=>p.side==='top'?[pad+p.f*W,pad]:p.side==='bottom'?[pad+p.f*W,pad+H]:p.side==='left'?[pad,pad+H-p.f*H]:[pad+W,pad+p.f*H];
+  const ROT=p=>p.r!=null?p.r:p.side==='right'?90:p.side==='left'?-90:(p.side==='bottom'&&p.t==='cell')?180:0;
+  const c={box,parts,fx,top,anims:[],s};
+  c.render=()=>{sy.innerHTML=`<svg width="${BW}" height="${BH}">${parts.filter(p=>p.t).map(p=>{const[x,y]=P(p);
+    return `<g transform="translate(${x} ${y}) rotate(${ROT(p)}) scale(${s})">${comp(p.t,0,0,p.g||0,true)}</g>`+(p.t==='amm'?`<text x="${x}" y="${y+5*s}" text-anchor="middle" font-size="${13*s}" font-weight="800" font-family="sans-serif" fill="${INK}">A</text>`:'');}).join('')}</svg>`;};
+  c.at=p=>P(p);
+  c.flow=(n=16,ms=8000)=>{dl.innerHTML='';c.anims=[];const L=2*(W+H);
+    const kf=[{transform:'translate(0,0)',offset:0},{transform:`translate(${W}px,0)`,offset:W/L},{transform:`translate(${W}px,${H}px)`,offset:(W+H)/L},{transform:`translate(0,${H}px)`,offset:(2*W+H)/L},{transform:'translate(0,0)',offset:1}];
+    for(let i=0;i<n;i++){const e=mk('',`left:${pad-dsz/2}px;top:${pad-dsz/2}px;width:${dsz}px;height:${dsz}px;border-radius:50%;background:#2c66cf;box-shadow:0 0 7px #5aa0f0`,null,dl);
+      c.anims.push(e.animate(kf,{duration:ms,iterations:Infinity,easing:'linear',delay:-i*ms/n}));}return c;};
+  c.setParts=arr=>{parts.forEach(p=>{if(p.h)p.h.remove();if(p.z)p.z.remove();});parts.splice(0,parts.length,...arr);c.render();};
+  c.rate=r=>c.anims.forEach(a=>a.playbackRate=r);
+  c.stop=()=>c.anims.forEach(a=>a.pause());c.go=()=>c.anims.forEach(a=>a.play());
+  c.light=lv=>{parts.filter(p=>p.t==='lamp').forEach(p=>{p.g=lv;const[x,y]=P(p),r=36*s;
+    if(!p.h){p.h=mk('',`left:${x-r}px;top:${y-r}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,.85),rgba(255,214,0,0) 68%);opacity:0;transition:opacity .4s`,null,fx);
+      loop(p.h,[{transform:'scale(.85)'},{transform:'scale(1.1)'}],600,{direction:'alternate'});}
+    p.h.style.opacity=lv;p.h.style.width=p.h.style.height=2*r*(.6+.4*lv)+'px';p.h.style.left=x-r*(.6+.4*lv)+'px';p.h.style.top=y-r*(.6+.4*lv)+'px';});c.render();};
+  c.buzz=on=>{parts.filter(p=>p.t==='bz').forEach(p=>{if(p.z){p.z.remove();p.z=null;}if(!on)return;const[x,y]=P(p);
+    p.z=mk('',`left:${x}px;top:${y}px`,null,top);
+    for(let i=0;i<3;i++){const r=mk('',`left:-${14*s}px;top:-${14*s}px;width:${28*s}px;height:${28*s}px;border-radius:50%;border:3px solid #6a45d8`,null,p.z);
+      r.animate([{transform:'scale(.7)',opacity:.9},{transform:'scale(2.4)',opacity:0}],{duration:1200,iterations:Infinity,delay:i*400});}
+    const t=mk('',`left:${16*s}px;top:${-30*s}px;font-size:${8*s+2}px;font-weight:800;color:#6a45d8;white-space:nowrap`,'BZZZ!',p.z);
+    loop(t,[{transform:'translateX(-2px)'},{transform:'translateX(2px)'}],90,{direction:'alternate'});});
+    clearInterval(c.iv);if(on&&o.sound!==false)c.iv=setInterval(()=>{if(!box.isConnected){clearInterval(c.iv);return;}beep(330,.22,'square',.03);},650);};
+  c.render();return c;}
+const stampAt=(x,y,html,par,fs=22,rot=-5)=>{const st=mk('stamp',`left:${x}px;top:${y}px;font-size:${fs}px;z-index:20`,html,par);
+  an(st,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:`rotate(${rot}deg)`,opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return st;};
+const box=(x,y,w,h,html,css='')=>mk('',`left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 16px;${css}`,html);
+const fill=el=>{el.style.background='#e3f7ec';el.style.color='#17935b';el.style.borderColor='#18a058';pop(el);beep(760,.1);};
+const BL='display:inline-block;min-width:90px;padding:0 8px;border-bottom:3px dashed #8a78cc;color:transparent;border-radius:8px;text-align:center';
+
+/* ====================== analogue meter ====================== */
+/* scale 0..max, numbers every maj, small divisions every min. Needle angle: -60deg (0) to +60deg (max) */
+function meterSVG(o={}){const max=o.max||10,maj=o.maj||1,mn=o.min||.2,R=130,W=o.w||300;
+  const th=v=>(-60+120*v/max)*Math.PI/180,P=(v,r)=>[150+r*Math.sin(th(v)),165-r*Math.cos(th(v))];
+  let s=`<svg ${o.xmlns?'xmlns="http://www.w3.org/2000/svg" ':''}width="${W}" height="${W*.6}" viewBox="0 0 300 180"><rect x="3" y="3" width="294" height="174" rx="18" fill="#fbfbf7" stroke="${INK}" stroke-width="3"/>`;
+  const[ax,ay]=P(0,R),[bx,by]=P(max,R);s+=`<path d="M${ax} ${ay} A${R} ${R} 0 0 1 ${bx} ${by}" fill="none" stroke="${INK}" stroke-width="2"/>`;
+  const n=Math.round(max/mn);
+  for(let i=0;i<=n;i++){const v=i*mn,big=Math.abs(v/maj-Math.round(v/maj))<1e-6,L=big?16:8;const[x1,y1]=P(v,R),[x2,y2]=P(v,R-L);
+    s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${INK}" stroke-width="${big?2.4:1.2}"/>`;
+    if(big){const[tx,ty]=P(v,R+15);s+=`<text x="${tx}" y="${ty+5}" text-anchor="middle" font-size="15" font-weight="800" font-family="sans-serif" fill="${INK}">${+v.toFixed(2)}</text>`;}}
+  s+=`<text x="150" y="132" text-anchor="middle" font-size="24" font-weight="800" fill="#2c66cf" font-family="sans-serif">${o.unit||'A'}</text>`;
+  if(o.v!=null){const[nx,ny]=P(o.v,R+4);s+=`<line x1="150" y1="165" x2="${nx}" y2="${ny}" stroke="#e02020" stroke-width="3.5" stroke-linecap="round"/><circle cx="150" cy="165" r="9" fill="${INK}"/>`;}
+  return s+'</svg>';}
+const meterImg=(v,w=240)=>`<img alt="" src="data:image/svg+xml;utf8,${encodeURIComponent(meterSVG({v,w,xmlns:true}))}" width="${w}" height="${w*.6}" style="display:block">`;
+function meterEl(par,x,y,w,o={}){const k=w/300,max=o.max||10,R=130;
+  const el=mk('',`left:${x}px;top:${y}px;width:${w}px;height:${w*.6}px`,meterSVG(Object.assign({},o,{w,v:null})),par);
+  const ov=mk('','left:0;top:0;width:100%;height:100%',null,el);
+  const nd=mk('',`left:${148*k}px;top:${(165-R-4)*k}px;width:${4*k}px;height:${(R+4)*k}px;border-radius:${2*k}px;background:#e02020;transform-origin:50% 100%;transform:rotate(-60deg)`,null,el);
+  mk('',`left:${141*k}px;top:${156*k}px;width:${18*k}px;height:${18*k}px;border-radius:50%;background:${INK}`,null,el);
+  let cur=-60;const deg=v=>-60+120*v/max;
+  const m={el,ov,k,v:0,
+    set(v,ms=1000){const to=deg(v);const p=an(nd,[{transform:`rotate(${cur}deg)`},{transform:`rotate(${to}deg)`}],{duration:ms,easing:'cubic-bezier(.3,1.35,.5,1)'});cur=to;m.v=v;return p;},
+    pt(v,r){const t=deg(v)*Math.PI/180;return[k*(150+r*Math.sin(t)),k*(165-r*Math.cos(t))];},
+    band(a,b,col='rgba(255,216,77,.8)'){const P=v=>{const t=deg(v)*Math.PI/180;return[150+(R-6)*Math.sin(t),165-(R-6)*Math.cos(t)];};const[x1,y1]=P(a),[x2,y2]=P(b);
+      const s=mk('','left:0;top:0',`<svg width="${w}" height="${w*.6}" viewBox="0 0 300 180"><path d="M${x1} ${y1} A${R-6} ${R-6} 0 0 1 ${x2} ${y2}" fill="none" stroke="${col}" stroke-width="14" stroke-linecap="round"/></svg>`,ov);pop(s);return s;},
+    ring(v,col='#18a058'){const[x,y]=m.pt(v,R+15);const r=mk('',`left:${x-12*k}px;top:${y-11*k}px;width:${24*k}px;height:${22*k}px;border-radius:50%;border:3px solid ${col}`,null,ov);pop(r);
+      loop(r,[{transform:'scale(1)'},{transform:'scale(1.2)'}],500,{direction:'alternate'});return r;}};
+  return m;}
+/* option buttons: wrong ones lock (so you can try again), resolves when the right one is tapped */
+async function pickOpts(w,opts,a,{x,y,cols=1,ow,oh=60,gap=12,onWrong}){let got=false;
+  const els=opts.map((t,i)=>{const r=Math.floor(i/cols),c=i%cols;const e=mk('ex-opt',`left:${x+c*(ow+gap)}px;top:${y+r*(oh+gap)}px;width:${ow}px;min-height:${oh}px`,`<span class="k">${'ABCD'[i]}</span><span>${t}</span>`);pop(e,i*60);
+    e.onclick=()=>{if(got)return;if(i===a){got=true;els.forEach(z=>z.classList.add('locked'));e.classList.add('ok');yay();confetti(40);}
+      else{e.classList.add('bad','locked');shake(e);boo();onWrong&&onWrong(i);}};return e;});
+  await w.until(()=>got);return els;}
+
+Lesson.start({
+  id:'l12', num:12, unit:9, emoji:'📟', title:'Measuring current: ammeters & amps',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today we learn to <b>measure</b> current: the unit, the meter, and how to read its scale. Press <b>Start</b>!`,
+  scenes:[
+/* 1 */ {t:'How much current?',run:async w=>{
+  const P1=panel(13,8,460,250,'Circuit 1: one cell',''),P2=panel(487,8,459,250,'Circuit 2: two cells','');pop(P1);pop(P2,150);
+  const c1=circ(P1,80,66,300,130,[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5}],{s:1.6,pad:30,dot:10});c1.flow(14,9000);c1.light(.4);
+  const c2=circ(P2,80,66,300,130,[{t:'cell',side:'top',f:.4},{t:'cell',side:'top',f:.6},{t:'lamp',side:'right',f:.5}],{s:1.6,pad:30,dot:10});c2.flow(14,9000);c2.rate(2.4);c2.light(1);
+  const q1=mk('tag','left:150px;top:118px;background:#efe9ff;color:#4a2ea6;font-size:17px','❓ how much current?',P1),q2=mk('tag','left:150px;top:118px;background:#efe9ff;color:#4a2ea6;font-size:17px','❓ how much current?',P2);
+  [q1,q2].forEach(q=>loop(q,[{transform:'rotate(-3deg)'},{transform:'rotate(3deg)'}],500,{direction:'alternate'}));
+  say(`Two circuits. In which one is the <b>current bigger</b>? 🤔 Electrons are far too tiny to count by eye!`);await w(3600);
+  say(`Circuit 2 has more push, so its electrons flow faster. That's a <b>bigger current</b>. But <b>how big</b>? We need to <b>measure</b> it!`);await w(3800);
+  const U=[['V','volts','measure voltage (the push)','#5d9cf5'],['A','amperes (amps)','measure current','#18a058'],['J','joules','measure energy','#e06a1b'],['g','grams','measure mass','#c9a400']];
+  say(`Every measurement needs a <b>unit</b>. Which unit is used for <b>current</b>? Watch…`);
+  const cards=U.map((u,i)=>{const c=mk('badge',`left:${13+i*237}px;top:270px;width:222px;height:160px;padding:8px`,`<div style="font-size:56px;font-weight:800;line-height:1.1;color:${u[3]}">${u[0]}</div><div style="font-size:18px;font-weight:800">${u[1]}</div><div class="n" style="font-size:15px;color:#626a80;opacity:0">${u[2]}</div>`);
+    an(c,[{transform:'rotateY(90deg)',opacity:0},{transform:'none',opacity:1}],{duration:500,delay:i*250});beep(500+i*90,.08,'triangle',.1,i*.25);return c;});
+  await w(3000);
+  cards.forEach((c,i)=>{c.querySelector('.n').style.opacity=1;if(i!==1){c.style.transition='opacity .5s';c.style.opacity=.45;}});
+  cards[1].style.borderColor='#18a058';cards[1].style.background='#f1fbf5';loop(cards[1],[{transform:'scale(1)'},{transform:'scale(1.05)'}],600,{direction:'alternate'});
+  say(`Current is measured in <b>amperes</b>, or <b>amps</b> for short. Its symbol is a capital <b>A</b>.`);await w(1400);
+  stampAt(30,450,'✔ MCQ 4: B) Amperes or Amps (A)',null,22,-3);await w(2600);
+  const f=mk('tag','left:560px;top:458px;background:#e6f0ff;color:#1c4a9c;font-size:17px;padding:8px 14px','🇫🇷 Named after André-Marie Ampère');pop(f);
+  say(`Amps are named after <b>André-Marie Ampère</b>, a French scientist. Volts, joules and grams measure <b>other</b> things.`);await w(3200);}},
+
+/* 2 */ {t:'The AMmeter',run:async w=>{
+  say(`To measure current, we need the right <b>instrument</b>. Here are four. Which one measures current? 🤔`);
+  const D=[['🌡️ Thermometer','Measures <b>temperature</b> (°C).'],['Ⓥ Voltmeter','Measures <b>voltage</b> (V), the push.'],['📟 Ammeter','Measures <b>current</b> (A).'],['📏 Ruler','Measures <b>length</b> (cm).']];
+  const A=D.map((d,i)=>card(13+i*237,8,222,222,d[0],d[1],'#6a45d8'));
+  mk('','left:58px;top:16px;font-size:80px;line-height:1','🌡️',A[0]);mk('','left:58px;top:16px;font-size:80px;line-height:1','📏',A[3]);
+  mk('','left:50px;top:12px',`<svg width="100" height="100"><circle cx="50" cy="50" r="40" fill="#fff" stroke="${INK}" stroke-width="5"/><text x="50" y="66" text-anchor="middle" font-size="44" font-weight="800" font-family="sans-serif" fill="#2c66cf">V</text></svg>`,A[1]);
+  const mm=meterEl(A[2],24,20,150);mm.set(6,10);
+  await w(1500);
+  const X=i=>{const p=A[i].parentElement;p.style.transition='opacity .5s';p.style.opacity=.4;const x=mk('','left:70px;top:70px;font-size:70px;z-index:5',`❌`,p);pop(x);boo();};
+  say(`A <b>thermometer</b> measures temperature, and a <b>ruler</b> measures length. Not current! ❌`);await w(1200);X(0);await w(500);X(3);await w(2400);
+  say(`A <b>voltmeter</b> measures <b>voltage</b>, the push from the cell. Close, but not current! ❌`);await w(1200);X(1);await w(2400);
+  const am=A[2].parentElement;am.style.borderColor='#18a058';am.style.background='#f1fbf5';loop(am,[{transform:'scale(1)'},{transform:'scale(1.04)'}],600,{direction:'alternate'});
+  for(let i=0;i<4;i++)setTimeout(()=>mm.set([2,8,4,6][i],600),i*700);
+  say(`The <b>ammeter</b> measures <b>current</b>! ✅`);await w(1800);
+  const T=panel(13,244,560,268,'🧠 Memory trick','');pop(T);
+  const tr=mk('','left:0;top:44px;width:554px;text-align:center;font-size:31px;font-weight:800',`<span class="a" style="display:inline-block;color:#18a058">AM</span>meter measures <span class="a" style="display:inline-block;color:#18a058">AM</span>ps!`,T);pop(tr);
+  tr.querySelectorAll('.a').forEach((a,i)=>loop(a,[{transform:'translateY(0)'},{transform:'translateY(-8px) scale(1.15)'}],420,{direction:'alternate',delay:i*200}));
+  say(`Memory trick: the <b>AM</b>meter measures <b>AM</b>ps. A for ammeter, A for amps! 🅰️`);await w(3200);
+  const m2=meterEl(T,60,108,130);m2.set(4,10);
+  mk('','left:212px;top:126px;font-size:34px;font-weight:800;color:#6a45d8','➜',T);
+  const sy=mk('','left:270px;top:110px',symSVG('amm',2.4),T);an(sy,[{transform:'scale(0) rotate(-30deg)',opacity:0},{transform:'none',opacity:1}],{duration:600,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  say(`In a circuit diagram, an ammeter is drawn as a <b>circle with a capital A</b> inside.`);await w(2400);
+  stampAt(24,206,'✔ MCQ 5: C) Ammeter',T,22,-3);await w(1200);
+  const S=box(587,244,359,268,`<div style="font-size:15px;font-weight:800;color:#8a78cc;letter-spacing:.04em">✏️ SHORT ANSWER 3</div><div style="font-size:17px;font-weight:700;margin-top:6px;line-height:1.35">Name the component used to measure current, and its unit.</div>
+    <div style="font-size:19px;font-weight:700;line-height:1.9;margin-top:10px">Component: <span class="b1" style="${BL}">ammeter</span><br>Unit: <span class="b2" style="${BL}">amperes (A)</span></div>`);pop(S);
+  say(`Exam answer: the component that measures current is an <b>ammeter</b>, and its unit is <b>amperes</b>, or amps.`);
+  await w(1200);fill(S.querySelector('.b1'));await w(1200);fill(S.querySelector('.b2'));await w(800);}},
+
+/* 3 */ {t:'In series: in the loop',run:async w=>{
+  const M=panel(13,8,600,404,'🔁 Putting the ammeter in','');pop(M);
+  const parts=[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5}];
+  const c=circ(M,100,90,400,220,parts);c.flow(18,8000);c.light(1);
+  say(`An ammeter must be connected <b>in series</b>. That means <b>in the same loop</b>, so that every electron passes <b>through</b> it.`);await w(3600);
+  c.setParts([...parts,{t:'gap',side:'bottom',f:.5}]);c.stop();c.light(0);beep(300,.15,'square',.05);
+  const g=mk('tag','left:236px;top:340px;background:#fde3e3;color:#e04848','✂️ open a gap',M);pop(g);
+  say(`First, we open a <b>gap</b> in the loop. The current stops…`);await w(2400);
+  const am=mk('',`left:520px;top:30px;width:52px;height:52px;border-radius:50%;border:5px solid ${INK};background:#fff;font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;z-index:9`,'A',M);pop(am);await w(500);
+  await an(am,[{transform:'translate(0,0) rotate(0)'},{transform:'translate(-246px,254px) rotate(360deg)'}],{duration:1100,easing:'cubic-bezier(.4,0,.3,1)'});
+  am.remove();g.remove();c.setParts([{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5},{t:'amm',side:'bottom',f:.5}]);c.go();c.light(1);yay();
+  const halo=mk('','left:256px;top:266px;width:88px;height:88px;border-radius:50%;border:5px solid #18a058',null,M);loop(halo,[{transform:'scale(.8)',opacity:1},{transform:'scale(1.25)',opacity:.2}],700);
+  const ev=mk('tag','left:150px;top:186px;background:#e3f7ec;color:#17935b;font-size:17px','⚡ every electron goes through A',M);pop(ev);
+  const rd=mk('tag','left:248px;top:362px;background:#1f2433;color:#7dffb0;font-size:20px;font-family:monospace','0.5 A',M);pop(rd);
+  say(`…then we connect the ammeter <b>into the gap</b>. Now every electron in the loop flows <b>through</b> the ammeter, so it measures the whole current!`);await w(4200);
+  const P1=panel(627,8,319,196,'Choice 1',''),P2=panel(627,216,319,196,'Choice 2','');pop(P1);pop(P2,150);
+  const b1=circ(P1,56,58,170,100,[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5}],{s:1.3,pad:26,dot:9});b1.flow(10,6000);b1.light(1);
+  mk('','left:0;top:0',`<svg width="319" height="196"><path d="M226 84 H284 V132 H226" fill="none" stroke="${INK}" stroke-width="3.25"/><g transform="translate(284 108) rotate(90) scale(1.3)">${comp('amm',0,0,0,true)}</g><text x="284" y="115" text-anchor="middle" font-size="17" font-weight="800" font-family="sans-serif" fill="${INK}">A</text></svg>`,P1);
+  const b2=circ(P2,56,58,170,100,[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5},{t:'amm',side:'bottom',f:.5}],{s:1.3,pad:26,dot:9});b2.flow(10,6000);b2.light(1);
+  const strip=box(13,424,933,88,`<div style="font-size:19px;font-weight:700;line-height:1.4">🎯 Your turn! Which ammeter is connected the <b>right</b> way? Tap <b>Choice 1</b> or <b>Choice 2</b>.</div>`);pop(strip);
+  let done=false;[P1,P2].forEach(P=>P.style.cursor='pointer');
+  P1.onclick=()=>{if(done||P1.bad)return;P1.bad=1;P1.style.borderColor='#e04848';shake(P1);boo();const t=mk('tag','left:12px;top:162px;background:#fde3e3;color:#e04848;font-size:14px','❌ separate branch: not in the loop',P1);pop(t);
+    say(`Not that one. Choice 1 puts the ammeter on a <b>separate branch</b>, so it is not in the loop. It gives the wrong reading. Try again!`);};
+  P2.onclick=()=>{if(done)return;done=true;P2.style.borderColor='#18a058';P2.style.background='#f1fbf5';};
+  window.AUTOPLAY=()=>{if(!done)P2.click();};
+  say(`Your turn! Which ammeter is connected the <b>right</b> way? Tap a choice. 👉`);
+  await w.until(()=>done);window.AUTOPLAY=null;
+  if(!P1.bad){const t=mk('tag','left:12px;top:162px;background:#fde3e3;color:#e04848;font-size:14px','❌ separate branch: not in the loop',P1);pop(t);P1.style.opacity=.6;}
+  strip.innerHTML='';stampAt(120,18,'✔ MCQ 6: A) In series (in the same loop)',strip,22,-2);
+  say(`Yes! Choice 2 is <b>in series</b>: the ammeter is <b>in the same loop</b>. Choice 1 is on a separate branch, which is wrong.`);await w(3800);}},
+
+/* 4 */ {t:'How to read a scale',run:async w=>{
+  const L=panel(13,8,560,504,'📟 Reading an ammeter scale','');pop(L);
+  const m=meterEl(L,20,40,514);
+  say(`Ammeters often have a <b>needle</b> and a <b>scale</b>. Let's learn to read one, step by step. 👀`);await m.set(4.6,1400);await w(2000);
+  const steps=[['1️⃣ Check the scale','It goes from <b>0</b> to <b>10 A</b>.'],['2️⃣ Last number passed','The needle has passed <b>4</b>.'],['3️⃣ Count the small spaces','4 to 5 has <b>5</b> spaces, so each is <b>0.2 A</b>.'],['4️⃣ Add them up','3 spaces past 4: 4 + 0.6 = <b>4.6 A</b>.']];
+  const S=steps.map((s,i)=>box(587,8+i*112,359,102,`<div style="font-size:19px;font-weight:800;color:#6a45d8">${s[0]}</div><div style="font-size:17px;font-weight:700;margin-top:6px;line-height:1.3">${s[1]}</div>`,'display:none'));
+  const show=i=>{S[i].style.display='block';pop(S[i]);beep(600+i*80,.1);};
+  show(0);const bd=m.band(0,10);
+  say(`Step 1: check the <b>scale</b>. This one goes from <b>0</b> to <b>10 amps</b>.`);await w(3000);bd.remove();
+  show(1);m.ring(4);
+  say(`Step 2: find the <b>last number</b> the needle has passed. Here, that's <b>4</b>.`);await w(3000);
+  show(2);m.band(4,5);
+  const Z=mk('','left:20px;top:364px;width:514px;height:126px;background:#f7f4ff;border:3px solid #d9cff7;border-radius:16px',null,L);pop(Z);
+  mk('','left:12px;top:6px;font-size:15px;font-weight:800;color:#8a78cc','🔍 ZOOM: between 4 and 5',Z);
+  const X0=40,DX=86,Y0=78;
+  mk('',`left:${X0}px;top:${Y0}px;width:${5*DX}px;height:3px;background:${INK}`,null,Z);
+  for(let i=0;i<=5;i++){const big=i===0||i===5;mk('',`left:${X0+i*DX-1}px;top:${Y0-(big?24:14)}px;width:${big?4:2}px;height:${big?24:14}px;background:${INK}`,null,Z);
+    mk('',`left:${X0+i*DX-20}px;top:${Y0+8}px;width:40px;text-align:center;font-size:${big?18:13}px;font-weight:800;color:${big?INK:'#8a86a0'}`,big?(i?'5':'4'):(4+i*.2).toFixed(1),Z);}
+  const nd=mk('',`left:${X0+3*DX-2}px;top:${Y0-50}px;width:4px;height:52px;background:#e02020;opacity:0`,null,Z);
+  say(`Step 3: count the <b>small spaces</b> between 4 and 5. There are <b>5</b> spaces, so each one is worth <b>0.2 amps</b>.`);
+  for(let i=0;i<5;i++){const h=mk('',`left:${X0+i*DX+DX/2-13}px;top:${Y0-46}px;width:26px;height:26px;border-radius:50%;background:#ffd84d;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center`,i+1,Z);pop(h);beep(500+i*90,.08);await w(500);}
+  await w(2000);
+  show(3);nd.style.opacity=1;pop(nd);
+  say(`Step 4: the needle is <b>3 spaces</b> past 4. 3 × 0.2 = 0.6, so the reading is <b>4.6 amps</b>! 🎯`);await w(1600);
+  stampAt(620,462,'✔ Reading = 4.6 A',null,22,-3);await w(2400);}},
+
+/* 5 */ {t:'Needle game',run:async w=>{
+  const R=[{v:3,o:['30 A','3 A','0.3 A','4 A'],a:1,why:'The needle points exactly at <b>3</b>.'},
+    {v:7.4,o:['7.4 A','7.2 A','8.4 A','74 A'],a:0,why:'Past 7 by 2 small spaces: 7 + 0.4 = <b>7.4 A</b>.'},
+    {v:1.8,o:['2.8 A','1.4 A','18 A','1.8 A'],a:3,why:'Past 1 by 4 small spaces: 1 + 0.8 = <b>1.8 A</b>.'}];
+  const L=panel(13,8,520,504,'🎮 Read the ammeter!','');pop(L);
+  const m=meterEl(L,20,44,474);
+  const sc=mk('','left:20px;top:340px;width:474px;font-size:16px;font-weight:700;color:#626a80;text-align:center','Each small space = <b>0.2 A</b>. Find the last number, then count the spaces!',L);
+  const stars=mk('','left:20px;top:400px;width:474px;text-align:center;font-size:40px;letter-spacing:8px','',L);
+  say(`Game time! 🎮 I'll move the needle. You read the ammeter. Remember: each small space is <b>0.2 amps</b>.`);await w(2600);
+  for(let r=0;r<R.length;r++){const q=R[r];
+    const head=box(547,8,399,70,`<div style="font-size:14px;font-weight:800;color:#8a78cc;letter-spacing:.06em">READING ${r+1} OF ${R.length}</div><div style="font-size:19px;font-weight:800">What does the ammeter read?</div>`,'padding:8px 16px');pop(head);
+    await m.set(q.v,1300);
+    say(`Reading ${r+1}: what does the ammeter show? Tap your answer! 👉`);
+    const els=await pickOpts(w,q.o,q.a,{x:547,y:92,ow:399,oh:58,gap:12,onWrong:()=>say(`Not quite! Find the <b>last number</b> the needle passed, then count the small spaces.`)});
+    stars.textContent+='⭐';pop(stars);
+    const why=box(547,376,399,60,`<div style="font-size:17px;font-weight:700">✅ ${q.why}</div>`,'background:#e3f7ec;border-color:#18a058;padding:12px 16px');pop(why);
+    say(`Correct! ${q.why}`);await w(2000);
+    let nx=false;const b=btn('ex-btn',`left:${r<R.length-1?690:740}px;top:448px`,r<R.length-1?'Next question ▶':'Finish ✔',()=>{nx=true;});pop(b);
+    await w.until(()=>nx);[head,why,b,...els].forEach(e=>e.remove());}
+  confetti(120);yay();
+  const d=box(547,120,399,200,`<div style="font-size:60px;text-align:center">🏆</div><div style="font-size:21px;font-weight:800;text-align:center;color:#4a2ea6">Scale reading expert!</div>`);pop(d);
+  say(`Brilliant! You can read an ammeter scale. 🏆 Next: Sofia's multimeter from your exam sheet.`);await w(2400);}},
+
+/* 6 */ {t:"Sofia's multimeter",run:async w=>{
+  const body=mk('','left:40px;top:10px;width:380px;height:496px;border-radius:34px;background:linear-gradient(160deg,#ffd447,#f0b400);box-shadow:inset 0 -8px 0 rgba(0,0,0,.12),0 6px 16px rgba(0,0,0,.15)');pop(body);
+  const disp=mk('','left:20px;top:18px;width:340px;height:212px;border-radius:18px;background:#2b2f3a;padding:10px',null,body);
+  const m=meterEl(disp,10,10,320);
+  mk('','left:0;top:238px;width:380px;text-align:center;font-size:18px;font-weight:800;letter-spacing:.2em;color:#5c4100','MULTIMETER',body);
+  const CX=190,CY=372;
+  const knob=mk('',`left:${CX-62}px;top:${CY-62}px;width:124px;height:124px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#555b6b,#22252e);box-shadow:0 5px 0 rgba(0,0,0,.3)`,null,body);
+  const ptr=mk('','left:56px;top:6px;width:12px;height:56px;border-radius:6px;background:#fff;transform-origin:50% 100%',null,knob);
+  const lab={};[['OFF',0],['V',-65],['A',65],['Ω',-130],['mA',130]].forEach(([t,a])=>{const r=a*Math.PI/180,x=CX+92*Math.sin(r),y=CY-92*Math.cos(r);
+    lab[t]=mk('',`left:${x-22}px;top:${y-16}px;width:44px;height:32px;border-radius:10px;background:#fff;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;transition:all .3s`,t,body);});
+  [['#22252e',30],['#e04848',326]].forEach(([c,x])=>mk('',`left:${x}px;top:448px;width:26px;height:26px;border-radius:50%;background:${c};border:4px solid #fff`,null,body));
+  say(`This is <b>Sofia's multimeter</b>. A multimeter can measure lots of things. The <b>dial</b> chooses what it measures.`);await w(3400);
+  await an(ptr,[{transform:'rotate(0)'},{transform:'rotate(65deg)'}],{duration:900,easing:'cubic-bezier(.3,1.4,.5,1)'});beep(900,.06,'square',.06);
+  Object.assign(lab.A.style,{background:'#18a058',color:'#fff',transform:'scale(1.2)'});
+  say(`She turns the dial to <b>A</b>, for <b>amps</b>. Now it works as an <b>ammeter</b>, measuring current! 📟`);await w(3000);
+  await m.set(2.2,1500);
+  const Q=box(467,8,479,112,`<div style="font-size:13px;font-weight:800;color:#8a78cc;letter-spacing:.05em">WORKSHEET · UNIT 9 · Q18</div><div style="font-size:18px;font-weight:700;line-height:1.35;margin-top:4px">Sofia's multimeter is switched to measure current. Which is the current in her circuit?</div>`);pop(Q);
+  say(`The needle stops just past 2. Which is the current in her circuit? Tap your answer! 👉`);
+  await pickOpts(w,['60 A','2.2 A','12 A','75 A'],1,{x:467,y:134,cols:2,ow:233,oh:58,gap:13,onWrong:i=>say(`Not quite! Look at the scale: it only goes up to <b>10 A</b>. Find the last number the needle passed.`)});
+  const E=box(467,290,479,222,`<div style="font-size:18px;font-weight:800;color:#6a45d8">How to get it</div><div style="font-size:17px;font-weight:700;line-height:1.55;margin-top:4px">1️⃣ Scale: 0 to 10 A<br>2️⃣ Last number passed: <b>2</b><br>3️⃣ One small space more: + 0.2 A<br>👉 2 + 0.2 = <b>2.2 A</b></div>`);pop(E);
+  m.ring(2);
+  say(`Yes, <b>2.2 amps</b>! The needle passed 2, then one small space of 0.2. And 60, 12 and 75 amps are all bigger than the whole scale!`);await w(1600);
+  stampAt(230,150,'✔ Q18: 2.2 A',E,24,-5);await w(2600);}},
+
+/* 7 */ {t:"Lily's investigation",run:async w=>{
+  const L=panel(13,8,560,420,"👧 Lily's circuit",'');pop(L);
+  const cells=[{t:'cell',side:'top',f:.415},{t:'cell',side:'top',f:.585}],amm={t:'amm',side:'bottom',f:.5};
+  const LP=[null,[.5],[.3,.7],[.2,.5,.8]],RD=[null,'0.6 A','0.3 A','0.2 A'],RT=[0,1,.5,.33],GL=[0,1,.55,.3];
+  const c=circ(L,80,100,400,230,[...cells,{t:'lamp',side:'right',f:.5},amm]);c.flow(18,7000);c.light(1);
+  const rd=mk('tag','left:232px;top:368px;background:#1f2433;color:#7dffb0;font-size:22px;font-family:monospace;padding:4px 14px','0.6 A',L);pop(rd);
+  const T=box(587,8,359,250,`<div style="font-size:17px;font-weight:800;color:#6a45d8">📋 Lily's results</div>
+    <table style="margin-top:8px;width:100%;border-collapse:collapse;font-size:17px;font-weight:700;text-align:center"><tr style="color:#626a80;font-size:14px"><td style="padding:6px">Number of lamps</td><td>Current (A)</td></tr>
+    ${[1,2,3].map(n=>`<tr class="r${n}" style="border-top:2px solid #ece8f8;opacity:${n===1?1:.2}"><td style="padding:8px">${n}</td><td class="v" style="font-family:monospace;font-size:20px">${n===1?'0.6':'?'}</td></tr>`).join('')}</table>`);pop(T);
+  let N=1,goal=1;
+  const b=mk('bigbtn','left:163px;top:442px;width:260px;height:56px;background:#e06a1b;display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer','➕ Add a lamp');
+  b.onclick=()=>{if(N>=3)return;N++;c.setParts([...cells,...LP[N].map(f=>({t:'lamp',side:'right',f})),amm]);c.rate(RT[N]);c.light(GL[N]);rd.textContent=RD[N];pop(rd);
+    const r=T.querySelector('.r'+N);r.style.opacity=1;r.querySelector('.v').textContent=RD[N].replace(' A','');pop(r.querySelector('.v'));beep(400-N*50,.15);if(N>=3)b.style.opacity=.35;};
+  window.AUTOPLAY=()=>{if(N<goal)b.click();};
+  say(`Meet <b>Lily</b>! 👧 She is finding out how the <b>number of lamps</b> affects the <b>current</b>. Her meter is in the loop.`);await w(3600);
+  say(`With <b>1 lamp</b>, her meter reads <b>0.6 A</b>. Now tap <b>Add a lamp</b>! 👇`);pop(b);goal=2;
+  await w.until(()=>N>=2);
+  say(`With <b>2 lamps</b>, the reading drops to <b>0.3 A</b>. The electrons flow more slowly. Add another one!`);goal=3;await w(2400);
+  await w.until(()=>N>=3);
+  say(`With <b>3 lamps</b>, only <b>0.2 A</b>. More lamps make the current <b>smaller</b>, so the lamps are dimmer too.`);await w(3400);window.AUTOPLAY=null;
+  const Q=box(587,272,359,240,`<div style="font-size:13px;font-weight:800;color:#8a78cc;letter-spacing:.05em">WORKSHEET · UNIT 9 · Q14 (b)</div><div style="font-size:17px;font-weight:700;line-height:1.35;margin-top:4px">Lily uses a meter to measure the current. Name the meter.</div>
+    <div style="font-size:21px;font-weight:800;margin-top:12px">📟 <span class="b1" style="${BL};min-width:120px">ammeter</span></div>`);pop(Q);
+  say(`Exam question: what is the name of Lily's meter? It measures <b>current</b>, so it is an <b>ammeter</b>!`);await w(1400);
+  fill(Q.querySelector('.b1'));await w(400);stampAt(40,170,'✔ Ammeter',Q,22,-4);await w(2400);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 9 · MCQ 4',q:'What unit is used to measure electric current?',o:['Volts (V)','Amperes or Amps (A)','Joules (J)','Grams (g)'],a:1,why:'Current is measured in <b>amperes</b> (amps), symbol <b>A</b>.'},
+    {src:'Worksheet · Unit 9 · MCQ 5',q:'Which measuring instrument is used to measure electric current in a circuit?',o:['Thermometer','Voltmeter','Ammeter','Ruler'],a:2,why:'The <b>am</b>meter measures <b>am</b>ps!'},
+    {src:'Worksheet · Unit 9 · MCQ 6',q:'How must an ammeter be connected in a circuit to measure current?',o:['In series (in the same loop)','In parallel (on a separate branch)','Outside the circuit completely','Across the switch only'],a:0,why:'<b>In series</b>: in the same loop, so every electron passes through it.'},
+    {src:'Worksheet · Unit 9 · Short answer 3',q:'Name the component used in a circuit to measure current and its unit.',model:'<b>Ammeter</b>. Its unit is <b>amperes (A)</b>.'},
+    {src:'Worksheet · Unit 9 · Q14 (b)',q:'Lily investigates how the number of lamps affects the current. She uses a meter to measure the current. Name the meter.',model:'An <b>ammeter</b>.'},
+    {src:`Worksheet · Unit 9 · Q18<div style="margin:8px 0 4px">${meterImg(2.2,230)}</div>`,q:"Sofia's multimeter is switched to measure current. Which is the current in her circuit?",o:['60 A','2.2 A','12 A','75 A'],a:1,cols:4,why:'The needle is one small space (0.2 A) past 2, so the current is <b>2.2 A</b>.'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 Fantastic! You've finished <b>Measuring current</b>. Here's everything you learned…`);
+  const B=[['🅰️','Current is measured in <b>amperes</b> (amps), symbol <b>A</b>.'],['📟','An <b>ammeter</b> measures current.<br>AMmeter → AMps!'],
+    ['⭕',`Ammeter symbol: a <b>circle with A</b> inside.<br>${symImg('amm',1)}`],['🔁','Connect it <b>in series</b>: in the same loop.'],
+    ['1️⃣','Read a scale: find the <b>last number</b> the needle passed.'],['🔢','Then count the <b>small spaces</b>. Here each is 0.2 A.'],
+    ['🎯',"Sofia's multimeter, switched to A, reads <b>2.2 A</b>."],['💡','Lily: more lamps → <b>smaller</b> current.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${10+Math.floor(i/4)*212}px;width:222px;height:200px;font-size:16px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:446px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🎮 Test yourself in the Science Quest quiz ➜');
+  f.onclick=()=>{location.href='../quiz.html';};pop(f);
+  say(`You're a <b>measuring master</b>! 📟 Now test yourself in the <b>Science Quest</b> quiz.`);}},
+  ]
+});
+</script>
+</body>
+</html>

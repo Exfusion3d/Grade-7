@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Conductors &amp; insulators</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.el{position:absolute;left:0;top:0;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#2c66cf;box-shadow:0 0 7px #5aa0f0;offset-rotate:0deg}
+.mat{position:absolute;width:130px;height:84px;border-radius:16px;background:#fff;border:3px solid #e3e0f0;box-shadow:0 4px 0 #e3e0f0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;font-size:16px;cursor:pointer;transition:transform .15s,opacity .3s}
+.mat:hover{transform:translateY(-3px)}
+.mat .sw{width:70px;height:20px;border-radius:5px;margin-bottom:6px}
+.mat.done{opacity:.45;cursor:default}
+.res{position:absolute;height:36px;padding:0 12px;border-radius:18px;font-weight:800;font-size:15px;display:flex;align-items:center;white-space:nowrap}
+.ion{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+.lbl{position:absolute;background:#1f2433;color:#fff;border-radius:12px;padding:6px 12px;font-size:15px;font-weight:700;line-height:1.3}
+.ansbox{position:absolute;background:#fff8e6;border:3px solid #f2c200;border-radius:18px;padding:10px 16px;font-size:17px;font-weight:700;line-height:1.35}
+.sum small{display:block;font-size:12.5px;color:#8a78cc;font-weight:800;letter-spacing:.05em}
+.ansbox small{display:block;font-size:12.5px;color:#8a78cc;font-weight:800;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+function stampIt(css,html){const st=mk('stamp',css,html);an(st,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-4deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return st;}
+/* ---------- a simple circuit with a gap for testing materials (470 x 290) ---------- */
+const MATS={copper:['Copper','#e0915a',1],steel:['Steel','#a9b0bb',1],aluminium:['Aluminium','#d5d9e0',1],silver:['Silver','#e3e7ee',1],
+  plastic:['Plastic','#5d9cf5',0],wood:['Wood','#c08a50',0],rubber:['Rubber','#3a3a3a',0],cotton:['Cotton','#f4efe2',0],glass:['Glass','#cfeef7',0],air:['Air','transparent',0],spoon:['Metal spoon','#b9bec8',1],ruler:['Plastic ruler','#ff8fb1',0]};
+function makeCircuit(parent,ox,oy){
+  const wrap=mk('',`left:${ox}px;top:${oy}px;width:470px;height:290px`,null,parent);
+  mk('',`left:0;top:0;width:470px;height:290px`,`<svg width="470" height="290"><path d="M354 250 H440 V70 H30 V250 H86 M154 250 H266" fill="none" stroke="#c86a2a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,wrap);
+  const dots=[];for(let i=0;i<12;i++){const d=mk('el','opacity:0;offset-path:path("M235 70 H440 V250 H30 V70 Z")',null,wrap);
+    loop(d,[{offsetDistance:'0%'},{offsetDistance:'100%'}],4200,{easing:'linear',delay:-i*350});dots.push(d);}
+  const glow=mk('','left:175px;top:10px;width:120px;height:120px;border-radius:50%;background:radial-gradient(rgba(255,214,0,.85),rgba(255,224,102,0) 68%);opacity:0',null,wrap);
+  const bulb=mk('','left:211px;top:46px;width:48px;height:48px;border-radius:50%;background:#f2f2f2;border:4px solid #555;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#777;transition:background .3s,color .3s','∿',wrap);
+  mk('','left:226px;top:94px;width:18px;height:12px;background:#777;border-radius:0 0 4px 4px',null,wrap);
+  mk('','left:84px;top:236px;width:72px;height:30px;border-radius:6px;background:linear-gradient(90deg,#1f2433 70%,#e0a800 70%);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;padding-left:8px','− &nbsp;+',wrap);
+  mk('','left:254px;top:242px;width:16px;height:16px;border-radius:3px;background:#444',null,wrap);mk('','left:350px;top:242px;width:16px;height:16px;border-radius:3px;background:#444',null,wrap);
+  let sample=null,gl=null;
+  const st=mk('tag','left:286px;top:200px;background:#e9e6f4;color:#6b6585;font-size:13px','gap',wrap);
+  function set(key){const m=MATS[key];if(sample)sample.remove();if(gl){gl.cancel();gl=null;}
+    sample=mk('',`left:268px;top:238px;width:84px;height:24px;border-radius:5px;background:${m[1]};z-index:2;`+(key==='air'?'border:2px dashed #9aa3b5;':'box-shadow:inset 0 -4px 0 rgba(0,0,0,.15);')+(key==='cotton'?'background:repeating-linear-gradient(90deg,#f4efe2 0 6px,#e2dccb 6px 9px);':''),'',wrap);
+    an(sample,[{transform:'translateY(-90px)',opacity:0},{transform:'translateY(4px)',opacity:1,offset:.8},{transform:'none',opacity:1}],{duration:500,easing:'ease-in'});
+    st.textContent=m[0];st.style.background=m[2]?'#e3f7ec':'#fde3e3';st.style.color=m[2]?'#18a058':'#e04848';
+    setTimeout(()=>{dots.forEach(d=>d.style.opacity=m[2]?1:0);bulb.style.background=m[2]?'#fff6a0':'#f2f2f2';bulb.style.color=m[2]?'#e0a800':'#777';glow.style.opacity=m[2]?1:0;
+      if(m[2])gl=loop(glow,[{transform:'scale(.9)'},{transform:'scale(1.15)'}],500,{direction:'alternate'});beep(m[2]?880:200,.12,m[2]?'triangle':'sawtooth',.06);},450);
+    return m[2];}
+  return {wrap,set};}
+
+Lesson.start({
+  id:'l14', num:14, unit:9, emoji:'🔌', title:'Conductors & insulators',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Why are wires made of metal, but covered in plastic? Let's find out! Press <b>Start</b>.`,
+  scenes:[
+/* 1 */ {t:'Will it light?',run:async w=>{
+  const P=panel(13,8,500,320,'⚡ Will the bulb light?','');pop(P);
+  const C=makeCircuit(P,14,20);
+  say(`Here's a circuit with a <b>gap</b> in it. 🔋 The bulb is off, because electricity can't jump across the gap.`);await w(3400);
+  C.set('spoon');await w(600);
+  say(`Let's bridge the gap with a <b>metal spoon</b>… 🥄 The bulb lights up! Electricity flows straight through the metal.`);await w(3600);
+  C.set('ruler');await w(600);
+  say(`Now a <b>plastic ruler</b>… 📏 Nothing! The plastic will not let the electricity through.`);await w(3400);
+  const a=mk('','left:527px;top:8px;width:419px;height:156px;background:#e3f7ec;border:3px solid #18a058;border-radius:20px;padding:12px 16px;font-size:18px;font-weight:700;line-height:1.35',
+    `<div style="font-size:24px;font-weight:800;color:#17935b">✅ CONDUCTOR</div>A material that <b>allows electricity to flow</b> through it <b>easily</b>.<br><span style="font-size:15px;color:#3a6a4f">e.g. metals: copper, steel, aluminium</span>`);pop(a);
+  C.set('spoon');
+  say(`A material that lets electricity flow through it easily is called a <b>conductor</b>. All <b>metals</b> are conductors.`);await w(3800);
+  const b=mk('','left:527px;top:172px;width:419px;height:156px;background:#fde3e3;border:3px solid #e04848;border-radius:20px;padding:12px 16px;font-size:18px;font-weight:700;line-height:1.35',
+    `<div style="font-size:24px;font-weight:800;color:#c43030">🚫 INSULATOR</div>A material that does <b>NOT</b> allow electric current to pass through it <b>easily</b>.<br><span style="font-size:15px;color:#8a3a3a">e.g. plastic, wood, rubber, glass</span>`);pop(b);
+  C.set('ruler');
+  say(`A material that does <b>not</b> let current pass through it easily is an <b>insulator</b>. Plastic is an insulator.`);await w(3800);
+  const q=mk('','left:13px;top:342px;width:933px;height:170px;background:#fff;border:3px solid #ece8f8;border-radius:20px');pop(q);
+  mk('','left:18px;top:12px;width:640px;font-size:17px;font-weight:700',`<span style="color:#8a78cc;font-size:13px;font-weight:800">MCQ 10</span><br>What is a material called that allows electricity to flow through it easily?`,q);
+  mk('','left:18px;top:84px;width:640px;font-size:17px;font-weight:700',`<span style="color:#8a78cc;font-size:13px;font-weight:800">MCQ 12</span><br>What is a material called that does NOT allow electric current to pass through it easily?`,q);
+  say(`These are <b>two exam questions</b> on your sheet! 📝`);await w(1800);
+  stampIt('left:700px;top:362px','✔ A) Conductor');
+  say(`<b>MCQ 10</b>: lets electricity flow easily. Answer: <b>A) Conductor</b>.`);await w(2800);
+  stampIt('left:710px;top:436px','✔ B) Insulator');
+  say(`<b>MCQ 12</b>: does NOT let current pass easily. Answer: <b>B) Insulator</b>. ✅`);await w(2600);}},
+
+/* 2 */ {t:'Circuit tester',run:async w=>{
+  const P=panel(13,8,500,300,'🔬 Circuit tester','');pop(P);
+  const C=makeCircuit(P,14,8);
+  const keys=['copper','steel','aluminium','plastic','wood','rubber','cotton','glass','air'];
+  const B1=mk('','left:13px;top:316px;width:460px;height:196px;background:#f2fbf6;border:3px solid #18a058;border-radius:20px',`<div style="margin:8px 14px;font-size:18px;font-weight:800;color:#17935b">💡 Bulb lights: CONDUCTORS</div>`);
+  const B2=mk('','left:487px;top:316px;width:459px;height:196px;background:#fff4f4;border:3px solid #e04848;border-radius:20px',`<div style="margin:8px 14px;font-size:18px;font-weight:800;color:#c43030">⚫ Bulb stays off: INSULATORS</div>`);
+  let n1=0,n2=0,busy=false;const done=new Set();
+  const tiles=keys.map((k,i)=>{const m=MATS[k];const t=mk('mat',`left:${530+(i%3)*143}px;top:${20+Math.floor(i/3)*96}px`,`<div class="sw" style="background:${m[1]};${k==='air'?'border:2px dashed #9aa3b5;':''}"></div>${m[0]}`);pop(t,i*60);
+    t.onclick=()=>{if(busy||done.has(k))return;busy=true;done.add(k);t.classList.add('done');const ok=C.set(k);
+      const box=ok?B1:B2,idx=ok?n1++:n2++;const r=mk('res',`left:${14+(idx%3)*146}px;top:${48+Math.floor(idx/3)*46}px;background:${ok?'#c9f0da':'#fbd0d0'};color:${ok?'#17935b':'#c43030'};opacity:0`,(ok?'✔ ':'✘ ')+m[0],box);
+      setTimeout(()=>{r.style.top=(48+Math.floor(idx/3)*46)+'px';pop(r);},500);
+      const lines={copper:`<b>Copper</b>: the bulb lights! Copper is a great <b>conductor</b>. 💡`,steel:`<b>Steel</b>: it lights! Steel is a metal, so it <b>conducts</b>.`,aluminium:`<b>Aluminium</b>: it lights! Another metal <b>conductor</b>.`,
+        plastic:`<b>Plastic</b>: no light. Plastic is an <b>insulator</b>.`,wood:`<b>Wood</b>: no light. Wood is an <b>insulator</b>.`,rubber:`<b>Rubber</b>: nothing. Rubber is an <b>insulator</b>.`,
+        cotton:`<b>Cotton</b> thread: nothing! Cotton is an <b>insulator</b>, so you could <b>never</b> make wires from it.`,glass:`<b>Glass</b>: no light. Glass is an <b>insulator</b>.`,air:`<b>Air</b>: just an empty gap. Air is an <b>insulator</b> too!`};
+      say(lines[k]);setTimeout(()=>{busy=false;},1400);};return t;});
+  window.AUTOPLAY=()=>{const t=tiles.find((t,i)=>!done.has(keys[i]));if(t&&!busy)t.click();};
+  say(`Your turn! 👆 Tap each material to put it in the gap. Does the bulb light? Test <b>all nine</b>!`);
+  await w.until(()=>done.size===keys.length&&!busy);
+  await w(1500);
+  tiles.forEach(t=>an(t,[{opacity:.45},{opacity:0}],{duration:400}));
+  const S=mk('sum','left:527px;top:8px;width:419px;height:300px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 16px;font-size:16.5px;font-weight:700;line-height:1.4');pop(S);
+  const h1=mk('','left:14px;top:150px;font-size:15px;font-weight:700;color:#17935b','⚙️ They are all <b>metals</b>!',B1),h2=mk('','left:14px;top:150px;font-size:15px;font-weight:700;color:#c43030','🧴 Non-metals, plastics, natural materials and air',B2);pop(h1);pop(h2);
+  say(`Great testing! 🎉 Every <b>metal</b> lit the bulb. Everything else was an <b>insulator</b>.`);await w(3000);
+  const L=[[`<small>MCQ 11 · good electrical conductor?</small>✔ <b>B) Copper</b> (not plastic, glass or rubber)`],[`<small>Q15 · underline the good conductor</small>wood, plastic, <u><b>metal</b></u>, air`],[`<small>Q16 · could NOT make electric wires</small>steel, copper, <u><b>cotton</b></u>, aluminium`]];
+  const says=[`Exam time! <b>MCQ 11</b>: which is a good electrical conductor? <b>B) Copper</b>.`,`<b>Q15</b>: which is a good conductor: wood, plastic, metal or air? <b>Metal</b>!`,`<b>Q16</b>: which could <b>not</b> make electric wires? <b>Cotton</b>, because it's an insulator. ✅`];
+  for(let i=0;i<3;i++){const d=mk('',`position:relative;margin-bottom:12px;background:#e3f7ec;border-radius:14px;padding:8px 12px`,L[i][0],S);d.style.position='relative';
+    an(d,[{opacity:0,transform:'translateX(30px)'},{opacity:1,transform:'none'}],{duration:450});beep(700+i*80,.08);say(says[i]);await w(3000);}
+  yay();}},
+
+/* 3 */ {t:'Free electrons',run:async w=>{
+  say(`Why do metals conduct, but plastic doesn't? Let's zoom in to the <b>particles</b>! 🔍`);await w(2400);
+  const M=panel(13,8,460,330,'🔩 Metal (conductor)','');pop(M);
+  const Pl=panel(487,8,459,330,'🧴 Plastic (insulator)','');pop(Pl);
+  for(let r=0;r<4;r++)for(let c=0;c<5;c++){const x=60+c*85,y=72+r*62;
+    const a=mk('ion',`left:${x}px;top:${y}px;background:#f7ad5f;color:#5c2c00`,'+',M);loop(a,[{transform:'translate(0,0)'},{transform:'translate(2px,-2px)'}],300+((r+c)%3)*60,{direction:'alternate'});}
+  const fe=[];for(let i=0;i<16;i++){const x=40+Math.random()*380,y=56+Math.random()*220;
+    const e=mk('el',`left:${x}px;top:${y}px;width:14px;height:14px;margin:-7px 0 0 -7px;z-index:2`,null,M);
+    const dx=(Math.random()-.5)*120,dy=(Math.random()-.5)*80;fe.push(e);
+    e.wander=loop(e,[{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px)`},{transform:`translate(${-dy}px,${dx/2}px)`},{transform:'translate(0,0)'}],2600+Math.random()*1200);}
+  for(let r=0;r<4;r++)for(let c=0;c<5;c++){const x=60+c*85,y=72+r*62;
+    const a=mk('',`left:${x-30}px;top:${y-30}px;width:60px;height:60px`,null,Pl);
+    mk('ion',`left:30px;top:30px;background:#5d9cf5;color:#fff;font-size:16px`,'',a);
+    const o=mk('',`left:0;top:0;width:60px;height:60px;border-radius:50%;border:1.5px dashed #b9cff5`,null,a);
+    const e=mk('el',`left:30px;top:0;width:12px;height:12px;margin:-6px 0 0 -6px`,null,o);
+    loop(o,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],1400+((r*5+c)%4)*250,{easing:'linear'});}
+  say(`In a <b>metal</b>, some electrons are <b>free</b>. 🔵 They are not stuck to any atom, so they can wander all through the metal.`);await w(4200);
+  say(`In <b>plastic</b>, every electron is <b>held tightly</b> by its own atom. 🔒 None of them are free to move.`);await w(4000);
+  const bat1=mk('','left:420px;top:14px;font-size:34px;z-index:4;line-height:1','🔋'),bat2=mk('','left:893px;top:14px;font-size:34px;z-index:4;line-height:1','🔋');pop(bat1);pop(bat2);
+  say(`Now let's connect a <b>battery</b> to both… ⚡`);await w(1800);
+  fe.forEach((e,i)=>{e.wander.cancel();const y=parseFloat(e.style.top);e.style.left='0px';
+    loop(e,[{transform:'translate(-20px,0)'},{transform:'translate(220px,6px)',offset:.5},{transform:'translate(480px,0)'}],3200,{easing:'linear',delay:-i*200});});
+  const ok=mk('tag','left:120px;top:286px;background:#18a058;color:#fff;z-index:5','➡️ Electrons flow = current!',M);pop(ok);
+  const no=mk('tag','left:140px;top:286px;background:#e04848;color:#fff;z-index:5','🔒 Stuck: no current',Pl);pop(no);loop(no,[{transform:'translateX(-4px)'},{transform:'translateX(4px)'}],120,{direction:'alternate',iterations:8});
+  say(`In the metal, the free electrons <b>flow</b> along. That's an electric current! In the plastic… nothing moves.`);await w(4000);
+  const A=mk('ansbox','left:13px;top:350px;width:933px;height:96px;font-size:19px',`<small>SHORT ANSWER 10 · the difference in terms of particles</small>Conductors have <b>free electrons</b> that can move, while insulators do <b>not</b> have free electrons that can move easily.`);pop(A);
+  say(`So here's the exam answer: conductors have <b>free electrons</b> that can move, while insulators do <b>not</b> have free electrons that can move easily.`);await w(5000);
+  stampIt('left:640px;top:458px;font-size:20px','✔ Short answer 10');await w(800);}},
+
+/* 4 */ {t:'Inside a wire',run:async w=>{
+  const P=panel(13,8,933,300,'✂️ A cut-away electric wire','');pop(P);
+  say(`Look inside an electric <b>wire</b>. It's made of <b>two</b> materials. Let's cut it open! ✂️`);await w(2600);
+  const core=mk('','left:60px;top:132px;width:830px;height:36px;border-radius:0 18px 18px 0;background:linear-gradient(#f2b27c,#c86a2a 60%,#a5521d)',null,P);
+  for(let i=0;i<5;i++)mk('',`left:${780+i*4}px;top:${136+i*6}px;width:110px;height:2px;background:rgba(255,255,255,.35)`,null,P);
+  const ds=[];for(let i=0;i<14;i++){const d=mk('el',`left:60px;top:150px;opacity:0;z-index:1`,null,P);loop(d,[{transform:'translateX(0)'},{transform:'translateX(820px)'}],3600,{easing:'linear',delay:-i*257});ds.push(d);}
+  const c1=mk('','left:50px;top:110px;width:220px;height:80px;border-radius:40px 0 0 40px;background:linear-gradient(#ff7b7b,#e04848 60%,#b52f2f);z-index:2',null,P);
+  const cut=mk('','left:270px;top:110px;width:300px;height:80px;background:linear-gradient(#ff7b7b,#e04848 60%,#b52f2f);z-index:2',null,P);
+  const c2=mk('','left:570px;top:110px;width:200px;height:80px;background:linear-gradient(#ff7b7b,#e04848 60%,#b52f2f);z-index:2',null,P);
+  await w(800);
+  an(cut,[{opacity:1,transform:'none'},{opacity:.3,transform:'translateY(-6px)'}],{duration:900});beep(500,.1);
+  mk('','left:270px;top:110px;width:300px;height:80px;border:3px dashed #b52f2f;border-radius:4px;z-index:3',null,P);
+  ds.forEach(d=>d.style.opacity=1);
+  await w(1000);
+  const l1=mk('lbl','left:300px;top:216px;z-index:4','🟠 Copper core: a <b>conductor</b>, carries the current',P);pop(l1);
+  mk('','left:420px;top:174px;width:3px;height:42px;background:#1f2433;z-index:4',null,P);
+  say(`Inside is <b>copper</b>, a metal. It's a <b>conductor</b>, so the electricity flows along it. ⚡`);await w(3400);
+  const l2=mk('lbl','left:120px;top:48px;z-index:4','🔴 Plastic coating: an <b>insulator</b>',P);pop(l2);
+  mk('','left:180px;top:82px;width:3px;height:28px;background:#1f2433;z-index:4',null,P);
+  say(`Outside is <b>plastic</b>. It's an <b>insulator</b>, so the electricity stays inside the copper.`);await w(3400);
+  const hand=mk('','left:620px;top:0;font-size:64px;line-height:1;z-index:5','👇',P);
+  await an(hand,[{transform:'translateY(-80px)'},{transform:'translateY(46px)'}],{duration:700});
+  const safe=mk('tag','left:700px;top:40px;background:#18a058;color:#fff;font-size:17px;z-index:5','✔ Safe to touch!',P);pop(safe);yay();
+  say(`So you can touch the plastic safely. 👍 It <b>stops electric shocks</b>.`);await w(3000);
+  await an(hand,[{transform:'translateY(46px)'},{transform:'translate(200px,64px)'}],{duration:800});safe.remove();
+  const zap=mk('','left:830px;top:70px;font-size:60px;z-index:6;line-height:1','⚡',P);loop(zap,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1.3)'}],180,{direction:'alternate'});
+  shake(P);boo();const sh=mk('tag','left:560px;top:44px;background:#e04848;color:#fff;font-size:17px;z-index:5','⚠️ Bare copper = SHOCK!',P);pop(sh);
+  say(`But touch the bare copper and… ZAP! ⚡ That's an <b>electric shock</b>. That's why wires have a plastic coat.`);await w(3600);
+  const Q=mk('','left:13px;top:318px;width:933px;height:194px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 18px');pop(Q);
+  mk('','position:relative;font-size:17.5px;font-weight:700',`<span style="color:#8a78cc;font-size:13px;font-weight:800">MCQ 13</span><br>Why are electrical wires usually coated in plastic?`,Q);
+  const O=['A) Plastic is a good conductor that speeds up electricity','B) Plastic is a good insulator that prevents electric shocks','C) Plastic makes the wire heavier','D) Plastic makes the electricity shine brighter'];
+  const os=O.map((t,i)=>{const e=mk('',`left:${18+(i%2)*455}px;top:${70+Math.floor(i/2)*56}px;width:440px;height:48px;border-radius:12px;border:3px solid #e3e0f0;font-size:15.5px;font-weight:700;display:flex;align-items:center;padding:0 12px;line-height:1.2`,t,Q);pop(e,i*80);return e;});
+  say(`Exam question! <b>MCQ 13</b>: why are wires coated in plastic? 🤔`);await w(2600);
+  os.forEach((e,i)=>{if(i!==1)an(e,[{opacity:1},{opacity:.35}],{duration:400});});
+  os[1].style.background='#e3f7ec';os[1].style.borderColor='#18a058';an(os[1],[{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],{duration:500});yay();
+  say(`✅ <b>B</b>: plastic is a good <b>insulator</b> that <b>prevents electric shocks</b>.`);await w(3000);}},
+
+/* 5 */ {t:'Inside a plug',run:async w=>{
+  const P=panel(13,8,560,344,'🔌 A cut-away plug','');pop(P);
+  const g=mk('','left:0;top:0;width:560px;height:344px',null,P);
+  const plug=mk('','left:40px;top:70px;width:340px;height:240px',`<svg width="340" height="240" viewBox="0 0 340 240">
+    <path d="M0 132 H80" stroke="#444" stroke-width="22" stroke-linecap="round"/>
+    <path d="M76 132 C120 132 120 70 170 70 H230" stroke="#8b5a2b" stroke-width="7" fill="none"/>
+    <path d="M76 132 C120 132 120 190 170 190 H230" stroke="#2c66cf" stroke-width="7" fill="none"/>
+    <rect x="80" y="30" width="170" height="200" rx="26" fill="rgba(240,240,240,.55)" stroke="#2d2d2d" stroke-width="6"/>
+    <rect x="228" y="58" width="100" height="24" rx="4" fill="#e7b416" stroke="#a07b00" stroke-width="2"/>
+    <rect x="228" y="178" width="100" height="24" rx="4" fill="#e7b416" stroke="#a07b00" stroke-width="2"/>
+  </svg>`,g);
+  const sock=mk('','left:430px;top:80px;width:110px;height:230px;border-radius:16px;background:#f4f4f4;border:4px solid #bbb',`<div style="position:absolute;left:-4px;top:44px;width:40px;height:32px;background:#333;border-radius:4px"></div><div style="position:absolute;left:-4px;top:164px;width:40px;height:32px;background:#333;border-radius:4px"></div><div style="position:absolute;left:44px;top:96px;font-size:30px">⚡</div>`,g);
+  const lamp=mk('','left:4px;top:40px;font-size:44px;line-height:1;filter:grayscale(1);opacity:.6','💡',g);
+  say(`Now look inside a <b>plug</b>! 🔌 It has a <b>plastic body</b> and <b>metal pins</b>. Why two different materials?`);await w(3400);
+  await an(plug,[{transform:'translateX(0)'},{transform:'translateX(80px)'}],{duration:1200,easing:'ease-in-out'});beep(300,.1,'square',.05);
+  const cord=mk('','left:0;top:0;width:200px;height:240px',`<svg width="200" height="240"><path d="M26 86 C26 170 60 202 126 202" fill="none" stroke="#444" stroke-width="12" stroke-linecap="round"/></svg>`,g);an(cord,[{opacity:0},{opacity:1}],{duration:300});
+  const flow=[];for(let i=0;i<10;i++){const d=mk('el',`offset-path:path("M440 140 H290 C240 140 240 202 196 202 H126 C60 202 26 170 26 90");z-index:3`,null,g);loop(d,[{offsetDistance:'0%'},{offsetDistance:'100%'}],2600,{easing:'linear',delay:-i*260});flow.push(d);}
+  lamp.style.filter='none';lamp.style.opacity=1;loop(lamp,[{filter:'drop-shadow(0 0 2px #ffd000)'},{filter:'drop-shadow(0 0 16px #ffc400)'}],600,{direction:'alternate'});
+  say(`Plugged in! ⚡ Electricity flows through the <b>metal pins</b>, along the wires, and the lamp lights up.`);await w(3600);
+  const p1=mk('lbl','left:330px;top:44px;z-index:5','🟡 Metal pins',g);pop(p1);
+  const A9=mk('ansbox','left:587px;top:8px;width:359px;height:166px',`<small>SHORT ANSWER 9 · why are the pins metal?</small>🟡 Metal is a <b>conductor</b>, so electricity can <b>flow into the appliance</b>.`);pop(A9);
+  say(`Why are the <b>pins</b> made of metal? Metal is a <b>conductor</b>, so electricity can flow into the appliance.`);await w(4000);
+  const hand=mk('','left:150px;top:300px;font-size:60px;line-height:1;z-index:6','✊',g);
+  await an(hand,[{transform:'translateY(60px)'},{transform:'translateY(-110px)'}],{duration:700});
+  const p2=mk('lbl','left:120px;top:300px;z-index:5','⚪ Plastic body',g);pop(p2);
+  const ok=mk('tag','left:290px;top:250px;background:#18a058;color:#fff;z-index:6','✔ No shock!',g);pop(ok);
+  const A8=mk('ansbox','left:587px;top:186px;width:359px;height:166px',`<small>SHORT ANSWER 8 · why is the body plastic?</small>⚪ Plastic is an <b>insulator</b>. It helps <b>prevent electric shocks</b> when you hold the plug.`);pop(A8);
+  say(`And the <b>body</b>? Plastic is an <b>insulator</b>, so it helps <b>prevent electric shocks</b> when you hold the plug. ✊`);await w(4200);
+  const S=mk('','left:13px;top:364px;width:933px;height:148px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;padding:14px 20px;font-size:20px;font-weight:800;color:#4a2ea6;text-align:center;line-height:1.6',
+    `🧠 Memory trick:<br><span style="color:#b08400">Metal = the path</span> for electricity &nbsp;·&nbsp; <span style="color:#555">Plastic = the shield</span> for your hand`);pop(S);
+  stampIt('left:680px;top:440px;font-size:18px','✔ Short answers 8 & 9');
+  say(`Remember: <b>metal is the path</b> for the electricity, and <b>plastic is the shield</b> for your hand. 🛡️`);await w(3400);}},
+
+/* 6 */ {t:'Why not silver?',run:async w=>{
+  const Q=mk('','left:13px;top:8px;width:933px;height:84px;background:#f7f4ff;border:3px solid #d9cff7;border-radius:20px;padding:10px 18px;font-size:18px;font-weight:700;line-height:1.35',
+    `<span style="display:block;font-size:13px;color:#8a78cc;font-weight:800">SHORT ANSWER 7</span>Why are wires for home use not made from silver, even though silver is a better conductor than copper?`);pop(Q);
+  say(`Tricky one! 🤔 <b>Silver</b> is an even <b>better</b> conductor than copper. So why aren't the wires in our homes made of silver?`);await w(4000);
+  const mkSide=(x,name,col,label)=>{const p=panel(x,104,460,300,name,'');pop(p);
+    const coil=mk('',`left:30px;top:56px;width:120px;height:120px;border-radius:50%;border:14px solid ${col};box-shadow:inset 0 0 0 10px ${col}88`,null,p);
+    loop(coil,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],5000,{easing:'linear'});
+    mk('',`left:170px;top:56px;font-size:15px;font-weight:800`,'⚡ How well it conducts',p);
+    const bar=mk('',`left:170px;top:80px;width:260px;height:24px;border-radius:12px;background:#eee;overflow:hidden`,'<div style="height:100%;width:0;background:linear-gradient(90deg,#5aa0f0,#2c66cf);border-radius:12px"></div>',p);
+    mk('',`left:170px;top:120px;font-size:15px;font-weight:800`,'💰 Cost',p);
+    const cost=mk('',`left:170px;top:144px;width:260px;height:24px;border-radius:12px;background:#eee;overflow:hidden`,'<div style="height:100%;width:0;background:linear-gradient(90deg,#ffd84d,#e0a800);border-radius:12px"></div>',p);
+    return {p,bar:bar.firstChild,cost:cost.firstChild};};
+  const S=mkSide(13,'🥈 Silver wire','#c9ced8'),C=mkSide(487,'🟠 Copper wire','#d9824a');
+  await w(600);
+  an(S.bar,[{width:'0%'},{width:'100%'}],{duration:1400});an(C.bar,[{width:'0%'},{width:'94%'}],{duration:1400});
+  say(`How well do they conduct? Silver wins, but only <b>just</b>. Copper is almost as good! ⚡`);await w(3200);
+  an(S.cost,[{width:'0%'},{width:'100%'}],{duration:1800});an(C.cost,[{width:'0%'},{width:'4%'}],{duration:1800});
+  for(let i=0;i<10;i++){const c=mk('',`left:${30+Math.random()*400}px;top:40px;font-size:28px;z-index:3`,i%2?'💰':'🪙',S.p);an(c,[{transform:'translateY(-80px)',opacity:0},{transform:'translateY(130px)',opacity:1,offset:.8},{transform:'translateY(150px)',opacity:0}],{duration:1400,delay:i*150,easing:'ease-in'});}
+  const t1=mk('',`left:170px;top:190px;font-size:24px;font-weight:800;color:#c26a00;background:#ffe9a8;border-radius:14px;padding:4px 14px;z-index:4`,'💸 VERY expensive!',S.p);pop(t1,600);
+  loop(t1,[{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'}],450,{direction:'alternate'});
+  const t2=mk('',`left:170px;top:190px;font-size:24px;font-weight:800;color:#17935b;background:#d8f5e5;border-radius:14px;padding:4px 14px`,'👍 Much cheaper',C.p);pop(t2,600);
+  say(`But look at the <b>cost</b>! 💸 Silver is a precious metal. It costs <b>many times more</b> than copper.`);await w(3800);
+  mk('','left:30px;top:240px;width:400px;font-size:15px;font-weight:700;color:#555','A house needs hundreds of metres of wire. In silver, that would cost a fortune!',S.p);
+  mk('','left:30px;top:240px;width:400px;font-size:15px;font-weight:700;color:#555','Copper conducts very well and is cheap, so it is the best choice for wires.',C.p);
+  const A=mk('ansbox','left:13px;top:416px;width:600px;height:96px;font-size:21px',`<small>MODEL ANSWER</small>Because <b>silver is too expensive</b>. Copper conducts well and costs much less.`);pop(A);
+  stampIt('left:630px;top:442px;font-size:19px','✔ Silver is too expensive!');
+  say(`✅ So the exam answer is: <b>silver is too expensive</b>. Copper does the job well for much less money.`);await w(3400);}},
+
+/* 7 */ {t:'Sort them!',run:async w=>{
+  const r=await sortGame(w,{bins:['✅ Conductors','🚫 Insulators'],colors:['#45c288','#e07070'],
+    items:[['🟠 Copper',0],['⚙️ Steel',0],['🥫 Aluminium',0],['🥈 Silver',0],['🔩 Iron',0],['🧴 Plastic',1],['🪵 Wood',1],['🧤 Rubber',1],['🪟 Glass',1],['🧵 Cotton',1],['💨 Air',1]],
+    intro:`Sorting time! 🧺 Tap a material, then tap <b>Conductors</b> or <b>Insulators</b>. Press <b>Check</b> when you're done.`});
+  say(r.ok===r.total?`Perfect sorting! 🎉 All the <b>metals</b> are conductors. Everything else is an insulator.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box. Remember: <b>metals conduct</b>!`);await w(3200);
+  const A=mk('ansbox','left:13px;top:10px;width:933px;height:122px;font-size:21px;z-index:10;box-shadow:0 10px 30px rgba(0,0,0,.18)',
+    `<small>SHORT ANSWER 6 · two conductors and two insulators</small>⚡ Conductors: <b>steel</b> and <b>aluminium</b><br>🚫 Insulators: <b>plastic</b> and <b>wood</b>`);pop(A);
+  say(`Short answer 6 asks for <b>two conductors</b> and <b>two insulators</b>. Use <b>steel and aluminium</b>, and <b>plastic and wood</b>. ✅`);await w(4000);
+  stampIt('left:680px;top:50px;z-index:11','✔ Short answer 6');}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 9 · MCQ 10',q:'What is a material called that allows electricity to flow through it easily?',o:['Conductor','Insulator','Absorber','Reflector'],a:0,why:'A <b>conductor</b> lets electricity flow through it easily.'},
+    {src:'Worksheet · Unit 9 · MCQ 11',q:'Which of the following materials is a good electrical conductor?',o:['Plastic','Copper','Glass','Rubber'],a:1,why:'<b>Copper</b> is a metal, and metals are good conductors.'},
+    {src:'Worksheet · Unit 9 · MCQ 12',q:'What is a material called that does NOT allow electric current to pass through it easily?',o:['Conductor','Insulator','Circuit','Magnet'],a:1,why:'An <b>insulator</b> does not let current pass through it easily.'},
+    {src:'Worksheet · Unit 9 · MCQ 13',q:'Why are electrical wires usually coated in plastic?',o:['Plastic is a good conductor that speeds up electricity','Plastic is a good insulator that prevents electric shocks','Plastic makes the wire heavier','Plastic makes the electricity shine brighter'],a:1,why:'Plastic is a good <b>insulator</b>, so it <b>prevents electric shocks</b>.',optH:72},
+    {src:'Worksheet · Unit 9 · Q15',q:'Which of these materials is a good conductor of electricity?',o:['Wood','Plastic','Metal','Air'],a:2,why:'<b>Metal</b> is the conductor. Wood, plastic and air are insulators.'},
+    {src:'Worksheet · Unit 9 · Q16',q:'Which of these materials could NOT be used to make electric wires?',o:['Steel','Copper','Cotton','Aluminium'],a:2,why:'<b>Cotton</b> is an insulator, so it cannot carry a current.'},
+    {src:'Worksheet · Short answer 6',q:'Give two examples of electrical conductors and two of insulators.',model:'Conductors: <b>steel</b> and <b>aluminium</b>. Insulators: <b>plastic</b> and <b>wood</b>.'},
+    {src:'Worksheet · Short answer 7',q:'Why are wires for home use not made from silver, even though silver is a better conductor than copper?',model:'<b>Silver is too expensive.</b>'},
+    {src:'Worksheet · Short answer 8',q:'Explain why the bodies of plugs are made from plastic.',model:'Plastic is an <b>insulator</b> that helps <b>prevent electric shocks</b>.'},
+    {src:'Worksheet · Short answer 9',q:'Explain why the pins on plugs are made from metal.',model:'Metal is a <b>conductor</b>, so electricity can <b>flow into the appliance</b>.'},
+    {src:'Worksheet · Short answer 10',q:'Explain the difference between conductors and insulators in terms of particles.',model:'Conductors have <b>free electrons</b> that can move, while insulators do <b>not</b> have free electrons that can move easily.'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  const h=mk('','left:0;top:10px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#4a2ea6','🎉 Electric Expert badges!');pop(h);
+  say(`Fantastic work, Electric Expert! ⚡ Let's collect your badges.`);await w(1800);
+  const D=[['💡','<b>Conductor</b>: lets electricity flow easily (metals: copper, steel, aluminium)'],['🚫','<b>Insulator</b>: does not let current pass easily (plastic, wood, rubber, cotton, air)'],['🔵','Conductors have <b>free electrons</b>. Insulators do not.'],
+    ['🔌','Wires: <b>copper</b> inside, <b>plastic</b> coat outside to stop shocks'],['✊','Plugs: <b>metal pins</b> conduct, <b>plastic body</b> insulates'],['💸','Not silver wires: <b>silver is too expensive</b>']];
+  const lines=[`Conductors let electricity flow easily. All <b>metals</b> are conductors.`,`Insulators don't. Like plastic, wood and cotton.`,`Conductors have <b>free electrons</b> that can move.`,`Wires: copper inside, plastic outside.`,`Plugs: metal pins, plastic body.`,`And silver is <b>too expensive</b> for wires! 💸`];
+  for(let i=0;i<6;i++){const x=13+(i%3)*313,y=60+Math.floor(i/3)*226;
+    const b=mk('badge',`left:${x}px;top:${y}px;width:300px;height:212px`,`<span class="e" style="font-size:60px">${D[i][0]}</span><div>${D[i][1]}</div>`);
+    an(b,[{transform:'scale(0) rotate(-20deg)',opacity:0},{transform:'scale(1.1) rotate(3deg)',opacity:1,offset:.7},{transform:'none',opacity:1}],{duration:600});beep(600+i*80,.1);
+    loop(b,[{transform:'translateY(0)'},{transform:'translateY(-5px)'}],900,{direction:'alternate',delay:600+i*150});
+    say(lines[i]);await w(1700);}
+  confetti(160);yay();
+  say(`You now know why wires are <b>metal inside</b> and <b>plastic outside</b>. Lesson complete! 🏆`);await w(2000);}},
+  ]
+});
+</script>
+</body>
+</html>

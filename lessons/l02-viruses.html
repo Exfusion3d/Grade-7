@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Viruses: alive or not?</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.gap{display:inline-block;min-width:110px;border-bottom:3px solid #6a45d8;color:#6a45d8;font-weight:800;text-align:center;padding:0 6px;line-height:1.25}
+.gap.filled{background:#e3f7ec;color:#17935b;border-color:#17935b;border-radius:8px}
+.gap.click{cursor:pointer;background:#f7f4ff;border-radius:8px}
+.sent{position:absolute;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:0 22px;font-size:24px;font-weight:700;display:flex;align-items:center}
+.wchip{position:absolute;height:52px;border-radius:26px;background:#fff;border:3px solid #cfc4f5;font-weight:800;font-size:21px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 0 #ddd5fa;transition:background .2s,opacity .3s}
+.wchip.sel{background:#6a45d8;color:#fff;border-color:#6a45d8}
+.wchip.used{opacity:.3;cursor:default}
+.lbl{position:absolute;font-size:15px;font-weight:800;white-space:nowrap}
+.chk{position:absolute;display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #ece8f8;border-radius:16px;padding:0 14px}
+.chk .L{flex:none;width:44px;height:44px;border-radius:12px;color:#fff;font-size:26px;font-weight:900;display:flex;align-items:center;justify-content:center}
+.chk .n{flex:none;width:130px;font-size:18px;font-weight:800}
+.chk .why{padding-right:40px;font-size:15.5px;font-weight:600;color:#3a3f52;line-height:1.25}
+.chk .x{position:absolute;right:14px;top:10px;font-size:30px}
+.mstamp{white-space:normal!important;text-align:center;font-size:15px!important;padding:5px 10px!important;border-width:3px!important;line-height:1.25}
+.speech{position:absolute;background:#fff;border:3px solid #d63f8c;border-radius:20px;padding:12px 18px;font-size:20px;font-weight:800;color:#8a1f55}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 2 · Viruses: alive or not? (Unit 4) */
+const STAMP=(x,y,txt,par,extra,cls)=>{const s=mk('stamp'+(cls?' '+cls:''),`left:${x}px;top:${y}px;z-index:20;${extra||''}`,txt,par);
+  an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-5deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+const fillGap=(el,word)=>{el.innerHTML=word;el.classList.remove('click');el.classList.add('filled');an(el,[{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:450});beep(820,.08);};
+/* a virus drawn in SVG: protein coat (hexagon) with spikes and coiled instructions inside */
+function virusSVG(size,col='#e04848'){let sp='';for(let k=0;k<12;k++){const a=k*Math.PI/6,c=Math.cos(a),s=Math.sin(a);
+    sp+=`<line x1="${(34*c).toFixed(1)}" y1="${(34*s).toFixed(1)}" x2="${(50*c).toFixed(1)}" y2="${(50*s).toFixed(1)}" stroke="${col}" stroke-width="5"/><circle cx="${(53*c).toFixed(1)}" cy="${(53*s).toFixed(1)}" r="6" fill="${col}"/>`;}
+  const hex=[0,1,2,3,4,5].map(k=>{const a=k*Math.PI/3+Math.PI/6;return `${(40*Math.cos(a)).toFixed(1)},${(40*Math.sin(a)).toFixed(1)}`;}).join(' ');
+  return `<svg width="${size}" height="${size}" viewBox="-62 -62 124 124">${sp}<polygon points="${hex}" fill="${col}2e" stroke="${col}" stroke-width="6" stroke-linejoin="round"/>
+    <path class="dna" d="M-22 0 q5.5 -14 11 0 t11 0 t11 0 t11 0" fill="none" stroke="#6a45d8" stroke-width="5" stroke-linecap="round"/></svg>`;}
+function vir(par,x,y,size,col){return mk('',`left:${x}px;top:${y}px;width:${size}px;height:${size}px;line-height:0`,virusSVG(size,col),par);}
+
+const SCENES=[
+/* 1 */ {t:'The sick zebra',run:async w=>{
+  const P=mk('panel','left:13px;top:8px;width:933px;height:330px;background:linear-gradient(#dff0ff 0,#eef7ff 62%,#f3e3a6 62%,#e6cf7d 100%)','');pop(P);
+  const sun=mk('big-emoji','left:820px;top:22px;font-size:60px','☀️',P);loop(sun,[{transform:'rotate(0)'},{transform:'rotate(30deg)'}],1600,{direction:'alternate'});
+  mk('big-emoji','left:60px;top:120px;font-size:70px','🌳',P);mk('big-emoji','left:700px;top:132px;font-size:56px','🌳',P);
+  const z=mk('big-emoji','left:380px;top:96px;font-size:120px','🦓',P);const zl=loop(z,[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],600,{direction:'alternate'});
+  say(`This is a <b>mountain zebra</b> 🦓 It's happy and healthy… but something tiny is coming its way!`);await w(2800);
+  const V=[];for(let i=0;i<6;i++){const v=vir(P,960,40+i*40,34,'#e04848');V.push(v);
+    an(v,[{transform:'translate(0,0) rotate(0)'},{transform:`translate(${-470+(i%3)*14}px,${80-i*18}px) rotate(-360deg)`,opacity:1,offset:.85},{transform:`translate(${-480+(i%3)*14}px,${86-i*18}px) scale(.2) rotate(-400deg)`,opacity:0}],{duration:2200,delay:i*200,easing:'ease-in'});}
+  beep(300,.2,'sawtooth',.04);await w(2800);
+  zl.cancel();z.style.filter='saturate(.4) sepia(.5)';shake(z);
+  const ill=mk('big-emoji','left:500px;top:84px;font-size:46px','🤒',P);pop(ill);loop(ill,[{transform:'rotate(-10deg)'},{transform:'rotate(10deg)'}],300,{direction:'alternate'});
+  const it=mk('tag','left:396px;top:236px;background:#e04848;color:#fff;font-size:18px','The zebra is ill!',P);pop(it);
+  say(`Uh-oh! A <b>virus</b> got inside the zebra. Now the zebra is <b>ill</b> 🤒`);await w(2800);
+  const mia=mk('big-emoji','left:28px;top:356px;font-size:110px','👧');pop(mia);loop(mia,[{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'}],700,{direction:'alternate'});
+  const sp=mk('speech','left:156px;top:370px;width:330px','A virus made the zebra ill, so a virus must be alive!');pop(sp,200);
+  say(`Mia says: a virus made the zebra ill, so a virus must be a <b>living organism</b>!`);await w(3000);
+  const q=mk('','left:520px;top:362px;width:420px;height:140px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;text-align:center;padding-top:22px;font-size:28px;font-weight:800;color:#4a2ea6','Is Mia correct? 🤔<div style="font-size:17px;color:#1f2433;margin-top:10px">Let\'s investigate what a virus really is!</div>');pop(q);
+  loop(q,[{transform:'scale(1)'},{transform:'scale(1.04)'}],700,{direction:'alternate'});
+  say(`Is Mia correct? 🤔 Let's investigate what a virus <b>really</b> is!`);await w(2500);}},
+
+/* 2 */ {t:'Tiny!',run:async w=>{
+  const big=vir(null,360,90,240,'#e04848');pop(big);const bl=loop(big,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],1200,{direction:'alternate'});
+  const lb=mk('lbl','left:420px;top:340px;font-size:22px;color:#e04848','🔍 a virus, zoomed in!');pop(lb);
+  say(`Here's a virus, zoomed in a LOT. 🔍 In real life, it is <b>far</b> too small to see!`);await w(2800);
+  say(`Let's zoom out and put it next to <b>one</b> living cell… 🔭`);await w(1200);
+  lb.remove();bl.cancel();
+  const cell=mk('','left:50px;top:6px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#eaffef,#bfeccd);border:6px solid #18a058;opacity:0',null);
+  mk('','left:120px;top:110px;width:100px;height:100px;border-radius:50%;background:#7fd19c;border:4px solid #4bb06f',null,cell);
+  for(let i=0;i<10;i++)mk('',`left:${50+(i*67)%250}px;top:${60+(i*41)%230}px;width:10px;height:10px;border-radius:50%;background:#9bd8ae`,null,cell);
+  an(cell,[{transform:'scale(4)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:1600,easing:'ease-out'});
+  await an(big,[{transform:'none'},{transform:'translate(20px,14px) scale(.05)'}],{duration:1600,easing:'ease-out'});
+  const cl=mk('lbl','left:140px;top:360px;font-size:20px;color:#18a058','🧫 one living cell');pop(cl);
+  const ring=mk('','left:470px;top:194px;width:60px;height:60px;border-radius:50%;border:4px solid #e04848');loop(ring,[{transform:'scale(.7)',opacity:1},{transform:'scale(1.4)',opacity:0}],900);
+  const ar=mk('lbl','left:540px;top:208px;font-size:20px;color:#e04848','👈 the virus is THIS tiny dot!');pop(ar);
+  say(`See that tiny dot? 👈 That's the virus! A virus is <b>hundreds of times smaller</b> than a cell.`);await w(3400);
+  const m=mk('','left:470px;top:270px;width:470px;height:110px;background:#fff;border:3px solid #ece8f8;border-radius:18px;padding:12px 16px;font-size:17px;font-weight:700;line-height:1.45',
+    '🔬 Viruses are so small that even a school microscope can\'t show them. Scientists use a powerful <b>electron microscope</b>.');pop(m);
+  say(`Viruses are so small that scientists need a powerful <b>electron microscope</b> to see them. 🔬`);await w(3000);
+  const s=mk('sent','left:13px;top:420px;width:933px;height:88px','<span>Viruses are very&nbsp;</span><span class="gap">?</span><span>.</span>');pop(s);
+  await w(1200);fillGap(s.querySelector('.gap'),'small');STAMP(700,436,'✔ very SMALL',null,'font-size:22px');
+  say(`So the first sentence on your sheet is: viruses are very <b>small</b>. ✅`);await w(2600);}},
+
+/* 3 */ {t:'What is a virus made of?',run:async w=>{
+  say(`What is a virus made of? Let's compare it with a <b>living cell</b>. 🧫`);await w(2000);
+  const L=panel(13,8,460,380,'🧫 A living cell','Cells are the building blocks of every living thing.');pop(L);
+  const c=mk('','left:90px;top:56px;width:270px;height:230px;border-radius:48% 52% 50% 50%;background:radial-gradient(circle at 40% 40%,#eaffef,#bfeccd);border:6px solid #18a058',null,L);
+  loop(c,[{borderRadius:'48% 52% 50% 50%'},{borderRadius:'54% 46% 44% 56%'}],1600,{direction:'alternate'});
+  const nu=mk('','left:186px;top:136px;width:76px;height:70px;border-radius:50%;background:#7fd19c;border:4px solid #4bb06f',null,L);
+  for(let i=0;i<8;i++){const d=mk('',`left:${120+(i*53)%200}px;top:${90+(i*37)%160}px;width:10px;height:10px;border-radius:50%;background:#89cf9f`,null,L);loop(d,[{transform:'translate(0,0)'},{transform:`translate(${i%2?8:-8}px,6px)`}],900+i*80,{direction:'alternate'});}
+  [['cell membrane',300,36,'#18a058'],['cytoplasm',30,250,'#2c8a50'],['nucleus',272,212,'#1f6b3d']].forEach(([t,x,y,col],i)=>{const l=mk('lbl',`left:${x}px;top:${y}px;color:${col}`,t,L);pop(l,400+i*400);});
+  say(`A cell has a <b>membrane</b>, <b>cytoplasm</b> and usually a <b>nucleus</b>. It's alive: it feeds, grows and divides.`);await w(3400);
+  const R=panel(487,8,460,380,'🦠 A virus','No membrane, no cytoplasm, no nucleus: <b>not a cell</b> at all!');pop(R);
+  const v=vir(R,110,60,230,'#e04848');pop(v);loop(v,[{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'}],1400,{direction:'alternate'});
+  const dna=v.querySelector('.dna');loop(dna,[{strokeWidth:4,opacity:.6},{strokeWidth:7,opacity:1}],600,{direction:'alternate'});
+  const l1=mk('lbl','left:16px;top:52px;color:#e04848','protein coat ↘',R);pop(l1,300);
+  const l2=mk('lbl','left:300px;top:262px;color:#6a45d8;white-space:normal;width:150px;line-height:1.2','↖ instructions (genetic material)',R);pop(l2,900);
+  say(`A virus is just a <b>protein coat</b> with a set of <b>instructions</b> inside. No membrane, no cytoplasm, no nucleus!`);await w(3600);
+  const s=mk('sent','left:13px;top:400px;width:933px;height:108px','<span>Viruses are not made of&nbsp;</span><span class="gap">?</span><span>.</span>');pop(s);await w(1200);
+  fillGap(s.querySelector('.gap'),'cells');STAMP(640,428,'✔ NOT made of cells',null,'font-size:22px');
+  say(`So: viruses are <b>not made of cells</b>. Every living organism is made of cells, so that's a big clue! 🕵️`);await w(3200);}},
+
+/* 4 */ {t:'Hijack! How viruses multiply',run:async w=>{
+  const P=panel(13,8,933,400,'🏭 How a virus makes copies','');pop(P);
+  const cell=mk('','left:330px;top:46px;width:560px;height:330px;border-radius:50%;background:radial-gradient(circle at 45% 45%,#eaffef,#c6efd3);border:6px solid #18a058',null,P);
+  const fac=mk('big-emoji','left:570px;top:160px;font-size:70px','🏭',P);
+  const hl=mk('lbl','left:556px;top:244px;color:#18a058','host cell\'s factory',P);
+  say(`Viruses can't make copies of themselves on their own. They need a living <b>host cell</b>. Watch closely! 👀`);await w(2800);
+  const v=vir(P,40,170,70,'#e04848');const vf=loop(v,[{transform:'translateY(-10px)'},{transform:'translateY(10px)'}],700,{direction:'alternate'});
+  await w(800);vf.cancel();
+  await an(v,[{transform:'translate(0,0) rotate(0)'},{transform:'translate(262px,0) rotate(180deg)'}],{duration:1200,easing:'ease-in-out'});beep(500,.15);
+  const dk=mk('tag','left:270px;top:120px;background:#e04848;color:#fff',' docks on! ',P);pop(dk);
+  say(`Step 1: the virus <b>attaches</b> to the cell and pushes its <b>instructions</b> inside. 🧬`);
+  const ins=mk('','left:350px;top:190px;width:60px;height:24px',`<svg width="60" height="24"><path d="M2 12 q7 -14 14 0 t14 0 t14 0 t14 0" fill="none" stroke="#6a45d8" stroke-width="5" stroke-linecap="round"/></svg>`,P);
+  await an(ins,[{transform:'translateX(0)'},{transform:'translateX(214px)'}],{duration:1600,easing:'ease-in-out'});
+  ins.remove();await w(2400);
+  dk.remove();fac.animate([{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'}],{duration:160,iterations:Infinity,direction:'alternate'});
+  const hj=mk('tag','left:540px;top:120px;background:#6a45d8;color:#fff',' HIJACKED! ',P);pop(hj);
+  say(`Step 2: the instructions take over the cell's <b>factory</b> 🏭 The cell is forced to make <b>copies of the virus</b>!`);
+  const cnt=mk('lbl','left:690px;top:120px;font-size:18px;color:#e04848','copies: 0',P);
+  const spots=[[400,110],[440,260],[480,90],[500,300],[660,80],[700,300],[760,130],[780,250],[420,180],[820,190],[620,300],[460,150]];
+  const copies=[];for(let i=0;i<spots.length;i++){const c=vir(P,spots[i][0],spots[i][1],40,'#e04848');copies.push(c);pop(c);beep(600+i*40,.05);cnt.textContent='copies: '+(i+1);await w(260);}
+  await w(1600);
+  say(`Step 3: the cell <b>bursts</b> 💥 and the new viruses spread out to invade more cells!`);
+  fac.getAnimations().forEach(a=>a.cancel());hj.remove();hl.remove();cnt.remove();
+  an(cell,[{transform:'scale(1)',opacity:1},{transform:'scale(1.15)',opacity:0}],{duration:600});an(fac,[{opacity:1},{opacity:0}],{duration:500});
+  const bang=mk('big-emoji','left:560px;top:150px;font-size:90px','💥',P);pop(bang);boo();
+  copies.forEach((c,i)=>{const dx=(spots[i][0]-600)*0.6,dy=(spots[i][1]-190)*0.6;an(c,[{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px) rotate(200deg)`}],{duration:1200,easing:'ease-out'});});
+  an(v,[{opacity:1},{opacity:0}],{duration:400});
+  await w(1800);bang.remove();
+  const res=mk('','left:200px;top:150px;width:530px;text-align:center;font-size:28px;white-space:nowrap;font-weight:800;color:#4a2ea6;background:#ffffffd9;border-radius:18px;padding:8px','1 virus in ➜ many copies out!',P);pop(res);
+  STAMP(290,260,'MCQ 4 ✔ C) By invading a host cell and forcing it to make copies of the virus',P,'width:350px','mstamp');
+  say(`So for MCQ 4: viruses multiply <b>by invading a host cell and forcing it to make copies</b> of the virus. Answer C!`);await w(3600);
+  const s=mk('sent','left:13px;top:418px;width:933px;height:90px;font-size:22px','<span>Viruses can only&nbsp;</span><span class="gap">?</span><span>&nbsp;when they are inside a living cell.</span>');pop(s);await w(1200);
+  fillGap(s.querySelector('.gap'),'replicate');
+  say(`<b>Replicate</b> means make copies. Viruses can only <b>replicate</b> when they are inside a living cell.`);await w(3000);}},
+
+/* 5 */ {t:'The MRS GREN test',run:async w=>{
+  const L=panel(13,8,330,504,'🦠 A virus on its own','');pop(L);
+  const v=vir(L,95,70,140,'#e04848');v.animate([{transform:'translate(-30px,0) rotate(0)'},{transform:'translate(30px,30px) rotate(40deg)'}],{duration:3000,iterations:Infinity,direction:'alternate',easing:'ease-in-out'});
+  const dr=mk('lbl','left:100px;top:250px;color:#8a8fa3;font-size:16px','…just drifting…',L);loop(dr,[{opacity:.3},{opacity:1}],900,{direction:'alternate'});
+  say(`Let's give a virus the <b>MRS GREN</b> test. Outside a cell, can it do the seven life processes <b>on its own</b>? 🤔`);await w(3000);
+  const D=[['M','Movement','Can\'t move by itself: it just drifts.','#e06a1b'],['R','Respiration','Doesn\'t break down food to release energy.','#e04848'],['S','Sensitivity','Can\'t detect or respond to changes.','#6a45d8'],['G','Growth','Never grows bigger.','#18a058'],
+    ['R','Reproduction','Can\'t reproduce on its own: it needs a host cell.','#d63f8c'],['E','Excretion','Makes no waste to get rid of.','#2c66cf'],['N','Nutrition','Doesn\'t feed at all.','#c58a00']];
+  const S=[`<b>Movement?</b> No, it can't move by itself. <b>Respiration?</b> No energy released.`,`<b>Sensitivity?</b> No. <b>Growth?</b> It never grows.`,`<b>Reproduction?</b> Not on its own! It needs a host cell. <b>Excretion</b> and <b>nutrition?</b> No and no!`];
+  for(let i=0;i<7;i++){const r=mk('chk',`left:357px;top:${8+i*72}px;width:589px;height:64px`,`<span class="L" style="background:${D[i][3]}">${D[i][0]}</span><span class="n">${D[i][1]}</span><span class="why">${D[i][2]}</span><span class="x"></span>`);
+    an(r,[{transform:'translateX(60px)',opacity:0},{transform:'none',opacity:1}],{duration:400});
+    if(i===0)say(S[0]);if(i===2)say(S[1]);if(i===4)say(S[2]);
+    await w(500);const x=r.querySelector('.x');x.textContent='❌';pop(x);beep(260,.12,'square',.05);r.style.background='#fff5f5';await w(i===1||i===3?2600:900);}
+  await w(1200);
+  STAMP(18,330,'MCQ 3 ✔ B) It cannot carry out the seven life processes on its own',L,'width:286px','mstamp');
+  say(`Zero out of seven! ❌ That's why most scientists say a virus is <b>non-living</b>: it <b>cannot carry out the seven life processes on its own</b>. Answer B!`);await w(3800);}},
+
+/* 6 */ {t:'Fill the gaps',run:async w=>{
+  const h=mk('','left:0;top:4px;width:960px;text-align:center;font-size:22px;font-weight:800;color:#4a2ea6','✏️ Complete the sentences using the word list');pop(h);
+  const WL=['big','cells','move','protein','replicate','small'];
+  const ANS=['small','cells','replicate'];
+  const SEN=[['1. Viruses are very','.'],['2. Viruses are not made of','.'],['3. Viruses can only','when they are inside a living cell.']];
+  let sel=null,filled=0;
+  const chips=WL.map((t,i)=>{const c=mk('wchip',`left:${48+i*148}px;top:48px;width:132px`,t);c.dataset.w=t;pop(c,i*70);
+    c.onclick=()=>{if(c.classList.contains('used'))return;sel=sel===c?null:c;chips.forEach(x=>x.classList.toggle('sel',x===sel));beep(650,.05);};return c;});
+  const gaps=SEN.map((s,i)=>{const r=mk('sent',`left:30px;top:${136+i*96}px;width:900px;height:80px;white-space:pre`,`<span>${s[0]}&nbsp;</span><span class="gap click">&nbsp;</span><span>&nbsp;${s[1]}</span>`);pop(r,300+i*120);
+    const g=r.querySelector('.gap');g.onclick=()=>{if(g.classList.contains('filled')||!sel)return;
+      if(sel.dataset.w===ANS[i]){fillGap(g,ANS[i]);sel.getAnimations().forEach(a=>a.cancel());sel.classList.remove('sel');sel.classList.add('used');sel=null;filled++;
+        if(filled<3)say([`Yes! Viruses are very <b>small</b>. 🔬`,`Yes! Viruses are not made of <b>cells</b>. 🧫`,`Yes! Viruses only <b>replicate</b> inside a living cell. 🏭`][i]);}
+      else{shake(r);boo();say([`Not quite! Think about the zoom-out. Were viruses huge or tiny?`,`Hmm! A virus has a protein coat, but what is it NOT made of?`,`Not that one. Which word means "make copies"?`][i]);}};return g;});
+  window.AUTOPLAY=()=>{const i=gaps.findIndex(g=>!g.classList.contains('filled'));if(i<0)return;chips.find(c=>c.dataset.w===ANS[i]).click();gaps[i].click();};
+  say(`Your turn! ✏️ Tap a word from the list, then tap the gap where it belongs.`);
+  await w.until(()=>filled===3);confetti(100);
+  const n=mk('','left:30px;top:432px;width:900px;height:76px;background:#fff8e6;border:3px solid #f2c200;border-radius:18px;padding:10px 18px;font-size:16.5px;font-weight:700;line-height:1.4',
+    '💡 <b>big</b>, <b>move</b> and <b>protein</b> were the tricky extras. Viruses are not big and can\'t move by themselves. They do have a <b>protein</b> coat, but that doesn\'t fit these gaps!');pop(n);
+  say(`🏆 All three right! The extras were tricky: viruses aren't big, can't move by themselves, and their coat is made of protein.`);await w(3400);}},
+
+/* 7 */ {t:'Is Mia correct?',run:async w=>{
+  const mia=mk('big-emoji','left:30px;top:10px;font-size:100px','👧');pop(mia);loop(mia,[{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'}],700,{direction:'alternate'});
+  const sp=mk('speech','left:156px;top:24px;width:440px','A virus is a living organism!');pop(sp,200);
+  const z=mk('big-emoji','left:770px;top:14px;font-size:90px;filter:saturate(.4) sepia(.5)','🦓');pop(z);const zi=mk('big-emoji','left:860px;top:6px;font-size:40px','🤒');pop(zi,300);
+  loop(zi,[{transform:'rotate(-10deg)'},{transform:'rotate(10deg)'}],300,{direction:'alternate'});
+  const q=mk('ex-q','left:13px;top:132px;width:933px;padding:10px 18px;font-size:19px','<span class="src">WORKSHEET Q7(c)</span>A virus makes the mountain zebra become ill. Mia thinks a virus is a living organism. Is Mia correct? Tick Yes or No.');pop(q);
+  say(`Now you can answer question 7(c)! 🦓 Mia thinks a virus is a living organism. Is she correct? Tap <b>Yes</b> or <b>No</b>.`);
+  let done=false;
+  const by=mk('bigbtn','left:230px;top:248px;width:230px;height:80px;background:#e06a1b;display:flex;align-items:center;justify-content:center;cursor:pointer','☐ Yes');
+  const bn=mk('bigbtn','left:500px;top:248px;width:230px;height:80px;background:#2c66cf;display:flex;align-items:center;justify-content:center;cursor:pointer','☐ No');pop(by);pop(bn,100);
+  by.onclick=()=>{if(done)return;boo();shake(by);say(`Hmm, think back to the MRS GREN test. Can a virus <b>reproduce on its own</b>? Try again!`);};
+  bn.onclick=()=>{if(done)return;done=true;bn.innerHTML='☑ No';by.getAnimations().forEach(a=>a.cancel());by.style.opacity=.3;yay();confetti(80);
+    STAMP(760,262,'✔ NO!',null,'font-size:28px');
+    const m=mk('ex-model','left:13px;top:350px;width:933px','<b class="t">Model answer</b><b>No.</b> A virus is <b>not</b> a living organism because it <b>cannot reproduce on its own</b>. It can only make copies inside a living host cell, and it can\'t carry out the other life processes either.');pop(m);
+    say(`Correct! <b>No</b>. A virus is not a living organism because it <b>cannot reproduce on its own</b>. It needs a host cell to make copies.`);};
+  window.AUTOPLAY=()=>{if(!done)bn.click();};
+  await w.until(()=>done);await w(3600);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 4 · MCQ 3',q:'Why is a virus considered non-living by most scientists?',o:['It is too heavy.','It cannot carry out the seven life processes on its own.','It has too many legs.','It can only live underwater.'],a:1,why:'A virus fails the <b>MRS GREN</b> test: it <b>cannot carry out the seven life processes on its own</b>.'},
+    {src:'Worksheet · Unit 4 · MCQ 4',q:'How do viruses multiply or spread?',o:['By eating food and growing larger','By drinking water','By invading a host cell and forcing it to make copies of the virus','By sharing seeds in the wind'],a:2,why:'A virus <b>invades a host cell</b> and hijacks it to <b>make copies</b> of the virus.'},
+    {src:'Worksheet · Unit 4 · Q5',q:'Complete the sentences using the word list (big, cells, move, protein, replicate, small):<br>Viruses are very ____. Viruses are not made of ____. Viruses can only ____ when they are inside a living cell.',
+      model:'Viruses are very <b>small</b>. Viruses are not made of <b>cells</b>. Viruses can only <b>replicate</b> when they are inside a living cell.'},
+    {src:'Worksheet · Unit 4 · Q7(c)',q:'A virus makes the mountain zebra become ill. Mia thinks a virus is a living organism. Is Mia correct? Explain your answer.',
+      model:'<b>No.</b> A virus is not a living organism because it <b>cannot reproduce on its own</b>.'},
+  ]);
+  await w(1500);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Viruses: alive or not?</b> Here's what you learned…`);
+  const B=[['🔬','Viruses are very <b>small</b>: hundreds of times smaller than a cell.'],['🧫','Viruses are <b>not made of cells</b>: just a protein coat with instructions inside.'],['🏭','Viruses can only <b>replicate</b> inside a living cell.'],
+    ['💥','They multiply by <b>invading a host cell</b> and forcing it to make copies.'],['❌','They <b>cannot carry out the seven life processes</b> on their own.'],['👧','Mia is wrong: <b>No</b>. A virus <b>cannot reproduce on its own</b>.']];
+  for(let i=0;i<6;i++){const b=mk('badge',`left:${13+(i%3)*315}px;top:${10+Math.floor(i/3)*212}px;width:303px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const v=vir(null,60,440,70,'#e04848');loop(v,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],4000,{easing:'linear'});
+  const f=mk('','left:180px;top:442px;width:600px;height:62px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to all lessons ➜');
+  f.onclick=()=>{location.href='../index.html';};pop(f);
+  say(`Great detective work! 🕵️ A virus can make you ill, but it is <b>not alive</b>: it can't do the seven life processes on its own.`);await w(2000);}},
+];
+SCENES.forEach(s=>{const r=s.run;s.run=w=>{window.AUTOPLAY=null;return r(w);};});
+
+Lesson.start({
+  id:'l02', num:2, unit:4, emoji:'🦠', title:'Viruses: alive or not?',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Viruses can make us ill… but are they <b>alive</b>? Press <b>Start</b> to find out!`,
+  scenes:SCENES
+});
+</script>
+</body>
+</html>

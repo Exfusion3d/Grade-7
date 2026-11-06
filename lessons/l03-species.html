@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>What is a species?</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 3 · What is a species? Why we classify (Unit 4). Stage 960 x 520. */
+const stampIn=(html,css)=>{const s=mk('stamp',css,html);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-4deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+const ttl=(txt,col)=>{const h=mk('',`left:0;top:12px;width:960px;text-align:center;font-size:27px;font-weight:800;color:${col||'#4a2ea6'}`,txt);pop(h);return h;};
+const heart=(x,y)=>{const h=mk('',`left:${x}px;top:${y}px;font-size:46px;line-height:1`,'❤️');pop(h);loop(h,[{transform:'scale(1)'},{transform:'scale(1.25)'}],380,{direction:'alternate'});beep(880,.08);return h;};
+function ligerSVG(s){return `<svg width="${s}" height="${s}" viewBox="0 0 120 120">
+  <circle cx="60" cy="62" r="54" fill="#c9782a"/><circle cx="26" cy="28" r="12" fill="#e8a24c"/><circle cx="94" cy="28" r="12" fill="#e8a24c"/>
+  <circle cx="60" cy="64" r="38" fill="#f0b45e"/>
+  <path d="M48 30 q4 8 0 14 M60 27 v14 M72 30 q-4 8 0 14 M24 60 h12 M25 71 h10 M96 60 h-12 M95 71 h-10" stroke="#6b3a12" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="47" cy="57" r="5" fill="#1f2433"/><circle cx="73" cy="57" r="5" fill="#1f2433"/>
+  <ellipse cx="60" cy="80" rx="16" ry="12" fill="#fbe3bd"/><path d="M53 72 h14 l-7 8z" fill="#7a3b1e"/>
+  <path d="M60 80 v5 M60 85 q-6 5 -10 1 M60 85 q6 5 10 1" stroke="#7a3b1e" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;}
+
+Lesson.start({
+  id:'l03', num:3, unit:4, emoji:'🦁', title:'What is a species?',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today we find out what a <b>species</b> is, and why scientists sort living things into groups. Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'The zebra family',run:async w=>{
+  mk('','left:0;top:418px;width:960px;height:102px;background:linear-gradient(#a6dc84,#74c058)');
+  const sun=mk('','left:870px;top:14px;font-size:54px;line-height:1','☀️');loop(sun,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],9000,{easing:'linear'});
+  ttl('🦓 Meet the mountain zebras');
+  const Z1=mk('','left:40px;top:300px;font-size:96px;line-height:1','🦓'),Z2=mk('','left:180px;top:300px;font-size:96px;line-height:1','🦓');
+  an(Z1,[{transform:'translateX(-260px) scaleX(-1)'},{transform:'scaleX(-1)'}],{duration:1200});an(Z2,[{transform:'translateX(-400px)'},{transform:'none'}],{duration:1400});
+  say(`Meet two <b>mountain zebras</b> 🦓 When two animals of the same kind <b>mate</b>, they can make babies.`);
+  await w(2600);
+  heart(140,236);await w(700);
+  const L1=mk('tag','left:84px;top:446px;background:#fff;color:#17935b','Parents');pop(L1);
+  const F=mk('','left:360px;top:300px;font-size:96px;line-height:1;transform-origin:50% 100%','🦓');an(F,[{transform:'scale(0)'},{transform:'scale(.5)'}],{duration:600,easing:'cubic-bezier(.3,1.6,.5,1)'});
+  const L2=mk('tag','left:356px;top:446px;background:#fff;color:#17935b','Their foal');pop(L2);
+  say(`Here's their baby, called a <b>foal</b>. Babies are also called <b>offspring</b>.`);
+  await w(2800);
+  say(`Now watch the foal <b>grow up</b>… 📏`);
+  await an(F,[{transform:'scale(.5)'},{transform:'scale(1)'}],{duration:1600,easing:'ease-in-out'});
+  L2.innerHTML='Their foal, grown up';
+  const Z3=mk('','left:520px;top:300px;font-size:96px;line-height:1','🦓');an(Z3,[{transform:'translateX(500px)'},{transform:'none'}],{duration:1300});
+  await w(1400);heart(462,236);await w(700);
+  const G=mk('','left:700px;top:300px;font-size:96px;line-height:1;transform-origin:50% 100%','🦓');an(G,[{transform:'scale(0)'},{transform:'scale(.5)'}],{duration:600,easing:'cubic-bezier(.3,1.6,.5,1)'});
+  loop(G,[{transform:'scale(.5) translateY(0)'},{transform:'scale(.5) translateY(-18px)'}],420,{direction:'alternate',delay:700});
+  const L3=mk('tag','left:690px;top:446px;background:#fff;color:#17935b','A new foal! 🎉');pop(L3);
+  say(`The grown-up foal has a foal of its <b>own</b>! So the zebras' babies can have babies too.`);
+  await w(3200);
+  const st=stampIn('✔ FERTILE = the offspring can have babies too','left:200px;top:70px;font-size:24px');
+  say(`That's called being <b>fertile</b>. The offspring can grow up and have babies of their own. Remember this word!`);
+  await w(3400);
+  const q=mk('','left:250px;top:148px;width:460px;height:56px;border-radius:18px;background:#efe9ff;border:3px solid #6a45d8;color:#4a2ea6;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center','So… what is a species? 🤔');pop(q);
+  loop(q,[{transform:'rotate(-1.5deg)'},{transform:'rotate(1.5deg)'}],600,{direction:'alternate'});
+  say(`This is the key to today's big question: <b>what is a species?</b> Let's find out! 🔍`);}},
+
+/* 2 */ {t:'Lion + tiger = liger?',run:async w=>{
+  const lion=mk('','left:40px;top:40px;font-size:100px;line-height:1','🦁'),tiger=mk('','left:250px;top:40px;font-size:100px;line-height:1','🐯');
+  an(lion,[{transform:'translateX(-200px)'},{transform:'none'}],{duration:1000});an(tiger,[{transform:'translateX(700px)'},{transform:'none'}],{duration:1200});
+  mk('','left:18px;top:160px;width:160px;text-align:center;font-size:15px;font-weight:800;color:#d66a0a','Lion');
+  mk('','left:228px;top:160px;width:160px;text-align:center;font-size:15px;font-weight:800;color:#d66a0a','Tiger');
+  say(`Here's a puzzle! 🧩 A <b>lion</b> and a <b>tiger</b> are both big cats. In zoos, they can sometimes have a baby together.`);
+  await w(1300);const p=mk('','left:192px;top:66px;font-size:46px;font-weight:800;color:#6a45d8','+');pop(p);heart(184,4);
+  await w(2600);
+  const ar=mk('','left:380px;top:62px;font-size:52px;line-height:1','➡️');pop(ar);
+  const lg=mk('','left:470px;top:22px;width:150px;height:150px',ligerSVG(150));
+  an(lg,[{transform:'scale(0) rotate(-180deg)'},{transform:'scale(1.1) rotate(10deg)',offset:.75},{transform:'none'}],{duration:900});
+  for(let i=0;i<4;i++){const s=mk('',`left:${470+[0,120,10,128][i]}px;top:${[16,10,130,120][i]}px;font-size:24px`,'✨');loop(s,[{transform:'scale(0)',opacity:0},{transform:'scale(1.2)',opacity:1},{transform:'scale(0)',opacity:0}],1300,{delay:i*300});}
+  const lt=mk('tag','left:500px;top:176px;background:#ffe9a8;color:#8a5a00','🐾 a LIGER');pop(lt,500);
+  say(`Their baby is called a <b>liger</b>! Half lion, half tiger. It even has stripes. 🐾`);
+  await w(3200);
+  const ar2=mk('','left:640px;top:62px;font-size:52px;line-height:1','➡️');pop(ar2);
+  const baby=mk('','left:730px;top:22px;width:150px;height:150px;border-radius:50%;border:5px dashed #b9b2d6;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#8a84a8;text-align:center','baby<br>liger?');pop(baby);
+  say(`But can a liger grow up and have babies of its <b>own</b>? 🤔`);
+  await w(2600);
+  const no=mk('','left:735px;top:24px;font-size:132px;line-height:1','🚫');an(no,[{transform:'scale(3)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:400,easing:'cubic-bezier(.5,1.6,.5,1)'});boo();baby.innerHTML='';await w(400);shake(baby);
+  const inf=mk('tag','left:718px;top:176px;background:#fde3e3;color:#e04848','INFERTILE: no babies');pop(inf);loop(inf,[{transform:'scale(1)'},{transform:'scale(1.07)'}],500,{direction:'alternate'});
+  say(`No! Ligers are <b>infertile</b>: they <b>cannot</b> have babies. 🚫`);
+  await w(2600);
+  const A=panel(13,226,460,200,'✅ Zebra + zebra','');pop(A);
+  mk('','left:20px;top:52px;font-size:46px;line-height:1;white-space:nowrap','🦓 + 🦓 ➜ 🦓',A);
+  mk('','left:20px;top:116px;width:420px;font-size:17px;font-weight:700;line-height:1.35','Offspring are <b style="color:#17935b">fertile</b>.<br>➜ <b>SAME species</b>',A);
+  say(`Zebra plus zebra gives a <b>fertile</b> foal, so they're the <b>same species</b>.`);
+  await w(2600);
+  const B=panel(487,226,460,200,'❌ Lion + tiger','');pop(B);
+  mk('','left:20px;top:52px;font-size:46px;line-height:1;white-space:nowrap','🦁 + 🐯 ➜ 🚫',B);
+  mk('','left:20px;top:116px;width:420px;font-size:17px;font-weight:700;line-height:1.35','Ligers are <b style="color:#e04848">infertile</b>.<br>➜ <b>DIFFERENT species</b>',B);
+  say(`Lion plus tiger gives an <b>infertile</b> liger, so lions and tigers are <b>different species</b>.`);
+  await w(3000);
+  stampIn('✔ Q3: ligers are infertile, so lions &amp; tigers are different species','left:78px;top:446px;font-size:20px');
+  say(`✅ Exam answer: you're only the same species if your offspring are <b>fertile</b>. Lions and tigers make <b>infertile</b> ligers, so they are <b>different species</b>.`);}},
+
+/* 3 */ {t:'What is a species?',run:async w=>{
+  const P=panel(13,8,933,152,'📖 What is a species?','');pop(P);
+  const D='A <b>species</b> is a group of living things that can mate with each other to produce <b style="color:#17935b">fertile offspring</b>.';
+  const def=mk('','left:20px;top:46px;width:890px;font-size:23px;font-weight:700;line-height:1.4',D,P);
+  const nodes=[...def.childNodes];def.innerHTML='';
+  say(`Now we can write the <b>definition</b>. Read it with me…`);
+  const words=[];nodes.forEach(n=>{if(n.nodeType===3)n.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;const s=document.createElement('span');s.textContent=t;words.push(s);});else words.push(n);});
+  words.forEach(s=>{s.style.opacity=0;def.appendChild(s);});
+  for(const s of words){s.style.opacity=1;if(s.animate)s.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:250});await w(70);}
+  await w(800);
+  say(`A <b>species</b> is a group of living things that can mate with each other to produce <b>fertile offspring</b>. 🌟`);
+  const t7=mk('tag','left:640px;top:112px;background:#e3f7ec;color:#17935b','✔ This is the Q7(a) answer!',P);pop(t7);
+  await w(4200);
+  const N=panel(13,170,560,342,'🏷️ Every species has a two-part name','Mountain zebras are <i>Equus zebra</i>. Scientists everywhere use the same name, in any language.');pop(N);
+  const tag=mk('','left:130px;top:52px;width:300px;height:64px;border-radius:16px;background:#fff8e6;border:3px solid #f2c200',null,N);pop(tag);
+  const g=mk('','left:150px;top:58px;font-size:38px;font-weight:800;font-style:italic;color:#2c66cf','Equus',N),s=mk('','left:290px;top:58px;font-size:38px;font-weight:800;font-style:italic;color:#d66a0a','zebra',N);pop(g);pop(s,150);
+  say(`Scientists give every species a <b>two-part name</b>. The mountain zebra is called <b><i>Equus zebra</i></b>.`);
+  await w(3200);
+  an(tag,[{opacity:1},{opacity:0}],{duration:400});
+  an(g,[{transform:'none'},{transform:'translateX(-110px)'}],{duration:700});an(s,[{transform:'none'},{transform:'translateX(80px)'}],{duration:700});
+  await w(700);
+  const gl=mk('','left:24px;top:116px;width:210px;text-align:center;font-size:15px;font-weight:800;color:#2c66cf','1st part: the GROUP',N);pop(gl);
+  const gi=mk('','left:24px;top:140px;width:210px;text-align:center;font-size:54px;line-height:1','🐎🫏🦓',N);pop(gi,200);
+  mk('','left:24px;top:204px;width:210px;text-align:center;font-size:15px;font-weight:700;color:#444','horses, donkeys &amp; zebras',N);
+  say(`The first part, <b><i>Equus</i></b>, is the group. Horses, donkeys and zebras all belong to it. 🐎`);
+  await w(3400);
+  const sl=mk('','left:300px;top:116px;width:230px;text-align:center;font-size:15px;font-weight:800;color:#d66a0a','2nd part: the exact SPECIES',N);pop(sl);
+  const si=mk('','left:300px;top:140px;width:230px;text-align:center;font-size:54px;line-height:1','⛰️🦓',N);pop(si,200);loop(si,[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],500,{direction:'alternate'});
+  mk('','left:300px;top:204px;width:230px;text-align:center;font-size:15px;font-weight:700;color:#444','only mountain zebras',N);
+  say(`The second part tells you the <b>exact species</b>: only mountain zebras. Together, <b><i>Equus zebra</i></b>! 🏷️`);
+  await w(3400);
+  const Q=panel(587,170,359,342,'📝 Worksheet MCQ 5','');pop(Q);
+  mk('','left:16px;top:42px;width:325px;font-size:15px;font-weight:700;line-height:1.35','A group of organisms that can mate to produce <b>fertile offspring</b> is a…',Q);
+  const O=['A) Family','B) Kingdom','C) Species','D) Habitat'].map((t,i)=>{const e=mk('',`left:${16+(i%2)*168}px;top:${108+Math.floor(i/2)*66}px;width:152px;height:52px;border-radius:14px;border:3px solid #e3e0f0;background:#fff;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;transition:all .2s`,t,Q);pop(e,i*80);return e;});
+  say(`Your worksheet asks this as a multiple-choice question. Which word is it? 🤔`);
+  await w(1200);
+  for(let k=0;k<7;k++){O.forEach((e,i)=>{e.style.background=i===k%4?'#efe9ff':'#fff';e.style.borderColor=i===k%4?'#6a45d8':'#e3e0f0';});beep(500+k*40,.05);await w(220);}
+  O.forEach((e,i)=>{e.style.background=i===2?'#e3f7ec':'#fff';e.style.borderColor=i===2?'#18a058':'#e3e0f0';e.style.opacity=i===2?1:.45;});
+  an(O[2],[{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:500});
+  stampIn('✔ C) Species','left:690px;top:430px;font-size:24px');
+  say(`✅ It's <b>C) Species</b>! Not family, kingdom or habitat. Species is all about <b>fertile offspring</b>.`);}},
+
+/* 4 */ {t:'Look-alikes',run:async w=>{
+  const A=panel(13,8,933,150,'🦓 Same species: mountain zebras','');pop(A);
+  say(`Members of the <b>same species</b> usually look <b>similar</b> to one another. Here comes a herd of mountain zebras! 🦓`);
+  for(let i=0;i<6;i++){const sc=[1,.9,1.05,.85,.95,1][i],fl=i%2?-1:1;const z=mk('',`left:${40+i*132}px;top:48px;font-size:70px;line-height:1`,'🦓',A);
+    an(z,[{transform:`translateX(1000px) scale(${fl*sc},${sc})`},{transform:`scale(${fl*sc},${sc})`}],{duration:700,easing:'cubic-bezier(.3,1.2,.5,1)'});beep(500+i*50,.06);await w(250);}
+  const s1=mk('tag','left:820px;top:10px;background:#e3f7ec;color:#17935b','SIMILAR ✔',A);pop(s1);
+  await w(2400);
+  const B=panel(13,166,933,150,'🌍 Different species','');pop(B);
+  say(`But they look <b>different</b> from other species. A horse, a donkey, a giraffe… all different!`);
+  ['🐎','🫏','🦒','🐆','🐘','🦏'].forEach((e,i)=>{const d=mk('',`left:${40+i*132}px;top:48px;font-size:70px;line-height:1`,e,B);pop(d,i*200);beep(400+i*70,.06,'triangle',.1,i*.2);
+    loop(d,[{transform:'translateY(0)'},{transform:'translateY(-8px)'}],450+i*40,{direction:'alternate',delay:1300});});
+  const s2=mk('tag','left:800px;top:10px;background:#fde3e3;color:#e04848','DIFFERENT ✘',B);pop(s2,1300);
+  await w(3400);
+  const C=panel(13,324,933,188,'✏️ Worksheet Q4: fill the gaps','');pop(C);
+  const blank='display:inline-block;min-width:130px;text-align:center;border-bottom:3px solid #6a45d8;color:#6a45d8';
+  mk('','left:20px;top:46px;width:890px;font-size:20px;font-weight:700',`a) Organisms that belong to the same species usually look <span class="b1" style="${blank}">&nbsp;</span> to one another.`,C);
+  mk('','left:20px;top:88px;width:890px;font-size:20px;font-weight:700',`b) They look <span class="b2" style="${blank}">&nbsp;</span> from organisms belonging to other species.`,C);
+  say(`Now your worksheet question. Can you fill the gaps? ✏️`);
+  await w(2400);
+  const fill=async(cls,word)=>{const b=C.querySelector(cls);for(let i=1;i<=word.length;i++){b.textContent=word.slice(0,i);beep(700+i*30,.03);await w(70);}an(b,[{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:300});};
+  await fill('.b1','similar');say(`a) Same species usually look <b>similar</b> to one another.`);await w(2400);
+  await fill('.b2','different');say(`b) They look <b>different</b> from organisms of other species. ✅`);await w(2400);
+  const note=mk('','left:20px;top:134px;width:890px;font-size:16px;font-weight:700;color:#8a5a00;background:#fff8e6;border-radius:12px;padding:6px 12px','⚠️ Notice the word <b>usually</b>! A 🐩 poodle and a 🐕 labrador look different, but they are both dogs: one species.',C);pop(note);
+  say(`Careful: it says <b>usually</b>! A poodle and a labrador look different, but they're both <b>dogs</b>, one species. Their puppies are fertile. 🐶`);}},
+
+/* 5 */ {t:'Why do we classify?',run:async w=>{
+  const L=panel(13,8,460,410,'📚 A library','');pop(L);
+  const R=panel(487,8,460,410,'🌍 Living things','');pop(R);
+  const SH=[230,305,380];
+  const shelves=(P,labels,col)=>SH.forEach((y,i)=>{mk('',`left:16px;top:${y}px;width:422px;height:9px;border-radius:4px;background:#b07a45`,null,P);
+    mk('tag',`left:322px;top:${y-36}px;background:${col}22;color:${col};font-size:14px`,labels[i],P);});
+  const BC=['#e04848','#e04848','#e04848','#2c66cf','#2c66cf','#2c66cf','#18a058','#18a058','#18a058'];
+  const books=BC.map((c,i)=>{const b=mk('',`left:${40+(i*97)%330}px;top:${50+(i*37)%90}px;width:28px;height:62px;border-radius:4px;background:${c};box-shadow:inset -5px 0 0 rgba(0,0,0,.18),inset 0 8px 0 rgba(255,255,255,.35)`,null,L);
+    const r=(i*47)%80-40;b.dataset.r=r;an(b,[{transform:`translateY(-200px) rotate(${r}deg)`,opacity:0},{transform:`rotate(${r}deg)`,opacity:1}],{duration:600,delay:i*60});return b;});
+  say(`Imagine a library with <b>millions of books</b> thrown into one giant pile. 📚 Could you ever find the book you want?`);
+  await w(3400);
+  shelves(L,['Stories','Science','History'],'#6a45d8');
+  say(`So libraries <b>sort</b> books onto shelves. Stories here, science there, history over there…`);
+  await w(800);
+  books.forEach((b,i)=>{const sh=Math.floor(i/3),k=i%3;const x=30+k*36,y=SH[sh]-62;const x0=parseFloat(b.style.left),y0=parseFloat(b.style.top);
+    an(b,[{transform:`rotate(${b.dataset.r}deg)`},{transform:`translate(${x-x0}px,${y-y0}px)`}],{duration:700,delay:i*120,easing:'cubic-bezier(.3,1.3,.5,1)'});beep(500+i*40,.05,'triangle',.08,i*.12);});
+  await w(3000);
+  const AN=[['🦓',0],['🦉',1],['🐟',2],['🦁',0],['🦅',1],['🦈',2],['🐻',0],['🐧',1],['🐠',2]];
+  const anims=AN.map(([e],i)=>{const d=mk('',`left:${30+(i*113)%340}px;top:${46+(i*41)%100}px;font-size:40px;line-height:1`,e,R);
+    an(d,[{transform:'translateY(-220px) rotate(-90deg)',opacity:0},{transform:'none',opacity:1}],{duration:600,delay:i*60});return d;});
+  say(`Living things are the same, but even bigger! Scientists have named <b>over a million species</b>, and there are millions more. 🌍`);
+  await w(3600);
+  shelves(R,['Mammals','Birds','Fish'],'#18a058');
+  const cnt=[0,0,0];
+  anims.forEach((d,i)=>{const sh=AN[i][1],k=cnt[sh]++;const x=24+k*58,y=SH[sh]-46;const x0=parseFloat(d.style.left),y0=parseFloat(d.style.top);
+    an(d,[{transform:'none'},{transform:`translate(${x-x0}px,${y-y0}px)`}],{duration:700,delay:i*120,easing:'cubic-bezier(.3,1.3,.5,1)'});beep(600+i*40,.05,'triangle',.08,i*.12);});
+  say(`So scientists <b>classify</b> them: they put living things into <b>groups</b>, just like the library shelves. 🗂️`);
+  await w(3600);
+  stampIn('✔ MCQ 15: A) To make it easier to study the huge variety of life','left:86px;top:440px;font-size:21px');
+  say(`✅ Why do we classify? <b>A) To make it easier to study and understand the huge variety of life on Earth.</b>`);}},
+
+/* 6 */ {t:'Sort the animals',run:async w=>{
+  const r=await sortGame(w,{bins:['🐾 Mammals (hair, milk)','🪶 Birds (feathers)','🐟 Fish (fins, gills)'],
+    items:[['🦓 Zebra',0],['🐋 Whale',0],['🦇 Bat',0],['🦁 Lion',0],['🦉 Owl',1],['🐧 Penguin',1],['🦅 Eagle',1],['🦈 Shark',2],['🐟 Goldfish',2]],
+    colors:['#f7ad5f','#5d9cf5','#45c288'],
+    intro:`Your turn to classify! 🎮 Tap an animal, then tap its group. Watch out for the tricky ones! Press <b>Check</b> when you're done.`});
+  say(r.ok===r.total?`Perfect sorting! 🏆 You're a real scientist!`:`You got <b>${r.ok} of ${r.total}</b>. The red ones are in the wrong group. Press Replay to try again!`);
+  await w(2600);
+  const f=mk('','left:13px;top:452px;width:933px;height:58px;border-radius:16px;background:#fff8e6;border:3px solid #f2c200;font-size:16.5px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 12px','<div>💡 Whales and bats are <b>mammals</b>: they breathe air and feed their babies milk. Penguins have feathers, so they are <b>birds</b>!</div>');pop(f);
+  say(`Tricky ones: <b>whales</b> and <b>bats</b> are mammals, because they breathe air and feed their babies milk. And <b>penguins</b> are birds! 🐧`);}},
+
+/* 7 */ {t:'Same species? You decide!',run:async w=>{
+  const RD=[
+    {a:'🦓',an:'Zebra',b:'🦓',bn:'Zebra',c:'🦓',cn:'Foal',clue:'The foal grows up and has foals of its own.',same:true,
+     why:`The foal is <b>fertile</b>, so they're the <b>same species</b>! ✅`},
+    {a:'🦁',an:'Lion',b:'🐯',bn:'Tiger',c:'🐾',cn:'Liger',clue:'Ligers cannot have babies of their own.',same:false,
+     why:`Ligers are <b>infertile</b>, so lions and tigers are <b>different species</b>. ✅`},
+    {a:'🐎',an:'Horse',b:'🫏',bn:'Donkey',c:'🐴',cn:'Mule',clue:'Mules cannot have babies of their own.',same:false,
+     why:`Mules are <b>infertile</b>, so horses and donkeys are <b>different species</b>. ✅`},
+    {a:'🐩',an:'Poodle',b:'🐕',bn:'Labrador',c:'🐶',cn:'Puppies',clue:'The puppies grow up and have puppies of their own.',same:true,
+     why:`They look different, but the puppies are <b>fertile</b>. All dogs are <b>one species</b>! ✅`}];
+  ttl('🤔 Same species or not?');
+  const sc=mk('tag','left:820px;top:16px;background:#efe9ff;color:#6a45d8','⭐ 0 / 4');
+  say(`Quick-fire game! 🎮 For each pair, look at their babies and decide: <b>same species</b> or <b>different species</b>?`);
+  await w(2800);
+  let score=0;
+  window.AUTOPLAY=()=>{const b=stage.querySelector('[data-right="1"]');if(b)b.click();};
+  for(let r=0;r<RD.length;r++){const d=RD[r];
+    const G=mk('','left:0;top:0;width:960px;height:520px');
+    const lab=(x,t)=>mk('',`left:${x-20}px;top:166px;width:140px;text-align:center;font-size:15px;font-weight:800;color:#555`,t,G);
+    const A=mk('','left:140px;top:66px;font-size:90px;line-height:1',d.a,G),B=mk('','left:390px;top:66px;font-size:90px;line-height:1',d.b,G);
+    an(A,[{transform:'translateX(-300px)'},{transform:'none'}],{duration:700});an(B,[{transform:'translateX(600px)'},{transform:'none'}],{duration:700});
+    lab(140,d.an);lab(390,d.bn);
+    const pl=mk('','left:292px;top:84px;font-size:50px;font-weight:800;color:#6a45d8','+',G);pop(pl,300);
+    await w(800);
+    const ar=mk('','left:530px;top:86px;font-size:50px;line-height:1','➡️',G);pop(ar);
+    const C=mk('','left:650px;top:66px;font-size:90px;line-height:1',d.c,G);an(C,[{transform:'scale(0)'},{transform:'scale(1)'}],{duration:500,easing:'cubic-bezier(.3,1.6,.5,1)'});lab(650,d.cn);beep(900,.08);
+    const cl=mk('clue','left:150px;top:200px;width:660px;height:62px;padding:12px;font-size:19px;font-weight:700',`🔎 ${d.clue}`,G);pop(cl,200);
+    say(`<b>${d.an}</b> + <b>${d.bn}</b> make a <b>${d.cn.toLowerCase()}</b>. ${d.clue} Same species or different?`);
+    let done=false;
+    const mkb=(x,txt,col,isSame)=>{const b=mk('bigbtn',`left:${x}px;top:290px;width:290px;height:82px;background:${col};display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer`,txt,G);pop(b,400);
+      if(isSame===d.same)b.dataset.right='1';
+      b.onclick=()=>{if(done)return;if(isSame===d.same){done=true;b.removeAttribute('data-right');score++;sc.textContent=`⭐ ${score} / 4`;pop(sc);
+          const o=isSame?bd:bs;an(o,[{opacity:1},{opacity:.3}],{duration:300});an(b,[{transform:'scale(1)'},{transform:'scale(1.1)'},{transform:'scale(1)'}],{duration:400});
+          stampIn(isSame?'✔ SAME SPECIES':'✔ DIFFERENT SPECIES','left:340px;top:400px;font-size:26px');
+          say(d.why);}
+        else{boo();shake(b);say(`Hmm, not quite! 🤔 Look at the clue: can the babies have babies of their own? Try again!`);}};return b;};
+    const bs=mkb(170,'✅ Same species','#18a058',true),bd=mkb(500,'❌ Different species','#e04848',false);
+    await w.until(()=>done);
+    await w(3000);
+    if(r<RD.length-1){stage.querySelectorAll('.stamp').forEach(e=>e.remove());await an(G,[{opacity:1,transform:'none'},{opacity:0,transform:'translateX(-120px)'}],{duration:400});G.remove();}
+  }
+  window.AUTOPLAY=null;
+  confetti(120);
+  say(`Brilliant! 🏆 Remember the test: if the babies are <b>fertile</b>, the parents are the <b>same species</b>. Looks can trick you!`);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 4 · MCQ 5',q:'Which term describes a group of living organisms that can mate with each other to produce fertile offspring?',o:['Family','Kingdom','Species','Habitat'],a:2,
+      why:'A <b>species</b> is a group of organisms that can mate to produce <b>fertile offspring</b>.'},
+    {src:'Worksheet · Unit 4 · MCQ 15',q:'Why do scientists put living things into groups (classification)?',o:['To make it easier to study and understand the huge variety of life on Earth','To keep them neatly organised in boxes forever','To change them into different animals','To count how many rocks are in the ground'],a:0,cols:1,optH:46,
+      why:'Classifying is like sorting books onto library shelves: it makes the huge <b>variety of life</b> easier to <b>study and understand</b>.'},
+    {src:'Worksheet · Unit 4 · Q3',q:'Explain why biologists say that lions and tigers belong to different species, even though they can sometimes reproduce together.',
+      model:'Organisms belong to the same species only if they reproduce together to produce <b>fertile</b> offspring. Lions and tigers produce <b>infertile</b> offspring (ligers) that cannot reproduce.'},
+    {src:'Worksheet · Unit 4 · Q4',q:'Complete the sentences.<br>a) Organisms that belong to the same species usually look <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> to one another.<br>b) They look <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> from organisms belonging to other species.',
+      model:'a) <b>similar</b> &nbsp;&nbsp; b) <b>different</b>'},
+    {src:'Worksheet · Unit 4 · Q7(a)',q:'The mountain zebra belongs to the species <i>Equus zebra</i>. Define the term <b>species</b>.',
+      model:'A species is a group of living things that can produce <b>fertile offspring</b>.'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>What is a species?</b> Here's everything you learned…`);
+  const B=[['🦓','<b>Species</b> = a group that can mate to make <b>fertile offspring</b>.'],['🍼','<b>Fertile</b> = the babies can grow up and have babies too.'],
+    ['🦁','Lion + tiger ➜ liger. Ligers are <b>infertile</b>, so they are different species.'],['👀','Same species look <b>similar</b>. Other species look <b>different</b>.'],
+    ['🏷️','Two-part names: <i>Equus zebra</i> = mountain zebra.'],['📚','We classify to make the huge variety of life <b>easier to study</b>.'],
+    ['🐋','Whales and bats are <b>mammals</b>. Penguins are <b>birds</b>.'],['🐶','Poodles and labradors look different but are <b>one species</b>.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${10+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:446px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to all lessons ➜');f.onclick=()=>{location.href='../index.html';};pop(f);
+  say(`You're a <b>species expert</b>! 🧠 Next lesson: how scientists use <b>keys</b> to identify living things.`);}},
+  ]
+});
+</script>
+</body>
+</html>

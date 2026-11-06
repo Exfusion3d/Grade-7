@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Particles and heat</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.pt{position:absolute;border-radius:50%;box-shadow:inset -3px -3px 0 rgba(0,0,0,.14)}
+.box8{position:absolute;border:3px solid #c9c2e6;border-radius:14px;background:#fbfaff;overflow:hidden;overflow:clip}
+.lbl{position:absolute;background:#1f2433;color:#fff;border-radius:10px;padding:3px 10px;font-size:14px;font-weight:800;white-space:nowrap}
+.note{position:absolute;background:#fff;border:3px solid #ece8f8;border-radius:18px;padding:10px 16px;font-size:17px;font-weight:700;line-height:1.4}
+.ocard{position:absolute;width:295px;height:52px;border-radius:14px;background:#fff;border:3px solid #cfc4f5;box-shadow:0 3px 0 #ddd5fa;
+  display:flex;align-items:center;padding:0 12px;font-size:15px;font-weight:800;line-height:1.2;cursor:pointer;z-index:5;
+  transition:left .6s cubic-bezier(.3,1.2,.4,1),top .6s cubic-bezier(.3,1.2,.4,1),background .3s,border-color .3s}
+.ocard.done{background:#e3f7ec;border-color:#18a058;cursor:default}
+.oslot{position:absolute;width:295px;height:52px;border-radius:14px;border:3px dashed #c9c2e6;display:flex;align-items:center;padding-left:10px;font-weight:800;color:#a99be0;font-size:18px}
+.flame8{position:absolute;width:30px;height:56px;border-radius:50% 50% 45% 45%/70% 70% 30% 30%;
+  background:radial-gradient(ellipse at 50% 80%,#fff 0,#7fc8ff 25%,#2c66cf 55%,rgba(44,102,207,0) 72%)}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 8 · Particles and heat (Unit 5) */
+const STAMP=(t,css)=>{const s=mk('stamp',css,t);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-5deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+const P=(x,y,d,c,parent)=>mk('pt',`left:${x}px;top:${y}px;width:${d}px;height:${d}px;background:${c}`,null,parent);
+const R=(a,b)=>a+Math.random()*(b-a);
+/* make a particle jiggle on the spot; amplitude a px, period ms */
+function jig(el,a,ms){if(el._j)el._j.cancel();const k=[{transform:'translate(0,0)'},{transform:`translate(${a}px,${-a*.7}px)`},{transform:`translate(${-a*.8}px,${a*.5}px)`},{transform:`translate(${a*.5}px,${a*.8}px)`},{transform:'translate(0,0)'}];
+  el._j=el.animate(k,{duration:ms,iterations:Infinity,delay:-Math.random()*ms});}
+
+Lesson.start({
+  id:'l08', num:8, unit:5, emoji:'🔥', title:'Particles and heat',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today we zoom inside materials to see what <b>heat</b> really does. Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'Everything is made of particles', run:async w=>{
+  say(`Everything around you is made of tiny <b>particles</b>, far too small to see. Let's zoom in with a super microscope! 🔬`);
+  const S=[['🧊 Solid','Particles in <b>neat rows</b>, touching. They only <b>vibrate</b> on the spot.','#f7ad5f'],
+    ['💧 Liquid','Particles touching but <b>jumbled</b>. They <b>slide</b> past each other.','#5d9cf5'],
+    ['💨 Gas','Particles <b>far apart</b>, zooming fast in all directions.','#9aa3b5']];
+  const boxes=S.map((s,i)=>{const p=panel(13+i*315,8,303,372,s[0],s[1]);pop(p,i*150);return mk('box8','left:30px;top:48px;width:238px;height:220px',null,p);});
+  await w(2800);
+  // solid: neat rows
+  for(let r=0;r<5;r++)for(let c=0;c<6;c++){const d=P(22+c*33,30+r*33,30,'#f7ad5f',boxes[0]);jig(d,1.6,260);}
+  say(`In a <b>solid</b>, the particles sit in <b>neat rows</b>. They can't move around… they just <b>vibrate</b> on the spot.`);
+  await w(3400);
+  // liquid: jumbled, sliding
+  const lq=mk('','left:0;top:70px;width:238px;height:150px;background:rgba(93,156,245,.12)',null,boxes[1]);
+  for(let i=0;i<24;i++){const d=P(R(4,200),R(78,182),30,'#5d9cf5',boxes[1]);
+    d.animate([{transform:'translate(0,0)'},{transform:`translate(${R(-26,26)}px,${R(-14,14)}px)`},{transform:`translate(${R(-26,26)}px,${R(-14,14)}px)`},{transform:'translate(0,0)'}],{duration:R(2200,3200),iterations:Infinity});}
+  say(`In a <b>liquid</b>, the particles still touch, but they're <b>jumbled</b> up and <b>slide</b> past each other. That's why liquids flow!`);
+  await w(3600);
+  // gas: zooming
+  for(let i=0;i<9;i++){const d=P(R(10,190),R(10,170),26,'#9aa3b5',boxes[2]);const k=[{transform:'translate(0,0)'}];
+    for(let j=0;j<4;j++)k.push({transform:`translate(${R(-100,100)}px,${R(-80,80)}px)`});k.push({transform:'translate(0,0)'});
+    d.animate(k,{duration:R(2600,3600),iterations:Infinity,easing:'linear',delay:-R(0,2000)});}
+  say(`In a <b>gas</b>, the particles are <b>far apart</b> and zoom around fast, bumping into the walls. 💨`);
+  await w(3400);
+  const n=mk('note','left:13px;top:394px;width:933px;height:118px;display:flex;align-items:center;gap:18px;background:#fff8e6;border-color:#f2c200;font-size:20px',
+    `<span style="font-size:58px;line-height:1" class="fl">🔥</span><span>The big secret of this lesson: <b>heat energy makes particles move MORE</b>. More heat = more vibrating, sliding and zooming!</span>`);pop(n);
+  loop(n.querySelector('.fl'),[{transform:'scale(1) rotate(-6deg)'},{transform:'scale(1.15) rotate(6deg)'}],420,{direction:'alternate'});
+  say(`Here's the big secret: <b>heat energy makes particles move more</b>. Keep that in mind for the whole lesson! 🔥`);
+  await w(3000);
+}},
+
+/* 2 */ {t:'Heat it up!', run:async w=>{
+  const head=mk('tag','left:60px;top:14px;background:#efe9ff;color:#4a2ea6;font-size:17px','🔍 A metal bar, zoomed in to see its particles');pop(head);
+  const SP=[30,33,36,39],AMP=[1.4,2.8,4.2,5.6],PER=[300,210,150,110],COL=['#f7ad5f','#f59a4a','#ef7a3a','#e85a2e'],TEMP=[20,150,300,450];
+  const X0=60,Y0=96,D=26,NC=12,NR=4;
+  const ghost=mk('','left:'+(X0-8)+'px;top:'+(Y0-8)+'px;width:'+(11*SP[0]+D+16)+'px;height:'+(3*SP[0]+D+16)+'px;border:3px dashed #9a96b0;border-radius:12px;z-index:2');
+  const bar=mk('','left:'+(X0-8)+'px;top:'+(Y0-8)+'px;width:'+(11*SP[0]+D+16)+'px;height:'+(3*SP[0]+D+16)+'px;border:3px solid #d66a0a;background:#fff3e6;border-radius:12px;transition:width 1s,height 1s');
+  const parts=[];for(let r=0;r<NR;r++)for(let c=0;c<NC;c++){const d=P(X0+c*SP[0],Y0+r*SP[0],D,COL[0]);d.style.transition='left 1s,top 1s,background .8s';d.style.zIndex=3;d.r=r;d.c=c;parts.push(d);jig(d,AMP[0],PER[0]);pop(d,(r*NC+c)*8);}
+  const ruler=mk('','left:'+X0+'px;top:300px;height:4px;background:#1f2433;width:'+(11*SP[0]+D)+'px;transition:width 1s');
+  mk('','left:-2px;top:-8px;width:4px;height:20px;background:#1f2433',null,ruler);const rend=mk('','right:-2px;top:-8px;width:4px;height:20px;background:#1f2433',null,ruler);
+  const rl=mk('','left:'+X0+'px;top:310px;font-size:16px;font-weight:800;color:#626a80','↔ length of the bar');
+  const fl=mk('','left:'+X0+'px;top:250px;width:470px;height:40px;display:flex;gap:18px;justify-content:center;font-size:32px;line-height:1',null);
+  // thermometer + button
+  const th=mk('','left:600px;top:60px;width:34px;height:250px;border:4px solid #5a6478;border-radius:18px;background:#fff;overflow:hidden');
+  const tf=mk('','left:6px;bottom:6px;width:14px;height:20px;border-radius:7px;background:#e04848;transition:height 1s',null,th);
+  const tt=mk('','left:648px;top:270px;font-size:24px;font-weight:800;color:#e04848','20 °C');
+  let taps=0,armed=false,lvl=0;
+  const b=btn('bigbtn','left:700px;top:70px;width:240px;height:84px;background:linear-gradient(135deg,#e06a1b,#e04848);display:flex;align-items:center;justify-content:center;font-size:26px;opacity:.45','🔥 Add heat',()=>{if(!armed)return;armed=false;taps++;beep(300+taps*120,.15,'sawtooth',.06);});
+  const dots=mk('','left:700px;top:166px;width:240px;text-align:center;font-size:18px;font-weight:800;color:#626a80','Heat level: ○ ○ ○');
+  window.AUTOPLAY=()=>{if(armed)b.click();};
+  say(`Here's a <b>metal bar</b>. Its particles sit in neat rows, gently <b>vibrating</b>. The dashed line shows its size when cold.`);
+  await w(3600);
+  const LINES=[`The particles <b>vibrate more</b>! Look, they push each other a little further apart.`,
+    `Even more heat… the particles vibrate <b>harder</b> and take up <b>more space</b>. 📏`,
+    `Maximum heat! 🔥 The particles are jiggling wildly, and the whole bar has <b>grown longer</b>.`];
+  for(let k=1;k<=3;k++){
+    armed=true;b.style.opacity=1;loop(b,[{transform:'scale(1)'},{transform:'scale(1.06)'}],500,{direction:'alternate'});
+    say(k===1?`Your turn! 👆 Tap <b>Add heat</b> to heat the bar with a flame.`:`Tap <b>Add heat</b> again! 👆`);
+    await w.until(()=>taps>=k);b.style.opacity=.45;b.getAnimations().forEach(a=>a.cancel());
+    lvl=k;const s=SP[k];
+    parts.forEach(d=>{d.style.left=(X0+d.c*s)+'px';d.style.top=(Y0+d.r*s)+'px';d.style.background=COL[k];jig(d,AMP[k],PER[k]);});
+    bar.style.width=(11*s+D+16)+'px';bar.style.height=(3*s+D+16)+'px';ruler.style.width=(11*s+D)+'px';
+    tf.style.height=(20+k*70)+'px';tt.textContent=TEMP[k]+' °C';dots.textContent='Heat level: '+'● '.repeat(k)+'○ '.repeat(3-k);
+    fl.innerHTML='';for(let i=0;i<k*2;i++){const f=mk('','position:relative','🔥',fl);f.style.position='relative';loop(f,[{transform:'scale(1)'},{transform:'scale(1.25)'}],300+i*40,{direction:'alternate'});}
+    say(LINES[k-1]);await w(3200);}
+  rl.innerHTML='↔ the bar got <b style="color:#e04848">LONGER</b>: it <b>expanded</b>!';pop(rl);
+  const n=mk('note','left:13px;top:350px;width:560px;height:84px;font-size:16.5px',`🔥 Heated → particles <b>vibrate more</b> → they push apart and take up <b>more space</b> → the metal <b>expands</b>.`);pop(n);
+  say(`So when a metal is heated, its particles <b>vibrate more</b> and take up more space. The metal <b>expands</b>!`);
+  await w(3600);
+  const x=mk('note','left:590px;top:350px;width:356px;height:84px;font-size:14.5px;color:#9a3030;background:#fdf0f0;border-color:#f2b0b0',`❌ A) shrink &nbsp;❌ C) turn into gas<br>❌ D) lose all their weight`);pop(x);
+  STAMP('✔ MCQ 18 answer: B) They expand as particles vibrate more','left:40px;top:450px;font-size:21px');
+  say(`✅ That's <b>MCQ 18</b>: heated metals <b>expand as particles vibrate more</b>. Answer <b>B</b>! They don't shrink, turn to gas or lose weight.`);
+  await w(3000);
+}},
+
+/* 3 */ {t:'Watch out: particles do NOT grow!', run:async w=>{
+  say(`⚠️ Watch out! Lots of people think the particles themselves get <b>bigger</b> when heated. Let's check…`);
+  const L=panel(13,8,460,300,'❌ Myth: the particles get bigger','');pop(L);
+  const small=P(110,110,46,'#f7ad5f',L);jig(small,1.5,300);
+  mk('','left:176px;top:112px;font-size:40px;font-weight:800;color:#626a80','→',L);
+  const big=P(250,72,120,'#e85a2e',L);
+  mk('','left:84px;top:170px;font-size:15px;font-weight:800;color:#626a80','cold particle',L);
+  await w(2600);
+  const X=mk('','left:220px;top:40px;font-size:150px;line-height:1;color:#e04848;font-weight:800;z-index:3','✖',L);pop(X);boo();
+  mk('','left:20px;top:230px;width:420px;text-align:center;font-size:19px;font-weight:800;color:#e04848','WRONG! Particles never swell up.',L);
+  say(`<b>Wrong!</b> ❌ A particle does <b>not</b> get bigger when it's heated. So what really happens?`);
+  await w(3000);
+  const Rp=panel(487,8,460,300,'✅ Truth: the GAPS get bigger','');pop(Rp);
+  mk('','left:20px;top:58px;font-size:15px;font-weight:800;color:#2c66cf','❄️ cold',Rp);mk('','left:20px;top:160px;font-size:15px;font-weight:800;color:#e04848','🔥 hot',Rp);
+  for(let i=0;i<6;i++){const d=P(90+i*44,48,40,'#f7ad5f',Rp);jig(d,1.5,300);}
+  for(let i=0;i<6;i++){const d=P(90+i*58,150,40,'#e85a2e',Rp);jig(d,5,120);
+    if(i<5){const g=mk('','left:'+(130+i*58)+'px;top:156px;width:18px;height:28px;border-radius:6px;background:rgba(255,216,77,.7);z-index:-1',null,Rp);loop(g,[{opacity:.3},{opacity:1}],500,{direction:'alternate'});}}
+  mk('','left:20px;top:222px;width:420px;text-align:center;font-size:17px;font-weight:800;color:#18a058','Same-sized particles, just vibrating more<br>and spreading out. 🟨 = bigger gaps',Rp);
+  say(`✅ Each particle stays the <b>same size</b>. They just <b>vibrate more</b> and spread out, so the <b>gaps</b> between them get bigger.`);
+  await w(3800);
+  // ball and ring
+  const B=panel(13,318,933,194,'🔵 The ball-and-ring test','');pop(B);
+  const ring=mk('','left:450px;top:52px;width:26px;height:80px;border:7px solid #5a6478;border-radius:50%;z-index:4',null,B);
+  mk('','left:458px;top:130px;width:10px;height:50px;background:#5a6478',null,B);
+  const ball=mk('','left:110px;top:64px;width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b9bec8 45%,#6b7280);z-index:3',null,B);
+  const st=mk('','left:640px;top:70px;width:270px;font-size:20px;font-weight:800;text-align:center',``,B);
+  say(`Here's a famous test. When the metal ball is <b>cold</b>, it fits through the ring.`);
+  await an(ball,[{transform:'translateX(0)'},{transform:'translateX(420px)'}],{duration:1600,easing:'ease-in-out'});
+  st.innerHTML='❄️ Cold: it fits! ✅';pop(st);await w(2600);
+  await an(ball,[{transform:'translateX(420px)'},{transform:'translateX(0)'}],{duration:900});
+  const f=mk('','left:118px;top:120px;font-size:40px;line-height:1','🔥',B);pop(f);loop(f,[{transform:'scale(1)'},{transform:'scale(1.25)'}],300,{direction:'alternate'});
+  ball.style.transition='background 1s';ball.style.background='radial-gradient(circle at 35% 30%,#fff,#f59a4a 45%,#b8401c)';
+  say(`Now we <b>heat</b> the ball. 🔥 Its particles vibrate more and spread out, so the ball <b>expands</b>…`);
+  await an(ball,[{transform:'scale(1)'},{transform:'scale(1.3)'}],{duration:1200});
+  f.remove();
+  await an(ball,[{transform:'scale(1.3)'},{transform:'translateX(360px) scale(1.3)'}],{duration:1200,easing:'ease-in'});shake(ball);beep(160,.2,'square',.08);
+  st.innerHTML='🔥 Hot: STUCK! ❌';pop(st);
+  say(`…and now it's <b>stuck</b>! The hot ball is too big to fit. Cool it down and it <b>contracts</b> (shrinks) and fits again. ❄️`);
+  await w(2400);
+  ball.style.background='radial-gradient(circle at 35% 30%,#fff,#b9bec8 45%,#6b7280)';
+  await an(ball,[{transform:'translateX(360px) scale(1.3)'},{transform:'translateX(360px) scale(1)'}],{duration:1000});
+  await an(ball,[{transform:'translateX(360px)'},{transform:'translateX(420px)'}],{duration:600});
+  st.innerHTML='❄️ Cooled: contracts and fits ✅';pop(st);
+  say(`Heating made the ball <b>expand</b>, cooling made it <b>contract</b>. The particles never changed size: only the <b>gaps</b> did! ✅`);
+  await w(3000);
+}},
+
+/* 4 */ {t:'Expansion in real life', run:async w=>{
+  say(`Engineers have to plan for <b>expansion</b> every single day. Let's see three examples! 👷`);
+  await w(2200);
+  // railway
+  const A=panel(13,8,303,384,'🚆 Railway tracks','Small <b>gaps</b> are left between rails. On hot days the rails <b>expand</b> into the gaps instead of bending.');pop(A);
+  const sun=mk('','left:226px;top:44px;font-size:42px;line-height:1','☀️',A),snow=mk('','left:226px;top:44px;font-size:38px;line-height:1','❄️',A);
+  [22,62,102,172,212,252].forEach(x=>mk('','left:'+x+'px;top:150px;width:18px;height:90px;background:#9a6a3a;border-radius:3px',null,A));
+  const r1=mk('','left:6px;top:170px;width:130px;height:14px;background:#7d8796;border-radius:3px;transform-origin:left',null,A);
+  const r2=mk('','left:150px;top:170px;width:140px;height:14px;background:#7d8796;border-radius:3px;transform-origin:right',null,A);
+  const r3=mk('','left:6px;top:206px;width:130px;height:14px;background:#7d8796;border-radius:3px;transform-origin:left',null,A);
+  const r4=mk('','left:150px;top:206px;width:140px;height:14px;background:#7d8796;border-radius:3px;transform-origin:right',null,A);
+  const gl=mk('lbl','left:112px;top:110px','gap ↓',A);
+  [r1,r3].forEach(r=>loop(r,[{transform:'scaleX(1)'},{transform:'scaleX(1.05)'}],2200,{direction:'alternate'}));
+  [r2,r4].forEach(r=>loop(r,[{transform:'scaleX(1)'},{transform:'scaleX(1.045)'}],2200,{direction:'alternate'}));
+  loop(sun,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1)'}],2200,{direction:'alternate'});
+  loop(snow,[{opacity:1},{opacity:0}],2200,{direction:'alternate'});
+  const tr=mk('','left:0;top:110px;font-size:36px;line-height:1','🚆',A);tr.animate([{transform:'translateX(-60px)'},{transform:'translateX(320px)'}],{duration:4200,iterations:Infinity,easing:'linear'});
+  say(`🚆 <b>Railway tracks</b> have small <b>gaps</b> between the rails. In summer the rails expand and fill the gaps, instead of buckling.`);
+  await w(4000);
+  // bridge
+  const Bp=panel(328,8,303,384,'🌉 Bridges','Bridges have <b>expansion joints</b>: gaps that let the road grow in summer and shrink in winter.');pop(Bp);
+  mk('','left:20px;top:200px;width:30px;height:60px;background:#b9bec8',null,Bp);mk('','left:250px;top:200px;width:30px;height:60px;background:#b9bec8',null,Bp);
+  const d1=mk('','left:10px;top:180px;width:136px;height:20px;background:#5d6573;border-radius:3px;transform-origin:left',null,Bp);
+  const d2=mk('','left:156px;top:180px;width:136px;height:20px;background:#5d6573;border-radius:3px;transform-origin:right',null,Bp);
+  [d1,d2].forEach(d=>loop(d,[{transform:'scaleX(1)'},{transform:'scaleX(1.03)'}],2200,{direction:'alternate'}));
+  const jt=mk('lbl','left:140px;top:226px','↑ expansion joint',Bp);
+  for(let i=0;i<3;i++){const wv=mk('','left:'+(30+i*90)+'px;top:270px;font-size:40px;line-height:1;color:#5d9cf5;font-weight:800','〰️',Bp);loop(wv,[{transform:'translateX(-6px)'},{transform:'translateX(6px)'}],900,{direction:'alternate'});}
+  const car=mk('','left:0;top:148px;font-size:32px;line-height:1','🚗',Bp);car.animate([{transform:'translateX(320px) scaleX(1)'},{transform:'translateX(-50px) scaleX(1)'}],{duration:3600,iterations:Infinity,easing:'linear'});
+  say(`🌉 <b>Bridges</b> have <b>expansion joints</b>: gaps that let the road get longer on hot days without cracking.`);
+  await w(3800);
+  // jar lid
+  const C=panel(643,8,303,384,'🫙 A stuck jar lid','Stuck lid? Run it under <b>hot water</b>. The metal lid <b>expands</b> more than the glass, so it loosens.');pop(C);
+  mk('','left:98px;top:150px;width:110px;height:110px;border:4px solid #8fb4d8;border-top:none;border-radius:0 0 22px 22px;background:linear-gradient(#fff 0,#ffd6a0 30%,#f2a64a)',null,C);
+  const lid=mk('','left:92px;top:126px;width:122px;height:28px;border-radius:8px;background:repeating-linear-gradient(90deg,#9aa3b5 0 6px,#c3cad5 6px 12px);border:2px solid #6b7380',null,C);
+  const tap=mk('','left:120px;top:36px;font-size:44px;line-height:1;transform:scaleX(-1)','🚰',C);
+  say(`🫙 A jar lid is stuck! Run <b>hot water</b> over the <b>metal lid</b>…`);
+  const drops=[];for(let i=0;i<4;i++){const d=mk('','left:'+(134+i*9)+'px;top:80px;width:8px;height:12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#e06a1b',null,C);
+    drops.push(d.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(42px)',opacity:.4}],{duration:500,iterations:Infinity,delay:i*120}));}
+  const steam=mk('','left:200px;top:96px;font-size:22px',`♨️`,C);loop(steam,[{opacity:0,transform:'translateY(0)'},{opacity:1,transform:'translateY(-14px)'}],900,{direction:'alternate'});
+  await w(1600);
+  await an(lid,[{transform:'scaleX(1)'},{transform:'scaleX(1.1)'}],{duration:900});
+  drops.forEach(d=>d.effect.target.remove());tap.remove();steam.remove();
+  await an(lid,[{transform:'scaleX(1.1)'},{transform:'scaleX(1.1) translateY(-26px) rotate(-14deg)'}],{duration:700,easing:'cubic-bezier(.5,1.6,.5,1)'});
+  const pp=mk('','left:200px;top:70px;font-size:24px;font-weight:800;color:#18a058','POP! 🎉',C);pop(pp);yay();
+  say(`The metal lid <b>expands</b> more than the glass jar, so it gets looser and twists off. POP! 🎉`);
+  await w(3400);
+  const n=mk('note','left:13px;top:402px;width:933px;height:110px;display:flex;align-items:center;justify-content:space-around;font-size:21px;text-align:center',
+    `<div>🔥 Heating → <b style="color:#e04848">EXPANDS</b><br><span style="font-size:15px;color:#626a80">particles vibrate more, take up more space</span></div><div style="font-size:34px">⇄</div><div>❄️ Cooling → <b style="color:#2c66cf">CONTRACTS</b><br><span style="font-size:15px;color:#626a80">particles vibrate less, come closer</span></div>`);pop(n);
+  say(`Remember: heating makes materials <b>expand</b>. Cooling makes them <b>contract</b>. 🔁`);
+  await w(2600);
+}},
+
+/* 5 */ {t:'From water to steam and back', run:async w=>{
+  const svg=mk('','left:0;top:0;width:960px;height:520px;z-index:1',`<svg width="960" height="520" viewBox="0 0 960 520">
+  <defs><clipPath id="fw"><rect x="100" y="292" width="140" height="120"/></clipPath></defs>
+  <line x1="110" y1="384" x2="92" y2="512" stroke="#7d8796" stroke-width="6"/><line x1="230" y1="384" x2="248" y2="512" stroke="#7d8796" stroke-width="6"/>
+  <line x1="96" y1="384" x2="244" y2="384" stroke="#5a6478" stroke-width="6" stroke-linecap="round"/>
+  <rect x="158" y="448" width="24" height="58" fill="#9aa3b5"/><rect x="138" y="500" width="64" height="12" rx="4" fill="#7d8796"/>
+  <circle cx="170" cy="320" r="57" fill="#8fc3f5" clip-path="url(#fw)" class="fwater"/>
+  <path d="M156 196 V264 A62 62 0 1 0 184 264 V196" fill="rgba(220,235,255,.25)" stroke="#5a6478" stroke-width="4"/>
+  <rect x="150" y="186" width="40" height="16" rx="3" fill="#3a3f52"/>
+  <rect x="165" y="110" width="10" height="114" rx="5" fill="#fff" stroke="#5a6478" stroke-width="2"/>
+  <line x1="170" y1="222" x2="170" y2="190" stroke="#e04848" stroke-width="4" class="merc"/>
+  <circle cx="170" cy="222" r="6" fill="#e04848"/>
+  <line x1="330" y1="246" x2="680" y2="336" stroke="#5a6478" stroke-width="54" stroke-linecap="round"/>
+  <line x1="330" y1="246" x2="680" y2="336" stroke="#dff0ff" stroke-width="46" stroke-linecap="round" class="jacket"/>
+  <line x1="366" y1="236" x2="366" y2="168" stroke="#5a6478" stroke-width="14"/><line x1="366" y1="240" x2="366" y2="168" stroke="#dff0ff" stroke-width="7"/>
+  <line x1="644" y1="340" x2="644" y2="418" stroke="#5a6478" stroke-width="14"/><line x1="644" y1="336" x2="644" y2="418" stroke="#dff0ff" stroke-width="7"/>
+  <line x1="683.5" y1="322.4" x2="333.5" y2="232.4" stroke="#2c66cf" stroke-width="4" stroke-dasharray="10 16" class="flow" opacity="0"/>
+  <line x1="676.5" y1="349.6" x2="326.5" y2="259.6" stroke="#2c66cf" stroke-width="4" stroke-dasharray="10 16" class="flow" opacity="0"/>
+  <polyline points="184,218 310,240 712,344 712,374" fill="none" stroke="#5a6478" stroke-width="12" stroke-linejoin="round"/>
+  <polyline points="184,218 310,240 712,344 712,374" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M686 390 V502 H792 V390" fill="rgba(220,235,255,.25)" stroke="#5a6478" stroke-width="4"/>
+  </svg>`);
+  const bw=mk('','left:690px;top:500px;width:100px;height:0;background:#8fc3f5;z-index:0;border-radius:0 0 3px 3px');
+  const L=(t,css)=>{const e=mk('lbl',css+';z-index:5',t);pop(e);return e;};
+  say(`🎯 Your exam asks how water turns into <b>steam</b>, and then back into <b>liquid water</b>. Here's the kit we use. Let's label it!`);
+  L('flask 🧪','left:22px;top:300px');L('thermometer','left:190px;top:112px');L('Bunsen burner','left:206px;top:470px');
+  await w(2400);
+  L('condenser ❄️','left:452px;top:222px');L('beaker','left:808px;top:452px');
+  await w(1800);
+  // flame on
+  const flame=mk('flame8','left:155px;top:392px;z-index:3');pop(flame);loop(flame,[{transform:'scaleY(1) scaleX(1)'},{transform:'scaleY(1.15) scaleX(.9)'}],180,{direction:'alternate'});
+  beep(200,.3,'sawtooth',.04);
+  const tbox=mk('','left:40px;top:150px;width:96px;height:44px;border-radius:12px;background:#fff;border:3px solid #e04848;color:#e04848;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center;z-index:5','20 °C');pop(tbox);
+  say(`The <b>flame heats</b> the flask. The water <b>absorbs heat energy</b>, so its particles move faster and faster. 🔥`);
+  const merc=svg.querySelector('.merc');
+  for(let t=20;t<=100;t+=5){tbox.textContent=t+' °C';merc.setAttribute('y2',String(222-(t-20)*0.95));await w(140);}
+  tbox.style.background='#ffe9a8';pop(tbox);beep(880,.15);
+  await w(2200);
+  // bubbles
+  const fbub=[];for(let i=0;i<8;i++){const b=mk('','left:'+R(130,200)+'px;top:368px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.35);z-index:2');
+    fbub.push(b);b.animate([{transform:'translateY(0) scale(.6)',opacity:1},{transform:'translateY(-72px) scale(1.2)',opacity:.2}],{duration:R(700,1100),iterations:Infinity,delay:-R(0,1000),easing:'ease-in'});}
+  say(`At <b>100 °C</b> the water <b>boils</b>! Bubbles of <b>steam</b> form inside the water and rise. 🫧`);
+  await w(3000);
+  // steam particles
+  const PTS=[[170,300],[171,228],[190,219],[310,240],[500,289],[712,344],[712,374],[740,470]];
+  const dist=[0];for(let i=1;i<PTS.length;i++){const dx=PTS[i][0]-PTS[i-1][0],dy=PTS[i][1]-PTS[i-1][1];dist.push(dist[i-1]+Math.hypot(dx,dy));}
+  const tot=dist[dist.length-1];
+  const steamL=L('steam 💨','left:228px;top:186px');
+  const mkTrip=(i,n)=>{const d=mk('','left:0;top:0;width:12px;height:12px;border-radius:50%;z-index:4;border:2px solid #9aa3b5;background:#fff');
+    const k=PTS.map((p,j)=>{const o=dist[j]/tot;const cold=o>=dist[4]/tot;return{transform:`translate(${p[0]-6+(j==7?R(-30,30):0)}px,${p[1]-6}px) scale(${cold?1.25:1})`,background:cold?'#2c66cf':'#fff',borderColor:cold?'#2c66cf':'#9aa3b5',borderRadius:cold&&j>=6?'50% 50% 50% 50%/60% 60% 40% 40%':'50%',offset:o};});
+    d.animate(k,{duration:5200,iterations:Infinity,delay:-i*5200/n,easing:'linear'});return d;};
+  const trips=[];for(let i=0;i<7;i++)trips.push(mkTrip(i,14));
+  say(`Steam is a <b>gas</b>. Its particles zoom up out of the flask and along the tube, into the <b>condenser</b>. 💨`);
+  await w(3400);
+  // cold water
+  svg.querySelectorAll('.flow').forEach(f=>{f.setAttribute('opacity','1');f.animate([{strokeDashoffset:0},{strokeDashoffset:-52}],{duration:700,iterations:Infinity,easing:'linear'});});
+  svg.querySelector('.jacket').setAttribute('stroke','#bfe0ff');
+  L('⬆ cold water IN','left:570px;top:424px');L('warm water OUT ⬆','left:300px;top:136px');
+  say(`The condenser has a jacket of <b>cold water</b> flowing around the tube: in at the bottom, out at the top. ❄️`);
+  await w(3400);
+  for(let i=7;i<14;i++)trips.push(mkTrip(i,14));
+  L('liquid water 💧','left:470px;top:330px');
+  say(`The <b>cold water cools the steam</b>. Its particles lose energy, slow down and come together. The steam <b>condenses</b> into liquid water! 💧`);
+  an(bw,[{height:'0px',top:'500px'},{height:'64px',top:'436px'}],{duration:6000,easing:'linear'});
+  await w(4200);
+  const m=mk('note','left:452px;top:8px;width:494px;height:128px;background:#e3f7ec;border-color:#18a058;font-size:15.5px;z-index:6',
+    `<b style="color:#18a058;font-size:13px;letter-spacing:.08em">✔ SHORT ANSWER 14: MODEL ANSWER</b><br>Water <b>absorbs heat energy</b> and <b>boils</b> into <b>steam at 100 °C</b>. In the condenser, <b>cold water cools the steam</b>, causing it to <b>condense</b> into liquid water.`);
+  an(m,[{transform:'scale(2.4) rotate(-10deg)',opacity:0},{transform:'none',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();
+  say(`✅ Exam answer: water <b>absorbs heat energy</b> and <b>boils</b> into <b>steam at 100 °C</b>. In the condenser, <b>cold water cools the steam</b>, so it <b>condenses</b> into liquid water.`);
+  await w(4000);
+}},
+
+/* 6 */ {t:'Condensing at home + order the steps', run:async w=>{
+  const M=panel(13,8,300,504,'🪞 Breath on a cold mirror','Warm breath has <b>water vapour</b>. The <b>cold</b> mirror cools it, so it <b>condenses</b> into tiny droplets.');pop(M);
+  const mir=mk('','left:60px;top:48px;width:180px;height:240px;border-radius:50%/40%;border:8px solid #b08a5a;background:linear-gradient(135deg,#e9f3ff,#bcd3ea 50%,#e9f3ff);overflow:hidden',null,M);
+  const mist=mk('','left:0;top:0;width:100%;height:100%;background:rgba(255,255,255,0);transition:background 2s',null,mir);
+  const face=mk('','left:112px;top:300px;font-size:54px;line-height:1','😮‍💨',M);
+  say(`You can see <b>condensing</b> at home! Breathe onto a <b>cold mirror</b>… 🪞`);
+  await w(1200);
+  for(let i=0;i<14;i++){const v=mk('','left:'+R(120,170)+'px;top:300px;width:12px;height:12px;border-radius:50%;background:#c3cad5;z-index:3',null,M);
+    v.animate([{transform:'translate(0,0)',opacity:.9},{transform:`translate(${R(-60,60)}px,${R(-170,-110)}px)`,opacity:0}],{duration:1400,delay:i*140,easing:'ease-out',fill:'forwards'});}
+  await w(1600);
+  mist.style.background='rgba(255,255,255,.65)';
+  for(let i=0;i<26;i++){const d=mk('','left:'+R(14,150)+'px;top:'+R(30,200)+'px;width:'+R(5,10)+'px;height:'+R(5,10)+'px;border-radius:50%;background:#7fb2e5;opacity:.85',null,mir);pop(d,i*60);}
+  say(`The <b>water vapour</b> in your warm breath hits the cold glass, cools down and <b>condenses</b> into tiny droplets. It goes misty! 💧`);
+  await w(3800);
+  // order game
+  const STEPS=['🔥 The flame heats the flask','⚡ Water absorbs heat energy','🫧 Water boils at 100 °C','💨 Steam travels into the condenser','❄️ Cold water cools the steam','💧 Steam condenses into liquid','🥛 Drops drip into the beaker'];
+  const h=mk('','left:330px;top:10px;width:616px;text-align:center;font-size:21px;font-weight:800;color:#4a2ea6','🔢 Tap the steps in the right order!');pop(h);
+  for(let i=0;i<7;i++){const s=mk('oslot',`left:650px;top:${50+i*64}px`,(i+1)+'.');pop(s,i*50);}
+  const order=[...STEPS.keys()].sort(()=>Math.random()-.5);let next=0;
+  const cards=order.map((si,pos)=>{const c=mk('ocard',`left:335px;top:${50+pos*64}px`,STEPS[si]);c.si=si;pop(c,pos*60);
+    c.onclick=()=>{if(c.classList.contains('done'))return;
+      if(c.si===next){c.classList.add('done');c.style.left='650px';c.style.top=(50+next*64)+'px';beep(500+next*70,.08);next++;}
+      else{shake(c);boo();}};return c;});
+  window.AUTOPLAY=()=>{const c=cards.find(c=>c.si===next);if(c)c.click();};
+  say(`Now your turn! 👆 Tap the distillation steps in the <b>right order</b>, from the flame to the beaker.`);
+  await w.until(()=>next>=7);
+  yay();confetti(90);
+  say(`🏆 Perfect order! Heat, <b>boil</b> at 100 °C, steam travels, <b>cold water cools it</b>, it <b>condenses</b>, then drips into the beaker.`);
+  await w(3000);
+}},
+
+/* 7 */ {t:'Boiling or condensing?', run:async w=>{
+  const r=await sortGame(w,{bins:['🔥 Boiling (in the flask)','❄️ Condensing (in the condenser)'],colors:['#e06a1b','#2c66cf'],top:170,
+    items:[['absorbs heat energy',0],['liquid → gas',0],['particles speed up',0],['happens at 100 °C',0],['cooled by cold water',1],['gas → liquid',1],['particles slow down',1],['droplets form',1]],
+    intro:`Sorting time! 🎮 Tap a card, then tap <b>Boiling</b> or <b>Condensing</b>. Press <b>Check</b> when every card is sorted.`});
+  say(r.ok===r.total?`🌟 Perfect! <b>Boiling</b> takes IN heat: liquid → gas. <b>Condensing</b> gives OUT heat: gas → liquid.`:`You got <b>${r.ok} of ${r.total}</b>. Remember: <b>boiling</b> takes in heat (liquid → gas), <b>condensing</b> is cooling (gas → liquid).`);
+  const n=mk('note','left:13px;top:8px;width:933px;height:44px;padding:6px 16px;text-align:center;font-size:18px;z-index:6',`🔥 <b>Boiling</b>: liquid → gas (needs heat) &nbsp; ⇄ &nbsp; ❄️ <b>Condensing</b>: gas → liquid (cooling)`);pop(n);
+  await w(3400);
+}},
+
+/* 8 */ {t:'Exam check', run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 5 · MCQ 18',q:'What happens to most solid metals when they are heated?',o:['They shrink in size','They expand as particles vibrate more','They immediately turn into gas','They lose all their weight'],a:1,
+      why:'Heat makes the particles <b>vibrate more</b> and take up more space, so the metal <b>expands</b>. The particles themselves do not get bigger.'},
+    {src:'Worksheet · Unit 5 · Short answer 14',q:'Explain how the water in the flask changes to a gas and how steam changes back into a liquid in the condenser.',
+      model:'Water <b>absorbs heat energy</b> and <b>boils</b> into <b>steam at 100 °C</b>, while in the condenser <b>cold water cools the steam</b>, causing it to <b>condense</b> into liquid water.'},
+    {src:'Practice',q:'Why are small gaps left between the rails of a railway track?',o:['To save metal','So the rails can expand on hot days without bending','So rain can drain away','To make the train go faster'],a:1,
+      why:'On hot days the metal rails <b>expand</b>. The gaps give them room to grow instead of buckling.'},
+    {src:'Practice',q:'When a metal bar is heated, what happens to its particles?',o:['Each particle gets bigger','They vibrate more and move further apart','They stop moving','They disappear'],a:1,
+      why:'The particles stay the <b>same size</b>. They <b>vibrate more</b> and the gaps between them get bigger.'},
+  ]);
+}},
+
+/* 9 */ {t:'You did it!', run:async w=>{
+  say(`🎉 You finished <b>Particles and heat</b>! Here's everything you learned…`);
+  const B=[['🧊','Solid: neat rows, <b>vibrate</b> on the spot.'],['💧','Liquid: jumbled, <b>slide</b> past each other.'],['💨','Gas: far apart, <b>zoom</b> around fast.'],['🔥','Heated metals <b>expand</b> as particles <b>vibrate more</b>.'],
+    ['⚠️','Particles do <b>NOT</b> get bigger. The <b>gaps</b> do!'],['🚆','Gaps in rails and bridges allow for <b>expansion</b>.'],['🫧','Water <b>absorbs heat</b> and <b>boils</b> into steam at <b>100 °C</b>.'],['❄️','<b>Cold water cools</b> steam so it <b>condenses</b> to liquid.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:448px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🌈 Next lesson: Acids, alkalis &amp; the pH scale ➜');f.onclick=()=>{location.href='l09-acids-alkalis.html';};pop(f);
+  say(`You're a <b>particle pro</b>! 🧠 Heat makes particles move more: they <b>expand</b>, <b>boil</b>, and when cooled they <b>condense</b>.`);
+  await w(2600);
+}},
+  ]
+});
+</script>
+</body>
+</html>

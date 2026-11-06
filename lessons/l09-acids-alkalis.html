@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Acids, alkalis &amp; the pH scale</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.phb{position:absolute;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.15);transition:box-shadow .3s,transform .3s}
+.phb.glow{box-shadow:0 0 0 4px #1f2433,0 0 18px 6px #ffd84d;z-index:4}
+.note{position:absolute;background:#fff;border:3px solid #ece8f8;border-radius:18px;padding:10px 16px;font-size:17px;font-weight:700;line-height:1.4}
+.tube{position:absolute;border:3px solid #5a6478;border-top:none;border-radius:0 0 20px 20px;background:rgba(240,246,255,.6);overflow:hidden}
+.tube .liq{position:absolute;left:0;right:0;bottom:0;transition:background 1s}
+.beak{position:absolute;border:4px solid #5a6478;border-top:none;border-radius:0 0 18px 18px;background:rgba(240,246,255,.4);overflow:hidden}
+.strip{position:absolute;width:24px;height:130px;border-radius:4px;box-shadow:0 2px 0 rgba(0,0,0,.15);overflow:hidden;z-index:3}
+.strip .tip{position:absolute;left:0;right:0;bottom:0;height:70px;transition:background 1.2s}
+.sub{position:absolute;width:110px;height:72px;border-radius:14px;background:#fff;border:3px solid #e3e0f0;text-align:center;font-size:13.5px;font-weight:800;line-height:1.15;padding-top:4px;transition:border-color .3s,background .3s}
+.sub .e{font-size:30px;display:block;line-height:1.1}
+.sub.click{cursor:pointer}
+.sub.ok{border-color:#18a058;background:#e3f7ec}
+.qrow{position:absolute;left:13px;width:933px;height:62px;background:#fff;border:3px solid #ece8f8;border-radius:16px;display:flex;align-items:center;padding:0 16px;font-size:17px;font-weight:700}
+.qrow .ans{position:absolute;right:14px;top:8px;height:40px;display:flex;align-items:center;gap:8px;font-size:19px;font-weight:800;color:#18a058}
+input.ph{-webkit-appearance:none;appearance:none;width:100%;height:28px;border-radius:14px;outline:none;
+  background:linear-gradient(90deg,#e3262e,#ee4a2b,#f47b20,#f9a11b,#f6c917,#d9d51f,#3fae49,#3aa0d8,#2c7fd6,#2c5fcf,#5b47c8,#6a3dbf,#7432b0,#6a1f9a)}
+input.ph::-webkit-slider-thumb{-webkit-appearance:none;width:44px;height:44px;border-radius:50%;background:#fff;border:5px solid #1f2433;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+input.ph::-moz-range-thumb{width:36px;height:36px;border-radius:50%;background:#fff;border:5px solid #1f2433;cursor:pointer}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 9 · Acids, alkalis & the pH scale (Unit 5) */
+const UI=[null,'#e3262e','#ee4a2b','#f47b20','#f9a11b','#f6c917','#d9d51f','#3fae49','#3aa0d8','#2c7fd6','#2c5fcf','#5b47c8','#6a3dbf','#7432b0','#6a1f9a'];
+const CNAME=p=>p<=2?'red':p<=4?'orange':p<=6?'yellow':p===7?'green':p<=10?'blue':'purple';
+const KIND=p=>p<=3?'strong acid':p<=6?'weak acid':p===7?'neutral':p<=10?'weak alkali':'strong alkali';
+const EX=[null,'🫃 stomach acid','🍋 lemon juice','🥤 cola','🥗 vinegar','☕ black coffee','🥛 milk','💧 pure water','🌊 sea water','🛁 bath salts','🧼 soap','🧴 ammonia cleaner','🧽 floor cleaner','🫧 bleach','🎨 paint stripper'];
+const TXT=p=>(p===5||p===6)?'#4a3a00':'#fff';
+const STAMP=(t,css)=>{const s=mk('stamp',css,t);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-5deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+const R=(a,b)=>a+Math.random()*(b-a);
+const BX=p=>18+(p-1)*66;
+function scale14(y,h,delay){const b=[];for(let p=1;p<=14;p++){const e=mk('phb',`left:${BX(p)}px;top:${y}px;width:62px;height:${h}px;background:${UI[p]};color:${TXT(p)}`,p);b[p]=e;if(delay!=null)pop(e,p*delay);}return b;}
+
+Lesson.start({
+  id:'l09', num:9, unit:5, emoji:'🌈', title:'Acids, alkalis & the pH scale',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today we meet <b>acids</b>, <b>alkalis</b> and a rainbow called the <b>pH scale</b>. Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'Sour, soapy or neither?', run:async w=>{
+  say(`Some liquids are <b>acids</b>, some are <b>alkalis</b>, and some are <b>neutral</b>. Let's meet one of each! 🧪`);
+  await w(2400);
+  const A=panel(13,8,303,330,'🍋 Acids','Acids taste <b>sour</b>, like lemon juice and vinegar.');pop(A);
+  const lem=mk('','left:96px;top:56px;font-size:96px;line-height:1','🍋',A);loop(lem,[{transform:'scale(1,1)'},{transform:'scale(1.12,.86)'}],500,{direction:'alternate'});
+  for(let i=0;i<4;i++){const d=mk('','left:'+(130+i*12)+'px;top:160px;width:10px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#f5d64a',null,A);
+    d.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(70px)',opacity:0}],{duration:900,iterations:Infinity,delay:i*220});}
+  const t1=mk('tag','left:190px;top:200px;background:#fde3e3;color:#c0262e','sour! 😖',A);pop(t1,400);
+  say(`🍋 <b>Acids</b> taste <b>sour</b>, like lemon juice and vinegar.`);
+  await w(2800);
+  const B=panel(328,8,303,330,'🧼 Alkalis','Alkalis feel <b>soapy</b>, like soap and bath salts.');pop(B);
+  mk('','left:100px;top:76px;font-size:90px;line-height:1','🧼',B);
+  for(let i=0;i<7;i++){const s=R(14,30);const bb=mk('',`left:${R(70,220)}px;top:170px;width:${s}px;height:${s}px;border-radius:50%;border:2px solid #9b86e8;background:radial-gradient(circle at 35% 30%,#fff,rgba(200,185,255,.4))`,null,B);
+    bb.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.2},{transform:`translate(${R(-20,20)}px,-150px)`,opacity:0}],{duration:R(1800,2600),iterations:Infinity,delay:-R(0,2000)});}
+  say(`🧼 <b>Alkalis</b> feel <b>soapy</b>, like soap and bath salts.`);
+  await w(2800);
+  const C=panel(643,8,303,330,'💧 Neutral','Pure water is <b>neutral</b>: neither an acid nor an alkali.');pop(C);
+  for(let i=0;i<3;i++){const r=mk('','left:91px;top:110px;width:120px;height:40px;border-radius:50%;border:3px solid #5d9cf5',null,C);r.animate([{transform:'scale(.2)',opacity:1},{transform:'scale(1.6)',opacity:0}],{duration:2100,iterations:Infinity,delay:i*700});}
+  const dr=mk('','left:122px;top:40px;font-size:60px;line-height:1','💧',C);loop(dr,[{transform:'translateY(-10px)'},{transform:'translateY(40px)'}],1050,{direction:'alternate',easing:'ease-in'});
+  say(`💧 <b>Pure water</b> is <b>neutral</b>: it's neither an acid nor an alkali.`);
+  await w(2800);
+  const n=mk('note','left:13px;top:350px;width:933px;height:162px;background:#fff8e6;border-color:#f2c200;display:flex;align-items:center;gap:20px;font-size:19px',
+    `<span style="font-size:64px;line-height:1" class="wn">⚠️</span><span style="flex:1">But in the lab we <b>NEVER</b> taste or touch chemicals! Many acids and alkalis are <b>corrosive</b>. Instead we use an <b>indicator</b>: a dye that <b>changes colour</b>.</span><span class="ind" style="display:block;width:46px;height:110px;border:4px solid #5a6478;border-top:none;border-radius:0 0 24px 24px;flex:none"></span>`);pop(n);
+  loop(n.querySelector('.wn'),[{transform:'scale(1)'},{transform:'scale(1.15)'}],500,{direction:'alternate'});
+  n.querySelector('.ind').animate(UI.slice(1).map(c=>({background:c})),{duration:5000,iterations:Infinity,direction:'alternate'});
+  say(`⚠️ But in the lab we <b>never</b> taste or touch chemicals! Instead we use an <b>indicator</b>, a dye that <b>changes colour</b>. 🌈`);
+  await w(3200);
+}},
+
+/* 2 */ {t:'The pH scale', run:async w=>{
+  say(`Scientists measure how acidic or alkaline something is with the <b>pH scale</b>. It goes from <b>1 to 14</b>. Watch it build! 🌈`);
+  await w(1200);
+  const b=scale14(118,80,null);
+  for(let p=1;p<=14;p++){an(b[p],[{transform:'translateY(-300px) rotate(-30deg)',opacity:0},{transform:'none',opacity:1}],{duration:600,easing:'cubic-bezier(.3,1.35,.5,1)'});beep(300+p*45,.06);await w(150);}
+  await w(1600);
+  const lab=(x,wd,t,c)=>{const e=mk('',`left:${x}px;top:76px;width:${wd}px;height:34px;border-top:4px solid ${c};text-align:center;font-weight:800;font-size:17px;color:${c};padding-top:4px`,t);pop(e);return e;};
+  lab(18,392,'ACIDS (below 7)','#e3262e');lab(414,62,'',`#3fae49`);lab(480,458,'ALKALIS (above 7)','#5b47c8');
+  const nt=mk('tag','left:404px;top:86px;background:#e3f7ec;color:#18a058;font-size:13px','NEUTRAL');pop(nt);
+  say(`Below 7 are <b>acids</b>. Above 7 are <b>alkalis</b>. Right in the middle, <b>pH 7</b> is <b>neutral</b>.`);
+  await w(3600);
+  const la=mk('','left:18px;top:212px;width:392px;height:36px;border-radius:18px;background:linear-gradient(90deg,#e3262e,#f9a11b 70%,#f6c917);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;padding-left:14px','◀ stronger acid');
+  const ra=mk('','left:480px;top:212px;width:458px;height:36px;border-radius:18px;background:linear-gradient(90deg,#3aa0d8,#5b47c8 60%,#6a1f9a);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:flex-end;padding-right:14px','stronger alkali ▶');
+  an(la,[{clipPath:'inset(0 0 0 100%)'},{clipPath:'inset(0 0 0 0)'}],{duration:900});an(ra,[{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'}],{duration:900});
+  const pt=mk('','left:'+(BX(6)+12)+'px;top:64px;font-size:38px;line-height:1;z-index:5','👇');
+  say(`Here's the key rule: <b>the lower the number, the stronger the acid</b>. 👇`);
+  for(let p=6;p>=1;p--){await an(pt,[{transform:'translateY(-6px)'},{transform:'translateY(4px)'}],{duration:300});pt.style.left=(BX(p)+12)+'px';b[p].classList.add('glow');beep(500-p*30,.08);await w(250);if(p>1)b[p].classList.remove('glow');}
+  await w(2200);
+  STAMP('✔ Q19: pH 1 = strongly acidic','left:24px;top:270px;font-size:21px');
+  say(`✅ So a liquid with <b>pH 1</b> is a <b>strongly acidic</b> liquid. That's short answer 19!`);
+  await w(3200);
+  b[1].classList.remove('glow');pt.remove();
+  const dr=mk('','left:960px;top:30px;font-size:40px;line-height:1;z-index:5','💧');
+  await an(dr,[{transform:'translateX(0)'},{transform:`translateX(${BX(7)+11-960}px)`}],{duration:1200,easing:'cubic-bezier(.3,1.2,.5,1)'});
+  b[7].classList.add('glow');beep(700,.1);
+  STAMP('✔ Q18: Water is neutral because its pH is 7','left:410px;top:270px;font-size:21px');
+  say(`💧 And <b>water</b>? It's <b>neutral</b>, because its <b>pH is 7</b>. That's short answer 18!`);
+  await w(3400);
+  // quick pick
+  const q=mk('','left:24px;top:372px;width:470px;font-size:23px;font-weight:800;color:#4a2ea6;line-height:1.25','🤔 Quick! Which is the <u>stronger</u> acid?');pop(q);
+  let picked=false;
+  const b2=btn('bigbtn','left:500px;top:356px;width:200px;height:84px;background:'+UI[2]+';display:flex;align-items:center;justify-content:center','pH 2',()=>{if(picked)return;picked=true;b5.style.opacity=.3;yay();confetti(70);
+    STAMP('✔ pH 2: lower number!','left:540px;top:456px;font-size:20px');});
+  const b5=btn('bigbtn','left:730px;top:356px;width:200px;height:84px;background:'+UI[5]+';color:#4a3a00;display:flex;align-items:center;justify-content:center','pH 5',()=>{if(picked)return;boo();shake(b5);say(`Not quite! 🤔 Remember: the <b>lower</b> the number, the <b>stronger</b> the acid. Try again!`);});
+  pop(b2,100);pop(b5,200);
+  window.AUTOPLAY=()=>{if(!picked)b2.click();};
+  say(`Your turn! 👆 Which is the <b>stronger acid</b>: pH 2 or pH 5? Tap it!`);
+  await w.until(()=>picked);
+  say(`🎉 Yes! <b>pH 2</b> is the stronger acid, because it has the <b>lower number</b>.`);
+  await w(2600);
+}},
+
+/* 3 */ {t:'The litmus test', run:async w=>{
+  const BXs=[110,405,700],LQ=['#fff0a0','#dff0ff','#e6ddff'],NM=['🍋 lemon juice (acid)','💧 pure water (neutral)','🧼 soapy water (alkali)'];
+  const beaks=BXs.map((x,i)=>{const b=mk('beak',`left:${x}px;top:290px;width:150px;height:150px`);mk('','left:0;right:0;bottom:0;height:106px;background:'+LQ[i],null,b);pop(b,i*120);
+    const t=mk('tag',`left:${x-20}px;top:452px;width:190px;text-align:center;background:#f4f2fb;color:#1f2433`,NM[i]);pop(t,i*120);return b;});
+  const strips=BXs.map(x=>[['#2c66cf',x+44],['#e04848',x+84]].map(([c,sx])=>{const s=mk('strip',`left:${sx}px;top:70px;background:${c}`);s.innerHTML=`<div class="tip" style="background:${c}"></div>`;pop(s);return s;}));
+  say(`<b>Litmus paper</b> is a simple indicator. It comes in two colours: <b>blue</b> and <b>red</b>. Let's dip them into three liquids! 🧻`);
+  await w(3600);
+  const dip=async(i,newB,newR)=>{const [sb,sr]=strips[i];
+    await Promise.all([an(sb,[{transform:'none'},{transform:'translateY(200px)'}],{duration:800,easing:'ease-in'}),an(sr,[{transform:'none'},{transform:'translateY(200px)'}],{duration:800,easing:'ease-in',delay:100})]);
+    beep(400,.1,'sine');if(newB)sb.querySelector('.tip').style.background=newB;if(newR)sr.querySelector('.tip').style.background=newR;
+    await w(1300);
+    await Promise.all([an(sb,[{transform:'translateY(200px)'},{transform:'none'}],{duration:700}),an(sr,[{transform:'translateY(200px)'},{transform:'none'}],{duration:700})]);};
+  const res=(i,t,c)=>{const e=mk('tag',`left:${BXs[i]-20}px;top:22px;width:190px;text-align:center;background:${c}22;color:${c};font-size:15px`,t);pop(e);return e;};
+  // acid
+  say(`First, the <b>acid</b>: lemon juice. In go both strips… 🍋`);
+  await dip(0,'#e04848',null);
+  res(0,'🔵 ➜ 🔴 blue turns RED','#c0262e');
+  say(`The <b>blue</b> litmus turned <b>RED</b>! The red one stayed red. Acids turn blue litmus red. 🔴`);
+  await w(3400);
+  // alkali
+  say(`Now the <b>alkali</b>: soapy water. 🧼`);
+  await dip(2,null,'#2c66cf');
+  res(2,'🔴 ➜ 🔵 red turns BLUE','#2c66cf');
+  say(`This time the <b>red</b> litmus turned <b>BLUE</b>! Alkalis turn red litmus blue. 🔵`);
+  await w(3400);
+  // neutral
+  say(`Finally, <b>pure water</b>, which is neutral. 💧`);
+  await dip(1,null,null);
+  res(1,'no change 😐','#18a058');
+  say(`Nothing happened! In a <b>neutral</b> liquid, litmus does <b>not change colour</b>.`);
+  await w(3000);
+  STAMP('✔ Q17: Blue litmus turns RED in acid','left:250px;top:226px;font-size:23px');
+  say(`✅ Exam answer for short answer 17: in an acid, <b>blue litmus turns red</b>. In an alkali, red litmus turns blue.`);
+  await w(3600);
+}},
+
+/* 4 */ {t:'Universal Indicator', run:async w=>{
+  say(`Litmus only tells us acid or alkali. <b>Universal Indicator</b> tells us <b>how strong</b>, with a different colour for each pH! 🌈`);
+  const tubes=[];for(let p=1;p<=14;p++){const x=30+(p-1)*65;const t=mk('tube',`left:${x}px;top:40px;width:38px;height:104px`);const l=mk('liq','height:66px;background:#eef3fa',null,t);
+    mk('',`left:${x}px;top:148px;width:38px;text-align:center;font-weight:800;font-size:16px`,p);tubes[p]=l;pop(t,p*30);}
+  await w(2600);
+  const dropper=mk('','left:0;top:0;font-size:26px;line-height:1;z-index:5','💧');
+  for(let p=1;p<=14;p++){const x=30+(p-1)*65+6;
+    await an(dropper,[{transform:`translate(${x}px,0px)`,opacity:1},{transform:`translate(${x}px,40px)`,opacity:.3}],{duration:260,easing:'ease-in'});
+    tubes[p].style.background=UI[p];beep(300+p*50,.06);}
+  dropper.remove();
+  const G=[[1,2,'red'],[3,4,'orange'],[5,6,'yellow'],[7,7,'green'],[8,10,'blue'],[11,14,'purple']];
+  G.forEach(([a,b,n],i)=>{let x=30+(a-1)*65,wd=(b-a)*65+38;if(a===b){x-=12;wd=62;}const c=mk('',`left:${x}px;top:172px;width:${wd}px;height:26px;border-radius:13px;background:${UI[b]};color:${b>=5&&b<=6?'#4a3a00':'#fff'};font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center`,n);pop(c,i*120);});
+  say(`<b>Red</b> for strong acids, then <b>orange</b>, <b>yellow</b>, <b>green</b> for neutral, <b>blue</b>, and <b>purple</b> for strong alkalis!`);
+  await w(4000);
+  const Pn=panel(13,214,933,298,'🎚️ The pH explorer','');pop(Pn);
+  const big=mk('tube','left:40px;top:44px;width:84px;height:230px',null,Pn);const bl=mk('liq','height:150px;background:'+UI[7],null,big);
+  const sw=mk('','left:170px;top:62px;width:730px',`<input type="range" class="ph" min="1" max="14" step="1" value="7">`,Pn);
+  const sl=sw.querySelector('input');
+  for(let p=1;p<=14;p++)mk('',`left:${170+12+(p-1)*(706/13)-8}px;top:104px;width:16px;text-align:center;font-size:14px;font-weight:800;color:#626a80`,p,Pn);
+  const ro=mk('','left:170px;top:140px;width:730px;font-size:30px;font-weight:800',``,Pn);
+  const ex=mk('','left:170px;top:196px;width:730px;font-size:20px;font-weight:700;color:#3a3f52',``,Pn);
+  const upd=()=>{const p=+sl.value;bl.style.background=UI[p];ro.innerHTML=`pH ${p} · <span style="color:${p===5||p===6?'#b39500':UI[p]}">${CNAME(p)}</span> · ${KIND(p)}`;ex.innerHTML=`For example: <b>${EX[p]}</b>`;};
+  sl.addEventListener('input',upd);upd();
+  say(`Let's explore! Watch the slider sweep from <b>pH 1</b> to <b>pH 14</b>. 👀`);
+  for(let p=1;p<=14;p++){sl.value=p;upd();beep(300+p*40,.04);await an(bl,[{transform:'scaleY(.96)'},{transform:'none'}],{duration:220});}
+  await w(1200);
+  sl.value=7;upd();
+  const hint=mk('tag','left:640px;top:14px;background:#efe9ff;color:#4a2ea6','👆 drag the white circle!',Pn);pop(hint);loop(hint,[{transform:'translateX(0)'},{transform:'translateX(-10px)'}],500,{direction:'alternate'});
+  say(`Your turn! 👆 Drag the slider and watch the indicator change colour. Can you find <b>green</b>, neutral pH 7?`);
+  await w(4000);
+}},
+
+/* 5 */ {t:"Chen's pH chart", run:async w=>{
+  const h=mk('tag','left:13px;top:8px;background:#efe9ff;color:#4a2ea6;font-size:17px',"📋 Chen's pH chart (tested with Universal Indicator)");pop(h);
+  const b=scale14(132,52,25);b.forEach(e=>e&&(e.style.fontSize='22px'));
+  mk('','left:18px;top:190px;font-size:14px;font-weight:800;color:#c0262e','◀ more acidic');mk('','left:810px;top:190px;width:128px;text-align:right;font-size:14px;font-weight:800;color:#5b47c8','more alkaline ▶');
+  const S=[['🍋','lemon juice',2],['🥗','vinegar',4],['🛁','bath salts',9],['🧽','floor cleaner',12],['🎨','paint stripper',14]];
+  say(`Chen tested five chemicals with <b>Universal Indicator</b> and put them on a pH chart. Here they come! 🚚`);
+  await w(1400);
+  const subs=S.map(([e,n,p],i)=>{const cx=BX(p)+31;const x=Math.min(cx-55,836);
+    const s=mk('sub',`left:${x}px;top:40px`,`<span class="e">${e}</span>${n}`);const ar=mk('',`left:${cx-9}px;top:112px;font-size:16px;color:#1f2433;line-height:1`,'▼');
+    an(s,[{transform:'translateX(700px)',opacity:0},{transform:'none',opacity:1}],{duration:700,delay:i*250,easing:'cubic-bezier(.3,1.2,.5,1)'});an(ar,[{opacity:0},{opacity:1}],{delay:i*250+600});s.p=p;return s;});
+  await w(2200);
+  say(`Lemon juice is <b>2</b>, vinegar <b>4</b>, bath salts <b>9</b>, floor cleaner <b>12</b> and paint stripper <b>14</b>. Now let's answer Chen's questions!`);
+  await w(3800);
+  const Q=[['(a) Write down the pH of vinegar.'],['(b) Colour of Universal Indicator with paint stripper?'],['(c) The pH of a neutral solution?'],['(d) Which chemical is the most acidic?']];
+  const rows=Q.map((q,i)=>mk('qrow',`top:${226+i*72}px`,q[0]));rows.forEach((r,i)=>pop(r,i*80));
+  await w(800);
+  // (a)
+  b[4].classList.add('glow');subs[1].classList.add('ok');
+  const a1=mk('ans','','✔ pH 4',rows[0]);pop(a1);yay();
+  say(`(a) Find vinegar on the chart… its arrow points to <b>4</b>. The pH of vinegar is <b>4</b>.`);
+  await w(3200);b[4].classList.remove('glow');
+  // (b)
+  b[14].classList.add('glow');subs[4].classList.add('ok');
+  const a2=mk('ans','',`<span style="display:inline-block;width:20px;height:36px;border:3px solid #5a6478;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;position:relative"><span class="f" style="position:absolute;left:0;right:0;bottom:0;height:24px;background:#eef3fa;transition:background 1.2s"></span></span><span style="color:${UI[13]}">✔ Purple</span>`,rows[1]);pop(a2);
+  await w(300);a2.querySelector('.f').style.background=UI[14];yay();
+  say(`(b) Paint stripper is <b>pH 14</b>, a strong alkali. So Universal Indicator turns <b>purple</b>. 🟣`);
+  await w(3400);b[14].classList.remove('glow');
+  // (c)
+  b[7].classList.add('glow');
+  const a3=mk('ans','','✔ pH 7 (green)',rows[2]);pop(a3);yay();
+  say(`(c) A <b>neutral</b> solution, like pure water, has a pH of <b>7</b>. 🟢`);
+  await w(3000);b[7].classList.remove('glow');
+  // (d) interactive
+  rows[3].style.borderColor='#6a45d8';
+  const hint=mk('ans','color:#6a45d8','👆 Tap it on the chart!',rows[3]);pop(hint);
+  let done=false;
+  subs.forEach(s=>{s.classList.add('click');s.onclick=()=>{if(done)return;
+    if(s.p===2){done=true;s.classList.add('ok');b[2].classList.add('glow');hint.remove();const a4=mk('ans','','✔ Lemon juice (pH 2)',rows[3]);pop(a4);yay();confetti(80);}
+    else{boo();shake(s);say(`Not that one! 🤔 The <b>lower</b> the pH number, the <b>more acidic</b> it is. Find the lowest number!`);}};});
+  window.AUTOPLAY=()=>{if(!done)subs[0].click();};
+  say(`(d) Your turn! 👆 Tap the <b>most acidic</b> chemical on the chart. Hint: look for the <b>lowest</b> number.`);
+  await w.until(()=>done);
+  say(`🎉 Yes! <b>Lemon juice</b> is the most acidic, because it has the <b>lowest pH</b>: 2.`);
+  await w(3000);
+}},
+
+/* 6 */ {t:'Acid, neutral or alkali?', run:async w=>{
+  const r=await sortGame(w,{bins:['🔴 Acid (pH below 7)','🟢 Neutral (pH 7)','🟣 Alkali (pH above 7)'],colors:['#e04848','#18a058','#6a45d8'],top:170,
+    items:[['🍋 Lemon juice',0],['🥗 Vinegar',0],['🥤 Cola',0],['💧 Pure water',1],['🧂 Salt water',1],['🍬 Sugar water',1],['🧼 Soap',2],['🛁 Bath salts',2],['🧽 Floor cleaner',2]],
+    intro:`Sorting time! 🎮 Tap a card, then tap <b>Acid</b>, <b>Neutral</b> or <b>Alkali</b>. Press <b>Check</b> when every card is sorted.`});
+  say(r.ok===r.total?`🌟 Perfect sorting! Sour things like lemon juice are <b>acids</b>, soapy things are <b>alkalis</b>, and pure water is <b>neutral</b>.`:`You got <b>${r.ok} of ${r.total}</b>. Remember: sour = <b>acid</b>, soapy = <b>alkali</b>, and pure water is <b>neutral</b>.`);
+  const s=mk('','left:13px;top:8px;width:933px;height:44px;border-radius:22px;z-index:6;background:linear-gradient(90deg,'+UI.slice(1).join(',')+');color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:space-between;padding:0 18px;text-shadow:0 1px 2px rgba(0,0,0,.35)',`<span>◀ ACID</span><span>7 NEUTRAL</span><span>ALKALI ▶</span>`);
+  an(s,[{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'}],{duration:900});
+  await w(3400);
+}},
+
+/* 7 */ {t:'Exam check', run:async w=>{
+  const CH='Chen\'s chart: lemon juice <b>2</b>, vinegar <b>4</b>, bath salts <b>9</b>, floor cleaner <b>12</b>, paint stripper <b>14</b>.<br>';
+  await examCheck(w,[
+    {src:'Worksheet · Unit 5 · Short answer 17',q:'What colour does litmus change to in an acid?',o:['Blue litmus turns red','Red litmus turns blue','It turns green','It does not change'],a:0,
+      why:'In an acid, <b>blue litmus turns red</b>. (Red litmus turns blue in an alkali.)'},
+    {src:'Worksheet · Unit 5 · Short answer 18',q:'Is water an acid, an alkali or neutral? Give the reason.',model:'Water is <b>neutral</b> because its <b>pH is 7</b>.'},
+    {src:'Worksheet · Unit 5 · Short answer 19',q:'A liquid has a pH of 1. What type of liquid is it?',o:['Strongly acidic','Weakly acidic','Neutral','Strongly alkaline'],a:0,
+      why:'pH 1 is the <b>lowest</b> number, so it is a <b>strongly acidic</b> liquid.'},
+    {src:'Worksheet · Unit 5 · Chen\'s pH chart (a)',q:CH+'(a) Write down the pH of vinegar.',model:'The pH of vinegar is <b>4</b>.'},
+    {src:'Worksheet · Unit 5 · Chen\'s pH chart (b)',q:CH+'(b) Paint stripper is tested with Universal Indicator. What colour is the indicator after the test?',o:['Red','Green','Yellow','Purple'],a:3,
+      why:'Paint stripper is <b>pH 14</b>, a strong alkali, so Universal Indicator turns <b>purple</b>.'},
+    {src:'Worksheet · Unit 5 · Chen\'s pH chart (c)',q:'Pure water is neutral. Write down the pH of a neutral solution.',model:'A neutral solution has a pH of <b>7</b>.'},
+    {src:'Worksheet · Unit 5 · Chen\'s pH chart (d)',q:CH+'(d) Which chemical in the pH chart is the most acidic?',o:['Lemon juice','Vinegar','Bath salts','Paint stripper'],a:0,
+      why:'<b>Lemon juice</b> has the <b>lowest pH (2)</b>, so it is the most acidic.'},
+  ]);
+}},
+
+/* 8 */ {t:'You did it!', run:async w=>{
+  say(`🎉 You finished <b>Acids, alkalis and the pH scale</b>! Here's everything you learned…`);
+  const B=[['🍋','Acids: <b>pH below 7</b>. They taste sour.'],['🧼','Alkalis: <b>pH above 7</b>. They feel soapy.'],['💧','Water is <b>neutral</b> because its <b>pH is 7</b>.'],['📉','The <b>lower</b> the number, the <b>stronger</b> the acid. pH 1 = <b>strongly acidic</b>.'],
+    ['🔴','In acid, <b>blue litmus turns red</b>.'],['🔵','In alkali, <b>red litmus turns blue</b>.'],['🌈','Universal Indicator: red, orange, yellow, <b>green</b>, blue, <b>purple</b>.'],['📋','Chen: vinegar <b>4</b>, paint stripper <b>purple</b>, most acidic: <b>lemon juice</b>.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px;font-size:16px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:448px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🎮 Now test yourself in the Science Quest quiz! ➜');f.onclick=()=>{location.href='../quiz.html';};pop(f);
+  say(`You're a <b>pH pro</b>! 🧠 Remember: low number = strong acid, 7 = neutral, high number = strong alkali.`);
+  await w(2600);
+}},
+  ]
+});
+</script>
+</body>
+</html>

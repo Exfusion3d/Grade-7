@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Template lesson</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* TEMPLATE — copy this file to start a lesson. Stage is 960 x 520 px; place everything with mk(). */
+Lesson.start({
+  id:'template', num:0, unit:4, emoji:'🧪', title:'Template lesson',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ This is a template lesson. Press <b>Start</b>!`,
+  scenes:[
+    {t:'Animation demo', run:async w=>{
+      say(`Every scene <b>says</b> something and <b>animates</b> something. The scene waits for my voice to finish.`);
+      const a=card(13,8,222,244,'✨ A card','Cards hold a mini animation.', '#d66a0a');
+      const b=mk('','left:60px;top:30px;font-size:60px','🔔',a);loop(b,[{transform:'rotate(-20deg)'},{transform:'rotate(20deg)'}],300,{direction:'alternate'});
+      await w(2500);
+      const p=panel(260,8,686,244,'🧱 A panel','Panels have a title and a caption at the bottom.');pop(p);
+      const x=mk('','left:40px;top:60px;width:80px;height:80px;border-radius:16px;background:#5d9cf5',null,p);
+      await an(x,[{transform:'translateX(0)'},{transform:'translateX(480px) rotate(360deg)'}],{duration:1500});
+      const st=mk('stamp','left:330px;top:330px','✔ Stamp for answers');an(st,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-6deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();
+      say(`Use <b>stamp</b> to show an exam answer.`);
+    }},
+    {t:'Sort game demo', run:async w=>{
+      const r=await sortGame(w,{bins:['Living','Not living'],items:[['🦓 Zebra',0],['🪨 Rock',1],['🌳 Tree',0],['🦠 Virus',1]],
+        intro:`Tap a card, then tap the box it belongs in. Press <b>Check</b> when done.`});
+      say(r.ok===r.total?`Perfect sorting!`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+    }},
+    {t:'Exam check', run:async w=>{
+      await examCheck(w,[
+        {src:'Worksheet · Unit 4 · MCQ 1',q:'Living things produce young ones by __________.',o:['Respiration','Reproduction','Nutrition','Excretion'],a:1,why:'<b>Reproduction</b> means making new individuals of the same kind.'},
+        {src:'Worksheet · Unit 4 · Q3',q:'Explain why lions and tigers are different species.',model:'Same species = can reproduce to make <b>fertile</b> offspring. Lions and tigers make <b>infertile</b> ligers.'},
+      ]);
+    }},
+  ]
+});
+</script>
+</body>
+</html>

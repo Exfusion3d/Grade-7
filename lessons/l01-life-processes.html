@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Is it alive? The 7 life processes</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.gap{display:inline-block;min-width:64px;border-bottom:3px solid #6a45d8;color:#6a45d8;font-weight:800;text-align:center;padding:0 4px;line-height:1.25}
+.gap.filled{background:#e3f7ec;color:#17935b;border-color:#17935b;border-radius:6px}
+.lt{position:absolute;border-radius:18px;color:#fff;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.lt .L{font-size:58px;font-weight:900;line-height:1;margin-top:10px}
+.lt .ic{font-size:30px;line-height:1;margin-top:4px}
+.lt .wd{font-size:14px;font-weight:800;margin-top:6px;opacity:0}
+.mstamp{white-space:normal!important;text-align:center;font-size:15px!important;padding:4px 10px!important;border-width:3px!important;line-height:1.25}
+.mt{position:absolute;display:flex;align-items:center;background:#fff;border:3px solid #e3e0f0;border-radius:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #e3e0f0;transition:background .2s,border-color .2s}
+.mt.l{justify-content:center;font-size:19px}
+.mt.r{padding:0 14px;font-size:15.5px;font-weight:700;line-height:1.25}
+.mt.sel{background:#6a45d8;color:#fff;border-color:#6a45d8}
+.mt.done{background:#e3f7ec;border-color:#18a058;cursor:default;box-shadow:0 4px 0 #9fdcbb}
+.zp{cursor:pointer}
+.tapme{position:absolute;background:#ffd84d;color:#5c4300;border-radius:14px;padding:3px 12px;font-weight:800;font-size:15px}
+.ptag{position:absolute;border-radius:14px;padding:5px 12px;font-weight:800;font-size:17px;color:#fff;white-space:nowrap}
+.row4{position:absolute;display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #ece8f8;border-radius:16px;padding:0 12px;transition:background .3s,border-color .3s}
+.row4 .e{font-size:44px;line-height:1}
+.row4 .n{font-size:18px;font-weight:800}
+.row4 .v{position:absolute;right:10px;font-size:26px}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 1 · Is it alive? The 7 life processes (Unit 4) */
+const STAMP=(x,y,txt,par,extra)=>{const s=mk('stamp',`left:${x}px;top:${y}px;z-index:20;${extra||''}`,txt,par);
+  an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-5deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+const fillGap=(el,word)=>{el.innerHTML=word;el.classList.add('filled');an(el,[{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:450});beep(820,.08);};
+const GAP='<span class="gap">?</span>';
+const PROC=[['M','Movement','🏃','#e06a1b'],['R','Respiration','⚡','#e04848'],['S','Sensitivity','👃','#6a45d8'],['G','Growth','🌱','#18a058'],['R','Reproduction','🐣','#d63f8c'],['E','Excretion','💨','#2c66cf'],['N','Nutrition','🍎','#c58a00']];
+function bubble(par,x,y,txt,col){return mk('',`left:${x}px;top:${y}px;width:38px;height:38px;border-radius:50%;background:${col}22;border:2px solid ${col};color:${col};font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center`,txt,par);}
+
+const SCENES=[
+/* 1 */ {t:'Is it alive?',run:async w=>{
+  const h=mk('','left:0;top:4px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#4a2ea6','🤔 Is it alive?');pop(h);
+  const B=[['🚗','A car','It moves!'],['🔥','A fire','It grows!'],['🐈','A cat','It moves, eats, grows…']];
+  const P=B.map((b,i)=>{const p=mk('panel',`left:${40+i*300}px;top:50px;width:280px;height:160px`,'');pop(p,i*250);
+    const e=mk('big-emoji','left:104px;top:16px;font-size:66px',b[0],p);
+    mk('','left:0;top:106px;width:280px;text-align:center;font-size:18px;font-weight:800',`${b[1]}: <span style="color:#6a45d8">${b[2]}</span>`,p);return{p,e};});
+  loop(P[0].e,[{transform:'translateX(-80px)'},{transform:'translateX(46px)'}],1400,{direction:'alternate'});
+  loop(P[1].e,[{transform:'scale(.6)'},{transform:'scale(1.25)'}],1200,{direction:'alternate'});
+  loop(P[2].e,[{transform:'translateY(0) rotate(-4deg)'},{transform:'translateY(-10px) rotate(4deg)'}],500,{direction:'alternate'});
+  say(`Hi! I'm <b>Professor Atom</b> 👋 Today's big question is: how can we tell if something is <b>alive</b>?`);await w(2800);
+  say(`A car <b>moves</b>. A fire <b>grows</b>. So… are they alive? 🤔 Let's find out!`);await w(3000);
+  say(`Every living thing does <b>seven life processes</b>. Scientists remember them with a name: <b>MRS GREN</b>!`);
+  const T=PROC.map((p,i)=>{const t=mk('lt',`left:${44+i*126}px;top:232px;width:116px;height:150px;background:${p[3]}`,`<div class="L">${p[0]}</div><div class="ic">${p[2]}</div><div class="wd">${p[1]}</div>`);
+    an(t,[{transform:`translate(${(i-3)*90+(i%2?120:-120)}px,${i%2?320:-300}px) rotate(${i%2?200:-200}deg) scale(.3)`,opacity:0},{transform:'none',opacity:1}],{duration:900,delay:i*160,easing:'cubic-bezier(.3,1.3,.5,1)'});
+    beep(400+i*70,.08,'triangle',.1,i*.16);return t;});
+  await w(3200);
+  say(`<b>M</b>ovement, <b>R</b>espiration, <b>S</b>ensitivity, <b>G</b>rowth, <b>R</b>eproduction, <b>E</b>xcretion and <b>N</b>utrition.`);
+  for(let i=0;i<7;i++){const wd=T[i].querySelector('.wd');an(wd,[{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:350});
+    T[i].animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:400});beep(600+i*60,.06);await w(550);}
+  await w(2200);
+  [0,1].forEach(i=>{const x=mk('',`left:226px;top:8px;font-size:38px`,'❌',P[i].p);pop(x);P[i].e.style.filter='grayscale(1)';});
+  const ok=mk('','left:226px;top:8px;font-size:38px','✅',P[2].p);pop(ok,300);yay();
+  const info=mk('info','left:130px;top:400px;width:700px;padding:16px 20px;font-size:20px;line-height:1.5',
+    'A car and a fire only do one or two of these.<br>🐈 The cat does <b style="color:#ffd84d">ALL SEVEN</b>, so it is alive!');pop(info);
+  say(`A car and a fire only do one or two of these. The cat does <b>all seven</b>, so the cat is alive! ✅`);await w(3000);}},
+
+/* 2 */ {t:'M · R · S',run:async w=>{
+  say(`Let's meet the first three: <b>M</b>, <b>R</b> and <b>S</b>. Watch each one closely! 👀`);await w(2000);
+  const X=[13,328,643];
+  // Movement
+  const p1=panel(X[0],8,303,376,'🏃 Movement',`Most living organisms can change the shape and position of their bodies. This is called ${GAP}.`);pop(p1);
+  mk('','left:12px;top:132px;width:276px;height:4px;background:#e8dcc0;border-radius:2px',null,p1);
+  const ch=mk('big-emoji','left:0;top:66px;font-size:62px','🐆',p1);
+  ch.animate([{transform:'translateX(300px)'},{transform:'translateX(-80px)'}],{duration:2200,iterations:Infinity,easing:'linear'});
+  const sun=mk('big-emoji','left:214px;top:160px;font-size:40px','☀️',p1);loop(sun,[{transform:'rotate(0)'},{transform:'rotate(40deg)'}],1500,{direction:'alternate'});
+  const fl=mk('big-emoji','left:110px;top:170px;font-size:54px;transform-origin:50% 100%','🌻',p1);
+  loop(fl,[{transform:'rotate(-14deg)'},{transform:'rotate(14deg)'}],2400,{direction:'alternate'});
+  mk('','left:20px;top:240px;font-size:13px;font-weight:800;color:#18a058','plants move too, slowly!',p1);
+  say(`<b>Movement</b> 🏃 A cheetah sprints. Even a sunflower slowly turns to face the Sun!`);await w(3200);
+  fillGap(p1.querySelector('.gap'),'movement');
+  say(`Changing the shape and position of your body is called <b>movement</b>.`);await w(2800);
+  // Respiration
+  const p2=panel(X[1],8,303,376,'⚡ Respiration',`All living organisms break down some of the food they eat, to provide them with energy. This is called ${GAP}.`);pop(p2);
+  const cell=mk('','left:66px;top:50px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#eaffef,#bfeccd);border:4px solid #18a058',null,p2);
+  mk('','left:126px;top:110px;width:48px;height:48px;border-radius:50%;background:#7fd19c',null,p2);
+  mk('','left:96px;top:226px;font-size:13px;font-weight:800;color:#18a058','a living cell',p2);
+  for(let i=0;i<4;i++){const g=mk('',`left:6px;top:${100+(i%2)*40}px;font-size:22px`,'🍞',p2);
+    g.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate(120px,0) scale(.5)',opacity:1,offset:.7},{transform:'translate(130px,0) scale(0)',opacity:0}],{duration:2000,iterations:Infinity,delay:i*500});}
+  const fire=mk('big-emoji','left:132px;top:104px;font-size:38px','🔥',p2);loop(fire,[{transform:'scale(.8)'},{transform:'scale(1.25)'}],300,{direction:'alternate'});
+  for(let i=0;i<4;i++){const z=mk('',`left:160px;top:120px;font-size:24px`,'⚡',p2);
+    z.animate([{transform:'translate(0,0) scale(.3)',opacity:0},{opacity:1,offset:.3},{transform:`translate(110px,${(i-1.5)*40}px) scale(1.2)`,opacity:0}],{duration:1600,iterations:Infinity,delay:i*400});}
+  say(`<b>Respiration</b> happens inside every cell. Food is broken down to <b>release energy</b> ⚡ for everything else.`);await w(3400);
+  fillGap(p2.querySelector('.gap'),'respiration');
+  say(`Breaking down food to release energy is called <b>respiration</b>.`);await w(2600);
+  // Sensitivity
+  const p3=panel(X[2],8,303,376,'👃 Sensitivity',`Polar bears can ${GAP} things in their environment. With their nose they can sense the smell of meat.`);pop(p3);
+  mk('','left:0;top:190px;width:303px;height:60px;background:linear-gradient(#eef6ff,#d9ebff)',null,p3);
+  const bear=mk('big-emoji','left:14px;top:118px;font-size:76px','🐻‍❄️',p3);
+  const meat=mk('big-emoji','left:226px;top:150px;font-size:44px','🍖',p3);loop(meat,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],700,{direction:'alternate'});
+  for(let i=0;i<3;i++){const s=mk('',`left:200px;top:${130+i*16}px;width:60px;height:20px`,`<svg width="60" height="20"><path d="M2 10 Q12 0 22 10 T42 10 T58 10" fill="none" stroke="#9a7a55" stroke-width="3" stroke-linecap="round"/></svg>`,p3);
+    s.animate([{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.2},{transform:'translateX(-110px)',opacity:0}],{duration:1800,iterations:Infinity,delay:i*600});}
+  const sn=mk('','left:90px;top:84px;font-size:18px;font-weight:800;color:#6a45d8','sniff… sniff!',p3);
+  loop(sn,[{opacity:.2,transform:'scale(.9)'},{opacity:1,transform:'scale(1.1)'}],600,{direction:'alternate'});
+  loop(bear,[{transform:'rotate(0)'},{transform:'rotate(-6deg) translateY(-4px)'}],600,{direction:'alternate'});
+  say(`<b>Sensitivity</b> means detecting changes around you. This polar bear smells meat from far away! 🐻‍❄️`);await w(3400);
+  fillGap(p3.querySelector('.gap'),'sense');
+  say(`Polar bears can <b>sense</b> things in their environment. With their nose they sense the smell of meat.`);await w(3200);
+  const warn=mk('','left:13px;top:396px;width:933px;height:116px;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:12px 18px;font-size:18px;font-weight:700;line-height:1.45',
+    `⚠️ <b style="color:#c26a00">Careful!</b> Respiration is <b>NOT</b> the same as breathing.<br>🫁 <b>Breathing</b> moves air in and out of the lungs.<br>⚡ <b>Respiration</b> releases <b>energy</b> from food, inside <b>every cell</b>.`);pop(warn);
+  STAMP(716,430,'resp. ≠ breathing',null,'font-size:20px');
+  say(`⚠️ Careful! Respiration is <b>not</b> breathing. Breathing moves air in and out. <b>Respiration releases energy</b> from food in every cell.`);await w(3000);}},
+
+/* 3 */ {t:'G · R · E · N',run:async w=>{
+  say(`Now the last four letters: <b>G</b>, <b>R</b>, <b>E</b> and <b>N</b>. Four exam answers are hiding here! 🎯`);await w(2200);
+  const ST='left:236px;top:46px;width:204px;';
+  // Growth
+  const pG=panel(13,8,460,248,'🌱 Growth',`Young plants and animals get bigger. This is called ${GAP}: a <b>permanent</b> increase in size and mass.`);pop(pG);
+  mk('','left:14px;top:162px;width:210px;height:4px;background:#b98b5a;border-radius:2px',null,pG);
+  const G=[['🌱',26,20],['🪴',40,84],['🌳',62,140]];
+  G.forEach(([e,s,x],i)=>{const g=mk('big-emoji',`left:${x}px;top:${164-s*1.15}px;font-size:${s}px`,e,pG);pop(g,i*600);loop(g,[{transform:'scale(1)'},{transform:'scale(1.06)'}],900,{direction:'alternate',delay:i*200});});
+  const ar=mk('','left:18px;top:44px;font-size:13px;font-weight:800;color:#18a058','size ↑ &nbsp; mass ↑',pG);pop(ar,1400);
+  say(`<b>Growth</b> 🌱 A seed grows into a giant tree. It gets bigger <b>and</b> heavier, and it stays that way.`);await w(3200);
+  fillGap(pG.querySelector('.gap'),'growth');STAMP(236,48,'MCQ 14 ✔ B) A permanent increase in size and mass',pG,'width:204px');pG.lastChild.classList.add('mstamp');
+  say(`In biology, growth is <b>a permanent increase in size and mass</b>. That's answer <b>B</b> for MCQ 14.`);await w(3400);
+  // Reproduction
+  const pR=panel(487,8,460,248,'🐣 Reproduction',`Living organisms ${GAP} to make more of the same kind of organism.`);pop(pR);
+  const hen=mk('big-emoji','left:18px;top:62px;font-size:70px','🐔',pR);loop(hen,[{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'}],500,{direction:'alternate'});
+  const egg=mk('big-emoji','left:122px;top:100px;font-size:46px','🥚',pR);
+  const wob=loop(egg,[{transform:'rotate(-14deg)'},{transform:'rotate(14deg)'}],180,{direction:'alternate'});
+  say(`<b>Reproduction</b> 🐣 Living things make <b>young ones</b>, more of the same kind. Watch the egg…`);await w(2400);
+  wob.cancel();egg.textContent='🐣';pop(egg);beep(1000,.1);
+  const ck=mk('big-emoji','left:176px;top:110px;font-size:34px','🐥',pR);pop(ck,300);loop(ck,[{transform:'translateY(0)'},{transform:'translateY(-8px)'}],350,{direction:'alternate'});
+  await w(900);fillGap(pR.querySelector('.gap'),'reproduce');STAMP(236,48,'MCQ 1 ✔ B) Reproduction',pR,ST);pR.lastChild.classList.add('mstamp');
+  say(`Living things produce young ones by <b>reproduction</b>. Answer <b>B</b> for MCQ 1.`);await w(3000);
+  // Excretion
+  const pE=panel(13,264,460,248,'💨 Excretion',`All living organisms ${GAP} waste substances. Animals excrete ${GAP} when they breathe out.`);pop(pE);
+  const face=mk('big-emoji','left:16px;top:66px;font-size:70px','😮‍💨',pE);loop(face,[{transform:'scale(1)'},{transform:'scale(1.06)'}],800,{direction:'alternate'});
+  for(let i=0;i<4;i++){const b=bubble(pE,86,96,'CO₂','#2c66cf');b.animate([{transform:'translate(0,0) scale(.4)',opacity:0},{opacity:1,offset:.2},{transform:`translate(130px,${(i%2?-1:1)*30}px) scale(1)`,opacity:0}],{duration:2400,iterations:Infinity,delay:i*600});}
+  say(`<b>Excretion</b> 💨 means getting rid of <b>waste</b> your body has made. Every breath out carries away <b>carbon dioxide</b>.`);await w(3400);
+  const gE=pE.querySelectorAll('.gap');fillGap(gE[0],'excrete');await w(500);fillGap(gE[1],'carbon dioxide');
+  STAMP(236,48,'MCQ 9 ✔ B) Excretion',pE,ST);pE.lastChild.classList.add('mstamp');
+  say(`Getting rid of waste the body has made is <b>excretion</b>. Answer <b>B</b> for MCQ 9. Careful: digestion is a different thing!`);await w(3400);
+  // Nutrition
+  const pN=panel(487,264,460,248,'🍎 Nutrition',`Another word for taking in nutrition is ${GAP}. Food gives energy and materials for growth.`);pop(pN);
+  const gr=[];for(let i=0;i<3;i++){const g=mk('big-emoji',`left:${14+i*30}px;top:122px;font-size:30px;transform-origin:50% 100%`,'🌿',pN);gr.push(g);
+    g.animate([{transform:'scaleY(1)'},{transform:'scaleY(.2)',offset:.6},{transform:'scaleY(1)'}],{duration:2400,iterations:Infinity,delay:i*300});}
+  const z=mk('big-emoji','left:110px;top:66px;font-size:76px;transform-origin:20% 80%','🦓',pN);loop(z,[{transform:'rotate(0)'},{transform:'rotate(-10deg) translateY(4px)'}],400,{direction:'alternate'});
+  const mu=mk('','left:20px;top:48px;font-size:15px;font-weight:800;color:#c58a00','munch munch!',pN);loop(mu,[{opacity:.2},{opacity:1}],400,{direction:'alternate'});
+  say(`<b>Nutrition</b> 🍎 means taking in food for <b>energy and growth</b>. This zebra is grazing on grass!`);await w(3200);
+  fillGap(pN.querySelector('.gap'),'feeding');STAMP(236,48,'MCQ 8 ✔ B) Nutrition',pN,ST);pN.lastChild.classList.add('mstamp');
+  say(`Another word for nutrition is <b>feeding</b>. Taking in food for energy and growth is <b>nutrition</b>: answer <b>B</b> for MCQ 8.`);await w(3400);}},
+
+/* 4 */ {t:'Plants make their own food',run:async w=>{
+  const L=panel(13,8,600,504,'🌿 Photosynthesis: how plants make food','Plants use <b>sunlight</b>, <b>water</b> and <b>carbon dioxide</b> to make their own food (sugar). Oxygen is given out.');pop(L);
+  // stem + roots + leaf
+  mk('','left:0;top:0;width:600px;height:420px',`<svg width="600" height="420">
+    <rect x="0" y="352" width="600" height="68" fill="#e9d6b8"/>
+    <path d="M300 352 C300 300 300 280 300 240" stroke="#3f9a52" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M300 352 q-30 30 -70 40 M300 352 q10 40 0 60 M300 352 q40 25 80 30" stroke="#a0703c" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M300 250 C200 240 170 150 210 90 C290 100 330 180 300 250 Z" fill="#4caf63" stroke="#2f7d43" stroke-width="4"/>
+    <path d="M300 250 C270 190 240 140 214 96" stroke="#2f7d43" stroke-width="3" fill="none"/></svg>`,L);
+  const sun=mk('big-emoji','left:26px;top:44px;font-size:74px','☀️',L);loop(sun,[{transform:'rotate(0) scale(1)'},{transform:'rotate(30deg) scale(1.1)'}],1400,{direction:'alternate'});
+  mk('','left:20px;top:126px;font-size:15px;font-weight:800;color:#c58a00','sunlight',L);
+  say(`Plants can't go shopping for food! 🌿 So how do they eat? They <b>make their own food</b>. This is called <b>photosynthesis</b>.`);await w(3200);
+  for(let i=0;i<5;i++){const r=mk('',`left:96px;top:${86+i*14}px;width:130px;height:5px;border-radius:3px;background:linear-gradient(90deg,#ffd84d,#ffb300);transform-origin:0 50%;transform:rotate(${8+i*4}deg)`,null,L);
+    r.animate([{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'},{clipPath:'inset(0 0 0 100%)'}],{duration:1400,iterations:Infinity,delay:i*200});}
+  say(`First, the leaf traps <b>sunlight</b> ☀️ That gives the energy to make food.`);await w(2600);
+  mk('','left:322px;top:372px;font-size:15px;font-weight:800;color:#2c66cf','💧 water (from the roots)',L);
+  for(let i=0;i<4;i++){const d=mk('big-emoji','left:291px;top:340px;font-size:20px','💧',L);
+    d.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.15},{transform:'translateY(-150px)',opacity:1,offset:.85},{transform:'translateY(-160px)',opacity:0}],{duration:2400,iterations:Infinity,delay:i*600});}
+  say(`Next, <b>water</b> 💧 travels up from the roots, through the stem, to the leaf.`);await w(2600);
+  mk('','left:420px;top:92px;font-size:15px;font-weight:800;color:#626a80;width:160px;text-align:center','carbon dioxide (from the air)',L);
+  for(let i=0;i<4;i++){const b=bubble(L,520,140+(i%2)*40,'CO₂','#626a80');
+    b.animate([{transform:'translate(0,0)',opacity:0},{opacity:1,offset:.2},{transform:'translate(-230px,20px) scale(.5)',opacity:0}],{duration:2400,iterations:Infinity,delay:i*600});}
+  say(`And <b>carbon dioxide</b> from the air goes in through tiny holes in the leaf.`);await w(2600);
+  const food=mk('','left:150px;top:250px;width:120px;height:44px;border-radius:14px;background:#fff1c9;border:3px solid #e0a800;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:4px','🍬 food!',L);pop(food);
+  loop(food,[{transform:'scale(1)'},{transform:'scale(1.1)'}],500,{direction:'alternate'});
+  for(let i=0;i<3;i++){const o=bubble(L,330,170,'O₂','#18a058');o.animate([{transform:'translate(0,0)',opacity:0},{opacity:1,offset:.2},{transform:'translate(70px,-110px)',opacity:0}],{duration:2600,iterations:Infinity,delay:i*870});}
+  STAMP(330,282,'MCQ 2 ✔ A) Sunlight, water and carbon dioxide',L,'font-size:15px;white-space:normal;width:250px;text-align:center');
+  say(`The plant makes <b>food</b> 🍬 and gives out oxygen. So for MCQ 2: plants need <b>sunlight, water and carbon dioxide</b>. Answer <b>A</b>!`);await w(3600);
+  // Right: who makes its own food?
+  const R=panel(627,8,320,504,'☀️ Who makes its own food?','');pop(R);
+  const Q=[['🍄','Mushroom'],['🌳','Oak tree'],['🪱','Earthworm'],['🦁','Lion']];
+  const rows=Q.map((q,i)=>{const r=mk('row4',`left:12px;top:${46+i*86}px;width:290px;height:74px`,`<span class="e">${q[0]}</span><span class="n">${q[1]}</span><span class="v"></span>`,R);pop(r,i*150);return r;});
+  say(`MCQ 10: which of these can make its own food using sunlight? Watch the sunbeam… 🔦`);await w(2400);
+  const beam=mk('','left:0;top:40px;width:320px;height:90px;background:linear-gradient(rgba(255,216,77,0),rgba(255,216,77,.55),rgba(255,216,77,0));pointer-events:none',null,R);
+  for(let i=0;i<4;i++){await an(beam,[{transform:`translateY(${(i?i-1:0)*86}px)`},{transform:`translateY(${i*86}px)`}],{duration:500});
+    const v=rows[i].querySelector('.v');v.textContent=i===1?'✅':'❌';pop(v);if(i===1){rows[i].style.background='#e3f7ec';rows[i].style.borderColor='#18a058';yay();}else beep(300,.1);await w(450);}
+  beam.remove();
+  const fg=mk('tag','left:92px;top:-13px;background:#e04848;color:#fff;font-size:12.5px;padding:2px 10px','a fungus, not a plant!',rows[0]);pop(fg);
+  say(`A mushroom looks a bit like a plant, but it's a <b>fungus</b>! 🍄 It can't make food. Earthworms and lions must eat other things too.`);await w(3600);
+  STAMP(30,416,'MCQ 10 ✔ B) Oak tree',R,'font-size:19px');
+  say(`Only the <b>oak tree</b> 🌳 is a plant, so only it makes food using sunlight. Answer <b>B</b>!`);await w(2800);}},
+
+/* 5 */ {t:'Why do plants stay put?',run:async w=>{
+  const L=panel(13,8,460,250,'🦁 Animals move to find food','Animals must <b>find</b> their food, so they have <b>muscles and legs</b> to move.');pop(L);
+  const zb=mk('big-emoji','left:0;top:64px;font-size:56px','🦓',L),li=mk('big-emoji','left:0;top:70px;font-size:50px','🦁',L);
+  zb.animate([{transform:'translateX(460px)'},{transform:'translateX(-90px)'}],{duration:2600,iterations:Infinity,easing:'linear'});
+  li.animate([{transform:'translateX(600px)'},{transform:'translateX(50px)'}],{duration:2600,iterations:Infinity,easing:'linear'});
+  mk('','left:10px;top:140px;width:440px;height:4px;background:#e8dcc0;border-radius:2px',null,L);
+  const R=panel(487,8,460,250,'🌳 Plants stay in one place','Plants <b>make their own food</b> right where they are, and have <b>no muscles or legs</b>.');pop(R);
+  mk('','left:0;top:0;width:460px;height:200px',`<svg width="460" height="200"><rect x="0" y="140" width="460" height="60" fill="#e9d6b8"/><path d="M230 140 q-30 20 -60 26 M230 140 q4 30 -4 50 M230 140 q30 18 64 22" stroke="#a0703c" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`,R);
+  const tr=mk('big-emoji','left:186px;top:46px;font-size:90px;transform-origin:50% 100%','🌳',R);loop(tr,[{transform:'rotate(-3deg)'},{transform:'rotate(3deg)'}],1600,{direction:'alternate'});
+  const sn=mk('big-emoji','left:380px;top:40px;font-size:44px','☀️',R);loop(sn,[{transform:'rotate(0)'},{transform:'rotate(30deg)'}],1400,{direction:'alternate'});
+  const nl=mk('','left:20px;top:56px;font-size:15px;font-weight:800;color:#e04848;line-height:1.5','🦵 no legs<br>💪 no muscles',R);
+  const fd=mk('','left:310px;top:110px;font-size:15px;font-weight:800;color:#c58a00','🍬 makes food!',R);loop(fd,[{opacity:.3},{opacity:1}],600,{direction:'alternate'});
+  say(`Animals like lions and zebras dash about. 🦁 But a tree stays rooted to one spot. Why?`);await w(2800);
+  say(`Animals must go and <b>find food</b>, so they have muscles and legs. Plants <b>make food where they stand</b>, and have no legs or muscles!`);await w(3800);
+  const q=mk('ex-q','left:13px;top:268px;width:933px;padding:10px 18px;font-size:18px','<span class="src">MCQ 11</span>Why can animals move around easily while plants mostly stay in one place?');pop(q);
+  const O=['Plants do not have muscles or legs to walk.','Plants are scared of moving.','Animals need to find food, while plants make their own food in place.','Both A and C'];
+  let done=false;
+  const opts=O.map((t,i)=>{const e=mk('ex-opt',`left:${13+(i%2)*473}px;top:${352+Math.floor(i/2)*80}px;width:460px;min-height:66px;font-size:16px`,`<span class="k">${'ABCD'[i]}</span><span>${t}</span>`);pop(e,i*80);
+    e.onclick=()=>{if(done)return;if(i===3){done=true;opts.forEach(o=>o.classList.add('locked'));e.classList.add('ok');confetti(60);
+        STAMP(738,284,'✔ D) Both A and C',null,'font-size:19px');say(`Yes! 🎉 <b>Both A and C</b>. Plants have no muscles or legs, AND they make their own food, so they don't need to move.`);}
+      else{e.classList.add('locked');if(i===1)e.classList.add('bad');else{e.style.background='#fff8e6';e.style.borderColor='#f2c200';}shake(e);boo();say(i===1?`Ha! Plants aren't scared. 😄 Look at the two pictures again!`:`That's true… but is it the <b>whole</b> answer? Look at both pictures!`);}};return e;});
+  say(`Your turn! 👇 Tap the best answer.`);
+  await w.until(()=>done);await w(4000);}},
+
+/* 6 */ {t:'Match game',run:async w=>{
+  const h=mk('','left:0;top:4px;width:960px;text-align:center;font-size:22px;font-weight:800;color:#4a2ea6','🔗 Match each life process to what it means');pop(h);
+  const PR=['nutrition','respiration','excretion','reproduction','growth','sensitivity','movement'];
+  const DS=['feeding: taking in materials from the environment for energy and growth','breaking down nutrients to release energy','getting rid of waste materials','making new individuals of the same kind of organism','getting bigger','detecting changes in the environment','changing the position of part or all of the body'];
+  const ORD=[4,0,5,2,6,3,1];
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width',960);svg.setAttribute('height',520);svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none';stage.appendChild(svg);
+  let sel=-1,matched=0;const doneL=new Set();
+  const Ls=PR.map((p,i)=>{const e=mk('mt l',`left:20px;top:${46+i*66}px;width:200px;height:56px`,p);pop(e,i*60);return e;});
+  const Rs=ORD.map((d,j)=>{const e=mk('mt r',`left:400px;top:${46+j*66}px;width:540px;height:56px`,DS[d]);e.dataset.d=d;pop(e,300+j*60);return e;});
+  const line=(i,j,col,dash)=>{const l=document.createElementNS('http://www.w3.org/2000/svg','line');const y1=46+i*66+28,y2=46+j*66+28;
+    l.setAttribute('x1',226);l.setAttribute('y1',y1);l.setAttribute('x2',396);l.setAttribute('y2',y2);l.setAttribute('stroke',col);l.setAttribute('stroke-width',5);l.setAttribute('stroke-linecap','round');
+    if(dash)l.setAttribute('stroke-dasharray','8 8');svg.appendChild(l);l.animate([{opacity:0},{opacity:1}],{duration:300});return l;};
+  Ls.forEach((e,i)=>e.onclick=()=>{if(doneL.has(i))return;sel=sel===i?-1:i;Ls.forEach((x,k)=>x.classList.toggle('sel',k===sel));beep(650,.05);});
+  Rs.forEach((e,j)=>e.onclick=()=>{if(sel<0||e.classList.contains('done'))return;const d=+e.dataset.d;
+    if(d===sel){doneL.add(sel);matched++;Ls[sel].classList.remove('sel');Ls[sel].classList.add('done');e.classList.add('done');line(sel,j,'#18a058');beep(700+matched*60,.1);
+      e.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],{duration:300});sel=-1;}
+    else{const l=line(sel,j,'#e04848',true);shake(e);boo();setTimeout(()=>l.remove(),700);}});
+  window.AUTOPLAY=()=>{const i=PR.findIndex((_,k)=>!doneL.has(k));if(i<0)return;Ls[i].click();Rs.find(r=>+r.dataset.d===i).click();};
+  say(`Game time! 🎮 Tap a <b>life process</b> on the left, then tap what it <b>means</b> on the right. Match all seven!`);
+  await w.until(()=>matched===7);
+  yay();confetti(120);
+  say(`🏆 All seven matched! That's the whole matching question from your worksheet. Well done!`);await w(2800);}},
+
+/* 7 */ {t:'The three zebras',run:async w=>{
+  const X=[13,328,643];const D=[['🌿 Nutrition','#c58a00','Grazing on grass = feeding'],['🏃 Movement','#e06a1b','Walking from place to place'],['🐣 Reproduction','#d63f8c','An adult with its young foal']];
+  const ps=X.map((x,i)=>{const p=mk('panel zp',`left:${x}px;top:8px;width:303px;height:286px`,`<h4>Zebra ${i+1}</h4>`);pop(p,i*200);
+    mk('','left:0;top:170px;width:303px;height:116px;background:linear-gradient(#f3e3a6,#e6cf7d)',null,p);return p;});
+  // 1 grazing
+  for(let i=0;i<4;i++)mk('big-emoji',`left:${30+i*36}px;top:150px;font-size:30px`,'🌱',ps[0]);
+  const z1=mk('big-emoji','left:120px;top:76px;font-size:96px;transform-origin:20% 80%','🦓',ps[0]);loop(z1,[{transform:'rotate(0)'},{transform:'rotate(-12deg) translateY(6px)'}],450,{direction:'alternate'});
+  // 2 walking
+  const z2=mk('big-emoji','left:0;top:76px;font-size:96px','🦓',ps[1]);
+  z2.animate([{transform:'translate(320px,0)'},{transform:'translate(150px,-6px)',offset:.5},{transform:'translate(-110px,0)'}],{duration:3400,iterations:Infinity,easing:'linear'});
+  // 3 adult + foal
+  const z3=mk('big-emoji','left:40px;top:70px;font-size:96px','🦓',ps[2]),f3=mk('big-emoji','left:176px;top:120px;font-size:50px','🦓',ps[2]);
+  loop(z3,[{transform:'translateY(0)'},{transform:'translateY(-4px)'}],700,{direction:'alternate'});loop(f3,[{transform:'translateY(0)'},{transform:'translateY(-10px)'}],350,{direction:'alternate'});
+  const hrt=mk('big-emoji','left:160px;top:56px;font-size:24px','💗',ps[2]);loop(hrt,[{transform:'translateY(0)',opacity:1},{transform:'translateY(-30px)',opacity:0}],1400);
+  say(`Exam question 7(b) shows <b>three zebras</b> 🦓🦓🦓 Growth is one life process. Which <b>three other</b> life processes can you see?`);await w(3400);
+  let n=0;const tagT=[];
+  ps.forEach((p,i)=>{const t=mk('tapme','left:94px;top:244px',' 👆 Tap me! ',p);tagT.push(t);loop(t,[{transform:'scale(1)'},{transform:'scale(1.1)'}],500,{direction:'alternate'});
+    p.onclick=()=>{if(p.dataset.r)return;p.dataset.r=1;n++;t.remove();
+      const g=mk('ptag',`left:12px;top:206px;background:${D[i][1]}`,D[i][0],p);pop(g);mk('',`left:12px;top:252px;font-size:14px;font-weight:700;color:#5a4a20`,D[i][2],p);beep(700+i*100,.1);
+      say([`Zebra 1 is <b>grazing</b>: eating grass is <b>nutrition</b>. 🌿`,`Zebra 2 is <b>walking</b>: that's <b>movement</b>. 🏃`,`Zebra 3 is an adult with its <b>foal</b>: that shows <b>reproduction</b>. 🐣`][i]);};});
+  window.AUTOPLAY=()=>{const p=ps.find(p=>!p.dataset.r);if(p)p.click();};
+  say(`Tap each zebra to find its life process! 👆`);
+  await w.until(()=>n===3);await w(2600);
+  const en=mk('','left:13px;top:304px;width:933px;height:56px;background:#fde3e3;border:3px solid #e04848;border-radius:18px;font-size:18px;font-weight:800;line-height:50px;text-align:center;color:#9c2424',
+    'All three zebras use <u>respiration</u> to release the energy they need!');pop(en);
+  [20,872].forEach((x,i)=>{const z=mk('big-emoji',`left:${x}px;top:9px;font-size:30px`,'⚡',en);loop(z,[{transform:'scale(.8)',opacity:.5},{transform:'scale(1.25)',opacity:1}],400,{direction:'alternate',delay:i*200});});
+  say(`And every zebra needs energy, so they all use <b>respiration</b> ⚡ too!`);await w(2800);
+  const box=mk('','left:13px;top:370px;width:933px;height:142px;background:#f7f4ff;border:3px solid #d9cff7;border-radius:20px;padding:12px 18px;font-size:17px;font-weight:700;line-height:1.45',
+    `<span style="font-size:13px;color:#8a78cc;font-weight:800">WORKSHEET Q7(b)</span><br>Growth is one characteristic of living organisms. Write down <b>three other</b> characteristics shown in the pictures.<br><span style="color:#626a80;font-size:15px">(Nutrition, from the grazing zebra, is also accepted.)</span>`);pop(box);
+  STAMP(470,450,'✔ Reproduction · Respiration · Movement',null,'font-size:20px');
+  say(`The answer key says: <b>reproduction, respiration and movement</b>. Nutrition is shown too, by the grazing zebra.`);await w(3400);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 4 · MCQ 1',q:'Living things produce young ones by __________.',o:['Respiration','Reproduction','Nutrition','Excretion'],a:1,why:'<b>Reproduction</b> means making new individuals of the same kind.'},
+    {src:'Worksheet · Unit 4 · MCQ 2',q:'What do plants need to make their own food through photosynthesis?',o:['Sunlight, water, and carbon dioxide','Oxygen, soil, and darkness','Meat and sugary drinks','Plastic and rocks'],a:0,why:'Leaves trap <b>sunlight</b>, take in <b>water</b> from the roots and <b>carbon dioxide</b> from the air.'},
+    {src:'Worksheet · Unit 4 · MCQ 8',q:'Which process involves taking in food for energy and growth?',o:['Excretion','Nutrition','Movement','Sensitivity'],a:1,why:'<b>Nutrition</b> (feeding) is taking in food for energy and growth.'},
+    {src:'Worksheet · Unit 4 · MCQ 9',q:'What is the term for getting rid of waste products that the body has made?',o:['Digestion','Excretion','Inhalation','Absorption'],a:1,why:'<b>Excretion</b> is getting rid of waste the body has made, like carbon dioxide.'},
+    {src:'Worksheet · Unit 4 · MCQ 10',q:'Which of these living things can make its own food using sunlight?',o:['Mushroom','Oak tree','Earthworm','Lion'],a:1,why:'The <b>oak tree</b> is a plant. A mushroom is a <b>fungus</b>, so it cannot photosynthesise.'},
+    {src:'Worksheet · Unit 4 · MCQ 11',q:'Why can animals move around easily while plants mostly stay in one place?',o:['Plants do not have muscles or legs to walk.','Plants are scared of moving.','Animals need to find food, while plants make their own food in place.','Both A and C'],a:3,why:'<b>Both A and C</b>: plants have no muscles or legs, and they make their own food where they are.'},
+    {src:'Worksheet · Unit 4 · MCQ 14',q:'What does "growth" mean in biology?',o:['Changing clothes as you get older','A permanent increase in size and mass','Moving from one room to another','Learning how to speak'],a:1,why:'Growth is <b>a permanent increase in size and mass</b>.'},
+    {src:'Worksheet · Unit 4 · Q2 (1–3)',q:'Another word for taking in nutrition is ____. Polar bears can ____ things in their environment. Animals ____ carbon dioxide when they breathe out.',
+      model:'<b>feeding</b> · <b>sense</b> · <b>excrete</b> (the waste gas is <b>carbon dioxide</b>).'},
+    {src:'Worksheet · Unit 4 · Q2 (4–7)',q:'Organisms ____ to make more of their kind. Getting bigger is ____. Breaking down food for energy is ____. Changing body shape and position is ____.',
+      model:'<b>reproduce</b> · <b>growth</b> · <b>respiration</b> · <b>movement</b>.'},
+    {src:'Worksheet · Unit 4 · Q7(b)',q:'Growth is one characteristic of living organisms. Write down three other characteristics shown in the zebra pictures.',model:'<b>Reproduction</b> (adult with foal), <b>respiration</b> and <b>movement</b> (walking). Nutrition (grazing) is also shown.'},
+  ]);
+  await w(1500);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Is it alive?</b> Here's everything you learned…`);
+  const B=[['🏃','<b>Movement</b>: changing the position of part or all of the body.'],['⚡','<b>Respiration</b>: breaking down food to <b>release energy</b>. Not breathing!'],['👃','<b>Sensitivity</b>: detecting changes, like a polar bear smelling meat.'],['🌱','<b>Growth</b>: a permanent increase in <b>size and mass</b>.'],
+    ['🐣','<b>Reproduction</b>: making young of the same kind.'],['💨','<b>Excretion</b>: getting rid of waste, like <b>carbon dioxide</b>.'],['🍎','<b>Nutrition</b> (feeding): food for energy and growth.'],['☀️','Plants make food from <b>sunlight, water &amp; carbon dioxide</b>. 🍄 is a fungus!']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${10+Math.floor(i/4)*212}px;width:222px;height:200px;font-size:16px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:442px;width:600px;height:62px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🦠 Next: Lesson 2 · Viruses: alive or not? ➜');
+  f.onclick=()=>{location.href='l02-viruses.html';};pop(f);
+  say(`Remember <b>MRS GREN</b> and you'll never forget the seven life processes! 🧠 Next up: are <b>viruses</b> alive?`);await w(2000);}},
+];
+SCENES.forEach(s=>{const r=s.run;s.run=w=>{window.AUTOPLAY=null;return r(w);};});
+
+Lesson.start({
+  id:'l01', num:1, unit:4, emoji:'🦓', title:'Is it alive? The 7 life processes',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ What makes something <b>alive</b>? Let's find out! Press <b>Start</b>!`,
+  scenes:SCENES
+});
+</script>
+</body>
+</html>

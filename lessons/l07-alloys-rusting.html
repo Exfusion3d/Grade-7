@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Alloys and rusting</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 7 · Alloys and rusting (Unit 5) */
+const STAMP=(txt,css,rot=-4)=>{const s=mk('stamp',css,txt);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:`rotate(${rot}deg)`,opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+async function wipe(w){const k=[...stage.children];k.forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:350}));await w(400);k.forEach(e=>e.remove());}
+const label=(par,css,html)=>mk('',`font-weight:800;font-size:15px;${css}`,html,par);
+/* vertical iron nail: head at (x,y), pointing down, total length len. Returns {el, rust} */
+function vnail(par,x,y,len){const n=mk('',`left:${x-11}px;top:${y}px;width:22px;height:${len}px;z-index:3`,null,par);
+  mk('','left:0;top:0;width:22px;height:7px;border-radius:2px;background:#5d6573',null,n);
+  mk('',`left:7px;top:6px;width:8px;height:${len-22}px;background:linear-gradient(90deg,#8a94a3,#eef1f5,#8a94a3)`,null,n);
+  mk('',`left:7px;top:${len-17}px;width:8px;height:17px;background:linear-gradient(90deg,#8a94a3,#eef1f5,#8a94a3);clip-path:polygon(0 0,100% 0,50% 100%)`,null,n);
+  const rust=mk('',`left:5px;top:4px;width:12px;height:${len-12}px;opacity:0;border-radius:4px;background:radial-gradient(circle at 30% 20%,#c0561c 0 3px,transparent 4px),radial-gradient(circle at 70% 55%,#a94716 0 4px,transparent 5px),radial-gradient(circle at 40% 80%,#c0561c 0 3px,transparent 4px),linear-gradient(#b8642e,#8a3a12)`,null,n);
+  return{el:n,rust};}
+const tileEl=(par,css,sym,metal)=>mk('tile on '+(metal?'metal':'nonmetal'),`width:54px;height:54px;font-size:22px;border-radius:10px;${css}`,sym,par);
+
+Lesson.start({
+  id:'l07', num:7, unit:5, emoji:'⚙️', title:'Alloys and rusting',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today: how we make metals <b>stronger</b>, and why iron goes <b>rusty</b>. Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'Rust or shine?',run:async w=>{
+  const L=panel(13,8,460,330,'🚲 A bike left out in the rain','');pop(L);
+  const bike=mk('big-emoji','left:140px;top:90px;font-size:150px','🚲',L);
+  for(let i=0;i<14;i++){const d=mk('',`left:${20+i*31}px;top:40px;width:3px;height:14px;border-radius:2px;background:#5d9cf5;opacity:.7`,null,L);
+    d.animate([{transform:'translateY(0)',opacity:0},{opacity:.8,offset:.15},{transform:'translateY(260px)',opacity:.6}],{duration:900+(i%4)*120,iterations:Infinity,delay:i*97,easing:'linear'});}
+  const R=panel(487,8,460,330,'🪙 Gold coin from a shipwreck','');pop(R);
+  mk('','left:0;top:44px;width:460px;height:286px;background:linear-gradient(#cdeeff,#5aa6e6)',null,R);
+  mk('','left:0;top:270px;width:460px;height:60px;background:#f1d9a0;border-radius:50% 50% 0 0/30px 30px 0 0',null,R);
+  const coin=mk('','left:170px;top:170px;width:120px;height:120px;border-radius:50%;background:linear-gradient(110deg,#d99a1b 0%,#ffd84d 40%,#fff6c8 50%,#ffd84d 60%,#d99a1b 100%);background-size:300% 100%;box-shadow:0 0 0 6px #e7b416,0 6px 0 8px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#8a6100',
+    'Au',R);loop(coin,[{backgroundPosition:'120% 0'},{backgroundPosition:'-20% 0'}],1600,{easing:'linear'});
+  [[150,160,0],[300,180,500],[260,280,900]].forEach(([x,y,d])=>{const s=mk('',`left:${x}px;top:${y}px;font-size:24px`,'✨',R);loop(s,[{transform:'scale(0)',opacity:0},{transform:'scale(1.2)',opacity:1},{transform:'scale(0)',opacity:0}],1400,{delay:d});});
+  const fish=mk('big-emoji','left:0;top:80px;font-size:40px','🐟',R);fish.animate([{transform:'translateX(-60px) scaleX(-1)'},{transform:'translateX(480px) scaleX(-1)'}],{duration:5000,iterations:Infinity,easing:'linear'});
+  for(let i=0;i<5;i++){const b=mk('',`left:${60+i*80}px;top:260px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;opacity:.8`,null,R);b.animate([{transform:'translateY(0)',opacity:.9},{transform:'translateY(-200px)',opacity:0}],{duration:2400,iterations:Infinity,delay:i*450});}
+  say(`Two metal mysteries! 🕵️ A bike is left out in the rain, and a gold coin lies at the bottom of the sea.`);
+  await w(2800);
+  const yr=mk('tag','left:310px;top:44px;background:#1f2433;color:#fff','⏳ Day 1',L);
+  const spots=[[170,150],[230,190],[300,160],[200,220],[270,210],[330,200],[250,140],[190,180]];
+  say(`Let's fast-forward time… ⏩ Watch the bike!`);
+  for(let i=0;i<spots.length;i++){const s=mk('',`left:${spots[i][0]}px;top:${spots[i][1]}px;width:${18+(i%3)*7}px;height:${14+(i%2)*6}px;border-radius:50%;opacity:.85;background:radial-gradient(#c0561c,#8a3a12 70%,transparent 72%);z-index:2`,null,L);pop(s);
+    yr.textContent=['⏳ 1 week','⏳ 1 month','⏳ 3 months','⏳ 6 months','⏳ 1 year','⏳ 2 years','⏳ 3 years','⏳ 5 years'][i];beep(300-i*15,.06,'sawtooth',.03);await w(380);}
+  bike.style.filter='sepia(.6) saturate(1.4) hue-rotate(-15deg)';
+  const t1=label(L,'left:20px;top:290px;color:#a94716;font-size:18px','🟠 Orange, flaky RUST!');pop(t1);
+  say(`The bike has gone orange and flaky. That's <b>rust</b>! 🟠 But the gold coin, after <b>300 years</b> under the sea, is still shiny! ✨`);
+  const t2=label(R,'left:20px;top:56px;color:#1c4a9c;font-size:18px','300 years later… still shiny! ✨');pop(t2);
+  await w(4400);
+  const Q1=mk('','left:13px;top:350px;width:460px;height:160px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;padding:14px 18px;text-align:center',
+    `<div style="font-size:19px;font-weight:800">⚙️ Big question 1</div><div style="font-size:17px;font-weight:700;margin-top:6px">How do we make metals <b>stronger</b> and <b>harder</b>?</div><div class="a" style="margin-top:12px;font-size:22px;font-weight:800;color:#6a45d8;opacity:0">➜ ALLOYS</div>`);pop(Q1);
+  const Q2=mk('','left:487px;top:350px;width:460px;height:160px;background:#fff1e0;border:3px solid #e06a1b;border-radius:20px;padding:14px 18px;text-align:center',
+    `<div style="font-size:19px;font-weight:800">🟠 Big question 2</div><div style="font-size:17px;font-weight:700;margin-top:6px">Why does iron <b>rust</b>, but gold stays shiny?</div><div class="a" style="margin-top:12px;font-size:22px;font-weight:800;color:#d66a0a;opacity:0">➜ RUSTING &amp; CORROSION</div>`);pop(Q2,200);
+  say(`Today we'll answer two big questions. How do we make metals stronger? And why does iron rust while gold stays shiny?`);
+  await w(3800);
+  an(Q1.querySelector('.a'),[{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'scale(1)'}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});beep(700,.1);await w(500);
+  an(Q2.querySelector('.a'),[{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'scale(1)'}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});beep(800,.1);
+  say(`The answers: <b>alloys</b> ⚙️ and <b>rusting</b> 🟠. Let's go!`);}},
+
+/* 2 */ {t:'Alloy recipes',run:async w=>{
+  say(`An <b>alloy</b> is like a recipe 📜. We take a metal and <b>mix</b> it with one or more other elements. Let's cook!`);
+  const R=[['⚙️ Steel',['Fe',1],['C',0],'<b>Iron + a little carbon.</b> Very strong: bridges, cars, tools.','#5d6573','linear-gradient(135deg,#d5dae2,#8a94a3)','Steel'],
+    ['🎺 Brass',['Cu',1],['Zn',1],'<b>Copper + zinc.</b> Golden and hard-wearing: trumpets, door handles.','#b08400','linear-gradient(135deg,#ffe58a,#c99a1a)','Brass'],
+    ['🔔 Bronze',['Cu',1],['Sn',1],'<b>Copper + tin.</b> Tough and slow to corrode: medals, statues, bells.','#a14c00','linear-gradient(135deg,#f0b27a,#a8642a)','Bronze'],
+    ['🔌 Solder',['Sn',1],['Cu',1],'<b>Mostly tin + a little copper.</b> Melts easily: joins wires in circuits.','#2c66cf','linear-gradient(135deg,#eef1f5,#aab3c2)','Solder']];
+  await w(2600);
+  const lines=[`⚙️ <b>Steel</b> = <b>iron</b> + a little <b>carbon</b>. Carbon is a non-metal, so an alloy can be a metal mixed with a <b>non-metal</b>.`,
+    `🎺 <b>Brass</b> = <b>copper</b> + <b>zinc</b>. Two metals mixed together. Trumpets are made of brass!`,
+    `🔔 <b>Bronze</b> = <b>copper</b> + <b>tin</b>. It's tough, so it's used for statues, bells and medals.`,
+    `🔌 <b>Solder</b> is mostly <b>tin</b> with a little copper. It melts easily, so it joins wires together.`];
+  for(let i=0;i<4;i++){const r=R[i];const a=card(13+i*237,8,222,272,r[0],r[3],r[4]);
+    const t1=tileEl(a,'left:10px;top:4px',r[1][0],r[1][1]),t2=tileEl(a,'left:134px;top:4px',r[2][0],r[2][1]);
+    const plus=mk('','left:88px;top:14px;font-size:26px;font-weight:800;color:#8a78cc','+',a);
+    const pot=mk('','left:49px;top:84px;width:100px;height:46px;background:linear-gradient(#5a6273,#2f3542);clip-path:polygon(0 0,100% 0,88% 100%,12% 100%);border-radius:4px',null,a);
+    say(lines[i]);await w(900);
+    an(t1,[{transform:'none'},{transform:'translate(62px,74px) scale(.4)',opacity:0}],{duration:700,easing:'ease-in'});
+    an(plus,[{opacity:1},{opacity:0}],{duration:300});
+    await an(t2,[{transform:'none'},{transform:'translate(-62px,74px) scale(.4)',opacity:0}],{duration:700,easing:'ease-in'});
+    pot.animate([{transform:'rotate(0)'},{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'},{transform:'rotate(0)'}],{duration:300,iterations:2});
+    for(let k=0;k<3;k++){const b=mk('',`left:${70+k*22}px;top:76px;font-size:16px`,'🌀',a);an(b,[{transform:'translateY(0)',opacity:1},{transform:'translateY(-30px)',opacity:0}],{duration:600,delay:k*120});}
+    await w(700);
+    const p=mk('',`left:34px;top:22px;width:130px;height:48px;border-radius:12px;background:${r[5]};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#1f2433;box-shadow:0 4px 0 rgba(0,0,0,.18)`,r[6],a);pop(p);
+    loop(p,[{transform:'translateY(0)'},{transform:'translateY(-5px)'}],700,{direction:'alternate',delay:500});yay();
+    await w(2600);}
+  const D=mk('','left:13px;top:292px;width:933px;height:96px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;padding:12px 20px;font-size:19px;font-weight:700;line-height:1.5',
+    `<b style="color:#6a45d8">📜 Alloy</b> = a <b>mixture of two or more metals</b>, or a <b>metal mixed with another element</b>.<br><span style="font-size:16px">Brass and bronze: metal + metal. Steel: metal + non-metal (carbon). An alloy is a <b>mixture</b>, not a new element.</span>`);pop(D);
+  say(`So an <b>alloy</b> is a mixture of two or more metals, or a metal mixed with another element. That's short answer 11!`);
+  await w(4200);
+  STAMP('✔ Exam MCQ 9: B) A mixture of a metal with one or more other elements','left:90px;top:420px;font-size:18px',-2);
+  say(`✅ Exam question 9: an alloy is <b>B) a mixture of a metal with one or more other elements</b>.`);}},
+
+/* 3 */ {t:'Why alloys are stronger',run:async w=>{
+  say(`Why mix metals at all? Let's zoom in to the <b>atoms</b> 🔬. You'll push them yourself!`);
+  const mkGrid=(par,alloy)=>{const top=mk('','left:104px;top:60px;width:252px;height:84px',null,par),bot=mk('','left:104px;top:144px;width:252px;height:126px',null,par);
+    const at=(p,c,r,dx=0,dy=0)=>mk('',`left:${c*42+1+dx}px;top:${r*42+1+dy}px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#b9c0cc 45%,#7d8796)`,null,p);
+    for(let r=0;r<2;r++)for(let c=0;c<6;c++)at(top,c,r,alloy&&r===1&&c%2?0:0,alloy&&r===1?(c%2?-3:3):0);
+    for(let r=0;r<3;r++)for(let c=0;c<6;c++)at(bot,c,r,0,alloy&&r===0?(c%2?4:-2):0);
+    if(alloy)[1,3,5].forEach((c,i)=>{const k=mk('',`left:${c*42-10}px;top:-12px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#888,#1f2433);z-index:2`,null,bot);pop(k,i*150);});
+    const arrow=mk('big-emoji','left:40px;top:76px;font-size:44px','👉',par);
+    return{top,bot,arrow};};
+  const P1=panel(13,8,460,330,'Pure iron: neat, equal rows','');pop(P1);const G1=mkGrid(P1,false);
+  const P2=panel(487,8,460,330,'Steel (alloy): different-sized atoms','');pop(P2);const G2=mkGrid(P2,true);
+  mk('legend','left:120px;top:282px',`<span class="chipk" style="background:#e3e6ec">⚪ iron atom</span><span class="chipk" style="background:#1f2433;color:#fff">⚫ carbon atom</span>`,P2);
+  await w(2600);
+  let did=[false,false];
+  const b1=btn('ex-btn push','left:110px;top:352px;width:260px','👉 Push the pure iron',()=>{if(did[0])return;did[0]=true;b1.style.opacity=.35;
+    an(G1.arrow,[{transform:'none'},{transform:'translateX(30px)'}],{duration:500});
+    an(G1.top,[{transform:'none'},{transform:'translateX(42px)'}],{duration:900,easing:'cubic-bezier(.3,1.2,.4,1)'});beep(500,.1);beep(400,.15,'sine',.08,.2);
+    const t=label(P1,'left:30px;top:286px;color:#e04848;font-size:17px','➜ Layers SLIDE: soft, bends easily');pop(t);
+    say(`In pure iron, all the atoms are the <b>same size</b>, in neat rows. Push, and the layers <b>slide</b> over each other. So pure iron <b>bends</b> easily.`);});
+  const b2=btn('ex-btn push','left:590px;top:352px;width:260px;opacity:.35','👉 Push the steel',()=>{if(!did[0]||did[1])return;did[1]=true;b2.style.opacity=.35;
+    an(G2.arrow,[{transform:'none'},{transform:'translateX(14px)'},{transform:'none'}],{duration:500});
+    an(G2.top,[{transform:'none'},{transform:'translateX(9px)'},{transform:'translateX(-3px)'},{transform:'translateX(4px)'},{transform:'none'}],{duration:700});boo();
+    const x=mk('big-emoji','left:216px;top:120px;font-size:40px;z-index:5','🚫',P2);pop(x);
+    const t=label(P2,'left:110px;top:36px;color:#17935b;font-size:17px','➜ Layers JAM: stronger and harder 💪');pop(t);
+    say(`In steel, the small <b>carbon</b> atoms get in the way. The layers <b>can't slide</b>, so steel is <b>stronger and harder</b> than pure iron! 💪`);});
+  setTimeout(()=>{b2.style.transition='opacity .3s';},10);
+  window.AUTOPLAY=()=>{if(!did[0])b1.click();else if(!did[1])b2.click();};
+  say(`Tap <b>Push the pure iron</b> 👉 to give the atoms a shove!`);
+  await w.until(()=>did[0]);b2.style.opacity=1;b2.animate([{transform:'scale(.8)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:450});await w(4200);
+  say(`Now tap <b>Push the steel</b> 👉. What will happen this time?`);
+  await w.until(()=>did[1]);await w(4400);
+  b1.remove();b2.remove();
+  const S=mk('','left:13px;top:350px;width:933px;height:100px;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:12px 20px;font-size:18px;font-weight:700;line-height:1.45',
+    `💡 In an alloy, atoms of <b>different sizes</b> break up the neat rows. The layers can't slide easily, so alloys are usually <b>stronger and harder</b> than the pure metal.`);pop(S);
+  say(`That's the secret of alloys. Different-sized atoms stop the layers sliding, so alloys are usually <b>stronger and harder</b> than pure metals.`);
+  await w(4000);
+  const tg=mk('tag','left:250px;top:466px;background:#1f2433;color:#fff;font-size:18px','Pure metal: soft 🧈 → Alloy: strong 💪');pop(tg);}},
+
+/* 4 */ {t:'Gold carats',run:async w=>{
+  say(`Pure gold is beautiful, but it is very <b>soft</b>. Watch what happens if we squeeze a pure gold ring! 💍`);
+  const L=panel(13,8,400,320,'💍 Squeeze test','');pop(L);
+  const ring=mk('','left:130px;top:80px;width:140px;height:140px;border-radius:50%;border:18px solid #f5c518;box-shadow:inset 0 0 0 3px #d99a1b,0 0 0 3px #d99a1b',null,L);
+  const hl=mk('big-emoji','left:20px;top:120px;font-size:50px','👉',L),hr=mk('big-emoji','left:320px;top:120px;font-size:50px','👈',L);
+  const rl=label(L,'left:20px;top:262px;width:360px;text-align:center;font-size:17px;color:#a14c00','24 carat (pure gold)');
+  const squeeze=async(bends)=>{an(hl,[{transform:'none'},{transform:'translateX(56px)'},{transform:'none'}],{duration:1200});
+    an(hr,[{transform:'none'},{transform:'translateX(-56px)'},{transform:'none'}],{duration:1200});await w(500);
+    an(ring,[{transform:'none'},{transform:bends?'scale(.62,1.2)':'scale(.94,1.03)'}],{duration:500,easing:'cubic-bezier(.3,1.2,.5,1)'});beep(bends?220:600,.15);
+    if(!bends){await w(500);an(ring,[{transform:'scale(.94,1.03)'},{transform:'none'}],{duration:400,easing:'cubic-bezier(.3,1.6,.5,1)'});}await w(900);};
+  await w(2200);await squeeze(true);
+  const bt=label(L,'left:20px;top:40px;color:#e04848;font-size:18px','Bent out of shape! 😬');pop(bt);
+  say(`It bends out of shape! 😬 So jewellers <b>mix</b> gold with other metals, like copper and silver, to make it harder.`);
+  await w(3400);
+  const R=panel(427,8,520,320,'🟨 Carats: gold out of 24 parts','');pop(R);
+  const sq=[];for(let i=0;i<24;i++){const s=mk('',`left:${24+(i%8)*58}px;top:${50+Math.floor(i/8)*58}px;width:50px;height:50px;border-radius:8px;background:#e2e4ea;transition:background .3s`,null,R);sq.push(s);}
+  mk('legend','left:24px;top:228px',`<span class="chipk" style="background:#f5c518;color:#6b5000">🟨 gold</span><span class="chipk" style="background:#d9825a;color:#fff">🟫 other metals (copper, silver)</span>`,R);
+  const rd=mk('','left:20px;top:262px;width:480px;height:50px;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;color:#4a2ea6','Tap a carat button! 👇',R);
+  const fill=n=>sq.forEach((s,i)=>{s.style.transitionDelay=(i*25)+'ms';s.style.background=i<n?'#f5c518':'#d9825a';});
+  const C={24:[`24 carat = 24 out of 24 parts → <span style="color:#b08400">nearly pure gold</span>`,`<b>24 carat</b>: all 24 parts are gold. It is <b>nearly pure gold</b>, but very soft.`],
+    18:[`18 ÷ 24 = ¾ → <span style="color:#b08400">75% gold</span>, 25% other metals`,`<b>18 carat</b>: 18 parts out of 24 are gold. That's three quarters, or <b>75% gold</b>. It's an alloy!`],
+    9:[`9 ÷ 24 → <span style="color:#b08400">37.5% gold</span>, the rest other metals`,`<b>9 carat</b>: only 9 parts out of 24 are gold, so less than half is gold.`]};
+  const tried=new Set();
+  [24,18,9].forEach((n,i)=>{const b=btn('ex-btn kar',`left:${250+i*170}px;top:342px;width:150px;text-align:center;background:#d99a1b;box-shadow:0 5px 0 #a87412`,`${n} carat`,async()=>{
+      b.dataset.t=1;tried.add(n);if(!ring.dataset.fixed){ring.dataset.fixed=1;an(ring,[{transform:'scale(.62,1.2)'},{transform:'none'}],{duration:500});}fill(n);rd.innerHTML=C[n][0];rd.animate([{opacity:0},{opacity:1}],{duration:300});beep(500+n*20,.1);say(C[n][1]);
+      rl.textContent=n===24?'24 carat (nearly pure gold)':`${n} carat (gold alloy)`;ring.style.borderColor=n===24?'#f5c518':n===18?'#e8b13a':'#d9955a';
+      bt.remove();});pop(b,i*100);});
+  window.AUTOPLAY=()=>{const b=[...document.querySelectorAll('.kar')].find(x=>!x.dataset.t);if(b)b.click();};
+  say(`Gold purity is measured in <b>carats</b>, out of <b>24</b>. Tap each carat button to see how much is really gold!`);
+  await w.until(()=>tried.size===3);await w(3000);
+  [...document.querySelectorAll('.kar')].forEach(b=>b.remove());
+  fill(18);rd.innerHTML=C[18][0];rl.textContent='18 carat (gold alloy)';ring.style.borderColor='#e8b13a';
+  say(`Now let's squeeze an <b>18 carat</b> ring…`);await w(1400);await squeeze(false);
+  const ok=label(L,'left:20px;top:40px;color:#17935b;font-size:18px','Keeps its shape! ✔');pop(ok);
+  say(`It keeps its shape! The other metals make the gold <b>harder</b>, just like we saw with alloys.`);
+  await w(3200);
+  const A=mk('','left:13px;top:340px;width:933px;height:100px;background:#e3f7ec;border:3px solid #18a058;border-radius:20px;padding:12px 20px;font-size:19px;font-weight:700;line-height:1.45',
+    `<b style="color:#18a058;font-size:13px;letter-spacing:.08em">SHORT ANSWER 13</b><br><b>18-carat</b> gold is <b>75% gold</b> (18 out of 24 parts), while <b>24-carat</b> gold is <b>nearly pure</b> gold.`);pop(A);
+  say(`✅ Short answer 13: <b>18-carat</b> gold is <b>75%</b> gold, while <b>24-carat</b> gold is <b>nearly pure</b> gold.`);
+  await w(4200);
+  STAMP('✔ 18 ÷ 24 = 75% gold','left:340px;top:456px;font-size:20px',-3);}},
+
+/* 5 */ {t:'What is rust?',run:async w=>{
+  say(`Now for our second mystery: <b>rust</b> 🟠. Here is an iron nail, out in the damp air.`);
+  const P=panel(13,8,933,250,'🔩 An iron nail meets air and water','');pop(P);
+  const N=mk('','left:110px;top:130px;width:700px;height:40px',null,P);
+  mk('','left:0;top:0;width:16px;height:40px;border-radius:3px;background:#5d6573',null,N);
+  const sh=mk('','left:14px;top:8px;width:640px;height:24px;background:linear-gradient(#eef1f5,#8a94a3);overflow:visible',null,N);
+  mk('','left:654px;top:8px;width:46px;height:24px;background:linear-gradient(#eef1f5,#8a94a3);clip-path:polygon(0 0,100% 50%,0 100%)',null,N);
+  const flying=[];
+  for(let i=0;i<6;i++){const o=mk('',`left:${150+i*110}px;top:40px;width:38px;height:38px;border-radius:50%;background:#e6f0ff;border:2px solid #5d9cf5;color:#2c66cf;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center`,'O₂',P);
+    flying.push(o);o.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.2},{transform:'translateY(80px)',opacity:0}],{duration:1600,iterations:Infinity,delay:i*260});}
+  for(let i=0;i<6;i++){const d=mk('big-emoji',`left:${200+i*110}px;top:36px;font-size:26px`,'💧',P);
+    flying.push(d);d.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.2},{transform:'translateY(84px)',opacity:0}],{duration:1300,iterations:Infinity,delay:i*200+100,easing:'ease-in'});}
+  await w(1600);
+  say(`<b>Oxygen</b> from the air 💨 and <b>water</b> 💧 keep landing on the iron…`);
+  const rx=[30,90,150,210,270,330,390,450,510,570];
+  for(let i=0;i<rx.length;i++){const s=mk('',`left:${rx[i]+(i%2)*14}px;top:${i%2?-4:2}px;width:${44+(i%3)*12}px;height:${22+(i%2)*8}px;border-radius:50%;background:radial-gradient(#c0561c,#8a3a12 65%,transparent 70%)`,null,sh);pop(s);beep(250-i*8,.05,'sawtooth',.03);await w(300);}
+  for(let i=0;i<4;i++){const f=mk('',`left:${180+i*130}px;top:170px;width:10px;height:7px;background:#a94716;border-radius:2px`,null,P);
+    f.animate([{transform:'translateY(0) rotate(0)',opacity:1},{transform:'translateY(60px) rotate(200deg)',opacity:0}],{duration:1400,iterations:Infinity,delay:i*350});}
+  const rt=label(P,'left:330px;top:196px;color:#a94716;font-size:20px','RUST! 🟠 orange, flaky and weak');pop(rt);
+  say(`Orange-brown <b>rust</b> appears! 🟠 Iron reacts with <b>oxygen</b> and <b>water</b>. This chemical reaction is called <b>rusting</b>.`);
+  await w(3800);
+  const E=mk('','left:13px;top:268px;width:933px;height:82px;background:#fff;border:3px solid #ece8f8;border-radius:20px',null);pop(E);
+  const parts=[['🔩 iron','#e3e6ec','#1f2433'],['+',0],['💨 oxygen','#e6f0ff','#1c4a9c'],['+',0],['💧 water','#dff0ff','#1c4a9c'],['→',0],['🟠 rust','#fbd9c2','#8a3a12']];
+  let x=40;say(`Here's the word equation: <b>iron + oxygen + water → rust</b>.`);
+  for(const p of parts){const e=p[1]?mk('',`left:${x}px;top:16px;height:46px;padding:0 18px;border-radius:23px;background:${p[1]};color:${p[2]};font-size:21px;font-weight:800;display:flex;align-items:center`,p[0],E)
+      :mk('',`left:${x}px;top:14px;font-size:30px;font-weight:800;color:#8a78cc`,p[0],E);pop(e);beep(500+x/3,.06);x+=p[1]?(p[0].length>8?168:140):46;await w(380);}
+  label(E,'left:730px;top:58px;font-size:12px;color:#8a3a12;width:190px;text-align:center','(hydrated iron oxide)');
+  await w(2800);
+  const C1=mk('','left:13px;top:360px;width:460px;height:84px;background:#fff1e0;border:3px solid #e06a1b;border-radius:18px;padding:10px 14px;font-size:16px;font-weight:700;line-height:1.4',
+    `🟠 Rusting is a kind of <b>corrosion</b>: a metal slowly reacting with things around it, like air and water.`);pop(C1);
+  const C2=mk('','left:487px;top:360px;width:460px;height:84px;background:#fde3e3;border:3px solid #e04848;border-radius:18px;padding:10px 14px;font-size:16px;font-weight:700;line-height:1.4',
+    `😟 Rust <b>flakes off</b>, so the fresh iron underneath rusts too. The iron gets <b>weaker</b> and weaker.`);pop(C2,300);
+  say(`Rusting is a kind of <b>corrosion</b>. Rust flakes off, so the iron underneath rusts too, and it gets weaker and weaker.`);
+  await w(4200);
+  STAMP('✔ Exam MCQ 16: B) Rusting (Corrosion)','left:260px;top:456px;font-size:21px',-3);
+  say(`✅ Exam question 16: when iron meets air and moisture over time, the reaction is <b>B) Rusting</b>, which is a type of <b>corrosion</b>.`);}},
+
+/* 6 */ {t:'The three test tubes',run:async w=>{
+  say(`Does rusting need air, water, or both? 🧪 Scientists test this with <b>three test tubes</b>. Each has an iron nail.`);
+  const X=[160,480,800];const tubes=[];
+  const T=[['A: air only','Drying agent soaks up all the water.'],['B: water only','Boiled water + oil layer keep air out.'],['C: air + water','Ordinary water, open to the air.']];
+  for(let i=0;i<3;i++){const t=mk('',`left:${X[i]-45}px;top:40px;width:90px;height:220px;border:4px solid #9aa7c7;border-top:none;border-radius:0 0 45px 45px;background:rgba(230,240,255,.5);overflow:hidden`);pop(t,i*150);tubes.push(t);
+    const lb=mk('',`left:${X[i]-150}px;top:268px;width:300px;text-align:center`,`<div style="font-size:19px;font-weight:800">${T[i][0]}</div><div style="font-size:13.5px;font-weight:700;color:#5a5f70">${T[i][1]}</div>`);pop(lb,i*150);}
+  /* A: drying agent, bung */
+  mk('','left:0;top:170px;width:90px;height:50px;background:radial-gradient(circle,#fff 0 4px,transparent 5px) 0 0/14px 14px,#dfe3ea',null,tubes[0]);
+  const nA=vnail(tubes[0],45,30,136);
+  /* B: boiled water with oil layer */
+  mk('','left:0;top:64px;width:90px;height:156px;background:linear-gradient(#9fd0ff,#5aa6e6)',null,tubes[1]);
+  mk('','left:0;top:52px;width:90px;height:14px;background:#f5d64a',null,tubes[1]);
+  const nB=vnail(tubes[1],45,80,128);
+  /* C: tap water, open */
+  const wC=mk('','left:0;top:120px;width:90px;height:100px;background:linear-gradient(#9fd0ff,#5aa6e6);transition:background 2s',null,tubes[2]);
+  const nC=vnail(tubes[2],45,40,170);
+  [0,1].forEach(i=>{const b=mk('',`left:${X[i]-52}px;top:26px;width:104px;height:22px;border-radius:6px;background:#a8743f`);pop(b,400);});
+  mk('tag',`left:${X[1]+48}px;top:84px;background:#fff7d6;color:#8a6d00;font-size:12px`,'← oil');
+  mk('tag',`left:${X[0]+48}px;top:206px;background:#f1f2f5;color:#5d6573;font-size:12px`,'← drying agent');
+  await w(3800);
+  say(`Tube A has <b>air but no water</b>. Tube B has <b>water but no air</b>. Tube C has <b>both</b>. Which nail will rust? Make a prediction!`);
+  let pick=-1;const O=[0,1,2].map(i=>{const e=mk('ex-opt',`left:${X[i]-120}px;top:340px;width:240px;height:56px;justify-content:center;font-size:19px`,`<span class="k">${'ABC'[i]}</span><span>Tube ${'ABC'[i]} rusts</span>`);pop(e,i*80);
+    e.onclick=()=>{if(pick<0)pick=i;};return e;});
+  await w.until(()=>pick>=0);
+  O.forEach((e,i)=>{e.classList.add('locked');e.getAnimations().forEach(a=>a.cancel());if(i!==pick)e.style.opacity=.35;else{e.style.borderColor='#6a45d8';e.style.background='#efe9ff';e.style.boxShadow='0 4px 0 #c9b6f4';}});
+  say(`You predicted <b>tube ${'ABC'[pick]}</b>. Let's leave them for a week and see… ⏳`);
+  const day=mk('tag','left:590px;top:150px;width:140px;text-align:center;background:#1f2433;color:#fff;font-size:17px','📅 Day 1');pop(day);
+  await w(1800);
+  an(nC.rust,[{opacity:0},{opacity:1}],{duration:3000});wC.style.background='linear-gradient(#e8b48a,#c98050)';
+  for(let d=2;d<=7;d++){day.textContent='📅 Day '+d;day.animate([{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:250});beep(400+d*40,.05);await w(500);}
+  await w(800);
+  O.forEach(e=>e.remove());
+  const res=[['✘ no rust','#5d6573'],['✘ no rust','#5d6573'],['🟠 RUSTED!','#a94716']];
+  res.forEach((r,i)=>{const e=mk('tag',`left:${X[i]-90}px;top:342px;width:180px;text-align:center;font-size:20px;background:${i===2?'#fbd9c2':'#f1f2f5'};color:${r[1]}`,r[0]);pop(e,i*250);});
+  if(pick===2){yay();confetti(60);}
+  say(pick===2?`Great prediction! 🎉 Only the nail in <b>tube C</b> rusted, the one with <b>air and water</b>.`:`Only the nail in <b>tube C</b> rusted, the one with <b>air and water</b>. Nails A and B stayed shiny!`);
+  await w(3800);
+  const S=mk('','left:13px;top:394px;width:933px;height:64px;background:#fff1e0;border:3px solid #e06a1b;border-radius:18px;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center',
+    `🧪 Rusting needs <span style="color:#2c66cf;margin:0 6px">BOTH</span> air (oxygen) <span style="margin:0 6px">AND</span> water 💧`);pop(S);
+  say(`So rusting needs <b>both</b> air, for the oxygen, <b>and</b> water. Take away either one, and iron does not rust.`);
+  await w(4000);
+  STAMP('✔ air + water → rust','left:350px;top:466px;font-size:20px',-3);}},
+
+/* 7 */ {t:'Stop the rust!',run:async w=>{
+  say(`Rust needs air and water, so to stop it, we keep them <b>away</b> from the iron! 🛡️ Here are the tricks.`);
+  await w(2200);
+  const drops=(a,n,fy=100)=>{for(let i=0;i<n;i++){const d=mk('',`left:${20+i*(160/n)}px;top:-10px;width:8px;height:12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#5d9cf5;z-index:3`,null,a);
+    d.animate([{transform:'translateY(0)',opacity:1},{transform:`translateY(${fy}px)`,opacity:1,offset:.7},{transform:`translate(${i%2?14:-14}px,${fy-24}px)`,opacity:0}],{duration:1400,iterations:Infinity,delay:i*300,easing:'ease-in'});}};
+  /* paint */
+  let a=card(13,8,222,244,'🎨 Paint','A coat of paint keeps air and water out. Gates, cars, bridges.','#18a058');
+  for(let i=0;i<5;i++){mk('',`left:${24+i*34}px;top:20px;width:14px;height:110px;background:#7d8796;border-radius:3px`,null,a);
+    const p=mk('',`left:${21+i*34}px;top:20px;width:20px;height:0;background:#18a058;border-radius:4px`,null,a);an(p,[{height:'0px'},{height:'110px'}],{duration:900,delay:400+i*200});}
+  drops(a,4,14);
+  say(`🎨 <b>Paint</b> covers the iron, so air and water can't reach it. That's why gates, cars and bridges are painted.`);await w(3600);
+  /* oil */
+  a=card(250,8,222,244,'🛢️ Oil or grease','Oil on moving parts, like bike chains, keeps water out.','#d66a0a');
+  for(let i=0;i<6;i++)mk('',`left:${8+i*30}px;top:70px;width:34px;height:22px;border-radius:11px;border:5px solid #5d6573`,null,a);
+  const sheen=mk('','left:8px;top:68px;width:184px;height:26px;background:linear-gradient(90deg,transparent,rgba(255,216,77,.7),transparent);background-size:50% 100%;background-repeat:no-repeat',null,a);
+  loop(sheen,[{backgroundPosition:'-100% 0'},{backgroundPosition:'200% 0'}],1400,{easing:'linear'});
+  const can=mk('big-emoji','left:150px;top:0;font-size:34px','🛢️',a);
+  const od=mk('','left:160px;top:36px;width:10px;height:12px;border-radius:50%;background:#d99a1b',null,a);loop(od,[{transform:'translateY(0)',opacity:1},{transform:'translateY(30px)',opacity:0}],900);
+  drops(a,3,60);
+  say(`🛢️ <b>Oil or grease</b> works on moving parts, like a bike chain. Water just slides off!`);await w(3400);
+  /* galvanising */
+  a=card(487,8,222,244,'🪣 Galvanising','Coating steel with <b>zinc</b>. Buckets, nails and fences.','#2c66cf');
+  mk('','left:20px;top:86px;width:160px;height:46px;background:linear-gradient(#b8c4d8,#8a9ab5);border-radius:6px',null,a);
+  label(a,'left:130px;top:96px;font-size:11px;color:#fff;line-height:1.1','molten<br>zinc');
+  const sheet=mk('','left:76px;top:6px;width:48px;height:70px;border-radius:4px;background:#7d8796',null,a);
+  const coat=mk('','left:0;top:0;width:48px;height:70px;border-radius:4px;background:repeating-linear-gradient(45deg,#dfe7f2 0 6px,#c3cfe0 6px 12px);opacity:0',null,sheet);
+  loop(sheet,[{transform:'translateY(0)'},{transform:'translateY(54px)',offset:.4},{transform:'translateY(54px)',offset:.55},{transform:'translateY(0)'}],2600);
+  loop(coat,[{opacity:0},{opacity:0,offset:.45},{opacity:1,offset:.6},{opacity:1}],2600);
+  say(`🪣 <b>Galvanising</b> means coating iron or steel with a layer of <b>zinc</b>. Even if it's scratched, the zinc corrodes first and protects the iron!`);await w(4400);
+  /* gold & silver */
+  a=card(724,8,222,244,'✨ Gold &amp; silver','They <b>do not corrode</b> easily, so they stay shiny.','#b08400');
+  const ring=mk('big-emoji','left:60px;top:30px;font-size:70px','💍',a);loop(ring,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg) scale(1.06)'}],1100,{direction:'alternate'});
+  [[20,20,0],[150,30,500],[130,100,900]].forEach(([x,y,d])=>{const s=mk('',`left:${x}px;top:${y}px;font-size:22px`,'✨',a);loop(s,[{transform:'scale(0)',opacity:0},{transform:'scale(1.2)',opacity:1},{transform:'scale(0)',opacity:0}],1400,{delay:d});});
+  drops(a,3,30);
+  say(`✨ And <b>gold</b> and <b>silver</b>? They <b>don't corrode</b> easily at all. Rain or sea water, they stay shiny!`);await w(3600);
+  const B=mk('','left:13px;top:266px;width:933px;height:70px;background:#fff;border:3px solid #ece8f8;border-radius:18px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 16px',
+    `🛡️ Paint, oil and zinc all make a <b style="margin:0 5px">barrier</b> between the iron and the air and water.`);pop(B);
+  const J=mk('','left:13px;top:348px;width:933px;height:110px;background:#fffbe9;border:3px solid #e8c547;border-radius:18px;padding:12px 20px;font-size:18px;font-weight:700;line-height:1.45',
+    `<b style="color:#b08400;font-size:13px;letter-spacing:.08em">SHORT ANSWER 2 · WHY ARE GOLD AND SILVER USED FOR JEWELLERY?</b><br>💍 Because they are <b>shiny</b> and <b>attractive</b>, and they <b>do not corrode</b> easily, so they stay beautiful.`);pop(J,300);
+  say(`That's why gold and silver are used for <b>jewellery</b>: they are <b>shiny</b>, <b>attractive</b> and <b>do not corrode</b> easily.`);
+  await w(4600);
+  await wipe(w);
+  const h=mk('','left:0;top:12px;width:960px;text-align:center;font-size:24px;font-weight:800;color:#d66a0a','🟠 Will it rust? Sort them!');pop(h);
+  const r=await sortGame(w,{bins:['🟠 Will rust','✨ Will not rust'],colors:['#e06a1b','#18a058'],top:170,
+    items:[['🔩 Nail in the rain',0],['🚲 Bare steel bike outside',0],['⚓ Iron anchor in the sea',0],['🎨 Painted iron gate',1],['🪣 Galvanised bucket',1],['⛓️ Oiled bike chain',1],['💍 Gold ring',1],['🔩 Nail in dry air',1]],
+    intro:`Your turn! 🎮 Tap a card, then tap the box it belongs in. Will it <b>rust</b> or <b>not</b>? Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! 🏆 Bare iron with air and water rusts. Paint, oil, zinc, dry air or gold all stay rust-free!`:`You got ${r.ok} of ${r.total}. Remember: iron rusts only with <b>air and water</b>, unless paint, oil or zinc protects it.`);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 5 · MCQ 9',q:'What is an alloy?',o:['A pure non-metal element','A mixture of a metal with one or more other elements','A mineral dug straight out of the ground','A type of liquid plastic'],a:1,optH:80,why:'An <b>alloy</b> is a mixture, like steel (iron + carbon) or brass (copper + zinc).'},
+    {src:'Worksheet · Unit 5 · MCQ 16',q:'What chemical reaction happens when iron is exposed to air and moisture over time?',o:['Evaporation','Rusting (Corrosion)','Photosynthesis','Condensation'],a:1,why:'Iron + oxygen + water → <b>rust</b>. Rusting is a type of <b>corrosion</b>.'},
+    {src:'Worksheet · Unit 5 · Short answer 11',q:'What is an alloy?',model:'An alloy is a <b>mixture of two or more metals</b>, or a <b>metal mixed with another element</b>. For example, steel is iron mixed with carbon.'},
+    {src:'Worksheet · Unit 5 · Short answer 13',q:'Explain the difference between the purity of 18-carat gold and 24-carat gold.',model:'<b>18-carat</b> gold is <b>75% gold</b> (18 out of 24 parts), while <b>24-carat</b> gold is <b>nearly pure gold</b>.'},
+    {src:'Worksheet · Unit 5 · Short answer 2',q:'Why are gold and silver used to make jewellery?',model:'Because they are <b>shiny</b> and <b>attractive</b>, and they <b>do not corrode</b> easily.'},
+  ],{title:'Exam check: alloys and rusting'});}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You've cracked both mysteries! Here's everything you learned…`);
+  const B=[['⚙️','<b>Alloy</b> = a metal mixed with one or more other elements.'],['🔩','<b>Steel</b> = iron + carbon.<br><b>Brass</b> = copper + zinc.'],['🧱','Different-sized atoms stop layers sliding, so alloys are <b>stronger</b>.'],['💍','<b>18 carat</b> = 75% gold.<br><b>24 carat</b> = nearly pure.'],
+    ['🟠','Iron + oxygen + water → <b>rust</b>. Rusting is <b>corrosion</b>.'],['🧪','Rusting needs <b>BOTH</b> air and water.'],['🛡️','Stop rust with <b>paint</b>, <b>oil</b> or <b>galvanising</b> (zinc).'],['✨','<b>Gold &amp; silver</b> don\'t corrode, so they stay shiny.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:448px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to all lessons ➜');
+  f.onclick=()=>{location.href='../index.html';};pop(f);
+  say(`Brilliant work! ⚙️ You know how <b>alloys</b> make metals stronger, and how to <b>stop rust</b>. Now try the next lesson!`);}},
+  ]
+});
+</script>
+</body>
+</html>

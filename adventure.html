@@ -177,6 +177,7 @@ function cleanSpeech(html){let t=html.replace(/<br\s*\/?>/gi,'. ').replace(/<[^>
      .replace(/\bB\)/g,'B,').replace(/\bvs\b/g,'versus').replace(/\be\.g\./g,'for example');
   const EMO=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{FE0F}\u{200D}\u{20E3}]+/gu;
   t=t.replace(/Try Fe, Au and O!/,'Try iron, gold and oxygen!');
+  t=t.replace(/(\d)\s*A\b/g,'$1 amps').replace(/\bamps \(A\)/g,'amps');
   t=t.replace(new RegExp('([a-z0-9])\\s*'+EMO.source+'\\s+(?=[A-Z])','gu'),'$1. ').replace(EMO,' ');
   t=t.replace(/\b[A-Z]{3,}\b/g,w=>w.toLowerCase());
   return t.replace(/…/g,'... ').replace(/\s+/g,' ').replace(/\s+([.,!?])/g,'$1').trim();}
@@ -555,7 +556,7 @@ function dots(){const d=$('#dots');d.innerHTML='';SC.forEach((s,i)=>{const b=doc
   $('#count').textContent=`Scene ${cur+1} of ${SC.length}`;$('#back').style.visibility=cur?'visible':'hidden';$('#next').textContent=cur===SC.length-1?'Start over ⟲':'Next ▶';}
 async function run(){const my=++token;stopVoice();stage.getAnimations&&stage.getAnimations({subtree:true}).forEach(a=>a.cancel());stage.innerHTML='';
   $('#next').classList.remove('ready');$('#stitle').textContent=`Scene ${cur+1} · ${SC[cur].t}`;dots();
-  try{await SC[cur].run(ms=>sleep(ms,my));if(my===token)$('#next').classList.add('ready');}catch(e){if(e!=='cancel')console.error(e);}}
+  try{await SC[cur].run(ms=>sleep(ms,my));if(my===token){$('#next').classList.add('ready');if(cur===SC.length-1)try{localStorage.setItem('g7_done_l05','1');}catch(e){}}}catch(e){if(e!=='cancel')console.error(e);}}
 function go(i){cur=(i+SC.length)%SC.length;run();}
 $('#next').onclick=()=>go(cur+1);$('#back').onclick=()=>go(cur-1);$('#replay').onclick=()=>run();
 $('#snd').onclick=()=>{soundOn=!soundOn;$('#snd').textContent=soundOn?'🔊':'🔇';try{localStorage.setItem('pta_sound',soundOn?'1':'0');}catch(e){}};

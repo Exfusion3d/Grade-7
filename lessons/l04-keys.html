@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Dichotomous keys</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 4 · Dichotomous keys (Unit 4). Stage 960 x 520. */
+const stampIn=(html,css)=>{const s=mk('stamp',css,html);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-4deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+const ttl=(txt,col)=>{const h=mk('',`left:0;top:12px;width:960px;text-align:center;font-size:27px;font-weight:800;color:${col||'#4a2ea6'}`,txt);pop(h);return h;};
+
+/* ---------- the dichotomous key (620 x 412 box) ---------- */
+const KN={
+  q1:{x:215,y:0,t:'Does it have <b>feathers</b>?'},
+  owl:{x:25,y:112,e:'🦉',t:'Owl (bird)'},
+  q2:{x:325,y:112,t:'Does it have <b>six legs</b>?'},
+  lady:{x:205,y:224,e:'🐞',t:'Ladybird (insect)'},
+  q3:{x:405,y:224,t:'Does it have <b>fur</b>?'},
+  bear:{x:335,y:336,e:'🐻',t:'Bear (mammal)'},
+  fish:{x:490,y:336,e:'🐟',t:'Fish'}};
+const KE=[['q1','owl',1],['q1','q2',0],['q2','lady',1],['q2','q3',0],['q3','bear',1],['q3','fish',0]];
+const NEXT={q1:['q2','owl'],q2:['q3','lady'],q3:['fish','bear']}; /* [no, yes] */
+const nw=id=>KN[id].e?130:190,nh=id=>KN[id].e?76:56;
+function buildKey(ox,oy,shown){
+  const W=mk('',`left:${ox}px;top:${oy}px;width:620px;height:412px`);
+  let paths='';const geo={};
+  KE.forEach(([a,b,yes])=>{const A=KN[a],B=KN[b];const sx=A.x+nw(a)/2,sy=A.y+nh(a),ex=B.x+nw(b)/2,ey=B.y,my=(sy+ey)/2;
+    const len=Math.abs(my-sy)+Math.abs(ex-sx)+Math.abs(ey-my);geo[a+'-'+b]={lx:(sx+ex)/2,ly:my,len,yes};
+    paths+=`<path id="p-${a}-${b}" d="M${sx} ${sy} V${my} H${ex} V${ey}" fill="none" stroke="#8a84a8" stroke-width="4" stroke-linejoin="round" stroke-dasharray="${len}" stroke-dashoffset="${shown?0:len}"/>`;});
+  mk('','left:0;top:0;width:620px;height:412px;pointer-events:none',`<svg width="620" height="412">${paths}</svg>`,W);
+  const node={},edge={};
+  for(const id in KN){const n=KN[id];const leaf=!!n.e;
+    node[id]=mk('',`left:${n.x}px;top:${n.y}px;width:${nw(id)}px;height:${nh(id)}px;border-radius:14px;border:3px solid ${leaf?'#18a058':'#6a45d8'};background:${leaf?'#fff':'#efe9ff'};display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:700;line-height:1.15;transition:box-shadow .3s;${shown?'':'opacity:0'}`,
+      leaf?`<span style="font-size:30px;line-height:1">${n.e}</span><span style="font-size:13px">${n.t}</span>`:`<span style="font-size:16px">${n.t}</span>`,W);}
+  for(const k in geo){const g=geo[k];const l=mk('',`left:${g.lx-24}px;top:${g.ly-12}px;width:48px;height:24px;border-radius:12px;background:${g.yes?'#18a058':'#e04848'};color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;${shown?'':'opacity:0'}`,g.yes?'Yes':'No',W);
+    edge[k]={path:W.querySelector('#p-'+k),label:l,len:g.len};}
+  return{W,node,edge,
+    async showNode(id){node[id].style.opacity=1;beep(600,.06);return pop(node[id]);},
+    async drawEdge(a,b){const e=edge[a+'-'+b];await an(e.path,[{strokeDashoffset:e.len},{strokeDashoffset:0}],{duration:600,easing:'ease-in-out'});e.label.style.opacity=1;pop(e.label);},
+    glow(id,on){node[id].style.boxShadow=on?'0 0 0 6px #ffd84d, 0 0 22px #ffc400':'none';},
+    lightEdge(a,b,on){const p=edge[a+'-'+b].path;p.setAttribute('stroke',on?'#f2a900':'#8a84a8');p.setAttribute('stroke-width',on?7:4);}};}
+
+Lesson.start({
+  id:'l04', num:4, unit:4, emoji:'🔍', title:'Dichotomous keys',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today you become a nature detective and learn to use a <b>dichotomous key</b>. Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'A mystery creature',run:async w=>{
+  ttl('🕵️ A mystery creature!');
+  const box=mk('','left:330px;top:58px;width:300px;height:236px;border-radius:24px;background:linear-gradient(#2d2550,#4a3b85);overflow:hidden');pop(box);
+  const sil=mk('','left:80px;top:40px;font-size:130px;line-height:1;filter:brightness(0) invert(.15)','🐞',box);
+  loop(sil,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],700,{direction:'alternate'});
+  [[20,20],[240,30],[30,170],[245,170]].forEach(([x,y],i)=>{const q=mk('',`left:${x}px;top:${y}px;font-size:30px;font-weight:800;color:#ffd84d`,'?',box);loop(q,[{transform:'translateY(0)',opacity:.4},{transform:'translateY(-10px)',opacity:1}],600+i*90,{direction:'alternate'});});
+  const mag=mk('','left:250px;top:120px;font-size:64px;line-height:1;z-index:5','🔍');
+  loop(mag,[{transform:'translate(0,0) rotate(0)'},{transform:'translate(320px,30px) rotate(20deg)'},{transform:'translate(160px,-50px) rotate(-10deg)'},{transform:'translate(0,0) rotate(0)'}],4000);
+  say(`Scientists find new creatures all the time! 🕵️ But how do they work out <b>what</b> a creature is?`);
+  await w(3200);
+  say(`They ask questions, one at a time. Each question has just <b>two</b> answers: <b>yes</b> or <b>no</b>.`);
+  const c1=mk('clue','left:40px;top:316px;width:420px;height:64px;padding:12px;font-size:20px;font-weight:700;text-align:left','❓ Does it have feathers?');an(c1,[{transform:'rotateY(90deg)',opacity:0},{transform:'none',opacity:1}],{duration:500});
+  await w(2400);
+  const a1=mk('tag','left:340px;top:331px;background:#fde3e3;color:#e04848;font-size:18px','No ✘');pop(a1);boo();
+  await w(900);
+  const c2=mk('clue','left:500px;top:316px;width:420px;height:64px;padding:12px;font-size:20px;font-weight:700;text-align:left','❓ Does it have six legs?');an(c2,[{transform:'rotateY(90deg)',opacity:0},{transform:'none',opacity:1}],{duration:500});
+  await w(1400);
+  const a2=mk('tag','left:800px;top:331px;background:#e3f7ec;color:#17935b;font-size:18px','Yes ✔');pop(a2);yay();
+  await w(1200);
+  an(mag,[{opacity:1},{opacity:0}],{duration:300});
+  an(box,[{background:'linear-gradient(#2d2550,#4a3b85)'},{background:'linear-gradient(#e9f8e1,#c9ecb5)'}],{duration:600});
+  an(sil,[{filter:'brightness(0) invert(.15)'},{filter:'none'}],{duration:700});
+  const it=mk('tag','left:398px;top:250px;background:#fff;color:#d66a0a;font-size:18px;z-index:6','🐞 A ladybird: an INSECT!');pop(it);confetti(60);
+  say(`Mystery solved! 🐞 No feathers, but six legs. It's a <b>ladybird</b>, which is an <b>insect</b>!`);
+  await w(3200);
+  const nm=mk('','left:180px;top:396px;width:600px;height:110px;border-radius:22px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;text-align:center;padding-top:14px',
+    `<div style="font-size:34px;font-weight:800">🔍 Dichotomous key</div><div style="font-size:17px;font-weight:700;opacity:.9;margin-top:4px">say it: "dy-KOT-uh-mus"</div>`);pop(nm);
+  loop(nm,[{transform:'scale(1)'},{transform:'scale(1.04)'}],700,{direction:'alternate'});
+  say(`A list of yes-or-no questions like this is called a <b>dichotomous key</b>. Say it with me: <b>dy-KOT-uh-mus</b>! 🔍`);}},
+
+/* 2 */ {t:'"Di-" means two',run:async w=>{
+  const L='DICHOTOMOUS'.split('');
+  const tiles=L.map((c,i)=>{const t=mk('',`left:${200+i*62}px;top:16px;width:56px;height:64px;border-radius:12px;background:#efe9ff;border:3px solid #6a45d8;color:#4a2ea6;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center`,c);
+    an(t,[{transform:'translateY(-120px) rotate(-30deg)',opacity:0},{transform:'none',opacity:1}],{duration:600,delay:i*70,easing:'cubic-bezier(.3,1.4,.5,1)'});return t;});
+  say(`Let's crack the word <b>dichotomous</b>. It looks scary, but it has a secret! 🔐`);
+  await w(2800);
+  tiles.forEach((t,i)=>{if(i<2){t.style.background='#ffd84d';t.style.borderColor='#e0a800';an(t,[{transform:'none'},{transform:'translateY(-6px) scale(1.15)'}],{duration:400});}else an(t,[{opacity:1},{opacity:.35}],{duration:400});});
+  beep(900,.12);
+  const two=mk('tag','left:14px;top:34px;background:#ffd84d;color:#5c4100;font-size:22px','DI = TWO ✌️');pop(two);
+  say(`It starts with <b>di-</b>, and <b>di-</b> means <b>two</b>! ✌️`);
+  await w(2600);
+  const P1=panel(13,100,300,320,'🫧 Carbon DIoxide','CO₂ has <b>two</b> oxygen atoms. Di = two!');pop(P1);
+  const mol=mk('','left:0;top:0;width:294px;height:200px',null,P1);
+  const C=mk('','left:118px;top:96px;width:60px;height:60px;border-radius:50%;background:#3a3f52;color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center','C',mol);pop(C);
+  const O1=mk('','left:40px;top:96px;width:60px;height:60px;border-radius:50%;background:#e04848;color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center','O',mol);
+  const O2=mk('','left:196px;top:96px;width:60px;height:60px;border-radius:50%;background:#e04848;color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center','O',mol);
+  an(O1,[{transform:'translate(-120px,-60px)',opacity:0},{transform:'none',opacity:1}],{duration:700,easing:'cubic-bezier(.3,1.4,.5,1)'});
+  an(O2,[{transform:'translate(120px,-60px)',opacity:0},{transform:'none',opacity:1}],{duration:700,delay:300,easing:'cubic-bezier(.3,1.4,.5,1)'});
+  const n1=mk('tag','left:52px;top:166px;background:#fde3e3;color:#e04848','1');pop(n1,700);const n2=mk('tag','left:208px;top:166px;background:#fde3e3;color:#e04848','2');pop(n2,1000);
+  loop(mol,[{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'}],900,{direction:'alternate',delay:1200});
+  say(`You already know a <b>di-</b> word: carbon <b>di</b>oxide, CO₂. It has <b>two</b> oxygen atoms! 🫧`);
+  await w(3400);
+  const P2=panel(330,100,300,320,'🛣️ A fork in the road','Each question gives you <b>two</b> paths to choose from.');pop(P2);
+  mk('','left:0;top:40px;width:294px;height:200px',`<svg width="294" height="200"><path d="M147 190 V120 L60 40 M147 120 L234 40" fill="none" stroke="#c9c2e6" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/><path d="M147 190 V120 L60 40 M147 120 L234 40" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 10"/></svg>`,P2);
+  mk('tag','left:30px;top:44px;background:#18a058;color:#fff','Yes',P2);mk('tag','left:214px;top:44px;background:#e04848;color:#fff','No',P2);
+  const wk=mk('','left:128px;top:196px;font-size:36px;line-height:1','🚶',P2);
+  wk.animate([{transform:'translate(0,0)'},{transform:'translate(0,-60px)',offset:.35},{transform:'translate(-80px,-140px)',offset:.7},{transform:'translate(-80px,-140px)',offset:.85},{transform:'translate(0,0)'}],{duration:4000,iterations:Infinity});
+  say(`A dichotomous key is like a road that <b>splits in two</b>. At every fork you choose: <b>yes</b> or <b>no</b>. 🛣️`);
+  await w(3600);
+  const P3=panel(647,100,300,320,'✂️ Cut in two','"Dichotomous" means <b>cut into two</b> groups.');pop(P3);
+  const A=['🦉','🐧','🐻','🐕'].map((e,i)=>{const d=mk('',`left:${30+i*62}px;top:90px;font-size:44px;line-height:1`,e,P3);pop(d,i*100);return d;});
+  const cut=mk('','left:144px;top:50px;width:4px;height:150px;background:repeating-linear-gradient(#6a45d8 0 10px,transparent 10px 18px)',null,P3);
+  const sc=mk('','left:126px;top:30px;font-size:32px;line-height:1','✂️',P3);
+  await w(1000);
+  an(cut,[{transform:'scaleY(0)',transformOrigin:'top'},{transform:'scaleY(1)',transformOrigin:'top'}],{duration:500});
+  await an(sc,[{transform:'translateY(0) rotate(90deg)'},{transform:'translateY(150px) rotate(90deg)'}],{duration:700});
+  A.forEach((d,i)=>an(d,[{transform:'none'},{transform:`translateX(${i<2?-14:14}px)`}],{duration:500}));beep(700,.1);
+  mk('tag','left:28px;top:150px;background:#5d9cf522;color:#2c66cf','Birds',P3);mk('tag','left:176px;top:150px;background:#f7ad5f33;color:#d66a0a','Mammals',P3);
+  say(`In fact, <b>dichotomous</b> means <b>cut in two</b>. Every question cuts a group into <b>two</b> smaller groups. ✂️`);
+  await w(3600);
+  stampIn('✔ MCQ 7: "di-" means B) Two','left:290px;top:440px;font-size:26px');
+  say(`✅ So the exam answer is <b>B) Two</b>. Di means two!`);}},
+
+/* 3 */ {t:'A key builds itself',run:async w=>{
+  const AN=['🦉','🐞','🐻','🐟'].map((e,i)=>{const d=mk('',`left:44px;top:${30+i*96}px;font-size:58px;line-height:1`,e);pop(d,i*150);loop(d,[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],500+i*60,{direction:'alternate'});return d;});
+  const note=mk('','left:806px;top:30px;width:140px;border-radius:16px;background:#fff8e6;border:3px solid #f2c200;padding:10px;font-size:15px;font-weight:700;text-align:center;line-height:1.35','Every question has only <b>2</b> answers:<br><span style="color:#18a058">Yes</span> or <span style="color:#e04848">No</span>');
+  const K=buildKey(176,6,false);
+  say(`Let's build a key for <b>four animals</b>: an owl, a ladybird, a bear and a fish. Watch it grow! 🌱`);
+  await w(3000);pop(note);
+  await K.showNode('q1');
+  say(`Question 1: <b>Does it have feathers?</b> 🪶`);await w(2400);
+  await K.drawEdge('q1','owl');await K.showNode('owl');
+  say(`<b>Yes</b>? Then it's the <b>owl</b>, a bird. Only birds have feathers! 🦉`);await w(2800);
+  await K.drawEdge('q1','q2');await K.showNode('q2');
+  say(`<b>No</b>? Then ask another question: <b>Does it have six legs?</b>`);await w(2800);
+  await K.drawEdge('q2','lady');await K.showNode('lady');
+  say(`<b>Yes</b>: six legs means it's an <b>insect</b>, the ladybird! 🐞`);await w(2600);
+  await K.drawEdge('q2','q3');await K.showNode('q3');
+  say(`<b>No</b>? Next question: <b>Does it have fur?</b>`);await w(2400);
+  await K.drawEdge('q3','bear');await K.showNode('bear');
+  await K.drawEdge('q3','fish');await K.showNode('fish');
+  say(`<b>Yes</b>: it's the <b>bear</b>, a mammal. <b>No</b>: it's the <b>fish</b>. Every animal now has its own name at the end! 🎉`);await w(3600);
+  stampIn('✔ MCQ 6: C) Identifying unknown organisms by choosing between pairs of features','left:70px;top:452px;font-size:17px');
+  say(`✅ What is a dichotomous key for? <b>C) Identifying unknown organisms by choosing between pairs of features.</b>`);}},
+
+/* 4 */ {t:'Use the key!',run:async w=>{
+  const K=buildKey(326,6,true);
+  const P=panel(13,8,300,504,'🔎 Mystery animal','');pop(P);
+  const head=P.querySelector('h4');
+  const em=mk('','left:0;top:42px;width:294px;text-align:center;font-size:84px;line-height:1','❓',P);
+  const facts=mk('','left:14px;top:140px;width:266px;font-size:15px;font-weight:700;color:#555;text-align:center;line-height:1.35','',P);
+  const qb=mk('','left:14px;top:204px;width:266px;height:86px;border-radius:16px;background:#efe9ff;border:3px solid #6a45d8;color:#4a2ea6;font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px','',P);
+  const yb=mk('bigbtn','left:14px;top:306px;width:128px;height:70px;background:#18a058;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer','✔ Yes',P);
+  const nb=mk('bigbtn','left:154px;top:306px;width:128px;height:70px;background:#e04848;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer','✘ No',P);
+  const res=mk('','left:14px;top:396px;width:266px;font-size:17px;font-weight:800;text-align:center;line-height:1.35','',P);
+  const ANI=[{e:'🐞',n:'ladybird',a:'a ladybird',facts:'Six legs, a hard shiny shell and wings.',leaf:'lady',group:'an insect'},
+    {e:'🦉',n:'owl',a:'an owl',facts:'Soft feathers, a hooked beak and wings.',leaf:'owl',group:'a bird'},
+    {e:'🐻',n:'bear',a:'a bear',facts:'Thick fur, four legs and big claws.',leaf:'bear',group:'a mammal'}];
+  const TRUTH={ladybird:{q1:0,q2:1},owl:{q1:1},bear:{q1:0,q2:0,q3:1}};
+  const QW={q1:'feathers',q2:'six legs',q3:'fur'};
+  let answer=null;yb.onclick=()=>{answer=1;};nb.onclick=()=>{answer=0;};
+  window.AUTOPLAY=()=>{const b=stage.querySelector('[data-right="1"]');if(b)b.click();};
+  say(`Your turn to be the detective! 🕵️ Use the key to identify <b>three</b> mystery animals. Answer each question with <b>Yes</b> or <b>No</b>.`);
+  await w(3200);
+  for(let k=0;k<ANI.length;k++){const A=ANI[k];
+    head.textContent=`🔎 Mystery animal ${k+1} of 3`;em.textContent=A.e;pop(em);facts.innerHTML=`Clues: ${A.facts}`;res.innerHTML='';
+    let id='q1';const lit=[];
+    while(!KN[id].e){K.glow(id,true);
+      qb.innerHTML=`Does the ${A.n} have ${QW[id]}?`;an(qb,[{transform:'scale(.9)'},{transform:'scale(1)'}],{duration:300});
+      say(`Look at the ${A.n}. <b>Does it have ${QW[id]}?</b> 🤔`);
+      const want=TRUTH[A.n][id];
+      for(;;){answer=null;yb.removeAttribute('data-right');nb.removeAttribute('data-right');(want?yb:nb).dataset.right='1';
+        await w.until(()=>answer!==null);
+        if(answer===want)break;
+        boo();shake(answer?yb:nb);say(`Hmm, look at the clues again: ${A.facts} Try again!`);}
+      yb.removeAttribute('data-right');nb.removeAttribute('data-right');beep(700,.08);
+      const nx=NEXT[id][want];K.lightEdge(id,nx,true);lit.push([id,nx]);K.glow(id,false);id=nx;await w(300);}
+    K.glow(id,true);an(K.node[id],[{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:600});yay();confetti(60);
+    res.innerHTML=`${A.e} It's ${A.a}:<br><span style="color:#17935b">${A.group}!</span>`;pop(res);qb.innerHTML='Solved! ✅';
+    say(`Brilliant! The key says it's <b>${A.a}</b>, which is <b>${A.group}</b>! ${A.e}`);
+    await w(2800);K.glow(id,false);lit.forEach(([a,b])=>K.lightEdge(a,b,false));}
+  window.AUTOPLAY=null;
+  yb.style.opacity=nb.style.opacity=.35;
+  say(`You identified all three animals! 🏆 That's exactly how scientists use a <b>dichotomous key</b>.`);}},
+
+/* 5 */ {t:'Insects: six legs & armour',run:async w=>{
+  const L=panel(13,8,440,420,'🐞 A ladybird up close','');pop(L);
+  const legs=[[75,130,20,98],[68,182,8,186],[76,236,22,282],[225,130,280,98],[232,182,292,186],[224,236,278,282]];
+  const sv=mk('','left:70px;top:44px;width:300px;height:320px',`<svg width="300" height="320" viewBox="0 0 300 320">
+    ${legs.map(([a,b,c,d])=>`<line class="lg" x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="#1f2433" stroke-width="8" stroke-linecap="round" stroke-dasharray="80" stroke-dashoffset="80"/>`).join('')}
+    <path d="M132 50 Q120 20 100 14 M168 50 Q180 20 200 14" stroke="#1f2433" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="150" cy="80" rx="50" ry="38" fill="#1f2433"/><circle cx="130" cy="66" r="7" fill="#fff"/><circle cx="170" cy="66" r="7" fill="#fff"/>
+    <ellipse cx="150" cy="184" rx="86" ry="104" fill="#e0322b"/>
+    <ellipse class="shine" cx="118" cy="140" rx="22" ry="44" fill="#fff" opacity=".35"/>
+    <line x1="150" y1="84" x2="150" y2="288" stroke="#1f2433" stroke-width="4"/>
+    ${[[108,140],[192,140],[96,206],[204,206],[128,256],[172,256]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="15" fill="#1f2433"/>`).join('')}</svg>`,L);
+  pop(sv);
+  const cnt=mk('','left:20px;top:372px;width:400px;text-align:center;font-size:24px;font-weight:800;color:#4a2ea6','🦵 Legs: 0',L);
+  say(`Let's look closely at an <b>insect</b>. Count the legs with me! 🐞`);
+  await w(2200);
+  const LG=sv.querySelectorAll('.lg');
+  for(let i=0;i<6;i++){an(LG[i],[{strokeDashoffset:80},{strokeDashoffset:0}],{duration:400});cnt.textContent=`🦵 Legs: ${i+1}`;an(cnt,[{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:300});beep(500+i*80,.08);say(`<b>${i+1}</b>…`);await w(500);}
+  cnt.innerHTML='🦵 Legs: 6 ✔ <span style="color:#17935b">= insect!</span>';
+  say(`<b>Six legs!</b> Every insect has six legs. 🐞`);await w(2400);
+  const sh=sv.querySelector('.shine');loop(sh,[{opacity:.15},{opacity:.7}],500,{direction:'alternate'});
+  const R1=panel(467,8,479,200,'🛡️ Exoskeleton = a hard OUTER skeleton','Insects have their skeleton on the <b>outside</b>, like a suit of armour. You have yours on the inside!');pop(R1);
+  const you=mk('','left:40px;top:46px;font-size:56px;line-height:1','🧍',R1),bone=mk('','left:104px;top:56px;font-size:40px;line-height:1','🦴',R1);
+  mk('','left:4px;top:110px;width:200px;text-align:center;font-size:13px;font-weight:800;color:#555','You: skeleton INSIDE',R1);
+  const bug=mk('','left:270px;top:46px;font-size:56px;line-height:1','🐞',R1),arm=mk('','left:330px;top:52px;font-size:44px;line-height:1','🛡️',R1);
+  mk('','left:250px;top:110px;width:180px;text-align:center;font-size:13px;font-weight:800;color:#555','Insect: skeleton OUTSIDE',R1);
+  loop(bone,[{transform:'rotate(-15deg)'},{transform:'rotate(15deg)'}],600,{direction:'alternate'});
+  loop(arm,[{filter:'drop-shadow(0 0 0 #ffd000)'},{filter:'drop-shadow(0 0 12px #ffc400)'}],600,{direction:'alternate'});
+  say(`See that hard, shiny shell? Insects have an <b>exoskeleton</b>: a <b>hard outer skeleton</b>, like armour. 🛡️`);await w(3800);
+  const R2=panel(467,216,479,212,'🔢 Six legs = insect','');pop(R2);
+  const I=['🐜','🐝','🦋','🐞'];I.forEach((e,i)=>{const d=mk('',`left:${24+i*80}px;top:46px;font-size:46px;line-height:1`,e,R2);pop(d,i*150);loop(d,[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],400+i*50,{direction:'alternate'});
+    const t=mk('tag',`left:${26+i*80}px;top:104px;background:#e3f7ec;color:#17935b;font-size:13px`,'6 legs ✔',R2);pop(t,i*150+200);});
+  say(`Ants, bees, butterflies and ladybirds all have six legs. They're all <b>insects</b>! 🐜🐝`);await w(3200);
+  const sp=mk('','left:360px;top:44px;font-size:50px;line-height:1','🕷️',R2);pop(sp);await w(400);shake(sp);boo();
+  const st=mk('tag','left:340px;top:104px;background:#fde3e3;color:#e04848;font-size:13px','8 legs ✘',R2);pop(st);
+  mk('','left:16px;top:146px;width:440px;font-size:14.5px;font-weight:700;color:#3a3f52','🕷️ A spider has <b>eight</b> legs, so it is <b>not</b> an insect.',R2);
+  say(`Careful! A spider has <b>eight</b> legs, so a spider is <b>not</b> an insect. 🕷️`);await w(3000);
+  stampIn('✔ MCQ 13: six legs + exoskeleton = B) Insects','left:180px;top:442px;font-size:23px');
+  say(`✅ Six legs and an exoskeleton? It's an insect! The answer is <b>B) Insects</b>.`);}},
+
+/* 6 */ {t:'Good question or useless?',run:async w=>{
+  const Q=mk('','left:230px;top:10px;width:500px;height:54px;border-radius:16px;background:#efe9ff;border:3px solid #6a45d8;color:#4a2ea6;font-size:23px;font-weight:800;display:flex;align-items:center;justify-content:center','');
+  const YES=panel(13,166,460,250,'✔ YES','');YES.querySelector('h4').style.color='#18a058';YES.style.borderColor='#9fdcbb';pop(YES);
+  const NO=panel(487,166,460,250,'✘ NO','');NO.querySelector('h4').style.color='#e04848';NO.style.borderColor='#f2b0b0';pop(NO);
+  const E=[['🦉','Owl'],['🐧','Penguin'],['🐻','Bear'],['🐕','Dog']];
+  const H=[250,380,520,650];
+  const A=E.map(([e,n],i)=>{const d=mk('',`left:${H[i]}px;top:76px;width:90px;text-align:center;line-height:1`,`<div style="font-size:52px">${e}</div><div style="font-size:13px;font-weight:800;color:#555;margin-top:2px">${n}</div>`);pop(d,i*120);return d;});
+  say(`A key only works if each question <b>splits</b> the animals into two groups. Let's test some questions! 🧪`);
+  await w(3000);
+  const QS=[{q:'Does it have eyes?',yes:[1,1,1,1],v:'❌ Useless: every animal has eyes!',s:`<b>Does it have eyes?</b> All four go to YES. Nobody is left in NO. That question is <b>useless</b>! 👀`},
+    {q:'Does it need water?',yes:[1,1,1,1],v:'❌ Useless: every animal needs water!',s:`<b>Does it need water?</b> Every animal needs water, so it doesn't split them. <b>Useless</b> again! 💧`},
+    {q:'Does it have a mouth?',yes:[1,1,1,1],v:'❌ Useless: every animal has a mouth!',s:`<b>Does it have a mouth?</b> Same problem: they all have one! 👄`},
+    {q:'Does it have feathers?',yes:[1,1,0,0],v:'✅ Great question: birds YES, mammals NO!',s:`<b>Does it have feathers?</b> The birds go to YES and the mammals go to NO. It splits them perfectly! 🪶`}];
+  let vd=null;
+  for(const qq of QS){
+    A.forEach((d,i)=>an(d,[{transform:d.dataset.t||'none'},{transform:'none'}],{duration:400}));A.forEach(d=>d.dataset.t='none');
+    if(vd)vd.remove();await w(500);
+    Q.textContent=qq.q;pop(Q);beep(600,.08);await w(900);
+    let ny=0,nn=0;
+    A.forEach((d,i)=>{const y=qq.yes[i];const k=y?ny++:nn++;const x=(y?40:514)+k*104,yy=236;const t=`translate(${x-H[i]}px,${yy-76}px)`;d.dataset.t=t;
+      an(d,[{transform:'none'},{transform:t}],{duration:700,delay:i*150,easing:'cubic-bezier(.3,1.3,.5,1)'});});
+    await w(1400);
+    const good=qq.yes.includes(0);
+    vd=mk('',`left:130px;top:430px;width:700px;height:52px;border-radius:16px;background:${good?'#e3f7ec':'#fde3e3'};border:3px solid ${good?'#18a058':'#e04848'};color:${good?'#17935b':'#c03030'};font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center`,qq.v);pop(vd);
+    if(good){yay();}else{boo();shake(NO);}
+    say(qq.s);await w(3200);}
+  await w(600);vd.remove();
+  stampIn('✔ MCQ 12: B) Having feathers','left:300px;top:436px;font-size:26px');
+  say(`✅ To separate birds from mammals, use <b>B) Having feathers</b>. Eyes, a mouth and needing water are useless, because <b>every</b> animal has them!`);}},
+
+/* 7 */ {t:'Pick the best question',run:async w=>{
+  const RD=[{a:['🦅','Eagle'],b:['🐕','Dog'],o:['Does it have eyes?','Does it need water?','Does it have feathers?','Does it have a mouth?'],r:2,
+      why:`Only the eagle has <b>feathers</b>. Every animal has eyes and a mouth, and needs water! 🪶`},
+    {a:['🐝','Bee'],b:['🕷️','Spider'],o:['Does it have legs?','Does it have six legs?','Is it alive?','Does it eat food?'],r:1,
+      why:`The bee has <b>six legs</b> (insect). The spider has eight. Both have legs, both are alive and both eat! 🐝`},
+    {a:['🐻','Bear'],b:['🐟','Fish'],o:['Does it breathe?','Does it grow?','Does it have eyes?','Does it have fur?'],r:3,
+      why:`The bear has <b>fur</b>. The fish has scales. Both breathe, grow and have eyes! 🐻`}];
+  ttl('🛠️ Build a good key question');
+  const sc=mk('tag','left:820px;top:16px;background:#efe9ff;color:#6a45d8','⭐ 0 / 3');let score=0;
+  say(`Your turn to write the key! 🛠️ Pick the question that splits the two animals into <b>two</b> groups.`);
+  await w(2800);
+  window.AUTOPLAY=()=>{const b=stage.querySelector('[data-right="1"]');if(b)b.click();};
+  for(let r=0;r<RD.length;r++){const d=RD[r];
+    const G=mk('','left:0;top:0;width:960px;height:520px');
+    const mkA=(x,[e,n],from)=>{const a=mk('',`left:${x}px;top:58px;width:120px;text-align:center;line-height:1`,`<div style="font-size:74px">${e}</div><div style="font-size:15px;font-weight:800;color:#555;margin-top:4px">${n}</div>`,G);
+      an(a,[{transform:`translateX(${from}px)`},{transform:'none'}],{duration:700});return a;};
+    const A=mkA(300,d.a,-500),B=mkA(540,d.b,500);
+    const vs=mk('','left:452px;top:84px;font-size:30px;font-weight:800;color:#8a84a8','vs',G);pop(vs,300);
+    let done=false;
+    const O=d.o.map((t,i)=>{const e=mk('word',`left:${30+(i%2)*460}px;top:${190+Math.floor(i/2)*80}px;width:440px;height:66px;font-size:20px;font-weight:800;cursor:pointer`,`❓ ${t}`,G);pop(e,i*80);
+      if(i===d.r)e.dataset.right='1';
+      e.onclick=()=>{if(done)return;if(i===d.r){done=true;e.removeAttribute('data-right');e.classList.add('good');score++;sc.textContent=`⭐ ${score} / 3`;pop(sc);
+          an(A,[{transform:'none'},{transform:'translateX(-210px)'}],{duration:600});an(B,[{transform:'none'},{transform:'translateX(220px)'}],{duration:600});
+          const ty=mk('tag','left:96px;top:30px;background:#18a058;color:#fff','Yes',G),tn=mk('tag','left:766px;top:30px;background:#e04848;color:#fff','No',G);pop(ty,400);pop(tn,400);
+          stampIn('✔ It splits them in two!','left:330px;top:370px;font-size:26px');say(d.why);}
+        else if(!e.classList.contains('bad')){e.classList.add('bad');shake(e);boo();say(`Hmm, do <b>both</b> animals have that? Then it can't split them. Try another!`);}};return e;});
+    say(`<b>${d.a[1]}</b> or <b>${d.b[1]}</b>? Which question splits them apart? 🤔`);
+    await w.until(()=>done);await w(3200);
+    if(r<RD.length-1){stage.querySelectorAll('.stamp').forEach(e=>e.remove());await an(G,[{opacity:1},{opacity:0}],{duration:400});G.remove();}}
+  window.AUTOPLAY=null;confetti(120);
+  say(`Super! 🏆 A good key question is about a feature that <b>some</b> animals have and <b>others don't</b>.`);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 4 · MCQ 6',q:'What is a "dichotomous key" used for?',o:['Opening locked doors','Measuring the temperature of water','Identifying unknown organisms by choosing between pairs of features','Calculating the speed of an animal'],a:2,cols:1,optH:46,
+      why:'A dichotomous key asks yes/no questions about <b>pairs of features</b> to <b>identify unknown organisms</b>.'},
+    {src:'Worksheet · Unit 4 · MCQ 7',q:'What does the prefix "di-" mean in the word dichotomous?',o:['One','Two','Ten','Hundred'],a:1,
+      why:'<b>Di-</b> means <b>two</b>, like carbon <b>di</b>oxide (two oxygen atoms). Each question has two answers.'},
+    {src:'Worksheet · Unit 4 · MCQ 12',q:'Which feature is best used to separate birds from mammals in a key?',o:['Having eyes','Having feathers','Having a mouth','Needing water'],a:1,
+      why:'Only birds have <b>feathers</b>. Every animal has eyes and a mouth and needs water, so those questions do not split them.'},
+    {src:'Worksheet · Unit 4 · MCQ 13',q:'If you find an animal with six legs and an exoskeleton, which major group does it likely belong to?',o:['Fish','Insects','Birds','Amphibians'],a:1,
+      why:'<b>Insects</b> have <b>six legs</b> and an <b>exoskeleton</b> (a hard outer skeleton).'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Dichotomous keys</b>! Here's everything you learned…`);
+  const B=[['🔍','A <b>dichotomous key</b> identifies unknown organisms using <b>pairs of features</b>.'],['✌️','<b>Di-</b> means <b>two</b>: every question has two answers.'],
+    ['✂️','Each question splits a group into <b>two</b> smaller groups.'],['🪶','<b>Has feathers?</b> separates birds from mammals.'],
+    ['👀','<b>Has eyes? Needs water?</b> Useless: every animal does!'],['🐞','<b>Six legs + exoskeleton</b> = an insect.'],
+    ['🛡️','<b>Exoskeleton</b> = a hard outer skeleton.'],['🕷️','Spiders have <b>eight</b> legs, so they are not insects.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${10+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:446px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to all lessons ➜');f.onclick=()=>{location.href='../index.html';};pop(f);
+  say(`You're a <b>key master</b>! 🔑 You can now identify living things like a real scientist.`);}},
+  ]
+});
+</script>
+</body>
+</html>

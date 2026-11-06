@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Current &amp; circuit components</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* ====================== circuit helpers ====================== */
+const INK='#1f2433';
+/* one circuit symbol centred on (x,y), drawn horizontally (30 px long before scaling) */
+function comp(t,x,y,glow=0,noTxt=false){
+  const m=`<rect x="${x-15}" y="${y-5}" width="30" height="10" fill="#fff"/>`;const w=(a,b)=>`<line x1="${a}" y1="${y}" x2="${b}" y2="${y}" stroke="${INK}" stroke-width="2.5"/>`;
+  switch(t){
+    case 'cell':return m+w(x-15,x-4)+`<line x1="${x-4}" y1="${y-13}" x2="${x-4}" y2="${y+13}" stroke="${INK}" stroke-width="2.5"/><line x1="${x+4}" y1="${y-7}" x2="${x+4}" y2="${y+7}" stroke="${INK}" stroke-width="6"/>`+w(x+4,x+15);
+    case 'sw':return m+w(x-15,x-10)+`<circle cx="${x-10}" cy="${y}" r="2.8" fill="${INK}"/><circle cx="${x+10}" cy="${y}" r="2.8" fill="${INK}"/>`+w(x-10,x+10)+w(x+10,x+15);
+    case 'swo':return m+w(x-15,x-10)+`<circle cx="${x-10}" cy="${y}" r="2.8" fill="${INK}"/><line x1="${x-10}" y1="${y}" x2="${x+8}" y2="${y-12}" stroke="${INK}" stroke-width="2.5"/><circle cx="${x+10}" cy="${y}" r="2.8" fill="${INK}"/>`+w(x+10,x+15);
+    case 'lamp':return m+w(x-15,x-10)+w(x+10,x+15)+
+      `<circle cx="${x}" cy="${y}" r="10" fill="${glow>0?'#fff27a':'#fff'}" stroke="${INK}" stroke-width="2.5"/><line x1="${x-7}" y1="${y-7}" x2="${x+7}" y2="${y+7}" stroke="${INK}" stroke-width="2.2"/><line x1="${x+7}" y1="${y-7}" x2="${x-7}" y2="${y+7}" stroke="${INK}" stroke-width="2.2"/>`;
+    case 'bz':return m+w(x-15,x-10)+w(x+10,x+15)+`<path d="M${x-10},${y} A10,10 0 0 0 ${x+10},${y} Z" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`;
+    case 'amm':return m+w(x-15,x-10)+w(x+10,x+15)+`<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`+(noTxt?'':`<text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="800" font-family="sans-serif" fill="${INK}">A</text>`);
+    case 'gap':return `<rect x="${x-16}" y="${y-6}" width="32" height="12" fill="#fff"/><circle cx="${x-15}" cy="${y}" r="2.8" fill="${INK}"/><circle cx="${x+15}" cy="${y}" r="2.8" fill="${INK}"/>`;
+  }return '';}
+function symSVG(t,k=1,xmlns=false){return `<svg ${xmlns?'xmlns="http://www.w3.org/2000/svg" ':''}width="${70*k}" height="${34*k}" viewBox="0 0 70 34"><line x1="0" y1="17" x2="70" y2="17" stroke="${INK}" stroke-width="2.5"/>${comp(t,35,17)}</svg>`;}
+/* symbol as an <img>, so the voice never reads the letter inside it */
+const symImg=(t,k=1.2)=>`<img alt="" src="data:image/svg+xml;utf8,${encodeURIComponent(symSVG(t,k,true))}" width="${70*k}" height="${34*k}" style="vertical-align:middle">`;
+/* rectangular circuit loop. parts: [{t,side:'top'|'right'|'bottom'|'left',f:0..1}] */
+function circ(par,X,Y,W,H,parts,o={}){
+  const s=o.s||2,pad=o.pad||40,BW=W+2*pad,BH=H+2*pad,dsz=o.dot||12;
+  const box=mk('',`left:${X-pad}px;top:${Y-pad}px;width:${BW}px;height:${BH}px;pointer-events:none`,null,par);
+  mk('','left:0;top:0',`<svg width="${BW}" height="${BH}"><rect x="${pad}" y="${pad}" width="${W}" height="${H}" rx="3" fill="none" stroke="${INK}" stroke-width="${2.5*s}"/></svg>`,box);
+  const fx=mk('','left:0;top:0;width:100%;height:100%',null,box),dl=mk('','left:0;top:0;width:100%;height:100%',null,box),sy=mk('','left:0;top:0',null,box),top=mk('','left:0;top:0;width:100%;height:100%',null,box);
+  const P=p=>p.side==='top'?[pad+p.f*W,pad]:p.side==='bottom'?[pad+p.f*W,pad+H]:p.side==='left'?[pad,pad+H-p.f*H]:[pad+W,pad+p.f*H];
+  const ROT=p=>p.r!=null?p.r:p.side==='right'?90:p.side==='left'?-90:(p.side==='bottom'&&p.t==='cell')?180:0;
+  const c={box,parts,fx,top,anims:[],s};
+  c.render=()=>{sy.innerHTML=`<svg width="${BW}" height="${BH}">${parts.filter(p=>p.t).map(p=>{const[x,y]=P(p);
+    return `<g transform="translate(${x} ${y}) rotate(${ROT(p)}) scale(${s})">${comp(p.t,0,0,p.g||0,true)}</g>`+(p.t==='amm'?`<text x="${x}" y="${y+5*s}" text-anchor="middle" font-size="${13*s}" font-weight="800" font-family="sans-serif" fill="${INK}">A</text>`:'');}).join('')}</svg>`;};
+  c.at=p=>P(p);
+  c.flow=(n=16,ms=8000)=>{dl.innerHTML='';c.anims=[];const L=2*(W+H);
+    const kf=[{transform:'translate(0,0)',offset:0},{transform:`translate(${W}px,0)`,offset:W/L},{transform:`translate(${W}px,${H}px)`,offset:(W+H)/L},{transform:`translate(0,${H}px)`,offset:(2*W+H)/L},{transform:'translate(0,0)',offset:1}];
+    for(let i=0;i<n;i++){const e=mk('',`left:${pad-dsz/2}px;top:${pad-dsz/2}px;width:${dsz}px;height:${dsz}px;border-radius:50%;background:#2c66cf;box-shadow:0 0 7px #5aa0f0`,null,dl);
+      c.anims.push(e.animate(kf,{duration:ms,iterations:Infinity,easing:'linear',delay:-i*ms/n}));}return c;};
+  c.setParts=arr=>{parts.forEach(p=>{if(p.h)p.h.remove();if(p.z)p.z.remove();});parts.splice(0,parts.length,...arr);c.render();};
+  c.rate=r=>c.anims.forEach(a=>a.playbackRate=r);
+  c.stop=()=>c.anims.forEach(a=>a.pause());c.go=()=>c.anims.forEach(a=>a.play());
+  c.light=lv=>{parts.filter(p=>p.t==='lamp').forEach(p=>{p.g=lv;const[x,y]=P(p),r=36*s;
+    if(!p.h){p.h=mk('',`left:${x-r}px;top:${y-r}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,0,.85),rgba(255,214,0,0) 68%);opacity:0;transition:opacity .4s`,null,fx);
+      loop(p.h,[{transform:'scale(.85)'},{transform:'scale(1.1)'}],600,{direction:'alternate'});}
+    p.h.style.opacity=lv;p.h.style.width=p.h.style.height=2*r*(.6+.4*lv)+'px';p.h.style.left=x-r*(.6+.4*lv)+'px';p.h.style.top=y-r*(.6+.4*lv)+'px';});c.render();};
+  c.buzz=on=>{parts.filter(p=>p.t==='bz').forEach(p=>{if(p.z){p.z.remove();p.z=null;}if(!on)return;const[x,y]=P(p);
+    p.z=mk('',`left:${x}px;top:${y}px`,null,top);
+    for(let i=0;i<3;i++){const r=mk('',`left:-${14*s}px;top:-${14*s}px;width:${28*s}px;height:${28*s}px;border-radius:50%;border:3px solid #6a45d8`,null,p.z);
+      r.animate([{transform:'scale(.7)',opacity:.9},{transform:'scale(2.4)',opacity:0}],{duration:1200,iterations:Infinity,delay:i*400});}
+    const t=mk('',`left:${16*s}px;top:${-30*s}px;font-size:${8*s+2}px;font-weight:800;color:#6a45d8;white-space:nowrap`,'BZZZ!',p.z);
+    loop(t,[{transform:'translateX(-2px)'},{transform:'translateX(2px)'}],90,{direction:'alternate'});});
+    clearInterval(c.iv);if(on&&o.sound!==false)c.iv=setInterval(()=>{if(!box.isConnected){clearInterval(c.iv);return;}beep(330,.22,'square',.03);},650);};
+  c.render();return c;}
+const stampAt=(x,y,html,par,fs=22,rot=-5)=>{const st=mk('stamp',`left:${x}px;top:${y}px;font-size:${fs}px;z-index:20`,html,par);
+  an(st,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:`rotate(${rot}deg)`,opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return st;};
+const box=(x,y,w,h,html,css='')=>mk('',`left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 16px;${css}`,html);
+const fill=el=>{el.style.background='#e3f7ec';el.style.color='#17935b';el.style.borderColor='#18a058';pop(el);beep(760,.1);};
+const BL='display:inline-block;min-width:90px;padding:0 8px;border-bottom:3px dashed #8a78cc;color:transparent;border-radius:8px;text-align:center';
+
+Lesson.start({
+  id:'l11', num:11, unit:9, emoji:'💡', title:'Current & circuit components',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today we follow tiny <b>electrons</b> round a circuit and meet the parts that make it work. Press <b>Start</b>!`,
+  scenes:[
+/* 1 */ {t:'Inside a wire',run:async w=>{
+  const P=panel(13,8,933,300,'🔬 Zoom inside a copper wire','');pop(P);
+  const coat=mk('','left:24px;top:48px;width:879px;height:200px;border-radius:100px;background:linear-gradient(#6fd39a,#2f9d62)',null,P);
+  const tube=mk('','left:44px;top:68px;width:839px;height:160px;border-radius:80px;background:linear-gradient(#f7c08a,#e58e4c 60%,#c86a2a);overflow:hidden',null,P);
+  for(let r=0;r<3;r++)for(let c=0;c<14;c++){const a=mk('',`left:${26+c*58+(r%2)*29}px;top:${18+r*48}px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe2c2,#d9782f);color:#7a3600;font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center`,'+',tube);
+    loop(a,[{transform:'translate(-1.5px,0)'},{transform:'translate(1.5px,1px)'}],160+((r*7+c*3)%5)*30,{direction:'alternate'});}
+  const E=[];for(let i=0;i<30;i++){const x=10+((i*137)%800),y=8+((i*53)%132);
+    const e=mk('',`left:${x}px;top:${y}px;width:13px;height:13px;border-radius:50%;background:#2c66cf;box-shadow:0 0 8px #8fc0ff;z-index:2`,null,tube);e.x=x;
+    loop(e,[{transform:'translate(0,0)'},{transform:`translate(${(i%5-2)*9}px,${(i%3-1)*12}px)`},{transform:`translate(${(i%4-2)*-8}px,${(i%5-2)*8}px)`}],700+(i%6)*120,{direction:'alternate'});E.push(e);}
+  const lg=mk('legend','left:200px;top:258px;width:540px;justify-content:center',`<span class="chipk" style="background:#ffe2c2;color:#7a3600">🟠 metal atoms: stay in place</span><span class="chipk" style="background:#dce9ff;color:#1c4a9c">🔵 electrons: free to move</span>`,P);pop(lg);
+  say(`Let's <b>zoom inside</b> a copper wire! 🔬 It is packed with <b>metal atoms</b> and even tinier particles called <b>electrons</b>.`);await w(3400);
+  say(`The atoms just jiggle in their places. But in a metal, some electrons are <b>free to move</b>. They wander about all over the wire!`);await w(3800);
+  const push=mk('tag','left:640px;top:12px;background:#ffd84d;color:#5c4100;font-size:16px','🔋 Cell connected: PUSH ➡️',P);pop(push);
+  E.forEach(e=>{e.getAnimations().forEach(a=>a.cancel());const D=4200;
+    e.animate([{transform:`translate(${-e.x-20}px,0)`},{transform:`translate(${(860-e.x)/2-e.x/2}px,${(e.x%3-1)*6}px)`,offset:.5},{transform:`translate(${860-e.x}px,0)`}],{duration:D,iterations:Infinity,easing:'linear',delay:-(e.x+20)/880*D});});
+  beep(500,.1);beep(700,.1,'triangle',.1,.1);
+  say(`Now connect a <b>cell</b>. It gives the electrons a push, so they all drift along the wire together. ➡️`);await w(3600);
+  const A=box(13,320,460,192,`<div style="font-size:19px;font-weight:800;color:#2c66cf">⚡ What is an electric current?</div><div style="font-size:17px;font-weight:700;margin-top:8px;line-height:1.4">A <b>flow of electrons</b> round a circuit.<br>The particles that move are <b>electrons</b>.</div>`);pop(A);
+  say(`That flow of electrons is an <b>electric current</b>! So the particles that move round a circuit are <b>electrons</b>. Not atoms, protons or neutrons.`);await w(1400);
+  stampAt(20,118,'✔ MCQ 1: B) Electrons',A);await w(3400);
+  const B=box(487,320,459,192,`<div style="font-size:15px;font-weight:800;color:#8a78cc;letter-spacing:.04em">✏️ SHORT ANSWER 5</div><div style="font-size:19px;font-weight:700;line-height:1.75;margin-top:4px">When current flows, particles called <span class="b1" style="${BL}">electrons</span> move. In metals, these particles are <span class="b2" style="${BL}">free to move</span>.</div>`);pop(B);
+  say(`Exam sentence: when current flows, particles called <b>electrons</b> move. In metals, these particles are <b>free to move</b>.`);
+  await w(1200);fill(B.querySelector('.b1'));await w(1400);fill(B.querySelector('.b2'));await w(800);}},
+
+/* 2 */ {t:'A complete loop',run:async w=>{
+  const L=panel(13,8,460,504,'🚲 A circuit is like a bike chain','Push the chain and <b>every link moves at once</b>. Electrons in a wire do the same, so a lamp lights the <b>instant</b> the loop is complete.');pop(L);
+  const X=60,Y=120,W=340,H=180;
+  mk('',`left:${X-14}px;top:${Y-14}px;width:${W+28}px;height:${H+28}px;border-radius:40px;border:4px dashed #d6d0f0`,null,L);
+  const g1=mk('',`left:${X+16}px;top:${Y+40}px;font-size:96px;line-height:1`,'⚙️',L),g2=mk('',`left:${X+W-80}px;top:${Y+60}px;font-size:60px;line-height:1`,'⚙️',L);
+  const links=[],n=28,PER=2*(W+H);
+  const kf=[{transform:'translate(0,0)',offset:0},{transform:`translate(${W}px,0)`,offset:W/PER},{transform:`translate(${W}px,${H}px)`,offset:(W+H)/PER},{transform:`translate(0,${H}px)`,offset:(2*W+H)/PER},{transform:'translate(0,0)',offset:1}];
+  for(let i=0;i<n;i++){const col=i===0?'#e04848':i===14?'#18a058':'#5d6573';
+    const e=mk('',`left:${X-9}px;top:${Y-9}px;width:18px;height:18px;border-radius:50%;border:5px solid ${col};background:#fff;z-index:2`,null,L);
+    const a=e.animate(kf,{duration:9000,iterations:Infinity,easing:'linear',delay:-i*9000/n});a.pause();links.push(a);}
+  const rot=[g1,g2].map((g,i)=>{const a=g.animate([{transform:'rotate(0)'},{transform:'rotate(360deg)'}],{duration:i?2600:4200,iterations:Infinity,easing:'linear'});a.pause();return a;});
+  say(`Think of a <b>bike chain</b> 🚲. Look at the <b style="color:#e04848">red</b> link and the <b style="color:#18a058">green</b> link, on opposite sides of the loop.`);await w(3600);
+  links.forEach(a=>a.play());rot.forEach(a=>a.play());beep(500,.1);
+  say(`Turn the pedal and <b>every link moves at the same moment</b>, all the way round. Electrons in a wire behave just like this!`);await w(3800);
+  const R=panel(487,8,459,504,'💡 Electrons in a circuit','The circuit must be a <b>complete loop</b>. If there is a gap anywhere, the electrons stop.');pop(R);
+  const parts=[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5},{t:'gap',side:'bottom',f:.5}];
+  const c=circ(R,80,110,300,210,parts);c.flow(16,7000);c.stop();
+  const tc=mk('tag','left:258px;top:52px;background:#fff1c9;color:#7a5600','🔋 cell',R);pop(tc);
+  const tg=mk('tag','left:184px;top:336px;background:#fde3e3;color:#e04848','⛔ GAP in the wire',R);pop(tg);loop(tg,[{transform:'scale(1)'},{transform:'scale(1.08)'}],500,{direction:'alternate'});
+  say(`Here's a cell and a lamp, but there's a <b>gap</b> in the wire. The electrons are there, but they can't flow. The lamp stays dark.`);await w(3800);
+  let closed=false;
+  const b=mk('bigbtn','left:597px;top:392px;width:240px;height:56px;background:#18a058;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer','🔧 Close the gap');pop(b);
+  loop(b,[{transform:'scale(1)'},{transform:'scale(1.05)'}],600,{direction:'alternate'});
+  b.onclick=()=>{if(closed)return;closed=true;parts[2].t=null;c.render();c.go();c.light(1);tg.remove();b.remove();yay();};
+  window.AUTOPLAY=()=>{if(!closed)b.click();};
+  say(`Your turn! Tap <b>Close the gap</b> to complete the loop. 👇`);
+  await w.until(()=>closed);window.AUTOPLAY=null;
+  say(`The loop is complete! All the electrons move <b>at once</b>, like the chain, and the lamp lights up straight away. 💡`);await w(3200);
+  const st=stampAt(56,384,'✔ Current needs a complete loop',R,20,-3);}},
+
+/* 3 */ {t:'Meet the components',run:async w=>{
+  say(`Every circuit is built from <b>components</b>. Let's meet five of them, and see how each real object turns into a <b>circuit symbol</b>. ✏️`);await w(2600);
+  const pic={
+    cell:a=>mk('','left:40px;top:18px;font-size:70px;line-height:1','🔋',a),
+    swo:a=>{const p=mk('','left:44px;top:12px;width:62px;height:86px;border-radius:12px;background:#f4f4f6;border:3px solid #c9ccd6',null,a);
+      const r=mk('','left:17px;top:14px;width:22px;height:50px;border-radius:6px;background:linear-gradient(#fff,#d9dce5);border:2px solid #aab0be',null,p);
+      loop(r,[{transform:'perspective(80px) rotateX(25deg)'},{transform:'perspective(80px) rotateX(-25deg)'}],900,{direction:'alternate'});return p;},
+    lamp:a=>{const p=mk('','left:40px;top:18px;font-size:70px;line-height:1','💡',a);loop(p,[{filter:'drop-shadow(0 0 2px #ffd000)'},{filter:'drop-shadow(0 0 16px #ffc400)'}],600,{direction:'alternate'});return p;},
+    bz:a=>{const p=mk('','left:40px;top:16px;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#666,#111);box-shadow:0 4px 0 #000',null,a);
+      mk('','left:31px;top:31px;width:10px;height:10px;border-radius:50%;background:#000;border:2px solid #444',null,p);
+      mk('','left:20px;top:66px;width:4px;height:26px;background:#e04848',null,p);mk('','left:48px;top:66px;width:4px;height:26px;background:#222',null,p);
+      loop(p,[{transform:'translate(-1.5px,0)'},{transform:'translate(1.5px,0)'}],60,{direction:'alternate'});return p;},
+    amm:a=>{const p=mk('','left:26px;top:14px;width:100px;height:76px;border-radius:12px;background:#f7f8fb;border:3px solid #7d8796',
+      `<svg width="94" height="70" style="position:absolute;left:0;top:0"><path d="M14 52 A36 36 0 0 1 80 52" fill="none" stroke="${INK}" stroke-width="2"/><text x="47" y="62" text-anchor="middle" font-size="15" font-weight="800" fill="#2c66cf" font-family="sans-serif">A</text></svg>`,a);
+      const nd=mk('','left:45px;top:20px;width:3px;height:36px;background:#e02020;transform-origin:50% 100%',null,p);
+      loop(nd,[{transform:'rotate(-50deg)'},{transform:'rotate(40deg)'}],1300,{direction:'alternate'});return p;}};
+  const D=[['cell','🔋 Cell','Provides <b>energy</b> to make the current flow.',`The <b>cell</b> provides the <b>energy</b> to push electrons round. Its symbol: a long thin line and a short thick line.`],
+    ['swo','🔘 Switch','<b>Opens</b> or <b>closes</b> the circuit to stop or allow current to flow.',`The <b>switch</b> opens or closes the circuit. This symbol is an <b>open</b> switch: the lever is up, leaving a gap.`],
+    ['lamp','💡 Lamp','Gives out <b>light</b>.',`The <b>lamp</b> gives out <b>light</b>. Its symbol is a circle with a cross inside.`],
+    ['bz','🔊 Buzzer','Makes a <b>buzzing sound</b>.',`The <b>buzzer</b> makes a <b>buzzing sound</b>. Its symbol looks like a little dome.`],
+    ['amm','📟 Ammeter','<b>Measures</b> the current in the circuit.',`The <b>ammeter</b> <b>measures current</b>. Its symbol is a circle with a capital <b>A</b> inside.`]];
+  for(let i=0;i<5;i++){const a=card(13+i*188,8,180,300,D[i][1],D[i][2],'#6a45d8');const p=pic[D[i][0]](a);beep(560+i*70,.1);
+    say(D[i][3]);await w(1500);
+    an(p,[{transform:'none'},{transform:'translate(-38px,-14px) scale(.5)'}],{duration:600});
+    const s=mk('',`left:12px;top:64px`,symSVG(D[i][0],1.8),a);
+    an(s,[{transform:'scale(0) rotate(-30deg)',opacity:0},{transform:'none',opacity:1}],{duration:600,delay:300,easing:'cubic-bezier(.3,1.5,.5,1)'});
+    mk('','left:70px;top:16px;font-size:22px;font-weight:800;color:#6a45d8','➜ ✏️',a);
+    await w(2600);}
+  const B=panel(13,318,933,194,'🔁 All five in one complete loop','');pop(B);
+  const c=circ(B,150,58,630,86,[{t:'cell',side:'top',f:.2},{t:'sw',side:'top',f:.5},{t:'amm',side:'top',f:.8},{t:'lamp',side:'bottom',f:.3},{t:'bz',side:'bottom',f:.7}],{pad:30,s:1.6,dot:10,sound:false});
+  c.flow(22,9000);c.light(1);c.buzz(true);
+  say(`Put them all in <b>one complete loop</b> and close the switch: the electrons flow, the lamp shines and the buzzer buzzes! 🎉`);await w(3000);}},
+
+/* 4 */ {t:'Switch it on!',run:async w=>{
+  const L=panel(13,8,540,504,'🔦 Your circuit','');pop(L);
+  const parts=[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5},{t:'bz',side:'bottom',f:.5},{t:'swo',side:'left',f:.5}];
+  const c=circ(L,90,100,360,260,parts);c.flow(18,8000);c.stop();
+  [['🔋 Cell',306,46],['💡 Lamp',346,216],['🔊 Buzzer',228,310],['🔘 Switch',112,216]].forEach(([t,x,y],i)=>{const g=mk('tag',`left:${x}px;top:${y}px;background:#efe9ff;color:#4a2ea6`,t,L);pop(g,i*120);});
+  const S=box(567,8,379,112,'');pop(S);
+  const upd=on=>{S.innerHTML=`<div style="font-size:20px;font-weight:800">Switch: ${on?'<span style="color:#18a058">CLOSED ✅</span>':'<span style="color:#e04848">OPEN ⛔</span>'}</div><div style="font-size:18px;font-weight:700;margin-top:8px">Current: ${on?'<span style="color:#18a058">flowing ⚡</span>':'<span style="color:#e04848">none, there is a gap</span>'}</div>`;};upd(false);
+  const rows=[0,1,2].map(i=>box(567,132+i*128,379,116,''));
+  const row=(i,stamp,txt)=>{pop(rows[i]);stampAt(14,8,stamp,rows[i],20);mk('',`left:16px;top:62px;width:340px;font-size:16px;font-weight:700;line-height:1.3`,txt,rows[i]);};
+  const cellHalo=mk('','left:226px;top:56px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(255,216,77,.8),rgba(255,216,77,0) 70%)',null,L);
+  loop(cellHalo,[{transform:'scale(.7)',opacity:.4},{transform:'scale(1.2)',opacity:1}],500,{direction:'alternate'});
+  say(`Here's a circuit with a <b>cell</b>, a <b>switch</b>, a <b>lamp</b> and a <b>buzzer</b>. Which part provides the energy? The <b>cell</b>! 🔋`);await w(1800);
+  row(0,'✔ MCQ 2: B) Cell','The <b>cell</b> (or battery) provides the electrical energy.');await w(2200);cellHalo.remove();
+  let on=false,want=true,taps=0;
+  const b=mk('bigbtn','left:163px;top:440px;width:240px;height:58px;background:#18a058;display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer','👆 Close the switch');pop(b);
+  const set=v=>{on=v;parts[3].t=v?'sw':'swo';c.light(v?1:0);c.buzz(v);v?c.go():c.stop();upd(v);
+    b.textContent=v?'👆 Open the switch':'👆 Close the switch';b.style.background=v?'#e04848':'#18a058';beep(v?900:300,.08,'square',.06);};
+  b.onclick=()=>{set(!on);taps++;};
+  window.AUTOPLAY=()=>{if(on!==want)b.click();};
+  say(`But the switch is <b>open</b>: there's a gap, so no current flows. Tap <b>Close the switch</b>! 👇`);
+  await w.until(()=>on);
+  say(`It works! The <b>lamp</b> changes electrical energy into <b>light</b>, and the <b>buzzer</b> changes it into <b>sound</b>. 🔊`);await w(1600);
+  row(2,'✔ MCQ 15: B) Buzzer','The <b>buzzer</b> converts electrical energy into <b>sound</b>.');await w(2400);
+  want=false;say(`Now tap the switch again to <b>open</b> it. 👇`);
+  await w.until(()=>!on);
+  say(`Everything stops at once! A <b>switch</b> safely turns a circuit <b>on and off</b> by closing or opening a gap.`);await w(1600);
+  row(1,'✔ MCQ 14: B) Switch','Closed = current flows. Open = current stops.');await w(2600);
+  window.AUTOPLAY=null;
+  say(`Play with the switch as much as you like! Closed: on. Open: off. 😀`);}},
+
+/* 5 */ {t:'More push, faster flow',run:async w=>{
+  const L=panel(13,8,600,504,'🔋 More push = more current','');pop(L);
+  const parts=[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5},{t:'amm',side:'bottom',f:.5}];
+  const c=circ(L,90,100,420,250,parts);c.flow(18,9000);c.light(.35);
+  const rd=mk('tag','left:262px;top:396px;background:#1f2433;color:#7dffb0;font-size:22px;font-family:monospace;padding:4px 14px','0.2 A',L);pop(rd);
+  const sp=mk('tag','left:226px;top:208px;background:#e6f0ff;color:#1c4a9c;font-size:20px','🐢 slow flow',L);pop(sp);
+  const S=box(627,8,319,250,'');pop(S);
+  S.innerHTML=`<div style="font-size:18px;font-weight:800;color:#6a45d8">⚡ Electron speed</div><div style="position:absolute;left:16px;top:52px;width:280px;height:26px;border-radius:13px;background:#eef0f5"><div class="f" style="width:33%;height:100%;border-radius:13px;background:linear-gradient(90deg,#5d9cf5,#2c66cf);transition:width .8s"></div></div>
+    <div class="ic" style="position:absolute;left:16px;top:88px;font-size:40px">🐢</div><div class="ct" style="position:absolute;left:16px;top:146px;width:280px;font-size:17px;font-weight:700;line-height:1.4">Cells: <b>1</b><br>Current: <b>0.2 A</b></div>`;
+  let N=1;
+  const b=mk('bigbtn','left:180px;top:446px;width:260px;height:56px;background:#e06a1b;display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer','➕ Add a cell');
+  const R=[null,['0.2 A','🐢 slow flow','🐢',.35],['0.4 A','🐇 faster flow','🐇',.7],['0.6 A','🚀 fastest flow','🚀',1]];
+  const apply=()=>{c.setParts([...Array.from({length:N},(_,k)=>({t:'cell',side:'top',f:.5+(k-(N-1)/2)*.17})),{t:'lamp',side:'right',f:.5},{t:'amm',side:'bottom',f:.5}]);
+    c.rate(N);c.light(R[N][3]);rd.textContent=R[N][0];sp.textContent=R[N][1];pop(rd);pop(sp);
+    S.querySelector('.f').style.width=(33*N)+'%';S.querySelector('.ic').textContent=R[N][2];S.querySelector('.ic').style.left=(16+(N-1)*110)+'px';
+    S.querySelector('.ct').innerHTML=`Cells: <b>${N}</b><br>Current: <b>${R[N][0]}</b>`;yay();if(N>=3){b.style.opacity=.35;}};
+  b.onclick=()=>{if(N>=3)return;N++;apply();};
+  window.AUTOPLAY=()=>{if(N<goal)b.click();};let goal=1;
+  say(`One cell gives the electrons a gentle push. They flow <b>slowly</b>, and the ammeter shows a <b>small current</b>: 0.2 amps.`);await w(3600);
+  pop(b);loop(b,[{transform:'scale(1)'},{transform:'scale(1.05)'}],600,{direction:'alternate'});goal=2;
+  say(`Let's give them a bigger push. Tap <b>Add a cell</b>! 👇`);
+  await w.until(()=>N>=2);
+  say(`Two cells: more push! The electrons flow <b>faster</b>, so the current is <b>bigger</b>. The lamp is brighter too. Add one more!`);goal=3;
+  await w(2600);await w.until(()=>N>=3);
+  say(`Three cells: the electrons are zooming! 🚀 The ammeter shows the <b>biggest current</b> yet.`);await w(3000);window.AUTOPLAY=null;
+  const T=box(627,272,319,240,`<div style="font-size:15px;font-weight:800;color:#8a78cc;letter-spacing:.04em">✏️ SHORT ANSWER 4</div><div style="font-size:19px;font-weight:700;line-height:1.8;margin-top:4px">The greater the current in a circuit, the <span class="b1" style="${BL}">faster</span> the flow of <span class="b2" style="${BL}">electrons</span>.</div>`);pop(T);
+  say(`So, the exam sentence: the greater the current in a circuit, the <b>faster</b> the flow of <b>electrons</b>.`);
+  await w(1200);fill(T.querySelector('.b1'));await w(1000);fill(T.querySelector('.b2'));await w(600);stampAt(60,180,'✔ Faster electrons',T,18);await w(1500);}},
+
+/* 6 */ {t:'Symbol match game',run:async w=>{
+  mk('','left:0;top:12px;width:960px;text-align:center;font-size:22px;font-weight:800;color:#4a2ea6','🧩 Match each symbol and each job to its component');
+  const S=t=>`<span style="display:inline-flex">${symSVG(t)}</span>`;
+  const r=await sortGame(w,{bins:['🔋 Cell','💡 Lamp','🔘 Open switch','🔊 Buzzer','📟 Ammeter'],top:180,
+    colors:['#f7ad5f','#ffd84d','#5d9cf5','#c9b6f4','#45c288'],
+    items:[[S('cell'),0],['⚡ gives energy',0],[S('lamp'),1],['✨ gives light',1],[S('swo'),2],['⛔ makes a gap',2],[S('bz'),3],['🔊 makes sound',3],[S('amm'),4],['<span style="font-size:14px;line-height:1.1;text-align:center">📏 measures<br>current</span>',4]],
+    intro:`Game time! 🎮 Tap a card, then tap the box it belongs in. Each component gets <b>one symbol</b> and <b>one job</b>. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! 🏆 You know every symbol and every job. That's exam question 17 sorted!`:`You got <b>${r.ok} of ${r.total}</b>. The red ones are in the wrong box. Press <b>Replay</b> to try again!`);await w(3000);}},
+
+/* 7 */ {t:'Which circuit lights and buzzes?',run:async w=>{
+  const C=[{l:'A',parts:[{t:'swo',side:'top',f:.7},{t:'lamp',side:'bottom',f:.3},{t:'bz',side:'bottom',f:.7}],why:'❌ No cell: no energy!'},
+    {l:'B',parts:[{t:'cell',side:'top',f:.3},{t:'swo',side:'top',f:.7},{t:'lamp',side:'bottom',f:.3}],why:'❌ No buzzer: no sound!'},
+    {l:'C',parts:[{t:'cell',side:'top',f:.3},{t:'swo',side:'top',f:.7},{t:'lamp',side:'bottom',f:.3},{t:'bz',side:'bottom',f:.7}],ok:1},
+    {l:'D',parts:[{t:'cell',side:'top',f:.3},{t:'swo',side:'top',f:.7},{t:'bz',side:'bottom',f:.7}],why:'❌ No lamp: no light!'}];
+  let done=false;
+  const strip=box(13,424,933,88,`<div style="font-size:19px;font-weight:700;line-height:1.4">🎯 <b>Q17:</b> When the switch is closed, which circuit will <b>give light</b> AND <b>make the buzzer sound</b>? Tap it!</div>`);
+  C.forEach((o,i)=>{const P=panel(13+(i%2)*474,8+Math.floor(i/2)*208,460,200,'Circuit '+o.l,'');P.style.cursor='pointer';pop(P);o.P=P;
+    o.c=circ(P,90,62,280,100,o.parts,{s:1.5,pad:30,dot:10});
+    P.onclick=()=>{if(done)return;
+      if(o.ok){done=true;P.style.borderColor='#18a058';P.style.background='#f1fbf5';o.parts.forEach(p=>{if(p.t==='swo')p.t='sw';});o.c.flow(14,6000);o.c.light(1);o.c.buzz(true);
+        C.forEach(q=>{if(!q.ok){q.P.style.opacity=.55;}});}
+      else{P.style.borderColor='#e04848';shake(P);boo();if(!o.tg){o.tg=mk('tag','left:146px;top:98px;background:#fde3e3;color:#e04848;font-size:16px',o.why,P);pop(o.tg);}
+        say(`Not that one: ${o.why.replace('❌ ','')} Try again!`);}};});
+  pop(strip);
+  say(`Exam question 17! Four circuits. When the switch is closed, which one will <b>light up</b> AND <b>buzz</b>? Tap your answer! 👆`);
+  window.AUTOPLAY=()=>{if(!done)C[2].P.click();};
+  await w.until(()=>done);window.AUTOPLAY=null;
+  say(`Yes! Circuit <b>C</b> has a <b>cell</b>, a <b>switch</b>, a <b>lamp</b> and a <b>buzzer</b> all in <b>one complete loop</b>. 💡🔊`);
+  strip.innerHTML='';stampAt(110,16,'✔ Circuit C: cell + switch + lamp + buzzer in one loop',strip,21,-2);await w(3600);
+  C.forEach(q=>{if(!q.ok&&!q.tg){q.tg=mk('tag','left:146px;top:98px;background:#fde3e3;color:#e04848;font-size:16px',q.why,q.P);pop(q.tg);}});
+  say(`The others each miss something. A has <b>no cell</b>, B has <b>no buzzer</b> and D has <b>no lamp</b>.`);await w(3400);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  const Q=['cell','lamp','amm','swo'].map((t,i)=>`<span style="display:inline-flex;align-items:center;gap:6px;margin-right:22px"><b>${i+1}</b>${symImg(t,1.3)}</span>`).join('');
+  await examCheck(w,[
+    {src:'Worksheet · Unit 9 · MCQ 1',q:'What particles create an electric current in a wire?',o:['Atoms','Electrons','Protons','Neutrons'],a:1,why:'A current is a flow of <b>electrons</b>. In metals they are free to move.'},
+    {src:'Worksheet · Unit 9 · MCQ 2',q:'Which symbol or component provides the electrical energy in a circuit?',o:['Switch','Cell (or battery)','Lamp','Buzzer'],a:1,why:'The <b>cell</b> gives the push (energy) that makes the current flow.'},
+    {src:'Worksheet · Unit 9 · MCQ 14',q:'What component is used to safely turn a circuit on and off?',o:['Cell','Switch','Resistor','Wire'],a:1,why:'A <b>switch</b> opens or closes the circuit to stop or allow the current.'},
+    {src:'Worksheet · Unit 9 · MCQ 15',q:'What component converts electrical energy into sound energy in a circuit?',o:['Lamp','Buzzer','Switch','Motor'],a:1,why:'A <b>buzzer</b> makes a buzzing sound. A lamp makes light.'},
+    {src:'Worksheet · Unit 9 · Short answer 1',q:'Name the particles that move around a circuit when current flows.',model:'<b>Electrons.</b>'},
+    {src:'Worksheet · Unit 9 · Short answer 2',q:'Write the role of each component: cell, switch, lamp, buzzer, ammeter.',model:'<b>Cell:</b> provides energy to make current flow.<br><b>Switch:</b> opens or closes the circuit to stop or allow current to flow.<br><b>Lamp:</b> gives out light.<br><b>Buzzer:</b> makes a buzzing sound.<br><b>Ammeter:</b> measures current in the circuit.'},
+    {src:'Worksheet · Unit 9 · Short answer 4',q:'Complete: "The greater the current in a circuit, the ______ the flow of ______."',model:'The greater the current in a circuit, the <b>faster</b> the flow of <b>electrons</b>.'},
+    {src:'Worksheet · Unit 9 · Short answer 5',q:'Complete using: free to move, cannot move, electrons, atoms, wires. "When current flows, particles called ______ move. In metals, these particles are ______."',model:'When current flows, particles called <b>electrons</b> move. In metals, these particles are <b>free to move</b>.'},
+    {src:`Worksheet · Unit 9 · Q17 (a)<div style="margin:10px 0 6px;font-size:18px;color:#1f2433;letter-spacing:0">${Q}</div>`,q:'Write the names of these four circuit symbols, numbered 1 to 4.',model:'1 = <b>cell</b> · 2 = <b>lamp</b> · 3 = <b>ammeter</b> · 4 = <b>open switch</b>'},
+    {src:'Worksheet · Unit 9 · Q17 (b)',q:'Which circuit will give light and make a buzzer sound when the switch is closed?',model:'The circuit with a <b>cell, switch, lamp and buzzer all in one complete loop</b>. The others are missing the cell, the lamp or the buzzer.'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 Brilliant! You've finished <b>Current &amp; circuit components</b>. Here's everything you learned…`);
+  const B=[['🔵','Current is a flow of <b>electrons</b>. In metals they are <b>free to move</b>.'],['🔁','Current only flows round a <b>complete loop</b>.'],
+    ['🔋',`<b>Cell</b>: provides energy to make current flow.<br>${symImg('cell',1)}`],['🔘',`<b>Switch</b>: opens or closes the circuit.<br>${symImg('swo',1)}`],
+    ['💡',`<b>Lamp</b>: gives out light.<br>${symImg('lamp',1)}`],['🔊',`<b>Buzzer</b>: makes a buzzing sound.<br>${symImg('bz',1)}`],
+    ['📟',`<b>Ammeter</b>: measures current.<br>${symImg('amm',1)}`],['🚀','Greater current = <b>faster</b> flow of electrons.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${10+Math.floor(i/4)*212}px;width:222px;height:200px;font-size:16px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:446px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','📟 Next lesson: Measuring current with an ammeter ➜');
+  f.onclick=()=>{location.href='l12-measuring-current.html';};pop(f);
+  say(`You're a <b>circuit pro</b>! ⚡ Next, find out how an <b>ammeter</b> measures current in <b>amps</b>.`);}},
+  ]
+});
+</script>
+</body>
+</html>

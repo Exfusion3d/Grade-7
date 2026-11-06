@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Series circuits: brighter, dimmer, off</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.cp{position:absolute;width:64px;height:64px;transition:left .5s,top .5s;z-index:2}
+.cp.click{cursor:pointer}
+.bat{position:absolute;left:5px;top:18px;width:54px;height:28px;box-sizing:border-box;border-radius:6px;border:2px solid #1f2433;background:linear-gradient(90deg,#e06a1b 0 36%,#2d3142 36%);color:#fff;font-weight:800;font-size:15px;display:flex;justify-content:space-between;align-items:center;padding:0 5px;line-height:1}
+.bat:before{content:'';position:absolute;left:-7px;top:7px;width:5px;height:10px;background:#1f2433;border-radius:2px}
+.halo{position:absolute;left:-28px;top:-28px;width:120px;height:120px;border-radius:50%;opacity:0;transition:opacity .45s,transform .45s;pointer-events:none}
+.bulb{position:absolute;left:9px;top:9px;width:46px;height:46px;box-sizing:border-box;border-radius:50%;border:3px solid #1f2433;background:#fff;overflow:hidden;transition:box-shadow .45s}
+.bulb .fill{position:absolute;inset:0;border-radius:50%;opacity:0;transition:opacity .45s}
+.bulb svg{position:absolute;left:0;top:0}
+.bulb.broken{background:#e6e8ee}
+.am{position:absolute;left:11px;top:11px;width:42px;height:42px;box-sizing:border-box;border-radius:50%;border:3px solid #1f2433;background:#fff;font-weight:800;font-size:21px;display:flex;align-items:center;justify-content:center}
+.rd{position:absolute;left:50%;transform:translateX(-50%);background:#1f2433;color:#7dff9a;font-family:'Courier New',monospace;font-weight:800;font-size:17px;padding:2px 9px;border-radius:9px;white-space:nowrap;transition:background .3s}
+.rd.above{top:-24px}.rd.below{top:64px}.rd.left{left:auto;right:58px;top:19px;transform:none}
+.rd.hl{background:#6a45d8;color:#fff}
+.ele{width:12px;height:12px;border-radius:50%;background:#2c66cf;box-shadow:0 0 6px #5aa0f0;offset-anchor:center;z-index:1}
+.chain{position:absolute;height:56px;border-radius:16px;background:#f7f4ff;border:3px solid #d9cff7;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:17px;line-height:1.2;padding:0 8px;box-sizing:border-box}
+.qline{position:absolute;font-size:16px;font-weight:700;color:#626a80;font-style:italic}
+.rb2{position:absolute;width:54px;height:54px;border-radius:50%;border:none;background:#6a45d8;color:#fff;font-size:30px;font-weight:800;box-shadow:0 4px 0 #4a2ea6;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.rb2.off{opacity:.3;cursor:default}
+.opt2{position:absolute;display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #e3e0f0;border-radius:16px;padding:0 14px;box-sizing:border-box;font-size:19px;font-weight:700;box-shadow:0 4px 0 #e3e0f0;cursor:pointer}
+.opt2.sel{border-color:#6a45d8;background:#efe9ff;box-shadow:0 4px 0 #c9b6f4}
+.opt2.ok{border-color:#18a058;background:#e3f7ec;box-shadow:0 4px 0 #9fdcbb}
+.opt2.bad{border-color:#e04848;background:#fde3e3;box-shadow:0 4px 0 #f2b0b0}
+.opt2.miss{border:3px dashed #18a058}
+.chal{position:absolute;height:52px;border-radius:14px;border:3px solid #e3e0f0;background:#fff;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:14.5px;font-weight:800;line-height:1.15;color:#626a80}
+.chal.now{border-color:#6a45d8;background:#efe9ff;color:#4a2ea6}
+.chal.done{border-color:#18a058;background:#e3f7ec;color:#17935b}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* ====================== circuit helper ====================== */
+const WIRE='#c86a2a';
+const FIL_OK='M12 12 L28 28 M28 12 L12 28',FIL_BROKEN='M12 12 L18 18 M28 28 L23 23 M28 12 L22 18 M12 28 L17 23';
+function stampAt(x,y,html,size){const s=mk('stamp',`left:${x}px;top:${y}px;z-index:20${size?';font-size:'+size+'px':''}`,html);
+  an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-4deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;}
+function chainRow(y,items,col){const els=[];items.forEach((t,i)=>{const x=13+i*237;const c=mk('chain',`left:${x}px;top:${y}px;width:206px;border-color:${col||'#d9cff7'}`,t);c.style.opacity=0;els.push(c);
+  if(i<items.length-1){const a=mk('',`left:${x+208}px;top:${y+12}px;font-size:24px;font-weight:800;color:#6a45d8;opacity:0`,'➜');els.push(a);}});return els;}
+/* Circ: one series loop. o = {x,y,w,h,mx,my0,my1,top,bottom,right,glow,onChange}; items are 'cell' or ['amm',{rd:'above'}] */
+function Circ(parent,o){
+  const W=o.w,H=o.h,mx=o.mx??50,x0=mx,x1=W-mx,y0=o.my0??50,y1=H-(o.my1??50);
+  const C=mk('',`left:${o.x||0}px;top:${o.y||0}px;width:${W}px;height:${H}px`,null,parent);
+  mk('',`left:0;top:0;width:${W}px;height:${H}px`,`<svg width="${W}" height="${H}"><rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" rx="4" fill="none" stroke="${WIRE}" stroke-width="6"/></svg>`,C);
+  const EL=mk('',`left:0;top:0;width:${W}px;height:${H}px;transition:opacity .4s`,null,C);
+  const per=2*(x1-x0+y1-y0),N=Math.max(8,Math.round(per/46)),D=per/80*1000,path=`path("M${x0} ${y0} H${x1} V${y1} H${x0} Z")`;
+  const anims=[];
+  for(let i=0;i<N;i++){const e=mk('ele',`left:0;top:0;offset-path:${path};offset-rotate:0deg`,null,EL);
+    anims.push(e.animate([{offsetDistance:'0%'},{offsetDistance:'100%'}],{duration:D,iterations:Infinity,delay:-i*D/N,easing:'linear'}));}
+  const S={top:[],bottom:[],right:[],left:[]};
+  const R={el:C,S,I:0};
+  function make(t,opt){const c=Object.assign({t},opt||{});const el=mk('cp','left:0;top:0','',C);c.el=el;c.fresh=true;
+    if(t==='cell')el.innerHTML='<div class="bat"><b>+</b><b>−</b></div>';
+    if(t==='lamp'){const col=c.col||'#ffd84d';
+      el.innerHTML=`<div class="halo" style="background:radial-gradient(circle,${col}f0 0%,${col}00 68%)"></div><div class="bulb"><div class="fill" style="background:${col}"></div><svg width="40" height="40"><path class="fil" d="${FIL_OK}" stroke="#1f2433" stroke-width="3" stroke-linecap="round" fill="none"/></svg></div>`;
+      c.halo=el.querySelector('.halo');c.bulb=el.querySelector('.bulb');c.fill=el.querySelector('.fill');c.fil=el.querySelector('.fil');}
+    if(t==='sw'){c.closed=c.closed!==false;
+      el.innerHTML=`<svg width="64" height="64"><rect x="6" y="25" width="52" height="14" fill="#fff"/><line x1="0" y1="32" x2="14" y2="32" stroke="${WIRE}" stroke-width="6"/><line x1="50" y1="32" x2="64" y2="32" stroke="${WIRE}" stroke-width="6"/><line class="lev" x1="14" y1="32" x2="50" y2="32" stroke="#1f2433" stroke-width="5" stroke-linecap="round" style="transform-origin:14px 32px;transition:transform .3s"/><circle cx="14" cy="32" r="5" fill="#1f2433"/><circle cx="50" cy="32" r="5" fill="#1f2433"/></svg>`;
+      c.lev=el.querySelector('.lev');}
+    if(t==='amm'){el.innerHTML=`<div class="am">A</div><div class="rd ${c.rd||'above'}">0.00 A</div>`;c.rdEl=el.querySelector('.rd');}
+    return c;}
+  function pos(side,i,n){const f=(i+1)/(n+1);
+    if(side==='top')return[x0+(x1-x0)*f,y0];if(side==='bottom')return[x0+(x1-x0)*f,y1];if(side==='right')return[x1,y0+(y1-y0)*f];return[x0,y0+(y1-y0)*f];}
+  function layout(){for(const side in S)S[side].forEach((c,i)=>{const[cx,cy]=pos(side,i,S[side].length);
+    if(c.fresh){c.el.style.transition='none';c.el.style.left=(cx-32)+'px';c.el.style.top=(cy-32)+'px';c.el.offsetWidth;c.el.style.transition='';c.fresh=false;}
+    else{c.el.style.left=(cx-32)+'px';c.el.style.top=(cy-32)+'px';}});}
+  function all(){return[...S.top,...S.right,...S.bottom,...S.left];}
+  function setLamp(l,b){const on=b>0;l.halo.style.opacity=on?Math.min(1,.2+.75*b):0;l.halo.style.transform=`scale(${on?.45+.6*b:.3})`;
+    l.fill.style.opacity=on?Math.min(1,.25+.7*b):0;l.bulb.style.boxShadow=on?`0 0 ${6+22*b}px ${l.col||'#ffc400'}`:'none';l.fil.setAttribute('stroke',on?'#b35c00':'#1f2433');}
+  R.update=()=>{const A=all(),cells=A.filter(c=>c.t==='cell').length,lamps=A.filter(c=>c.t==='lamp');
+    const closed=A.filter(c=>c.t==='sw').every(c=>c.closed)&&!lamps.some(l=>l.broken);
+    const I=(closed&&cells&&lamps.length)?0.5*cells/lamps.length:0;R.I=I;R.cells=cells;R.lamps=lamps.length;R.closed=closed;
+    const b=Math.min(1.25,I*1.1)*(o.glow||1);
+    lamps.forEach(l=>setLamp(l,I>0?b:0));
+    A.filter(c=>c.t==='amm').forEach(a=>{if(!a.hidden)a.rdEl.textContent=I.toFixed(2)+' A';});
+    anims.forEach(a=>{if(I>0){a.playbackRate=Math.min(3.5,I/0.5);a.play();}else a.pause();});
+    EL.style.opacity=I>0?1:.4;if(o.onChange)o.onChange(I);return I;};
+  R.add=(side,t,opt,idx,fly)=>{const c=make(t,opt);S[side].splice(idx??S[side].length,0,c);layout();
+    if(fly)an(c.el,[{transform:'translateY(-150px)',opacity:0},{transform:'none',opacity:1}],{duration:700,easing:'cubic-bezier(.3,1.4,.5,1)'});else pop(c.el);
+    R.update();return c;};
+  R.remove=(side,idx)=>{const c=S[side].splice(idx,1)[0];if(!c)return;
+    an(c.el,[{transform:'none',opacity:1},{transform:'translateY(-60px) scale(.3)',opacity:0}],{duration:400}).then(()=>c.el.remove());layout();R.update();};
+  R.toggle=(c)=>{c=c||all().find(x=>x.t==='sw');c.closed=!c.closed;c.lev.style.transform=c.closed?'none':'rotate(-34deg)';beep(c.closed?700:420,.07);return R.update();};
+  R.breakLamp=l=>{l.broken=true;l.fil.setAttribute('d',FIL_BROKEN);l.bulb.classList.add('broken');shake(l.el);R.update();};
+  R.fixLamp=l=>{l.broken=false;l.fil.setAttribute('d',FIL_OK);l.bulb.classList.remove('broken');pop(l.el);R.update();};
+  R.of=t=>all().filter(c=>c.t===t);
+  for(const side of['top','right','bottom','left'])(o[side]||[]).forEach(it=>{const[t,opt]=Array.isArray(it)?it:[it,{}];S[side].push(make(t,opt));});
+  layout();all().forEach(c=>{if(c.t==='sw'&&!c.closed)c.lev.style.transform='rotate(-34deg)';});
+  R.update();return R;}
+
+/* ====================== lesson ====================== */
+Lesson.start({
+  id:'l13', num:13, unit:9, emoji:'🔋', title:'Series circuits: brighter, dimmer, off',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today: <b>series circuits</b>. What makes lamps brighter, dimmer, or go off? Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'One loop, like a necklace',run:async w=>{
+  const ring=mk('','left:83px;top:30px;width:320px;height:320px;border-radius:50%;border:4px solid #c9b6f4;box-sizing:border-box');pop(ring);
+  const cols=['#e04848','#f7ad5f','#ffd84d','#45c288','#5d9cf5','#6a45d8'];
+  for(let i=0;i<16;i++){const a=i/16*Math.PI*2;mk('',`left:${160+156*Math.cos(a)-15}px;top:${160+156*Math.sin(a)-15}px;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,${cols[i%6]} 60%);box-shadow:0 2px 0 rgba(0,0,0,.15)`,null,ring);}
+  const spin=loop(ring,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],9000,{easing:'linear'});
+  const nl=mk('','left:13px;top:362px;width:460px;text-align:center;font-size:20px;font-weight:800;color:#4a2ea6','📿 One string · one path round');pop(nl);
+  say(`Welcome to <b>series circuits</b>! 🔋 A series circuit is just <b>one loop</b>, like beads on a necklace.`);
+  await w(3400);
+  const P=panel(487,8,460,410,'🔁 A series circuit','The cell, switch, ammeter and two lamps are all on <b>one loop</b>.');pop(P);
+  const C=Circ(P,{x:0,y:44,w:460,h:280,my0:62,my1:56,top:['cell','sw',['amm',{rd:'above'}]],bottom:['lamp','lamp']});
+  say(`Here's a series circuit. Everything sits on <b>one loop</b>. The blue dots are <b>electrons</b>, flowing all the way round, like beads sliding along the string.`);
+  await w(4200);
+  const sw=C.of('sw')[0];let opened=false;
+  sw.el.classList.add('click');const pulse=loop(sw.el,[{transform:'scale(1)'},{transform:'scale(1.25)'}],500,{direction:'alternate'});
+  const hand=mk('','left:752px;top:20px;font-size:40px;z-index:9','👇');loop(hand,[{transform:'translateY(0)'},{transform:'translateY(10px)'}],400,{direction:'alternate'});
+  const info=mk('info','left:487px;top:430px;width:460px;height:46px;box-sizing:border-box','👆 Tap the switch to open it!');pop(info);
+  sw.el.onclick=()=>{C.toggle(sw);if(!sw.closed)opened=true;};
+  window.AUTOPLAY=()=>{if(!opened&&sw.closed)sw.el.click();};
+  say(`Your turn! <b>Tap the switch</b> to open it. Keep your eye on the electrons… 👀`);
+  await w.until(()=>opened);window.AUTOPLAY=null;
+  pulse.cancel();hand.remove();spin.pause();
+  info.innerHTML='Ammeter: <b>0.00 A</b> · tap again to close';
+  say(`The loop is broken! 🛑 The current <b>stops completely</b>, everywhere at once. Both lamps go out and the ammeter reads <b>zero</b>.`);
+  await w(4200);
+  an(ring,[{opacity:1},{opacity:.15}],{duration:500});nl.remove();
+  const gap=mk('','left:40px;top:120px;width:400px;height:150px;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:14px 18px;box-sizing:border-box;font-size:21px;font-weight:800;line-height:1.4;text-align:center',
+    '🔓 Open switch = a <span style="color:#e04848">GAP</span> in the loop<br>➜ electrons can\'t get round<br>➜ <b>no current anywhere</b>');pop(gap);
+  await w(1200);
+  stampAt(40,300,'✔ MCQ 3: B) The current stops completely',21);
+  say(`✅ Exam answer: <b>B) The current stops completely</b>. It doesn't slow down or change direction. It just stops!`);
+  await w(3600);}},
+
+/* 2 */ {t:'Add a cell: brighter!',run:async w=>{
+  const L=panel(13,8,460,316,'Normal: 1 cell + 1 lamp','');pop(L);
+  const R=panel(487,8,460,316,'Watch this one…','');pop(R,150);
+  const opt={x:0,y:36,w:460,h:270,my0:66,my1:70,top:['cell','sw',['amm',{rd:'above'}]],bottom:['lamp']};
+  Circ(L,opt);const B=Circ(R,opt);
+  say(`Let's power up! 🔋 Both circuits start the same: <b>one cell</b> and <b>one lamp</b>. The ammeters read <b>0.50 amps</b>.`);
+  await w(3800);
+  say(`Now I'll add a <b>second identical cell</b> to the right-hand circuit…`);await w(1200);
+  B.add('top','cell',{},1,true);beep(500,.1);beep(800,.12,'triangle',.12,.15);
+  R.querySelector('h4').innerHTML='Now: <b>2 cells</b> + 1 lamp';
+  await w(1400);
+  say(`Wow! The lamp shines much <b>brighter</b> ✨ Two cells give a bigger <b>push</b>, so more current flows: <b>1.00 amps</b>. Look how fast the electrons go!`);
+  await w(4200);
+  const ch=chainRow(338,['➕🔋 more cells','💪 more push','⚡ more current','💡 BRIGHTER lamp'],'#f7ad5f');
+  for(const e of ch){an(e,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:400});beep(600,.05);await w(350);}
+  say(`So: more cells, more push, more current, <b>brighter lamp</b>.`);await w(2600);
+  mk('qline','left:20px;top:410px;width:920px','MCQ 7: In a simple series circuit, what happens to a lamp if you add a second identical cell?');
+  stampAt(290,446,'✔ MCQ 7: B) It shines brighter');
+  say(`✅ Exam answer: <b>B) It shines brighter</b>.`);await w(2400);}},
+
+/* 3 */ {t:'Add lamps: all dimmer',run:async w=>{
+  const L=panel(13,8,460,316,'Normal: 1 cell + 1 lamp','');pop(L);
+  const R=panel(487,8,460,316,'Same cell… more lamps?','');pop(R,150);
+  const opt={x:0,y:36,w:460,h:270,my0:66,my1:70,top:['cell','sw',['amm',{rd:'above'}]],bottom:['lamp']};
+  Circ(L,opt);const B=Circ(R,opt);
+  say(`What if we add more <b>lamps</b>, but keep just <b>one cell</b>? 🤔 Watch the right-hand circuit.`);
+  await w(3200);
+  B.add('bottom','lamp');R.querySelector('h4').innerHTML='1 cell + <b>2 lamps</b>';beep(500,.1);
+  say(`Two lamps… they're both <b>dimmer</b>, and the current drops to <b>0.25 amps</b>.`);await w(3200);
+  B.add('bottom','lamp');R.querySelector('h4').innerHTML='1 cell + <b>3 lamps</b>';beep(420,.1);
+  say(`Three lamps… even <b>dimmer</b>! Only <b>0.17 amps</b>. The electrons are crawling now. 🐌`);await w(3600);
+  say(`Notice: <b>all three</b> lamps are equally dim, not just the last one. More lamps make it <b>harder</b> for the current to flow.`);
+  B.of('lamp').forEach((l,i)=>an(l.el,[{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:600,delay:i*250}));
+  await w(4200);
+  const ch=chainRow(338,['➕💡 more lamps','🚧 harder to flow','⚡ less current','💡 ALL dimmer'],'#5d9cf5');
+  for(const e of ch){an(e,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:400});beep(600,.05);await w(350);}
+  await w(800);
+  mk('qline','left:20px;top:410px;width:920px','MCQ 8: What happens to the lamps in a series circuit if you add more lamps without adding more cells?');
+  stampAt(290,446,'✔ MCQ 8: B) They all get dimmer');
+  say(`✅ Exam answer: <b>B) They all get dimmer</b>. More lamps, same cells, less current.`);await w(3000);}},
+
+/* 4 */ {t:'One bulb breaks: all go out',run:async w=>{
+  const P=panel(13,8,933,318,'🎄 Fairy lights: lots of lamps on one loop','');pop(P);
+  const cols=['#ff6b6b','#ffd84d','#5ee08a','#6fb2ff','#ff9de2','#ffb347'];
+  const C=Circ(P,{x:0,y:30,w:933,h:280,mx:60,my0:60,my1:70,glow:3,top:['cell','cell','cell','sw'],bottom:cols.map(c=>['lamp',{col:c}])});
+  say(`Old-style <b>fairy lights</b> are a series circuit: lots of lamps on <b>one loop</b>. ✨ Pretty!`);
+  await w(3400);
+  const lamps=C.of('lamp');let broke=null;
+  const info=mk('info','left:230px;top:338px;width:500px;height:46px;box-sizing:border-box','👆 Tap any bulb to snap its filament!');pop(info);
+  const pulses=lamps.map(l=>{l.el.classList.add('click');l.el.onclick=()=>{if(!broke){broke=l;}};return loop(l.el,[{transform:'scale(1)'},{transform:'scale(1.12)'}],450,{direction:'alternate'});});
+  window.AUTOPLAY=()=>{if(!broke)lamps[2].el.click();};
+  say(`What happens if just <b>one</b> bulb breaks? <b>Tap any bulb</b> to snap its filament! 💥`);
+  await w.until(()=>broke);window.AUTOPLAY=null;
+  pulses.forEach(p=>p.cancel());lamps.forEach(l=>l.el.classList.remove('click'));
+  C.breakLamp(broke);boo();
+  const r=broke.el.getBoundingClientRect(),s=document.querySelector('#stage').getBoundingClientRect(),sc=s.width/960;
+  const crack=mk('','left:'+((r.left-s.left)/sc-10)+'px;top:'+((r.top-s.top)/sc-48)+'px;font-size:22px;font-weight:800;color:#e04848;z-index:9','CRACK!');pop(crack);
+  info.innerHTML='💥 One broken lamp = a <b>gap</b> in the loop';
+  say(`CRACK! 💥 One filament snapped, so there's a <b>gap</b> in the loop. Current can't flow anywhere, so <b>ALL the other lamps go out</b>!`);
+  await w(4600);
+  mk('qline','left:20px;top:398px;width:920px','MCQ 9: In a series circuit, what happens to the remaining lamps if one lamp breaks?');
+  stampAt(150,428,'✔ MCQ 9: B) All other lamps go out');
+  say(`✅ Exam answer: <b>B) All other lamps go out</b>. In a series circuit there's only <b>one path</b> for the current.`);
+  await w(3800);
+  let fixed=false;
+  const fb=btn('bigbtn','left:660px;top:432px;width:270px;height:50px;font-size:19px;background:#18a058;display:flex;align-items:center;justify-content:center','🔧 Replace the bulb',()=>{if(fixed)return;fixed=true;C.fixLamp(broke);crack.remove();yay();fb.style.opacity=.3;
+    info.innerHTML='✨ Loop complete again: <b>all lamps on!</b>';say(`New bulb in, loop complete, and <b>all</b> the lamps light up again! ✨`);});pop(fb);
+  say(`Want them back? Tap <b>Replace the bulb</b> to fix the loop. 🔧`);await w(2500);}},
+
+/* 5 */ {t:'Same current everywhere',run:async w=>{
+  const P=panel(13,8,933,322,'Ⓐ Four ammeters, one loop','');pop(P);
+  const C=Circ(P,{x:0,y:28,w:933,h:290,mx:110,my0:64,my1:70,top:[['amm',{rd:'above'}],'cell','cell','sw',['amm',{rd:'above'}]],right:[['amm',{rd:'left'}]],bottom:['lamp',['amm',{rd:'below'}],'lamp','lamp']});
+  const ams=[C.S.top[0],C.S.top[4],C.S.right[0],C.S.bottom[1]];
+  ams.forEach(a=>{a.hidden=true;a.rdEl.textContent='?.?? A';});
+  say(`Big question: is the current <b>used up</b> as it goes round? 🤔 Let's put <b>four ammeters</b> in different places and find out.`);
+  await w(3800);
+  const names=['Before the cells…','After the cells…','On the far side…','Between the lamps…'];
+  for(let i=0;i<4;i++){const a=ams[i];a.rdEl.classList.add('hl');an(a.el,[{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:500});
+    for(let k=0;k<=10;k++){a.rdEl.textContent=(0.333*k/10).toFixed(2)+' A';await w(40);}
+    beep(600+i*120,.1);say(`${names[i]} <b>0.33 amps</b>.`);await w(1300);a.rdEl.classList.remove('hl');}
+  ams.forEach(a=>{a.rdEl.classList.add('hl');pop(a.rdEl);});yay();
+  say(`They ALL read <b>0.33 amps</b>! In a series circuit the current is <b>the same everywhere</b> around the loop.`);
+  await w(4000);
+  const m=mk('','left:13px;top:340px;width:300px;height:106px;background:#fde3e3;border:3px solid #e04848;border-radius:18px;padding:10px 14px;box-sizing:border-box;font-size:16.5px;font-weight:700;line-height:1.35',
+    '❌ <b>Myth:</b> each lamp "uses up" some current, so there is less at the end.');pop(m);
+  const x=mk('','left:258px;top:398px;font-size:40px;z-index:3','🚫');pop(x,300);
+  const t=mk('','left:327px;top:340px;width:619px;height:106px;background:#e3f7ec;border:3px solid #18a058;border-radius:18px;padding:10px 14px;box-sizing:border-box;font-size:16.5px;font-weight:700;line-height:1.35',
+    '✅ <b>Truth:</b> the electrons are <b>not used up</b>. They keep flowing round. What the lamps use is the <b>energy</b> the electrons carry: it comes out as <b>light and heat</b>. 💡🔥');pop(t,500);
+  say(`The electrons are <b>not used up</b>. They just keep going round. What the lamps use is the <b>energy</b> they carry, which comes out as light and heat.`);
+  await w(4600);
+  stampAt(200,464,'✔ Q11: C. Current stays the same around the circuit',20);
+  say(`✅ Exam answer: <b>C. Current stays the same around the circuit</b>.`);await w(2600);}},
+
+/* 6 */ {t:'Circuit lab',run:async w=>{
+  const bar=mk('','left:13px;top:8px;width:760px;height:56px;border-radius:16px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:19px;font-weight:800;display:flex;align-items:center;padding:0 16px;box-sizing:border-box','🔌 Circuit lab');pop(bar);
+  const P=panel(13,74,600,300,'🔌 Your series circuit','');pop(P);
+  let ammBig;
+  const C=Circ(P,{x:0,y:30,w:600,h:266,my0:68,my1:62,top:['cell','sw',['amm',{rd:'above'}]],bottom:['lamp'],onChange:I=>{if(ammBig)ammBig.textContent=I.toFixed(2)+' A';}});
+  const K=panel(627,74,319,300,'🎛️ Controls','');pop(K,150);
+  mk('','left:18px;top:52px;font-size:19px;font-weight:800','🔋 Cells',K);mk('','left:18px;top:128px;font-size:19px;font-weight:800','💡 Lamps',K);
+  const cv=mk('','left:186px;top:58px;width:40px;text-align:center;font-size:28px;font-weight:800','1',K),lv=mk('','left:186px;top:134px;width:40px;text-align:center;font-size:28px;font-weight:800','1',K);
+  const sb=mk('','left:18px;top:198px;width:283px;height:44px;border-radius:14px;color:#fff;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.2)','',K);
+  mk('','left:18px;top:256px;font-size:16px;font-weight:800;color:#626a80','Ammeter:',K);
+  ammBig=mk('','left:110px;top:250px;background:#1f2433;color:#7dff9a;font-family:\'Courier New\',monospace;font-weight:800;font-size:22px;padding:3px 12px;border-radius:10px','0.50 A',K);
+  const MAX=4;
+  const refresh=()=>{cv.textContent=C.cells;lv.textContent=C.lamps;const sw=C.of('sw')[0];sb.textContent=sw.closed?'Switch: CLOSED (on) ✅':'Switch: OPEN (off) ⛔';sb.style.background=sw.closed?'#18a058':'#e04848';
+    cm.classList.toggle('off',C.cells<=1);cp.classList.toggle('off',C.cells>=MAX);lm.classList.toggle('off',C.lamps<=1);lp.classList.toggle('off',C.lamps>=MAX);};
+  const act={c_:()=>{if(C.cells>1)C.remove('top',C.cells-1);},cP:()=>{if(C.cells<MAX)C.add('top','cell',{},C.cells,true);},
+    l_:()=>{if(C.lamps>1)C.remove('bottom',C.lamps-1);},lP:()=>{if(C.lamps<MAX)C.add('bottom','lamp');},sw:()=>C.toggle()};
+  const press=k=>{act[k]();beep(600,.05);refresh();};
+  const cm=mk('rb2','left:126px;top:50px','−',K),cp=mk('rb2','left:240px;top:50px','+',K),lm=mk('rb2','left:126px;top:126px','−',K),lp=mk('rb2','left:240px;top:126px','+',K);
+  cm.onclick=()=>press('c_');cp.onclick=()=>press('cP');lm.onclick=()=>press('l_');lp.onclick=()=>press('lP');sb.onclick=()=>press('sw');
+  C.of('sw')[0].el.classList.add('click');C.of('sw')[0].el.onclick=()=>press('sw');
+  refresh();
+  const CH=[
+    {t:'Make the lamps BRIGHTER than normal',s:'Brighter',goal:()=>C.closed&&C.I>0.5+1e-6,hint:'More cells = more push. Try <b>+ cells</b> (or fewer lamps).',
+      ap:()=>{if(!C.closed)return'sw';return C.cells<MAX?'cP':'l_';},win:'Brighter! More cells (or fewer lamps) = <b>more current</b>. ⚡'},
+    {t:'Make the lamps DIMMER than normal, but keep them ON',s:'Dimmer, still on',goal:()=>C.closed&&C.I>0&&C.I<0.5-1e-6,hint:'Add <b>more lamps</b>, or take a cell away.',
+      ap:()=>{if(!C.closed)return'sw';return C.cells>1?'c_':'lP';},win:'Dimmer! More lamps (or fewer cells) = <b>less current</b>. 🐌'},
+    {t:'Make the current ZERO (0.00 A)',s:'Zero current',goal:()=>C.I===0,hint:'Break the loop! What does the <b>switch</b> do?',
+      ap:()=>'sw',win:'Zero! An <b>open switch</b> stops the current completely. 🛑'},
+    {t:'Use THREE lamps, but get 0.50 A again',s:'3 lamps, 0.50 A',goal:()=>C.closed&&C.lamps===3&&Math.abs(C.I-0.5)<1e-6,hint:'Normal is 1 cell for 1 lamp. So 3 lamps need… how many cells?',
+      ap:()=>{if(C.lamps<3)return'lP';if(C.lamps>3)return'l_';if(C.cells<3)return'cP';if(C.cells>3)return'c_';return'sw';},win:'0.50 amps with <b>3 cells and 3 lamps</b>. Same push per lamp! 🏆'}];
+  const chips=CH.map((c,i)=>mk('chal',`left:${13+i*237}px;top:388px;width:222px`,`<span style="font-size:20px">${i+1}</span>${c.s}`));
+  chips.forEach((c,i)=>pop(c,i*80));
+  const tip=mk('info','left:13px;top:454px;width:933px;height:52px;box-sizing:border-box;font-size:17px','Normal = 1 cell + 1 lamp = <b>0.50 A</b>');pop(tip);
+  let cur=-1;
+  const hb=mk('','left:787px;top:8px;width:159px;height:56px;border-radius:16px;background:#ffd84d;color:#5c4400;font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 0 #d6b21a','💡 Hint');pop(hb);
+  hb.onclick=()=>{if(cur>=0){tip.innerHTML='💡 '+CH[cur].hint;pop(tip);beep(800,.06);}};
+  window.AUTOPLAY=()=>{if(cur>=0&&!CH[cur].goal())press(CH[cur].ap());};
+  say(`Welcome to the <b>circuit lab</b>! 🧪 Use <b>+</b> and <b>−</b> to add or remove cells and lamps, and tap the switch. Four challenges!`);
+  await w(3800);
+  for(let i=0;i<CH.length;i++){
+    chips.forEach((c,j)=>c.classList.toggle('now',j===i));
+    bar.innerHTML=`🎯 Challenge ${i+1} of 4: ${CH[i].t}`;pop(bar);tip.innerHTML='Normal = 1 cell + 1 lamp = <b>0.50 A</b>';
+    say(`Challenge ${i+1}: <b>${CH[i].t.replace('0.00 A','zero amps').replace('0.50 A','0.50 amps').toLowerCase()}</b>.`);
+    await w(1500);cur=i;
+    await w.until(()=>CH[i].goal());cur=-1;
+    chips[i].classList.remove('now');chips[i].classList.add('done');chips[i].innerHTML=`<span style="font-size:20px">✔</span>${CH[i].s}`;pop(chips[i]);yay();confetti(50);
+    tip.innerHTML='✅ '+CH[i].win;say('✅ '+CH[i].win);
+    await w(3400);}
+  window.AUTOPLAY=null;
+  bar.innerHTML='🏆 All four challenges done!';pop(bar);confetti(120);
+  say(`🏆 Lab complete! Cells add <b>push</b>, lamps make it <b>harder</b> to flow, and an open switch <b>stops</b> everything. Keep playing if you like!`);
+  await w(3000);}},
+
+/* 7 */ {t:'Two ways up, two ways down',run:async w=>{
+  const P=panel(13,8,440,330,'2 cells · switch · 3 lamps · ammeter','');pop(P);
+  const base={x:0,y:30,w:440,h:290,mx:40,my0:70,my1:66,top:['cell','cell','sw',['amm',{rd:'above'}]],bottom:['lamp','lamp','lamp']};
+  let C=Circ(P,base);
+  const H=mk('','left:470px;top:8px;width:476px;height:44px;font-size:21px;font-weight:800;color:#4a2ea6;display:flex;align-items:center','');
+  const parts=[
+    {h:'⬆️ Tap TWO ways to INCREASE the current',o:['➕🔋 Add more cells','➕💡 Add more lamps','➖💡 Remove a lamp','➖🔋 Remove a cell','🔓 Open the switch'],a:[0,2],
+      demo:[['Add more cells',C=>C.add('top','cell',{},2,true)],['Remove a lamp',C=>C.remove('bottom',2)]],
+      intro:`Exam question 12: this circuit has <b>2 cells</b>, a switch, <b>3 lamps</b> and an ammeter. Tap <b>TWO</b> ways to <b>increase</b> the current.`,
+      stamp:'✔ Q12: Add more cells · Remove a lamp',sayAns:`✅ To <b>increase</b> the current: <b>add more cells</b>, or <b>remove a lamp</b>.`},
+    {h:'⬇️ Tap TWO ways to DECREASE the current',o:['➕🔋 Add more cells','➖🔋 Remove a cell','➖💡 Remove a lamp','➕💡 Add more lamps'],a:[1,3],
+      demo:[['Remove a cell',C=>C.remove('top',1)],['Add more lamps',C=>C.add('bottom','lamp')]],
+      intro:`Question 13: now tap <b>TWO</b> ways to <b>decrease</b> the current in the same circuit.`,
+      stamp:'✔ Q13: Remove a cell · Add more lamps',sayAns:`✅ To <b>decrease</b> the current: <b>remove a cell</b>, or <b>add more lamps</b>.`}];
+  let st=null;
+  for(const p of parts){
+    H.innerHTML=p.h;pop(H);const sel=new Set();let checked=false,ck=null;
+    const els=p.o.map((t,i)=>{const e=mk('opt2',`left:470px;top:${60+i*56}px;width:476px;height:48px`,t);pop(e,i*70);
+      e.onclick=()=>{if(checked)return;beep(650,.05);if(sel.has(i)){sel.delete(i);e.classList.remove('sel');}else if(sel.size<2){sel.add(i);e.classList.add('sel');}
+        if(sel.size===2&&!ck){ck=btn('ex-btn',`left:610px;top:${66+p.o.length*56}px;width:200px`,'Check ✔',()=>{checked=true;});pop(ck);}
+        if(sel.size<2&&ck){ck.remove();ck=null;}};return e;});
+    window.AUTOPLAY=()=>{const n=p.a.find(i=>!sel.has(i));if(n!=null&&!checked)els[n].click();};
+    say(p.intro);
+    await w.until(()=>checked);window.AUTOPLAY=null;ck.remove();
+    let right=0;els.forEach((e,i)=>{e.classList.remove('sel');if(p.a.includes(i)){e.classList.add(sel.has(i)?'ok':'miss');if(sel.has(i))right++;}else if(sel.has(i)){e.classList.add('bad');shake(e);}});
+    if(right===2){yay();confetti(50);say(`Both right! 🎉 Let's test them on the circuit.`);}else{boo();say(`You got ${right} of 2. The green dashed ones are right. Let's test them on the circuit.`);}
+    await w(2400);
+    for(const[name,fn] of p.demo){fn(C);beep(600,.08);
+      say(`${name}… the ammeter now reads <b>${C.I.toFixed(2)} amps</b>${p===parts[0]?', up from 0.33! ⬆️':', down from 0.33! ⬇️'}`);await w(3000);
+      C.el.remove();C=Circ(P,base);await w(500);}
+    if(st)st.remove();
+    st=stampAt(240,452,p.stamp,21);
+    say(p.sayAns);await w(3400);
+    if(p===parts[0]){els.forEach(e=>e.remove());}}
+  }},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 9 · MCQ 3',q:'What happens to the electric current in a simple circuit if the switch is open?',o:['The current flows faster','The current stops completely','The current changes direction','The current becomes stronger'],a:1,
+      why:'An open switch makes a <b>gap</b> in the loop, so the current <b>stops completely</b>.'},
+    {src:'Worksheet · Unit 9 · MCQ 7',q:'In a simple series circuit, what happens to a lamp if you add a second identical cell?',o:['It goes out completely','It shines brighter','It shines dimmer','It stays exactly the same'],a:1,
+      why:'More cells = more push = more current = <b>brighter</b> lamp.'},
+    {src:'Worksheet · Unit 9 · MCQ 8',q:'What happens to the lamps in a series circuit if you add more lamps without adding more cells?',o:['They all get brighter','They all get dimmer','Only the first lamp stays bright','They start flashing'],a:1,
+      why:'More lamps make it harder for current to flow: less current, so they <b>all get dimmer</b>.'},
+    {src:'Worksheet · Unit 9 · MCQ 9',q:'In a series circuit, what happens to the remaining lamps if one lamp breaks?',o:['They get brighter','All other lamps go out','They stay lit up normally','They burst'],a:1,
+      why:'There is only <b>one path</b>. A broken lamp makes a gap, so <b>all other lamps go out</b>.'},
+    {src:'Worksheet · Unit 9 · Short answer 11',q:'Which statement is true about current in any series circuit?',o:['Current decreases around the circuit.','Current increases around the circuit.','Current stays the same around the circuit.','Current increases and decreases around the circuit.'],a:2,
+      why:'Every ammeter in a series circuit gives the <b>same reading</b>. The current is not used up.'},
+    {src:'Worksheet · Unit 9 · Short answer 12',q:'A circuit contains two cells, a switch, three lamps and an ammeter. Describe two ways to increase the current.',
+      model:'1️⃣ <b>Add more cells.</b><br>2️⃣ <b>Remove a lamp.</b>'},
+    {src:'Worksheet · Unit 9 · Short answer 13',q:'Describe two ways to decrease the current in the circuit.',
+      model:'1️⃣ <b>Remove a cell.</b><br>2️⃣ <b>Add more lamps.</b>'},
+  ],{title:'Exam check'});}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You've mastered <b>series circuits</b>! Here's everything you learned…`);
+  const B=[['🔁','A series circuit is <b>one loop</b>: one path for the current.'],['🔓','Switch open ➜ current <b>stops completely</b>.'],['🔋','More cells ➜ more current ➜ <b>brighter</b>.'],['🐌','More lamps, same cells ➜ <b>all dimmer</b>.'],
+    ['💥','One lamp breaks ➜ <b>all the others go out</b>.'],['Ⓐ','Current is <b>the same everywhere</b> in a series circuit.'],['⬆️','Increase current: <b>add cells</b> or <b>remove a lamp</b>.'],['⬇️','Decrease current: <b>remove a cell</b> or <b>add lamps</b>.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${10+Math.floor(i/4)*212}px;width:222px;height:198px;box-sizing:border-box`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:450px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🎮 Practise Unit 9 in the Science Quest quiz! ➜');
+  f.onclick=()=>{location.href='../quiz.html';};pop(f);
+  say(`You're a <b>circuit champion</b>! ⚡ Brighter, dimmer or off, you know why. Now try the <b>Unit 9</b> questions in the Science Quest quiz.`);
+  await w(2500);}},
+  ]
+});
+</script>
+</body>
+</html>

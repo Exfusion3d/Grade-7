@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Choosing materials: the property toolkit</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 6 · Choosing materials: the property toolkit (Unit 5) */
+const STAMP=(txt,css,rot=-4)=>{const s=mk('stamp',css,txt);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:`rotate(${rot}deg)`,opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
+async function wipe(w){const k=[...stage.children];k.forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:350}));await w(400);k.forEach(e=>e.remove());}
+/* a steel nail drawn with CSS: outer box moves, inner box is rotated */
+function nail(par,x,y,len,rot){const o=mk('',`left:${x}px;top:${y}px;width:1px;height:1px;z-index:4`,null,par);
+  mk('',`left:0;top:-11px;width:${len}px;height:22px;transform:rotate(${rot}deg);transform-origin:${len}px 11px;margin-left:${-len}px`,
+   `<div style="position:absolute;left:0;top:0;width:7px;height:22px;border-radius:2px;background:#5d6573"></div>`+
+   `<div style="position:absolute;left:6px;top:7px;width:${len-24}px;height:8px;background:linear-gradient(#eef1f5,#8a94a3)"></div>`+
+   `<div style="position:absolute;left:${len-18}px;top:7px;width:18px;height:8px;background:linear-gradient(#eef1f5,#8a94a3);clip-path:polygon(0 0,100% 50%,0 100%)"></div>`,o);
+  return o;}
+const label=(par,css,html)=>mk('',`font-weight:800;font-size:15px;${css}`,html,par);
+
+Lesson.start({
+  id:'l06', num:6, unit:5, emoji:'🧰', title:'Choosing materials: the property toolkit',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today you become a <b>materials engineer</b>! Press <b>Start</b>!`,
+  scenes:[
+
+/* 1 */ {t:'The property toolkit',run:async w=>{
+  const eng=mk('big-emoji','left:40px;top:340px;font-size:96px','👷');pop(eng);
+  const box=mk('big-emoji','left:390px;top:330px;font-size:130px','🧰');pop(box,200);
+  say(`Engineers never pick a material at random! 👷 First they open their <b>property toolkit</b> and test it.`);
+  await w(2400);
+  box.animate([{transform:'rotate(0)'},{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'},{transform:'rotate(0)'}],{duration:400,iterations:2});
+  const T=[['💎','Hardness','Can it be scratched?','#2c66cf'],['💪','Strength','How much force before it breaks?','#e06a1b'],['⚖️','Density','How heavy for its size?','#6a45d8'],['💥','Brittle?','Does it shatter when hit?','#e04848'],
+    ['🪟','Transparent?','Does light pass through?','#17935b'],['🔥','Thermal insulator?','Does heat get through?','#d66a0a'],['⚡','Electrical insulator?','Does electricity get through?','#2c66cf']];
+  say(`Each property is a <b>tool</b> for testing a material. Out they come! 🧰`);
+  for(let i=0;i<T.length;i++){const x=i<4?13+i*237:131+(i-4)*237,y=i<4?10:124;
+    const c=mk('card',`left:${x}px;top:${y}px;width:222px;height:104px;border-color:${T[i][3]};display:flex;gap:8px;align-items:center;padding:8px 10px`,
+      `<span class="ic" style="font-size:34px;line-height:1">${T[i][0]}</span><div><h4 style="color:${T[i][3]};font-size:16px">${T[i][1]}</h4><p style="font-size:13.5px">${T[i][2]}</p></div>`);
+    an(c,[{transform:`translate(${455-(x+111)}px,${395-(y+52)}px) scale(.15)`,opacity:0},{transform:'none',opacity:1}],{duration:700,easing:'cubic-bezier(.3,1.3,.5,1)'});
+    loop(c.querySelector('.ic'),[{transform:'rotate(-10deg)'},{transform:'rotate(10deg)'}],700+i*90,{direction:'alternate'});
+    beep(450+i*70,.08);await w(420);}
+  await w(1600);
+  const bub=mk('','left:150px;top:252px;width:230px;height:66px;background:#fff;border:3px solid #6a45d8;border-radius:18px;font-size:16px;font-weight:800;color:#4a2ea6;display:flex;align-items:center;justify-content:center;text-align:center','Which material for…');pop(bub);
+  const jobs=['🍳 a pan handle?','✈️ an aeroplane?','🪟 a window?','⛏️ a drill tip?'];let j=0;
+  const tick=()=>{if(!bub.isConnected)return;bub.innerHTML=`Which material for<br>${jobs[j++%4]}`;bub.animate([{transform:'scale(.85)'},{transform:'scale(1)'}],{duration:300});setTimeout(tick,1500);};tick();
+  mk('','left:600px;top:244px;font-size:16px;font-weight:800;color:#8a78cc;letter-spacing:.08em','OUR MATERIALS');
+  const M=['🪵 Wood','🔩 Steel','🪟 Glass','🧴 Plastic','💎 Diamond','🥫 Aluminium','⬛ Lead','🧵 Cotton'];
+  say(`Every job needs the <b>right properties</b>. A pan handle, an aeroplane and a window all need very different materials!`);
+  M.forEach((m,i)=>{const c=mk('',`left:${600+(i%2)*176}px;top:${272+Math.floor(i/2)*58}px;width:166px;height:44px;border-radius:22px;background:#fff;border:3px solid #cfc4f5;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #ddd5fa`,m);pop(c,i*120);
+    loop(c,[{transform:'translateY(0)'},{transform:'translateY(-4px)'}],900+i*70,{direction:'alternate',delay:600});});
+  await w(4200);
+  say(`Let's try out each tool, one by one. At the end, <b>you</b> will be the engineer! 🎯`);}},
+
+/* 2 */ {t:'Scratch and smash',run:async w=>{
+  say(`Tool number one: <b>hardness</b> 💎. We test it with a <b>scratch test</b>, using a steel nail.`);
+  const P1=panel(13,8,460,300,'🪵 Scratch test: soft wood','The nail leaves a deep scratch. Wood is quite <b>soft</b>.');pop(P1);
+  mk('','left:50px;top:70px;width:360px;height:130px;border-radius:12px;background:repeating-linear-gradient(90deg,#dca46a 0 18px,#c98d52 18px 30px,#e2b07a 30px 46px);box-shadow:0 7px 0 #a8743f',null,P1);
+  const sv=mk('','left:50px;top:70px;width:360px;height:130px',`<svg width="360" height="130"><path d="M30 70 L80 64 L130 72 L190 62 L250 70 L320 64" fill="none" stroke="#6b3d14" stroke-width="6" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/></svg>`,P1);
+  const n1=nail(P1,80,134,110,50);
+  await w(1800);
+  an(sv.querySelector('path'),[{strokeDashoffset:100},{strokeDashoffset:0}],{duration:1600,easing:'linear'});
+  for(let i=0;i<6;i++)beep(180+Math.random()*60,.06,'sawtooth',.03,i*.25);
+  await an(n1,[{transform:'translate(0,0)'},{transform:'translate(290px,-4px)'}],{duration:1600,easing:'linear'});
+  const s1=label(P1,'left:60px;top:214px;color:#a14c00;font-size:18px','SCRATCH! ✘ soft');pop(s1);
+  say(`On soft <b>wood</b>, the nail digs in and leaves a deep scratch. Now let's try a <b>diamond</b>…`);
+  await w(2200);
+  const P2=panel(487,8,460,300,'💎 Scratch test: diamond','The nail just slides off. No mark! Diamond is the <b>hardest</b> natural material.');pop(P2);
+  const dia=mk('big-emoji','left:150px;top:62px;font-size:130px','💎',P2);loop(dia,[{filter:'drop-shadow(0 0 0 #9fd8ff)'},{filter:'drop-shadow(0 0 14px #9fd8ff)'}],900,{direction:'alternate'});
+  const n2=nail(P2,140,134,110,50);
+  await w(600);
+  const sp=label(P2,'left:150px;top:118px;font-size:24px','✨');
+  loop(sp,[{opacity:0,transform:'scale(.5)'},{opacity:1,transform:'scale(1.3)'}],200,{direction:'alternate'});
+  an(sp,[{transform:'translateX(0)'},{transform:'translateX(170px)'}],{duration:1400,easing:'linear'});
+  for(let i=0;i<6;i++)beep(1600+Math.random()*400,.03,'square',.03,i*.22);
+  await an(n2,[{transform:'translate(0,0)'},{transform:'translate(170px,0)'}],{duration:1400,easing:'linear'});
+  sp.remove();
+  const s2=label(P2,'left:60px;top:214px;color:#17935b;font-size:18px','No mark! ✔ very hard 😎');pop(s2);
+  say(`On <b>diamond</b>, the nail just slides off. Not a mark! Diamond is the <b>hardest</b> natural material.`);
+  await w(3200);
+  const L=mk('','left:13px;top:318px;width:933px;height:112px;background:#fff;border:3px solid #ece8f8;border-radius:20px');pop(L);
+  mk('','left:16px;top:8px;font-size:17px;font-weight:800','<b style="color:#2c66cf">Hardness</b> = how well a material resists being <b>scratched</b> or <b>dented</b>.',L);
+  const bar=mk('','left:20px;top:48px;width:888px;height:50px;border-radius:25px;background:linear-gradient(90deg,#fff3c4,#cfe3ff)',null,L);
+  mk('','left:8px;top:14px;font-size:13px;font-weight:800;color:#8a6d00','◀ SOFTER',bar);mk('','left:808px;top:14px;font-size:13px;font-weight:800;color:#1c4a9c','HARDER ▶',bar);
+  const H=['🧈 Butter','🪵 Wood','🟠 Copper','🪟 Glass','💎 Diamond'];
+  say(`Here's a <b>hardness ladder</b>. A harder material can scratch a softer one, but not the other way round.`);
+  for(let i=0;i<H.length;i++){const c=mk('tag',`left:${92+i*142}px;top:9px;background:#fff;border:2px solid #d9d2f5;font-size:16px`,H[i],bar);pop(c);beep(400+i*90,.07);await w(350);}
+  await w(2600);
+  STAMP('✔ Exam MCQ 10: A) Hardness','left:300px;top:448px');
+  say(`✅ Exam question 10: the property that measures how well a material resists being <b>scratched or dented</b> is <b>A) Hardness</b>.`);
+  await w(4200);
+  await wipe(w);
+  /* ---- smash test ---- */
+  say(`Now the <b>smash test</b> 🔨. What happens when we hit glass and steel with a hammer?`);
+  const P3=panel(13,8,460,300,'🪟 Hit glass with a hammer…','Glass <b>shatters</b> into sharp pieces. It is <b>brittle</b>.');pop(P3);
+  const shards=[];
+  for(let r=0;r<3;r++)for(let c=0;c<4;c++){const s=mk('',`left:${90+c*70}px;top:${60+r*48}px;width:70px;height:48px;background:rgba(160,210,255,.55);border:1px solid #fff;box-shadow:inset 0 0 8px rgba(255,255,255,.9)`,null,P3);shards.push(s);}
+  const P4=panel(487,8,460,300,'🔩 Hit steel with a hammer…','Steel <b>bends</b> and dents, but it does <b>not</b> shatter.');pop(P4);
+  mk('','left:70px;top:150px;width:40px;height:60px;background:#7d8796;border-radius:4px',null,P4);mk('','left:350px;top:150px;width:40px;height:60px;background:#7d8796;border-radius:4px',null,P4);
+  const bl=mk('','left:80px;top:126px;width:150px;height:24px;background:linear-gradient(#e2e6ec,#8a94a3);border-radius:4px 0 0 4px;transform-origin:100% 50%',null,P4);
+  const br=mk('','left:230px;top:126px;width:150px;height:24px;background:linear-gradient(#e2e6ec,#8a94a3);border-radius:0 4px 4px 0;transform-origin:0 50%',null,P4);
+  const hm1=mk('big-emoji','left:250px;top:20px;font-size:62px;transform-origin:80% 80%','🔨',P3);
+  const hm2=mk('big-emoji','left:200px;top:22px;font-size:62px;transform-origin:80% 80%','🔨',P4);
+  await w(1800);
+  an(hm1,[{transform:'rotate(-40deg)'},{transform:'rotate(15deg) translateY(30px)'}],{duration:350,easing:'ease-in'});await w(350);
+  beep(1800,.05,'square',.08);beep(1300,.12,'sawtooth',.06,.03);
+  shards.forEach((s,i)=>{const dx=(i%4-1.5)*60+(Math.random()-.5)*40,dy=(2-Math.floor(i/4))*22+18+Math.random()*20,rt=(Math.random()-.5)*300;
+    an(s,[{transform:'none'},{transform:`translate(${dx}px,${dy*.4-40}px) rotate(${rt/2}deg)`,offset:.4},{transform:`translate(${dx*1.3}px,${dy}px) rotate(${rt}deg)`,opacity:.8}],{duration:900,easing:'ease-in'});});
+  const k1=label(P3,'left:30px;top:44px;color:#e04848;font-size:22px','SMASH! 💥');pop(k1);
+  say(`💥 The glass <b>shatters</b> into sharp pieces. Glass is <b>brittle</b>: it breaks easily when it is struck.`);
+  await w(3000);
+  an(hm2,[{transform:'rotate(-40deg)'},{transform:'rotate(15deg) translateY(36px)'}],{duration:350,easing:'ease-in'});await w(350);
+  beep(300,.15,'triangle',.12);
+  an(bl,[{transform:'none'},{transform:'translateY(16px) rotate(9deg)'}],{duration:300});an(br,[{transform:'none'},{transform:'translateY(16px) rotate(-9deg)'}],{duration:300});
+  const k2=label(P4,'left:30px;top:44px;color:#2c66cf;font-size:22px','BONK! 🔩');pop(k2);
+  say(`The steel just <b>bends</b> and dents. It does <b>not</b> shatter, so steel is <b>not brittle</b>.`);
+  await w(3000);
+  const WD=mk('','left:13px;top:318px;width:933px;height:120px;background:#fff;border:3px solid #ece8f8;border-radius:20px');pop(WD);
+  const D=[['💥 Brittle','breaks or shatters easily when struck',1],['🌿 Flexible','bends easily without breaking',0],['🔨 Malleable','can be hammered into a new shape',0],['〰️ Ductile','can be pulled into thin wires',0]];
+  say(`Don't mix up these four words! Only one means <b>shatters easily</b>…`);
+  D.forEach((d,i)=>{const e=mk('',`left:${12+(i%2)*458}px;top:${10+Math.floor(i/2)*52}px;width:446px;height:44px;border-radius:12px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;background:#f6f4fd`,`<b style="min-width:112px">${d[0]}</b> = ${d[1]}`,WD);pop(e,i*150);
+    if(d[2])setTimeout(()=>{e.style.background='#e3f7ec';e.style.boxShadow='0 0 0 3px #18a058';},900);});
+  await w(2600);
+  STAMP('✔ Exam MCQ 5: B) Brittle','left:330px;top:452px');
+  say(`✅ Exam question 5: a material that breaks or shatters easily when struck is <b>B) Brittle</b>. Watch out: glass is <b>hard</b> to scratch, but still brittle!`);}},
+
+/* 3 */ {t:'Strength: the pull test',run:async w=>{
+  say(`Tool number two: <b>strength</b> 💪. Let's clamp two materials into a pulling machine and pull harder and harder!`);
+  const P=panel(13,8,933,250,'💪 The pull test','');pop(P);
+  const lanes=[{y:70,n:'🧵 Cotton thread',breakAt:20},{y:160,n:'⛓️ Steel cable',breakAt:Infinity}];
+  lanes.forEach(L=>{label(P,`left:30px;top:${L.y-30}px;font-size:16px`,L.n);
+    mk('',`left:20px;top:${L.y-10}px;width:44px;height:56px;background:#5d6573;border-radius:8px`,null,P);
+    L.left=mk('',`left:64px;top:${L.y+(L.breakAt<99?16:11)}px;width:280px;height:${L.breakAt<99?4:14}px;transform-origin:0 50%;background:${L.breakAt<99?'#e8dcc0':'repeating-linear-gradient(60deg,#c3cad5 0 6px,#8a94a3 6px 10px)'}`,null,P);
+    L.right=mk('',`left:344px;top:${L.y+(L.breakAt<99?16:11)}px;width:280px;height:${L.breakAt<99?4:14}px;transform-origin:100% 50%;background:${L.breakAt<99?'#e8dcc0':'repeating-linear-gradient(60deg,#c3cad5 0 6px,#8a94a3 6px 10px)'}`,null,P);
+    L.hook=mk('',`left:624px;top:${L.y-10}px;width:44px;height:56px;background:#e06a1b;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff`,'➡',P);
+    L.meter=mk('',`left:700px;top:${L.y-6}px;width:200px;height:48px;background:#1f2433;color:#7dffa1;border-radius:10px;font-family:Menlo,monospace;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center`,'0 N',P);});
+  await w(2400);
+  say(`Pulling… The <b>force</b> is measured in <b>newtons (N)</b>. Watch the meters climb!`);
+  let snapped=false;
+  for(let k=0;k<=40;k++){const F=k?Math.round(Math.pow(1.31,k)):0;
+    lanes.forEach(L=>{if(L.breakAt<99&&snapped)return;const f=Math.min(F,L.breakAt);L.meter.textContent=f.toLocaleString('en-GB')+' N';
+      L.hook.style.transform=L.right.style.transform=`translateX(${Math.min(8,k/5)}px)`;});
+    if(!snapped&&F>=20){snapped=true;const L=lanes[0];beep(1200,.08,'square',.08);
+      an(L.left,[{transform:'none'},{transform:'rotate(22deg) scaleX(.4)'}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});
+      an(L.right,[{transform:'translateX(3px)'},{transform:'translateX(8px) rotate(-22deg) scaleX(.4)'}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});
+      L.meter.style.color='#ff7b7b';const sn=label(P,'left:300px;top:40px;color:#e04848;font-size:22px','SNAP! at 20 N');pop(sn);
+      say(`<b>SNAP!</b> 🧵 The cotton thread breaks at only about <b>20 newtons</b>. It is <b>weak</b>.`);await w(2600);}
+    else{beep(300+k*20,.03,'sine',.03);await w(110);}}
+  const ok=label(P,'left:300px;top:130px;color:#17935b;font-size:22px','Still holding! 💪');pop(ok);
+  say(`The steel cable is still holding at <b>50,000 newtons</b>! Steel is very <b>strong</b>.`);
+  await w(3000);
+  const B1=panel(13,268,460,176,'🏗️ Strong cable → safe crane','');pop(B1);
+  mk('','left:40px;top:44px;width:12px;height:124px;background:#f2c200',null,B1);mk('','left:40px;top:44px;width:300px;height:12px;background:#f2c200',null,B1);
+  const hang=mk('','left:300px;top:56px;width:60px;height:110px',`<div style="position:absolute;left:28px;top:0;width:4px;height:60px;background:#5d6573"></div><div style="position:absolute;left:4px;top:56px;font-size:46px;line-height:1">🚗</div>`,B1);
+  loop(hang,[{transform:'translateY(4px)'},{transform:'translateY(-6px)'}],1300,{direction:'alternate'});
+  label(B1,'left:120px;top:96px;font-size:14px;color:#3a3f52','steel cable lifts<br>a 1,500 kg car');
+  const B2=panel(487,268,460,176,'👇 Pushing counts too','');pop(B2);
+  const chalk=mk('','left:110px;top:110px;width:26px;height:56px;background:#f4f1ea;border:2px solid #cfc8b8;border-radius:4px',null,B2);
+  mk('','left:320px;top:110px;width:26px;height:56px;background:linear-gradient(90deg,#8a94a3,#e2e6ec,#8a94a3);border-radius:4px',null,B2);
+  const wa=mk('','left:83px;top:40px;width:80px;height:40px;background:#3b4252;color:#fff;border-radius:6px;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center','PUSH',B2);
+  const wb=mk('','left:293px;top:40px;width:80px;height:40px;background:#3b4252;color:#fff;border-radius:6px;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center','PUSH',B2);
+  label(B2,'left:180px;top:60px;font-size:13px;color:#3a3f52;text-align:center','chalk<br>vs<br>steel rod');
+  say(`Strength isn't just about pulling. <b>Pushing</b> counts too! Let's squash a stick of chalk and a steel rod.`);
+  await w(2200);
+  an(wa,[{transform:'none'},{transform:'translateY(54px)'}],{duration:600,easing:'ease-in'});await an(wb,[{transform:'none'},{transform:'translateY(30px)'}],{duration:600,easing:'ease-in'});
+  beep(250,.2,'sawtooth',.05);chalk.style.transformOrigin='50% 100%';an(chalk,[{transform:'none'},{transform:'scaleY(.12)',opacity:.6}],{duration:300});
+  [0,1,2,3].forEach(i=>{const c=mk('',`left:${112+i*7}px;top:150px;width:9px;height:9px;background:#f4f1ea;border:1px solid #cfc8b8`,null,B2);an(c,[{transform:'none'},{transform:`translate(${(i-1.5)*26}px,8px) rotate(${i*60}deg)`}],{duration:500});});
+  const cr=label(B2,'left:40px;top:146px;color:#e04848','crumbles!');pop(cr);const hd=label(B2,'left:356px;top:146px;color:#17935b','holds ✔');pop(hd);
+  say(`The chalk <b>crumbles</b>, but the steel rod holds. Strong materials can take a big <b>pull</b> or <b>push</b> without breaking.`);
+  await w(3400);
+  STAMP('✔ Exam MCQ 11: B) How much pulling or pushing force it can take before breaking','left:40px;top:458px;font-size:17px',-2);
+  say(`✅ Exam question 11: strength means <b>B) how much pulling or pushing force a material can take before breaking</b>.`);}},
+
+/* 4 */ {t:'Density: packed in',run:async w=>{
+  say(`Tool number three: <b>density</b> ⚖️. Here are two cubes of exactly the <b>same size</b>: one is wood, one is lead.`);
+  const P1=panel(13,8,460,300,'⚖️ Same size, different mass','Both cubes have the <b>same volume</b>, but the lead has far more <b>mass</b>.');pop(P1);
+  mk('','left:205px;top:172px;width:50px;height:46px;background:#6b7380;clip-path:polygon(50% 0,100% 100%,0 100%)',null,P1);
+  mk('','left:170px;top:216px;width:120px;height:10px;background:#5d6573;border-radius:5px',null,P1);
+  const beam=mk('','left:70px;top:164px;width:320px;height:10px;background:#3b4252;border-radius:5px',null,P1);
+  const cube=(x,bg,txt,col)=>mk('',`left:${x}px;top:-76px;width:76px;height:76px;border-radius:8px;background:${bg};color:${col};font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)`,txt,beam);
+  cube(8,'repeating-linear-gradient(90deg,#dca46a 0 12px,#c98d52 12px 20px)','Wood','#5a3510');cube(236,'linear-gradient(135deg,#9aa1ad,#5d636e)','Lead','#fff');
+  await w(2600);
+  beep(200,.3,'triangle',.1);
+  await an(beam,[{transform:'rotate(0)'},{transform:'rotate(14deg)'}],{duration:900,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  const m1=label(P1,'left:48px;top:46px;color:#a14c00','≈ 75 g');pop(m1);const m2=label(P1,'left:330px;top:120px;color:#3b4252','≈ 1.4 kg!');pop(m2);
+  say(`<b>CLUNK!</b> The lead side drops. Same size, but the lead is about <b>20 times heavier</b>! Why? Let's zoom inside… 🔬`);
+  await w(3600);
+  const P2=panel(487,8,460,300,'🔬 Zoom inside the cubes','');pop(P2);
+  const bw=mk('','left:40px;top:50px;width:170px;height:170px;border:3px solid #c98d52;border-radius:10px;background:#fff7ee',null,P2);
+  const bl=mk('','left:250px;top:50px;width:170px;height:170px;border:3px solid #5d636e;border-radius:10px;background:#f1f2f5',null,P2);
+  const WP=[[20,20],[90,30],[130,90],[40,100],[80,130],[140,20],[20,60],[110,60],[60,60],[130,135],[30,140],[90,95]];
+  WP.forEach(([x,y],i)=>{const d=mk('',`left:${x}px;top:${y}px;width:18px;height:18px;border-radius:50%;background:#c98d52`,null,bw);pop(d,i*60);loop(d,[{transform:'translate(0,0)'},{transform:`translate(${i%2?3:-3}px,${i%3?-3:3}px)`}],500+i*40,{direction:'alternate',delay:900});});
+  for(let i=0;i<64;i++){const d=mk('',`left:${6+(i%8)*20}px;top:${6+Math.floor(i/8)*20}px;width:18px;height:18px;border-radius:50%;background:#5d636e`,null,bl);pop(d,i*18);}
+  label(P2,'left:30px;top:232px;width:190px;text-align:center;font-size:14px;color:#a14c00','Wood: spread out<br>→ LOW density');
+  label(P2,'left:240px;top:232px;width:190px;text-align:center;font-size:14px;color:#3b4252','Lead: packed in tight<br>→ HIGH density');
+  say(`Inside the wood, the particles are spread out. Inside the lead, the mass is <b>packed in tight</b>. That's <b>density</b>!`);
+  await w(3800);
+  const B1=panel(13,318,460,126,'💧 Into the water…','');pop(B1);
+  mk('','left:20px;top:46px;width:416px;height:70px;background:linear-gradient(#bfe0ff,#7fb8f0);border-radius:6px 6px 12px 12px',null,B1);
+  const fw=mk('','left:120px;top:30px;width:36px;height:36px;border-radius:5px;background:repeating-linear-gradient(90deg,#dca46a 0 8px,#c98d52 8px 13px)',null,B1);
+  const fl=mk('','left:290px;top:6px;width:36px;height:36px;border-radius:5px;background:linear-gradient(135deg,#9aa1ad,#5d636e)',null,B1);
+  loop(fw,[{transform:'translateY(0) rotate(-3deg)'},{transform:'translateY(5px) rotate(3deg)'}],900,{direction:'alternate'});
+  an(fl,[{transform:'none'},{transform:'translateY(72px)'}],{duration:1600,easing:'ease-in'});
+  label(B1,'left:170px;top:52px;font-size:13px;color:#1c4a9c','wood floats');label(B1,'left:340px;top:52px;font-size:13px;color:#1c4a9c','lead sinks');
+  const DF=mk('','left:487px;top:318px;width:460px;height:126px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;padding:14px 18px;font-size:18px;font-weight:700;line-height:1.45',
+    `<b style="color:#6a45d8">Density</b> = how much <b>mass</b> is packed into a given <b>volume</b>.<br><span style="font-size:15.5px">High density = heavy for its size. Low density = light for its size.</span>`);pop(DF);
+  say(`Drop them in water: low-density wood <b>floats</b>, high-density lead <b>sinks</b>. Density tells us how heavy a material is <b>for its size</b>.`);
+  await w(3800);
+  STAMP('✔ Exam MCQ 12: B) How much mass is packed into a given volume','left:120px;top:458px;font-size:19px',-2);
+  say(`✅ Exam question 12: density tells us <b>B) how much mass is packed into a given volume</b>.`);}},
+
+/* 5 */ {t:'The light test',run:async w=>{
+  say(`Tool number four: can light get through? 🔦 You run this test! Tap each material to put it in front of the torch.`);
+  const P=panel(13,8,933,300,'🔦 The light test','');pop(P);
+  mk('','left:30px;top:130px;width:110px;height:44px;background:#3b4252;border-radius:10px',null,P);
+  mk('','left:60px;top:122px;width:22px;height:10px;background:#ffd84d;border-radius:4px',null,P);
+  mk('','left:136px;top:116px;width:40px;height:72px;background:#5a6273;clip-path:polygon(0 25%,100% 0,100% 100%,0 75%)',null,P);
+  const b1=mk('','left:176px;top:92px;width:254px;height:120px;background:linear-gradient(90deg,rgba(255,216,77,.95),rgba(255,216,77,.7));clip-path:polygon(0 38%,100% 12%,100% 88%,0 62%)',null,P);
+  loop(b1,[{opacity:.85},{opacity:1}],400,{direction:'alternate'});
+  const b2=mk('','left:452px;top:92px;width:368px;height:120px;background:linear-gradient(90deg,rgba(255,216,77,.8),rgba(255,216,77,.55));clip-path:polygon(0 12%,100% 0,100% 100%,0 88%);opacity:0;transition:opacity .6s,filter .6s',null,P);
+  const wall=mk('','left:820px;top:40px;width:90px;height:230px;background:#e9e6f4;border-radius:10px;overflow:hidden',null,P);
+  const spot=mk('','left:12px;top:77px;width:66px;height:66px;border-radius:50%;background:#ffe066;opacity:0;transition:all .6s',null,wall);
+  const sheet=mk('','left:430px;top:70px;width:22px;height:170px;border:3px dashed #b9b0dc;border-radius:6px;transition:all .5s',null,P);
+  const nm=mk('tag','left:380px;top:246px;width:122px;text-align:center;background:#f1eefe;color:#4a2ea6','?',P);
+  const res=mk('','left:520px;top:236px;width:290px;height:56px;font-size:16px;font-weight:800;display:flex;flex-direction:column;justify-content:center',' ',P);
+  const S={g:['🪟 Window glass','#2c66cf','rgba(180,220,255,.35)','2px solid #8fc3f0',.9,'none',1,'66px',`TRANSPARENT ✔<br><span style="font-weight:600">light passes straight through clearly</span>`,'#2c66cf',
+      `🪟 Window glass is <b>transparent</b>: light passes <b>straight through clearly</b>. You can see right through it!`],
+    f:['🌫️ Frosted glass','#8a78cc','rgba(235,238,246,.95)','2px solid #c9cfdd',.4,'blur(6px)',.5,'86px',`TRANSLUCENT<br><span style="font-weight:600">some light gets through, but blurry</span>`,'#6a45d8',
+      `🌫️ Frosted glass is <b>translucent</b>: some light gets through, but it is scattered, so everything looks blurry.`],
+    wd:['🪵 Wood','#b0703a','repeating-linear-gradient(0deg,#dca46a 0 10px,#c98d52 10px 16px)','2px solid #a8743f',0,'none',0,'66px',`OPAQUE ✘<br><span style="font-weight:600">blocks all the light</span>`,'#a14c00',
+      `🪵 Wood is <b>opaque</b>: it blocks <b>all</b> the light. The wall behind it stays dark.`]};
+  const tried=new Set();
+  ['g','f','wd'].forEach((k,i)=>{const s=S[k];const b=mk('bigbtn lt',`left:${22+i*313}px;top:322px;width:290px;height:62px;background:${s[1]};display:flex;align-items:center;justify-content:center;font-size:23px`,s[0]);pop(b,i*120);
+    b.onclick=()=>{b.dataset.t=1;tried.add(k);beep(600+i*100,.08);
+      sheet.style.background=s[2];sheet.style.border=s[3];nm.textContent=s[0];nm.style.color=s[9];
+      b2.style.opacity=s[4];b2.style.filter=s[5];spot.style.opacity=s[6];spot.style.width=spot.style.height=s[7];spot.style.left=k==='f'?'2px':'12px';spot.style.top=k==='f'?'72px':'77px';spot.style.filter=k==='f'?'blur(8px)':'none';
+      res.innerHTML=s[8];res.style.color=s[9];res.animate([{opacity:0,transform:'translateX(-14px)'},{opacity:1,transform:'none'}],{duration:350});
+      sheet.animate([{transform:'translateY(-30px)',opacity:0},{transform:'none',opacity:1}],{duration:350});
+      if(!b.dataset.r){b.dataset.r=1;const t=mk('tag',`left:${22+i*313}px;top:396px;width:290px;text-align:center;background:#fff;border:2px solid ${s[1]};color:${s[9]}`,s[8].split('<br>')[0]);pop(t);}
+      say(s[10]);};});
+  window.AUTOPLAY=()=>{const b=[...document.querySelectorAll('.lt')].find(x=>!x.dataset.t);if(b)b.click();};
+  await w.until(()=>tried.size===3);
+  await w(3200);
+  STAMP('✔ Exam MCQ 17: B) It lets light pass straight through clearly','left:120px;top:452px;font-size:19px',-2);
+  say(`✅ Exam question 17: <b>transparent</b> means <b>B) it lets light pass straight through clearly</b>, like window glass or clear plastic.`);}},
+
+/* 6 */ {t:'Hot handles',run:async w=>{
+  say(`Tool number five: <b>insulators</b>. Two pans are heating on the hob. One has a <b>metal</b> handle, one has a <b>wooden</b> handle. 🍳`);
+  const P=panel(13,8,460,330,'🍳 Pans on the hob','');pop(P);
+  const pan=(Y,metal)=>{for(let k=0;k<3;k++){const f=mk('big-emoji',`left:${38+k*42}px;top:${Y+52}px;font-size:28px`,'🔥',P);loop(f,[{transform:'scale(1)'},{transform:'scale(1.18) translateY(-3px)'}],300+k*60,{direction:'alternate'});}
+    mk('',`left:24px;top:${Y}px;width:150px;height:52px;background:linear-gradient(#5a6273,#2f3542);border-radius:4px 4px 22px 22px`,null,P);
+    const h=mk('',`left:174px;top:${Y+12}px;width:200px;height:18px;border-radius:9px;overflow:hidden;background:${metal?'linear-gradient(#e2e6ec,#8a94a3)':'repeating-linear-gradient(90deg,#c98d52 0 14px,#b47a43 14px 22px)'}`,null,P);
+    const heat=mk('','left:0;top:0;width:0;height:18px;background:linear-gradient(90deg,#ff3d1f,#ff9a2e);opacity:.9',null,h);
+    for(let i=0;i<4;i++){const d=mk('',`left:176px;top:${Y+16}px;width:10px;height:10px;border-radius:50%;background:#ff3d1f;box-shadow:0 0 6px #ff9a2e;opacity:0`,null,P);
+      d.animate(metal?[{transform:'translateX(0)',opacity:1},{transform:'translateX(185px)',opacity:1,offset:.85},{transform:'translateX(185px)',opacity:0}]:[{transform:'translateX(0)',opacity:1},{transform:'translateX(26px)',opacity:0}],{duration:1600,iterations:Infinity,delay:i*400});}
+    return{heat,hand:mk('big-emoji',`left:384px;top:${Y-4}px;font-size:40px`,'✋',P)};};
+  const A=pan(52,true),B=pan(190,false);
+  label(P,'left:190px;top:92px;font-size:14px;color:#a14c00','🔩 metal handle');label(P,'left:190px;top:230px;font-size:14px;color:#a14c00','🪵 wooden handle');
+  await w(1200);
+  an(A.heat,[{width:'0px'},{width:'200px'}],{duration:2600,easing:'linear'});an(B.heat,[{width:'0px'},{width:'26px'}],{duration:2600,easing:'linear'});
+  say(`Heat flows along the <b>metal</b> handle all the way to the end. Metals are good <b>thermal conductors</b>.`);
+  await w(3200);
+  an(A.hand,[{transform:'none'},{transform:'translate(-14px,4px)',offset:.3},{transform:'translate(16px,-26px) rotate(25deg)'}],{duration:700});boo();
+  const o=label(P,'left:250px;top:36px;color:#e04848;font-size:20px','OUCH! 🔥');pop(o);
+  await w(900);
+  an(B.hand,[{transform:'none'},{transform:'translate(-14px,4px)'}],{duration:500});
+  const c=label(P,'left:250px;top:172px;color:#17935b;font-size:20px','Cool 😎');pop(c);
+  say(`But the <b>wooden</b> handle stays cool! Wood is a good <b>thermal insulator</b>: it does not let heat through easily.`);
+  await w(3400);
+  const R=panel(487,8,460,330,'🪛 Plastic handles: a double insulator','');pop(R);
+  mk('','left:40px;top:110px;width:150px;height:56px;border-radius:24px 10px 10px 24px;background:linear-gradient(#ffd84d,#e0a800)',null,R);
+  mk('','left:190px;top:130px;width:200px;height:16px;background:linear-gradient(#eef1f5,#8a94a3)',null,R);
+  mk('','left:390px;top:130px;width:20px;height:16px;background:#8a94a3;clip-path:polygon(0 0,100% 30%,100% 70%,0 100%)',null,R);
+  const z=mk('big-emoji','left:400px;top:80px;font-size:40px','⚡',R);loop(z,[{opacity:.3,transform:'scale(.9)'},{opacity:1,transform:'scale(1.15)'}],250,{direction:'alternate'});
+  for(let i=0;i<5;i++){const d=mk('','left:380px;top:133px;width:10px;height:10px;border-radius:50%;background:#2c66cf;box-shadow:0 0 8px #5aa0f0',null,R);
+    d.animate([{transform:'translateX(0)',opacity:1},{transform:'translateX(-185px)',opacity:1,offset:.8},{transform:'translateX(-185px)',opacity:0}],{duration:1500,iterations:Infinity,delay:i*300,easing:'linear'});}
+  const stop=mk('big-emoji','left:170px;top:76px;font-size:30px','🚫',R);loop(stop,[{transform:'scale(.9)'},{transform:'scale(1.15)'}],500,{direction:'alternate'});
+  const hand=mk('big-emoji','left:70px;top:150px;font-size:40px','🤚',R);pop(hand);
+  say(`Now a screwdriver touching a live wire ⚡. Electricity flows along the metal… but the <b>plastic handle</b> stops it! No shock.`);
+  await w(3400);
+  const t1=mk('tag','left:30px;top:218px;background:#e6f0ff;color:#1c4a9c','⚡ electrical insulator → stops electric shocks',R);pop(t1);await w(700);
+  const t2=mk('tag','left:30px;top:262px;background:#fff1e0;color:#a14c00','🔥 thermal insulator → handle stays cool',R);pop(t2);
+  say(`Plastic is a <b>double insulator</b>: it stops <b>electricity</b> AND <b>heat</b>. That's why pot handles and tool handles are covered in plastic.`);
+  await w(3800);
+  const S=mk('','left:13px;top:348px;width:933px;height:58px;background:#fff;border:3px solid #ece8f8;border-radius:18px;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px',
+    `<span style="color:#e04848">Heat flows through: 🥈 silver · 🥫 aluminium · 🔩 iron (metals)</span><span>|</span><span style="color:#17935b">Heat is stopped by: 🪵 wood · 🧴 plastic</span>`);pop(S);
+  say(`Remember: silver, aluminium and iron are metals, so they <b>conduct</b> heat. Wood and plastic are <b>insulators</b>.`);
+  await w(3400);
+  STAMP('✔ Exam MCQ 7: C) Wood','left:30px;top:422px;font-size:20px',-3);
+  say(`✅ Exam question 7: the good thermal insulator is <b>C) Wood</b>.`);
+  await w(2600);
+  STAMP('✔ Exam MCQ 13: A) It is a good electrical and thermal insulator','left:300px;top:462px;font-size:17px',-2);
+  say(`✅ Exam question 13: plastic covers pot and tool handles because <b>A) it is a good electrical and thermal insulator</b>.`);}},
+
+/* 7 */ {t:'Engineer challenge',run:async w=>{
+  const J=[
+    {e:'🍳',job:'Saucepan handle',need:'Must stop heat reaching your hand.',o:[['🟠','Copper'],['🧴','Plastic'],['🔩','Iron'],['🪟','Glass']],a:1,
+      ok:`Yes! <b>Plastic</b> is a <b>thermal insulator</b> (and an electrical one), so the handle stays cool.`,bad:[`Copper is a metal: it conducts heat. Ouch!`,'',`Iron is a metal: it conducts heat. Ouch!`,`Glass is brittle: it could shatter.`]},
+    {e:'🏡',job:'Greenhouse window',need:'Must let sunlight straight through.',o:[['🪵','Wood'],['🔩','Steel'],['🪟','Glass'],['🧱','Brick']],a:2,
+      ok:`Yes! <b>Glass</b> is <b>transparent</b>: light passes straight through clearly.`,bad:[`Wood is opaque: it blocks the light.`,`Steel is opaque: it blocks the light.`,'',`Brick is opaque: it blocks the light.`]},
+    {e:'⛏️',job:'Tip of a rock drill',need:'Must not get scratched or worn down.',o:[['⬛','Lead'],['🧴','Plastic'],['💎','Diamond'],['🪵','Wood']],a:2,
+      ok:`Yes! <b>Diamond</b> is the <b>hardest</b> natural material, so the rock can't scratch it.`,bad:[`Lead is soft: the rock would scratch it.`,`Plastic is too soft: it would wear away.`,'',`Wood is soft: it would wear away.`]},
+    {e:'✈️',job:'Aeroplane body',need:'Must be light, strong and last for years in rain.',o:[['⬛','Lead'],['🥫','Aluminium'],['🪟','Glass'],['🔩','Iron']],a:1,
+      ok:`Yes! <b>Aluminium</b> ✈️ is lightweight, strong and resists corrosion.`,bad:[`Lead is very dense: far too heavy to fly!`,'',`Glass is brittle: it would shatter.`,`Iron is dense (heavy) and it rusts.`]}];
+  say(`👷 Your turn to be the engineer! For each job, tap the <b>best material</b>. Think about which property the job needs.`);
+  await w(2800);let first=0;
+  for(let j=0;j<J.length;j++){const q=J[j];stage.innerHTML='';
+    mk('','left:0;top:10px;width:960px;text-align:center;font-size:20px;font-weight:800;color:#4a2ea6',`👷 Engineer challenge · job ${j+1} of ${J.length}`);
+    const jc=mk('','left:20px;top:48px;width:300px;height:296px;background:#fffbe9;border:3px dashed #e8c547;border-radius:20px;text-align:center;padding:16px',
+      `<div class="je" style="font-size:86px;line-height:1.1">${q.e}</div><div style="font-size:22px;font-weight:800;margin-top:10px">Job: ${q.job}</div><div style="font-size:16px;font-weight:700;color:#5a5f70;margin-top:10px">${q.need}</div>`);pop(jc);
+    let done=false,tries=0;const O=[];
+    q.o.forEach((m,i)=>{const e=mk('ex-opt',`left:${340+(i%2)*305}px;top:${48+Math.floor(i/2)*150}px;width:290px;height:138px;flex-direction:column;justify-content:center;gap:4px;font-size:22px`,`<span style="font-size:52px;line-height:1">${m[0]}</span><span>${m[1]}</span>`);pop(e,i*80);O.push(e);
+      e.onclick=()=>{if(done)return;tries++;
+        if(i===q.a){done=true;O.forEach(x=>x.classList.add('locked'));e.classList.add('ok');yay();confetti(40);if(tries===1)first++;
+          const je=jc.querySelector('.je');je.animate([{transform:'scale(1)'},{transform:'scale(1.3) rotate(-10deg)'},{transform:'scale(1)'}],{duration:600});
+          fb.innerHTML='✅ '+q.ok;fb.style.background='#e3f7ec';fb.style.borderColor='#18a058';pop(fb);say(q.ok);}
+        else{e.classList.add('bad','locked');shake(e);boo();fb.innerHTML='💡 '+q.bad[i]+' Try again!';fb.style.background='#fff8e6';fb.style.borderColor='#f2c200';pop(fb);say(q.bad[i]+' Try again!');}};});
+    const fb=mk('ex-why','left:20px;top:360px;width:920px;opacity:0',' ');
+    say(j?`Job ${j+1}: <b>${q.job}</b>. ${q.need} Tap the best material!`:`Job 1: a <b>saucepan handle</b>. ${q.need} Tap the best material!`);
+    await w.until(()=>done);await w(2600);
+    if(j===J.length-1){const B=[['🪶','Lightweight','low density, so it can fly'],['💪','Strong','takes big forces without breaking'],['🛡️','Resists corrosion','does not rust away in the rain']];
+      B.forEach((b,i)=>{const e=mk('',`left:${20+i*310}px;top:422px;width:300px;height:88px;background:#fff;border:3px solid #ece8f8;border-radius:18px;display:flex;align-items:center;gap:10px;padding:0 14px`,
+        `<span style="font-size:40px">${b[0]}</span><div><div style="font-size:18px;font-weight:800">${b[1]}</div><div style="font-size:14px;color:#5a5f70;font-weight:700">${b[2]}</div></div>`);pop(e,i*250);});
+      const pl=mk('big-emoji','left:0;top:300px;font-size:44px;z-index:9','✈️');an(pl,[{transform:'translate(-60px,40px)'},{transform:'translate(1000px,-80px)'}],{duration:2600,easing:'ease-in'});
+      say(`That's short answer 12! Aluminium is used for planes because it is <b>lightweight</b>, <b>strong</b> and <b>resistant to corrosion</b>.`);await w(4400);}}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:110px;width:600px;text-align:center',`<div style="font-size:80px">👷🏆</div><div style="font-size:30px;font-weight:800;color:#4a2ea6;margin-top:6px">Challenge complete!</div><div style="font-size:21px;font-weight:700;margin-top:10px">You chose right first time on <b>${first} of ${J.length}</b> jobs.</div>`);pop(s);confetti(120);yay();
+  say(first===J.length?`Perfect engineering! 🏆 You matched every job to the right property.`:`Well done, engineer! Remember: always ask <b>which property</b> the job needs.`);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 5 · MCQ 10',q:'What property measures how well a material resists being scratched or dented?',o:['Hardness','Density','Strength','Flexibility'],a:0,why:'<b>Hardness</b> = resisting scratches and dents. Diamond is the hardest natural material.'},
+    {src:'Worksheet · Unit 5 · MCQ 5',q:'Which term describes a material that breaks or shatters easily when struck?',o:['Flexible','Brittle','Malleable','Ductile'],a:1,why:'<b>Brittle</b> materials, like glass, shatter when hit.'},
+    {src:'Worksheet · Unit 5 · MCQ 11',q:'What does "strength" mean in material science?',o:['How shiny the material is','How much pulling or pushing force it can take before breaking','How easily it floats on water','How fast it absorbs liquids'],a:1,optH:80,why:'A <b>strong</b> material, like a steel cable, takes a big pull or push without breaking.'},
+    {src:'Worksheet · Unit 5 · MCQ 12',q:'What does "density" tell us about a material?',o:['How hot it gets in the sun','How much mass is packed into a given volume','How bright it shines under light','How long it takes to melt'],a:1,optH:80,why:'<b>Density</b> = mass packed into a volume. Lead is dense, so it sinks; wood is not, so it floats.'},
+    {src:'Worksheet · Unit 5 · MCQ 17',q:'What does "transparent" mean when describing glass or clear plastic?',o:['It blocks all light','It lets light pass straight through clearly','It absorbs water instantly','It changes shape when cold'],a:1,optH:80,why:'<b>Transparent</b> = light passes straight through clearly. Translucent is blurry; opaque blocks all light.'},
+    {src:'Worksheet · Unit 5 · MCQ 7',q:'Which material is a good thermal insulator (does not conduct heat well)?',o:['Silver','Aluminium','Wood','Iron'],a:2,why:'Silver, aluminium and iron are metals, which conduct heat. <b>Wood</b> is a thermal insulator.'},
+    {src:'Worksheet · Unit 5 · MCQ 13',q:'Why is plastic used to cover the handles of cooking pots and electrical tools?',o:['It is a good electrical and thermal insulator','It conducts heat very fast','It is a heavy magnetic material','It makes food taste better'],a:0,optH:80,why:'Plastic stops <b>heat</b> and <b>electricity</b>, so handles stay cool and safe.'},
+    {src:'Worksheet · Unit 5 · Short answer 12',q:'Which properties of aluminium make it useful for building planes?',model:'Aluminium is <b>lightweight</b> (low density), <b>strong</b> and <b>resistant to corrosion</b>.'},
+  ],{title:'Exam check: choosing materials'});}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You've used the whole <b>property toolkit</b>! Here's everything you learned…`);
+  const B=[['💎','<b>Hardness</b>: resists being scratched or dented.'],['💪','<b>Strength</b>: the pull or push it takes before breaking.'],['⚖️','<b>Density</b>: how much mass is packed into a volume.'],['💥','<b>Brittle</b>: breaks or shatters easily, like glass.'],
+    ['🪟','<b>Transparent</b>: light passes straight through clearly.'],['🪵','<b>Wood</b> is a good thermal insulator.'],['🧴','<b>Plastic</b> handles: electrical AND thermal insulator.'],['✈️','<b>Aluminium</b> planes: lightweight, strong, resists corrosion.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:448px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','⚙️ Next lesson: Alloys and rusting ➜');
+  f.onclick=()=>{location.href='l07-alloys-rusting.html';};pop(f);
+  say(`You're a real <b>materials engineer</b> now! 👷 Next, find out how mixing metals makes <b>alloys</b>, and why iron <b>rusts</b>.`);}},
+  ]
+});
+</script>
+</body>
+</html>

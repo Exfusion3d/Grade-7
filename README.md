@@ -6,10 +6,14 @@ Revision site for the Grade 7 Cambridge Science review worksheet (Units 4, 5 and
 
 | Page | What it is |
 |---|---|
-| `index.html` | Home page with links to everything |
-| `adventure.html` | Periodic Table Adventure: 13 animated scenes with a spoken tutor (Professor Atom) |
+| `index.html` | Home page: all lessons by unit with progress ticks, plus the quiz and study guide |
+| `adventure.html` | Lesson 5, Periodic Table Adventure (the original pilot lesson) |
+| `lessons/l01`–`l14-*.html` | Lessons 1–4 and 6–14: animated scenes with the spoken tutor, Professor Atom |
+| `lessons/engine.js`, `engine.css` | Shared lesson engine: narration and voice, animations, exam checks, sort games |
+| `lessons/LESSON-GUIDE.md`, `_template.html` | How to write a new lesson |
 | `quiz.html` | Science Quest: 111 interactive questions across Units 4, 5 and 9 |
 | `study-guide.pdf` | Printable study guide with explanations and a one-page cheat sheet |
+| `source/worksheet-by-lesson.md` | Every worksheet question, grouped by the lesson that teaches it |
 | `source/study-guide-source.html` | HTML source the PDF was printed from |
 
 Everything is plain HTML, CSS and JavaScript with no build step and no external dependencies.

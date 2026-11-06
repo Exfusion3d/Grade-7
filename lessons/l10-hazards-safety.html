@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Hazard symbols &amp; lab safety</title>
+<link rel="stylesheet" href="engine.css">
+<style>
+.hz{display:block;overflow:visible}
+.hz.draw .d{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.hz.draw .f{fill-opacity:0}
+.hz.draw .o{opacity:0}
+.step{position:absolute;width:218px;font-size:15.5px;line-height:1.2;font-weight:700;color:#1f2433;display:flex;align-items:center;gap:8px}
+.step i{font-style:normal;flex:none;width:26px;height:26px;border-radius:50%;background:#e04848;color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.bottle{position:absolute}
+.bottle .neck{position:absolute;left:34px;top:0;width:32px;height:30px;background:#dfe9f3;border:3px solid #9fb3c8;border-bottom:none;border-radius:6px 6px 0 0}
+.bottle .cap{position:absolute;left:30px;top:-12px;width:40px;height:16px;border-radius:5px}
+.bottle .body{position:absolute;left:0;top:28px;width:100px;height:130px;background:#eef4fa;border:3px solid #9fb3c8;border-radius:18px;overflow:hidden}
+.bottle .liq{position:absolute;left:0;bottom:0;width:100%;height:62%}
+.bottle .lab{position:absolute;left:18px;top:52px;width:64px;height:64px}
+.opt2{position:absolute;display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #e3e0f0;border-radius:16px;padding:8px 14px;font-size:17px;font-weight:700;box-shadow:0 4px 0 #e3e0f0;cursor:pointer}
+.rule{position:absolute;background:#fff;border:3px solid;border-radius:18px;text-align:center;padding:10px;font-weight:800;font-size:16px;line-height:1.3}
+.rule .e{font-size:46px;display:block;line-height:1.1;margin-bottom:6px}
+</style>
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* ---------- hazard pictograms (viewBox 120 x 120) ---------- */
+const RED='#e02020',INK='#141414';
+const P=(d,sw,extra='')=>`<path pathLength="1" d="${d}" fill="none" stroke="${INK}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" ${extra}/>`;
+const HZ={
+  frame:{steps:['Red diamond (a square on its corner)'],svg:[`<path class="d" pathLength="1" d="M60 7 L113 60 L60 113 L7 60 Z" fill="none" stroke="${RED}" stroke-width="7" stroke-linejoin="round"/>`]},
+  corrosive:{name:'Corrosive',steps:['Two test tubes, tipping','Drips falling down','A surface being eaten away','A hand being burned'],svg:[
+    `<g class="d">${P('M31 41 L50 47',8)}</g><g class="d">${P('M89 41 L70 47',8)}</g>`,
+    `<g class="o"><circle cx="51" cy="55" r="2.8" fill="${INK}"/><circle cx="52" cy="62" r="2.8" fill="${INK}"/><circle cx="69" cy="55" r="2.8" fill="${INK}"/><circle cx="68" cy="62" r="2.8" fill="${INK}"/></g>`,
+    `<path class="d f" pathLength="1" d="M33 72 H43 L46 67 L49 72 H55 V79 H33 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`,
+    `<path class="d f" pathLength="1" d="M64 79 V71 H78 L85 65 Q89 63 90 67 L84 74 V79 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`]},
+  flammable:{name:'Flammable',steps:['A tall flame shape','A flat line underneath'],svg:[
+    `<path class="d f" pathLength="1" d="M60 27 C80 45 82 62 72 76 C73 65 67 58 64 53 C62 64 55 69 57 77 C40 68 41 47 60 27 Z" fill="${INK}" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/>`,
+    `<g class="d">${P('M43 84 H77',6)}</g>`]},
+  environment:{name:'Hazardous to the environment',short:'Environment',steps:['A dead tree with bare branches','The ground line','A dead fish'],svg:[
+    `<g class="d">${P('M44 79 V41',4.5)}</g><g class="d">${P('M44 55 L33 45 M44 49 L54 38 M44 63 L35 58',3.2)}</g>`,
+    `<g class="d">${P('M34 80 H88',3.2)}</g>`,
+    `<path class="d f" pathLength="1" d="M58 71 Q70 62 82 71 Q70 79 58 71 Z" fill="${INK}" stroke="${INK}" stroke-width="2"/><path class="d f" pathLength="1" d="M82 71 L90 65 V77 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><g class="o"><path d="M62 68 l4 4 M66 68 l-4 4" stroke="#fff" stroke-width="1.6"/></g>`]},
+  toxic:{name:'Toxic',steps:['A skull','Crossed bones'],svg:[
+    `<path class="d f" pathLength="1" d="M47 49 Q47 32 60 32 Q73 32 73 49 Q73 56 67 58 V63 H53 V58 Q47 56 47 49 Z" fill="${INK}" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><g class="o"><circle cx="54.5" cy="47" r="4" fill="#fff"/><circle cx="65.5" cy="47" r="4" fill="#fff"/></g>`,
+    `<g class="d">${P('M42 68 L78 86',6)}</g><g class="d">${P('M78 68 L42 86',6)}</g>`]},
+  irritant:{name:'Harmful / irritant',steps:['A thick line','A dot underneath'],svg:[
+    `<g class="d">${P('M60 32 V68',11)}</g>`,`<g class="o"><circle cx="60" cy="83" r="6.5" fill="${INK}"/></g>`]},
+};
+/* returns svg html; draw=true hides parts so drawHz can draw them stroke by stroke */
+function hz(kind,size,draw){
+  return `<svg class="hz${draw?' draw':''}" width="${size}" height="${size}" viewBox="0 0 120 120"><path d="M60 7 L113 60 L60 113 L7 60 Z" fill="#fff"/>`+
+    `<g data-s="0">${HZ.frame.svg[0]}</g>`+HZ[kind].svg.map((s,i)=>`<g data-s="${i+1}">${s}</g>`).join('')+`</svg>`;}
+/* draw step i (0 = red diamond) of a .hz svg; returns a promise */
+function drawStep(svg,i,dur=900){const g=svg.querySelector(`[data-s="${i}"]`);if(!g)return Promise.resolve();const ps=[];
+  g.querySelectorAll('.d').forEach((p,k)=>ps.push(an(p,[{strokeDashoffset:1,opacity:0},{strokeDashoffset:.97,opacity:1,offset:.04},{strokeDashoffset:0,opacity:1}],{duration:dur,delay:k*dur*.5,easing:'ease-in-out'})));
+  g.querySelectorAll('.f').forEach((p,k)=>ps.push(an(p,[{fillOpacity:0},{fillOpacity:1}],{duration:400,delay:dur*.85+k*dur*.5})));
+  g.querySelectorAll('.o').forEach((p,k)=>ps.push(an(p,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:400,delay:dur*.6})));
+  beep(500+i*90,.08,'sine',.06);return Promise.all(ps);}
+async function drawAll(svg,n,dur=500){for(let i=0;i<=n;i++)await drawStep(svg,i,dur);}
+function stampIt(css,html){const st=mk('stamp',css,html);an(st,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-4deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return st;}
+function bottle(x,y,liq,capc,kind,parent){const b=mk('bottle',`left:${x}px;top:${y}px;width:100px;height:160px`,
+  `<div class="cap" style="background:${capc}"></div><div class="neck"></div><div class="body"><div class="liq" style="background:${liq}"></div></div><div class="lab"></div>`,parent);
+  if(kind)b.querySelector('.lab').innerHTML=hz(kind,64,false);return b;}
+/* tutorial panel: draws a symbol step by step with a numbered list */
+async function tutorial(w,kind,x,y,wd,h,lines){
+  const p=panel(x,y,wd,h,`✏️ How to draw: ${(HZ[kind].short||HZ[kind].name).toUpperCase()}`,'');pop(p);
+  const big=mk('',`left:16px;top:44px;width:200px;height:200px`,hz(kind,200,true),p);const svg=big.querySelector('svg');
+  const steps=[HZ.frame.steps[0],...HZ[kind].steps];
+  for(let i=0;i<steps.length;i++){
+    const s=mk('step',`left:228px;top:${50+i*46}px`,`<i>${i+1}</i>${steps[i]}`,p);
+    an(s,[{opacity:0,transform:'translateX(20px)'},{opacity:1,transform:'none'}],{duration:400});
+    if(lines&&lines[i])say(lines[i]);
+    const pen=mk('',`left:${150}px;top:${60}px;font-size:34px;z-index:3`,'✏️',p);
+    an(pen,[{transform:'translate(-90px,40px) rotate(-10deg)'},{transform:'translate(-30px,90px) rotate(10deg)'},{transform:'translate(-110px,110px)'}],{duration:1100});
+    await drawStep(svg,i,1100);pen.remove();
+    if(lines&&lines[i])await w(1800);else await w(500);}
+  return {p,svg};}
+
+Lesson.start({
+  id:'l10', num:10, unit:5, emoji:'⚠️', title:'Hazard symbols & lab safety',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Today we learn the <b>warning signs</b> on dangerous chemicals, and how to stay safe in the lab. Press <b>Start</b>!`,
+  scenes:[
+/* 1 */ {t:'Warning signs!',run:async w=>{
+  const shelf=mk('','left:40px;top:222px;width:880px;height:18px;border-radius:6px;background:linear-gradient(#c79a63,#9b6f3c);box-shadow:0 6px 0 #7b5528');
+  const B=[['#b8f0c8','#18a058','corrosive'],['#ffe1a8','#e06a1b','flammable'],['#cfe3ff','#2c66cf','environment'],['#e9d8ff','#6a45d8','toxic'],['#ffd0d0','#e04848','irritant']];
+  const bs=B.map((b,i)=>{const e=bottle(90+i*170,60,b[0],b[1],null);an(e,[{transform:'translateY(-300px)'},{transform:'translateY(8px)',offset:.8},{transform:'none'}],{duration:700,delay:i*120,easing:'ease-in'});return e;});
+  bs.forEach((e,i)=>loop(e.querySelector('.liq'),[{transform:'translateY(0)'},{transform:'translateY(4px) skewY(3deg)'}],900+i*130,{direction:'alternate'}));
+  say(`Welcome to the lab! 🧪 Some chemicals here are <b>dangerous</b>. But how can you tell which ones, just by looking?`);
+  await w(3200);
+  for(let i=0;i<B.length;i++){const l=bs[i].querySelector('.lab');l.innerHTML=hz(B[i][2],64,false);pop(l);beep(700+i*80,.08);await w(250);}
+  bs.forEach((e,i)=>loop(e.querySelector('.lab'),[{transform:'scale(1)'},{transform:'scale(1.12)'}],600,{direction:'alternate',delay:i*120}));
+  say(`Look for these labels! ⚠️ They are <b>hazard symbols</b>. Each one warns you about a different <b>danger</b>.`);
+  await w(3400);
+  const big=mk('','left:60px;top:270px;width:230px;height:230px',hz('corrosive',230,true));const svg=big.querySelector('svg');
+  const lab=(x,y,t,c)=>{const e=mk('tag',`left:${x}px;top:${y}px;background:${c};color:#fff;font-size:17px`,t);pop(e);return e;};
+  say(`Every hazard symbol has the same design. First, a <b>red diamond</b> border…`);
+  await drawStep(svg,0,1400);const a1=mk('','left:290px;top:300px;width:90px;height:4px;background:#e04848;transform-origin:0 50%',null);an(a1,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:400});
+  lab(390,286,'🔴 Red diamond border','#e04848');await w(2000);
+  say(`…then a <b>black picture</b> on a <b>white</b> background. The picture tells you the danger.`);
+  for(let i=1;i<=4;i++)drawStep(svg,i,600);
+  const a2=mk('','left:250px;top:388px;width:130px;height:4px;background:#1f2433;transform-origin:0 50%');an(a2,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:400,delay:300});
+  lab(390,374,'⚫ Black picture','#1f2433');const a3=mk('','left:236px;top:462px;width:144px;height:4px;background:#9aa3b5;transform-origin:0 50%');an(a3,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:400,delay:600});
+  lab(390,450,'⚪ White background','#9aa3b5');
+  await w(3000);
+  const goal=mk('clue','left:640px;top:290px;width:290px;height:200px',`<div class="e">🎯</div><b>Today you will:</b><br>read the symbols,<br>learn to <b>draw</b> them,<br>and stay safe in the lab!`);pop(goal);
+  loop(goal,[{transform:'rotate(-2deg)'},{transform:'rotate(2deg)'}],1400,{direction:'alternate'});
+  say(`Today you'll learn to <b>read</b> these symbols and <b>draw</b> them, just like in your exam. Let's go! 🚀`);await w(2600);}},
+
+/* 2 */ {t:'Corrosive',run:async w=>{
+  say(`Let's draw our first symbol: <b>corrosive</b>. Watch the pencil, step by step. ✏️`);await w(2000);
+  await tutorial(w,'corrosive',13,8,460,320,[
+    `Step 1: a <b>red diamond</b>. It's just a square standing on its corner.`,
+    `Step 2: two <b>test tubes</b>, tipping over at the top.`,
+    `Step 3: <b>drips</b> of liquid falling from each tube.`,
+    `Step 4: on the left, a <b>surface</b> with a bite taken out of it. The liquid is eating it away!`,
+    `Step 5: on the right, a <b>hand</b>. The liquid is burning the skin. 😬`]);
+  const R=panel(487,8,460,320,'🔬 What does corrosive mean?','');pop(R);
+  [[76,150],[256,-150]].forEach(([x,r])=>{const t=mk('',`left:${x}px;top:35px;width:28px;height:80px;border:4px solid #9fb3c8;border-top:none;border-radius:0 0 14px 14px;background:linear-gradient(#9be7a8 45%,#eef4fa 45%);transform:rotate(${r}deg)`,null,R);
+    loop(t,[{transform:`rotate(${r}deg)`},{transform:`rotate(${r+(r>0?6:-6)}deg)`}],700,{direction:'alternate'});});
+  const hand=mk('','left:200px;top:140px;font-size:96px;line-height:1','🖐️',R);
+  const burn=mk('','left:224px;top:180px;width:56px;height:46px;border-radius:50%;background:radial-gradient(#e04848,rgba(224,72,72,0) 70%);opacity:0',null,R);
+  const plate=mk('','left:40px;top:250px;width:120px;height:20px;background:linear-gradient(#c3cad5,#7d8796);border-radius:4px',null,R);
+  const hole=mk('','left:95px;top:246px;width:30px;height:16px;border-radius:0 0 50% 50%;background:#fff;transform:scaleY(0);transform-origin:50% 0',null,R);
+  say(`So what does <b>corrosive</b> mean? Watch what this liquid does… 👀`);
+  for(let k=0;k<6;k++){const d=mk('',`left:${k%2?244:104}px;top:108px;width:12px;height:16px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#5cc96f`,null,R);
+    loop(d,[{transform:'translateY(0)',opacity:1},{transform:`translateY(${k%2?64:136}px)`,opacity:1,offset:.9},{transform:`translateY(${k%2?64:136}px)`,opacity:0}],1200,{delay:k*200,easing:'ease-in'});}
+  await w(1500);
+  an(burn,[{opacity:0},{opacity:.9}],{duration:1500});an(hole,[{transform:'scaleY(0)'},{transform:'scaleY(1)'}],{duration:1500});
+  const sz=mk('','left:300px;top:110px;font-size:20px;font-weight:800;color:#e04848','SSSS! 🔥',R);loop(sz,[{opacity:.2,transform:'scale(.9)'},{opacity:1,transform:'scale(1.1)'}],400,{direction:'alternate'});
+  shake(hand);
+  say(`It eats away the metal, and it <b>burns the skin</b>! That's a <b>chemical burn</b>. Strong <b>acids</b> and <b>alkalis</b> are often corrosive.`);await w(4200);
+  const ans=mk('','left:13px;top:340px;width:933px;height:104px;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:12px 20px;font-size:21px;font-weight:700;line-height:1.4',
+    `🧠 <b>Corrosive</b> means a substance that can <b>damage skin tissues</b> and cause <b>chemical burns</b>.<br><span style="font-size:16px;color:#7a6a2a">It can also eat away other materials, like metal.</span>`);pop(ans);
+  say(`Learn this exam answer: corrosive means a substance that can <b>damage skin tissues</b> and cause <b>chemical burns</b>.`);await w(3800);
+  stampIt('left:640px;top:458px','✔ Short answer 15');
+  say(`✅ That's <b>short answer 15</b>. Next: what to do if it ever touches you!`);await w(2400);}},
+
+/* 3 */ {t:'Spill drill!',run:async w=>{
+  const L=panel(13,8,440,300,'🚨 Oops! Acid spill!','');pop(L);
+  const beaker=mk('','left:40px;top:70px;width:80px;height:90px;border:4px solid #9fb3c8;border-top:none;border-radius:0 0 14px 14px;background:linear-gradient(transparent 35%,#ffe066 35%);transform-origin:100% 100%',null,L);
+  const hand=mk('','left:180px;top:150px;font-size:100px;line-height:1','🖐️',L);
+  const burn=mk('','left:200px;top:182px;width:64px;height:54px;border-radius:50%;background:radial-gradient(#e04848,rgba(224,72,72,0) 70%);opacity:0',null,L);
+  say(`🚨 Spill drill! Oh no, a beaker of <b>acid</b> has tipped over and splashed onto your hand!`);
+  await an(beaker,[{transform:'rotate(0)'},{transform:'rotate(50deg)'}],{duration:700,easing:'ease-in'});
+  for(let k=0;k<5;k++){const d=mk('',`left:${180+k*5}px;top:100px;width:12px;height:14px;border-radius:50%;background:#f0c419`,null,L);
+    an(d,[{transform:'translate(0,0)'},{transform:`translate(${40+k*8}px,${80+k*6}px)`,opacity:.8,offset:.9},{transform:`translate(${40+k*8}px,${84+k*6}px)`,opacity:0}],{duration:800,delay:k*90,easing:'ease-in'});}
+  an(burn,[{opacity:0},{opacity:.85}],{duration:900,delay:500});shake(hand);boo();
+  const ow=mk('','left:300px;top:110px;font-size:24px;font-weight:800;color:#e04848','OUCH!',L);loop(ow,[{transform:'scale(.9) rotate(-6deg)'},{transform:'scale(1.15) rotate(6deg)'}],350,{direction:'alternate'});
+  await w(2600);
+  const Q=mk('','left:470px;top:14px;width:476px;font-size:22px;font-weight:800;color:#4a2ea6','What should you do FIRST? 🤔');pop(Q);
+  const O=[['🚰','Wash the area with lots of water',1],['👕','Wipe it on your clothes',0],['🙈','Ignore it and carry on',0],['🧴','Rub some hand cream on it',0]];
+  const why=[``,`No! Wiping just spreads the acid, and it can soak through your clothes. ❌`,`No way! The acid keeps burning your skin while you wait. ❌`,`No! Cream traps the acid on your skin. Try again! ❌`];
+  let done=false;
+  const opts=O.map((o,i)=>{const e=mk('ex-opt',`left:470px;top:${62+i*60}px;width:476px;min-height:50px`,`<span class="k">${o[0]}</span><span>${o[1]}</span>`);pop(e,i*80);
+    e.onclick=()=>{if(done||e.classList.contains('locked'))return;
+      if(o[2]){done=true;opts.forEach(x=>x.classList.add('locked'));e.classList.add('ok');}
+      else{e.classList.add('bad','locked');shake(e);boo();say(why[i]);}};return e;});
+  say(`Tap what you should do <b>first</b>! 👇`);
+  await w.until(()=>done);
+  yay();an(beaker,[{opacity:1},{opacity:0}],{duration:400});an(ow,[{opacity:1},{opacity:0}],{duration:400});ow.getAnimations().forEach(a=>{if(a.effect.getTiming().iterations===Infinity)a.cancel();});
+  const tap=mk('','left:196px;top:40px;font-size:60px;line-height:1;z-index:2','🚰',L);pop(tap);
+  for(let k=0;k<7;k++){const d=mk('',`left:${206+(k%3)*8}px;top:94px;width:7px;height:22px;border-radius:4px;background:#5aa0f0`,null,L);
+    loop(d,[{transform:'translateY(0)',opacity:1},{transform:'translateY(100px)',opacity:0}],700,{delay:k*100,easing:'ease-in'});}
+  an(burn,[{opacity:.85},{opacity:0}],{duration:3000});
+  say(`✅ Yes! <b>Wash the area with lots of water</b>. The water washes the acid away and makes it weaker. Keep the tap running!`);await w(3800);
+  opts.forEach(x=>{if(!x.classList.contains('ok'))an(x,[{opacity:1},{opacity:0}],{duration:400});});Q.innerHTML='✅ The right thing to do FIRST:';
+  stampIt('left:540px;top:150px;font-size:22px','✔ Wash with lots of water!');
+  const tt=mk('clue','left:487px;top:220px;width:459px;height:76px;padding:8px;font-size:18px',`🙋 Then <b>tell your teacher</b> straight away!`);pop(tt);
+  say(`Then <b>tell your teacher</b> straight away. That's <b>short answer 16</b>: if you spill acid, wash the area with lots of water.`);await w(4200);
+  const R=[['🥽','Wear safety goggles','#2c66cf','Protects your eyes from splashes.'],['🎀','Tie long hair back','#6a45d8','So it can\'t catch fire in a flame.'],['🚫🍔','No eating or drinking','#e06a1b','Chemicals could get into your food.'],['🙋','Tell the teacher about any spill','#18a058','Even small spills and accidents.']];
+  say(`More lab safety rules to keep you safe. Quick-fire! ⚡`);
+  for(let i=0;i<4;i++){const c=mk('rule',`left:${13+i*237}px;top:320px;width:222px;height:192px;border-color:${R[i][2]};color:${R[i][2]}`,`<span class="e">${R[i][0]}</span>${R[i][1]}<div style="font-size:14.5px;font-weight:600;color:#3a3f52;margin-top:8px">${R[i][3]}</div>`);pop(c);
+    loop(c.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],700,{direction:'alternate',delay:i*150});beep(600+i*90,.08);
+    say([`🥽 Wear <b>safety goggles</b> to protect your eyes from splashes.`,`🎀 <b>Tie long hair back</b>, so it can't catch fire in a flame.`,`🚫 <b>Never eat or drink</b> in the lab. Chemicals could get in your food.`,`🙋 <b>Tell the teacher</b> about any spill or accident, even a small one.`][i]);await w(2600);}}},
+
+/* 4 */ {t:'Flammable',run:async w=>{
+  say(`Next symbol: <b>flammable</b>. This one is easy to draw. Pencil ready? ✏️`);await w(1800);
+  await tutorial(w,'flammable',13,8,460,320,[
+    `Step 1: the <b>red diamond</b> again. Every hazard symbol starts with it.`,
+    `Step 2: a tall black <b>flame</b>, like a candle flame. 🔥`,
+    `Step 3: a short flat <b>line</b> underneath the flame. Done!`]);
+  const R=panel(487,8,460,320,'🔥 What does flammable mean?','');pop(R);
+  const bun=mk('','left:60px;top:200px;width:36px;height:80px;background:linear-gradient(90deg,#8a909c,#d5d9e1,#8a909c);border-radius:4px',null,R);
+  mk('','left:40px;top:274px;width:76px;height:12px;background:#5d636e;border-radius:4px',null,R);
+  const fl=mk('','left:54px;top:132px;font-size:52px;line-height:1','🔥',R);loop(fl,[{transform:'scale(1) rotate(-4deg)'},{transform:'scale(1.15) rotate(4deg)'}],300,{direction:'alternate'});
+  const bt=bottle(300,110,'#ffe1a8','#e06a1b','flammable',R);
+  say(`<b>Flammable</b> means it <b>catches fire easily</b>. Like ethanol or petrol. Watch what happens near a flame…`);await w(2400);
+  for(let k=0;k<5;k++){const v=mk('',`left:${296-k*4}px;top:120px;width:30px;height:14px;border-radius:50%;background:rgba(224,106,27,.25)`,null,R);
+    an(v,[{transform:'translate(0,0) scale(.6)',opacity:0},{transform:`translate(${-170+k*6}px,${10+k*3}px) scale(1.4)`,opacity:.8}],{duration:1400,delay:k*160});}
+  await w(1600);
+  const boom=mk('','left:110px;top:70px;font-size:90px;line-height:1','🔥',R);an(boom,[{transform:'scale(0)'},{transform:'scale(1.6)',offset:.6},{transform:'scale(1.2)'}],{duration:700});
+  const wh=mk('','left:220px;top:60px;font-size:28px;font-weight:800;color:#e06a1b','WHOOSH!',R);pop(wh);shake(R);boo();
+  say(`WHOOSH! 💥 The vapour caught fire. So keep flammable chemicals <b>away from flames</b>!`);await w(3400);
+  const D=mk('','left:13px;top:340px;width:933px;height:172px;background:#fff;border:3px solid #ece8f8;border-radius:20px');pop(D);
+  mk('','left:18px;top:10px;font-size:19px;font-weight:800;color:#6a45d8','📝 Exam drawing task: draw the hazard labels for corrosive and flammable',D);
+  const s1=mk('','left:30px;top:38px',hz('corrosive',104,true),D),s2=mk('','left:176px;top:38px',hz('flammable',104,true),D);
+  mk('','left:32px;top:142px;font-size:13px;font-weight:800;width:100px;text-align:center','Corrosive',D);mk('','left:178px;top:142px;font-size:13px;font-weight:800;width:100px;text-align:center','Flammable',D);
+  say(`In your exam you may have to <b>draw</b> both of these. Let's draw them side by side, quickly!`);
+  drawAll(s1.querySelector('svg'),4,350);await drawAll(s2.querySelector('svg'),2,450);
+  const C=['✔ A <b>red diamond</b> (square on its corner)','✔ <b>White</b> inside, <b>black</b> picture','✔ Corrosive: 2 test tubes dripping on a <b>surface</b> and a <b>hand</b>','✔ Flammable: a black <b>flame</b> on a line'];
+  for(let i=0;i<4;i++){const c=mk('',`left:330px;top:${44+i*30}px;font-size:16.5px;font-weight:700`,C[i],D);an(c,[{opacity:0,transform:'translateX(20px)'},{opacity:1,transform:'none'}],{duration:400});beep(700+i*60,.06);await w(500);}
+  say(`Remember the checklist: <b>red diamond</b>, <b>black picture</b>. Corrosive has the <b>test tubes, surface and hand</b>. Flammable has the <b>flame</b>. ✅`);await w(3000);}},
+
+/* 5 */ {t:'Danger to nature',run:async w=>{
+  say(`This symbol protects nature. 🌳🐟 It means <b>hazardous to the environment</b>. Let's draw it!`);await w(2000);
+  await tutorial(w,'environment',13,8,460,320,[
+    `Step 1: the <b>red diamond</b>, as always.`,
+    `Step 2: a <b>dead tree</b>, with bare branches and no leaves.`,
+    `Step 3: a line for the <b>ground</b>, or the river bank.`,
+    `Step 4: a <b>dead fish</b>, lying on its side. Poor fish! 🐟`]);
+  const R=panel(487,8,460,320,'🌍 Hazardous to the environment','');pop(R);
+  const sky=mk('','left:0;top:36px;width:460px;height:150px;background:linear-gradient(#dff0ff,#fff)',null,R);
+  mk('','left:0;top:186px;width:460px;height:40px;background:#8fd16a',null,R);
+  const river=mk('','left:0;top:226px;width:460px;height:94px;background:#5aa0f0',null,R);
+  const tree=mk('','left:60px;top:70px;font-size:96px;line-height:1','🌳',R);
+  const fish=[0,1,2].map(i=>{const f=mk('',`left:${120+i*110}px;top:${244+(i%2)*26}px;font-size:36px;line-height:1`,'🐟',R);
+    loop(f,[{transform:'translateX(0) scaleX(-1)'},{transform:'translateX(40px) scaleX(-1)'}],1400+i*200,{direction:'alternate'});return f;});
+  const drum=mk('','left:330px;top:110px;font-size:58px;line-height:1','🛢️',R);
+  say(`If these chemicals get into soil or water, they <b>poison</b> plants and animals. Watch…`);await w(1800);
+  const ooze=mk('','left:352px;top:170px;width:24px;height:30px;border-radius:50%;background:#7a3fbf;opacity:.8',null,R);
+  an(ooze,[{transform:'scale(.3)'},{transform:'translate(-60px,80px) scale(5,1.4)',opacity:.4}],{duration:2200});
+  an(river,[{background:'#5aa0f0'},{background:'#6c7a5a'}],{duration:2400,delay:600});
+  await w(1500);
+  an(tree,[{filter:'none'},{filter:'grayscale(1) brightness(.6)'}],{duration:1500});
+  fish.forEach((f,i)=>{f.getAnimations().forEach(a=>a.cancel());an(f,[{transform:'scaleX(-1)'},{transform:'scaleX(-1) rotate(180deg) translateY(-14px)',filter:'grayscale(1)'}],{duration:900,delay:i*250});});
+  await w(1400);
+  say(`The tree dies, and the fish die. That's exactly what the picture shows: a <b>dead tree</b> and a <b>dead fish</b>. 😢`);await w(3600);
+  const bon=mk('','left:13px;top:340px;width:933px;height:172px;background:#f7f4ff;border:3px dashed #a891ee;border-radius:20px');pop(bon);
+  mk('tag','left:16px;top:10px;background:#6a45d8;color:#fff','⭐ BONUS: not in your exam, but good to know!',bon);
+  const t1=mk('','left:24px;top:46px',hz('toxic',112,true),bon),t2=mk('','left:470px;top:46px',hz('irritant',112,true),bon);
+  mk('','left:150px;top:56px;width:300px;font-size:17px;font-weight:700;line-height:1.35','☠️ <b>Toxic</b>: a skull and crossbones. It can <b>poison</b> you or even kill, if swallowed, breathed in or touched.',bon);
+  mk('','left:596px;top:56px;width:320px;font-size:17px;font-weight:700;line-height:1.35','❗ <b>Harmful / irritant</b>: an exclamation mark. It can make skin <b>red and itchy</b> or make you feel ill.',bon);
+  say(`Two bonus symbols! The <b>skull and crossbones</b> means <b>toxic</b>, a poison.`);await drawAll(t1.querySelector('svg'),2,500);await w(2200);
+  say(`And the <b>exclamation mark</b> means <b>harmful</b> or <b>irritant</b>. It can make your skin sore.`);await drawAll(t2.querySelector('svg'),2,500);await w(2400);}},
+
+/* 6 */ {t:'Lily\'s battery',run:async w=>{
+  const L=panel(13,8,460,300,'🔋 Lily\'s battery of cells','');pop(L);
+  const bat=mk('','left:60px;top:70px;width:300px;height:150px;border-radius:18px;background:linear-gradient(#3b3f4d,#1f2433);box-shadow:0 8px 0 #11141c',null,L);
+  mk('','left:360px;top:110px;width:22px;height:70px;border-radius:0 8px 8px 0;background:#9aa3b5',null,L);
+  mk('','left:20px;top:14px;font-size:22px;font-weight:800;color:#ffd84d','+ 9V',bat);
+  const A=mk('','left:40px;top:42px',hz('corrosive',96,false),bat),Bx=mk('','left:170px;top:42px',hz('environment',96,false),bat);
+  const la=mk('tag','left:118px;top:240px;background:#1f2433;color:#fff;font-size:20px','A',L),lb=mk('tag','left:250px;top:240px;background:#1f2433;color:#fff;font-size:20px','B',L);
+  [A,Bx].forEach((e,i)=>loop(e,[{transform:'scale(1)'},{transform:'scale(1.08)'}],700,{direction:'alternate',delay:i*350}));
+  const Q=mk('','left:487px;top:8px;width:459px;height:110px;background:#f7f4ff;border:3px solid #d9cff7;border-radius:20px;padding:10px 16px;font-size:18px;font-weight:700;line-height:1.35',
+    `<span style="display:block;font-size:13px;color:#8a78cc;font-weight:800">WORKSHEET · UNIT 9 · Q14(a)</span>Lily's battery of cells has hazard symbols <b>A</b> and <b>B</b>. Write down the meaning of each.`);pop(Q);
+  say(`Here's a real exam question! Lily's battery has two hazard symbols, <b>A</b> and <b>B</b>. What do they mean? 🤔`);await w(3200);
+  say(`Look closely. A has <b>test tubes dripping on a hand</b>. B has a <b>dead tree and a fish</b>. Think, then tap <b>Reveal</b>!`);
+  let open=false;const rb=btn('ex-btn green','left:600px;top:140px;width:240px','👀 Reveal answer',()=>{open=true;});pop(rb);
+  await w.until(()=>open);rb.remove();
+  const a1=mk('','left:487px;top:128px;width:459px;height:60px;background:#e3f7ec;border:3px solid #18a058;border-radius:16px;padding:10px 16px;font-size:20px;font-weight:800;display:flex;align-items:center;gap:10px','<span style="font-size:28px">🅰️</span>A = Corrosive');pop(a1);
+  an(A,[{filter:'drop-shadow(0 0 0 #ffd84d)'},{filter:'drop-shadow(0 0 12px #ffd84d)'}],{duration:500});
+  say(`<b>A</b> means <b>corrosive</b>. The liquid inside can burn your skin.`);await w(2600);
+  const a2=mk('','left:487px;top:196px;width:459px;height:60px;background:#e3f7ec;border:3px solid #18a058;border-radius:16px;padding:10px 16px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;line-height:1.25','<span style="font-size:28px">🅱️</span>B = Hazardous to the environment');pop(a2);
+  say(`<b>B</b> means <b>hazardous to the environment</b>. It can harm plants and animals. ✅`);await w(3000);
+  stampIt('left:570px;top:258px;font-size:17px','✔ A: Corrosive · B: Environment');await w(1500);
+  const S=panel(13,316,933,196,'🗑️ So why must batteries NEVER go in the normal bin?','');pop(S);
+  const bin=mk('','left:40px;top:70px;font-size:70px;line-height:1','🗑️',S);
+  const b2=mk('','left:56px;top:-10px;font-size:36px;line-height:1','🔋',S);
+  say(`That's why used batteries must <b>never</b> go in the normal bin. Let's see why…`);
+  await an(b2,[{transform:'translateY(0)'},{transform:'translateY(90px) rotate(90deg)',opacity:0}],{duration:800,easing:'ease-in'});
+  mk('','left:140px;top:84px;font-size:36px','➡️',S);
+  const tip=mk('','left:200px;top:56px;width:160px;height:110px;text-align:center;font-size:15px;font-weight:800','<div style="font-size:56px;line-height:1.1">⛰️</div>Rubbish tip',S);pop(tip);await w(600);
+  mk('','left:368px;top:84px;font-size:36px','➡️',S);
+  const leak=mk('','left:430px;top:56px;width:180px;height:110px;text-align:center;font-size:15px;font-weight:800','<div style="font-size:56px;line-height:1.1">🟣💧</div>Chemicals leak into soil &amp; rivers',S);pop(leak);await w(600);
+  mk('','left:618px;top:84px;font-size:36px','➡️',S);
+  const dead=mk('','left:680px;top:56px;width:120px;height:110px;text-align:center;font-size:15px;font-weight:800','<div style="font-size:56px;line-height:1.1">🐟🥀</div>Wildlife harmed',S);pop(dead);
+  loop(dead.firstChild,[{transform:'rotate(0)'},{transform:'rotate(-8deg)'}],500,{direction:'alternate'});
+  say(`At the rubbish tip, the battery can break open. Its <b>corrosive</b>, harmful chemicals leak into the <b>soil</b> and <b>rivers</b>, and harm wildlife.`);await w(4400);
+  const rc=mk('','left:812px;top:50px;width:110px;height:120px;text-align:center;font-size:14px;font-weight:800;color:#18a058','<div style="font-size:60px;line-height:1.1">♻️</div>Recycle them!',S);pop(rc);
+  loop(rc.firstChild,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],3000,{easing:'linear'});yay();
+  say(`So take used batteries to a <b>battery recycling point</b>. ♻️ Many shops and schools have one!`);await w(3000);}},
+
+/* 7 */ {t:'Match the symbol',run:async w=>{
+  const ALL=[['corrosive','Corrosive'],['flammable','Flammable'],['environment','Hazardous to the environment'],['toxic','Toxic (bonus)'],['irritant','Harmful / irritant (bonus)']];
+  const rounds=['flammable','environment','corrosive','toxic'];let score=0;
+  const sc=mk('tag','left:800px;top:14px;background:#ffd84d;color:#1f2433;font-size:18px','⭐ 0 / 4');
+  say(`Game time! 🎮 I'll show you a hazard symbol. You tap what it <b>means</b>. Ready?`);await w(2600);
+  for(let r=0;r<rounds.length;r++){
+    const k=rounds[r];const hold=mk('','left:0;top:0;width:960px;height:520px');
+    mk('','left:40px;top:16px;font-size:20px;font-weight:800;color:#8a78cc',`ROUND ${r+1} OF 4`,hold);
+    const sym=mk('','left:60px;top:70px',hz(k,330,true),hold);drawAll(sym.querySelector('svg'),5,280);
+    loop(sym,[{transform:'rotate(-3deg)'},{transform:'rotate(3deg)'}],1200,{direction:'alternate'});
+    const choices=[k,...ALL.map(a=>a[0]).filter(x=>x!==k).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
+    let got=false,first=true;
+    const opts=choices.map((c,i)=>{const e=mk('ex-opt',`left:440px;top:${90+i*92}px;width:480px;min-height:74px;font-size:20px`,`<span class="k">${'ABCD'[i]}</span><span>${ALL.find(a=>a[0]===c)[1]}</span>`,hold);pop(e,i*80);
+      e.onclick=()=>{if(got||e.classList.contains('locked'))return;
+        if(c===k){got=true;opts.forEach(x=>x.classList.add('locked'));e.classList.add('ok');}
+        else{first=false;e.classList.add('bad','locked');shake(e);boo();say(`Not that one. Look at the picture again! 👀`);}};return e;});
+    say(`What does this symbol mean? Tap your answer! 👇`);
+    await w.until(()=>got);
+    if(first){score++;sc.textContent=`⭐ ${score} / 4`;pop(sc);}
+    yay();confetti(30);
+    const tips={flammable:`🔥 <b>Flammable</b>: the flame means it catches fire easily.`,environment:`🌳 <b>Hazardous to the environment</b>: dead tree and dead fish.`,corrosive:`🧪 <b>Corrosive</b>: drips burning a surface and a hand.`,toxic:`☠️ <b>Toxic</b>: skull and crossbones means poison.`};
+    say(tips[k]);await w(2400);hold.remove();}
+  const end=mk('','left:180px;top:120px;width:600px;text-align:center',`<div style="font-size:70px">🏅</div><div style="font-size:30px;font-weight:800;color:#4a2ea6">You scored ${score} out of 4!</div>`);pop(end);
+  ['flammable','environment','corrosive','toxic'].forEach((k,i)=>{const c=mk('',`left:${150+i*170}px;top:290px;width:150px;text-align:center;font-size:14px;font-weight:800`,hz(k,110,false).replace('<svg','<svg style="margin:0 auto"')+HZ[k].name,null);pop(c,i*120);});
+  say(score===4?`Perfect! You're a hazard symbol expert! 🏅`:`Well done! You got ${score} right first time. Keep practising.`);await w(2000);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Short answer 15',q:'What does "corrosive" mean, and what should you do if you spill acid?',model:'Corrosive means a substance that can <b>damage skin tissues and cause chemical burns</b>. If you spill acid, <b>wash the area with lots of water</b>.'},
+    {src:'Worksheet · Short answer 16',q:'What should you do if you spill acid?',model:'<b>Wash the area with lots of water</b> (then tell your teacher).'},
+    {src:'Worksheet · Drawing task',q:'Draw the hazard labels for <b>corrosive</b> and <b>flammable</b>. What must each drawing show?',model:'Both: a <b>red diamond</b> with a <b>black picture</b> on white. Corrosive: liquid dripping from <b>two test tubes</b> onto a <b>surface</b> and a <b>hand</b>. Flammable: a black <b>flame</b> on a line.'},
+    {src:'Worksheet · Unit 9 · Q14(a)',q:'Lily\'s battery has hazard symbol A (test tubes dripping onto a hand) and B (dead tree and fish). Write down the meaning of each.',model:'<b>A: Corrosive.</b> <b>B: Hazardous (dangerous) to the environment.</b>'},
+    {src:'Practice',q:'A hazard label shows a black flame inside a red diamond. What does it mean?',o:['Corrosive','Flammable','Toxic','Hazardous to the environment'],a:1,why:'A flame means <b>flammable</b>: it catches fire easily.'},
+    {src:'Practice',q:'Why should used batteries not be put in the normal bin?',o:['They are too heavy','Their chemicals can leak and harm the environment','They might start working again','Bins are only for paper'],a:1,why:'Battery chemicals can leak into <b>soil and rivers</b>, so recycle batteries instead.'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  const h=mk('','left:0;top:10px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#4a2ea6','🎉 Hazard Hero badges!');pop(h);
+  say(`Brilliant work, Hazard Hero! 🦸 Let's collect your badges.`);await w(1800);
+  const D=[['corrosive','Corrosive = damages skin tissue, causes <b>chemical burns</b>'],['flammable','Flammable = <b>catches fire</b> easily'],['environment','Dead tree &amp; fish = <b>hazardous to the environment</b>'],
+    [null,'🚰 Spill acid? <b>Wash with lots of water</b>, tell the teacher'],[null,'🔋 Lily\'s battery: <b>A corrosive</b>, <b>B environment</b>'],[null,'♻️ Batteries go to <b>recycling</b>, not the bin']];
+  const lines=[`Corrosive: damages skin and causes chemical burns.`,`Flammable: catches fire easily.`,`Dead tree and fish: hazardous to the environment.`,`Spill acid? Wash with <b>lots of water</b>!`,`Lily's battery: <b>A corrosive, B environment</b>.`,`And batteries go to <b>recycling</b>. ♻️`];
+  for(let i=0;i<6;i++){const x=13+(i%3)*313,y=60+Math.floor(i/3)*226;
+    const b=mk('badge',`left:${x}px;top:${y}px;width:300px;height:212px`,(D[i][0]?`<div style="height:100px">${hz(D[i][0],100,false)}</div>`:`<span class="e" style="font-size:64px">${['🚰','🔋','♻️'][i-3]}</span>`)+`<div>${D[i][0]?D[i][1]:D[i][1].replace(/^[^ ]+ /,'')}</div>`);
+    an(b,[{transform:'scale(0) rotate(-20deg)',opacity:0},{transform:'scale(1.1) rotate(3deg)',opacity:1,offset:.7},{transform:'none',opacity:1}],{duration:600});beep(600+i*80,.1);
+    loop(b,[{transform:'translateY(0)'},{transform:'translateY(-5px)'}],900,{direction:'alternate',delay:600+i*150});
+    say(lines[i]);await w(1700);}
+  confetti(160);yay();
+  say(`You can now <b>read</b> and <b>draw</b> hazard symbols, and you know how to stay safe in the lab. Lesson complete! 🏆`);await w(2000);}},
+  ]
+});
+</script>
+</body>
+</html>
