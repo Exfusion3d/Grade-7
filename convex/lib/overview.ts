@@ -40,3 +40,19 @@ export async function overviewFor(ctx: QueryCtx, profileId: Id<"profiles">) {
     lastActive: lastActive || null,
   };
 }
+
+/** The questions a student currently has wrong (latest answer wrong), with how often they missed each one. */
+export async function wrongQuestionsFor(ctx: QueryCtx, profileId: Id<"profiles">) {
+  const answers = await ctx.db.query("answers").withIndex("by_profile", (q) => q.eq("profileId", profileId)).collect();
+  const byQ = new Map<string, { questionId: string; lessonId: string; source: "quiz" | "lesson"; tries: number; misses: number; lastAt: number; latestCorrect: boolean }>();
+  for (const a of answers) {
+    const e = byQ.get(a.questionId) ?? { questionId: a.questionId, lessonId: a.lessonId, source: a.source, tries: 0, misses: 0, lastAt: 0, latestCorrect: false };
+    e.tries++; if (!a.correct) e.misses++;
+    e.lastAt = a.at; e.latestCorrect = a.correct;
+    byQ.set(a.questionId, e);
+  }
+  return [...byQ.values()]
+    .filter((q) => !q.latestCorrect)
+    .map(({ latestCorrect, ...q }) => q)
+    .sort((a, b) => b.misses - a.misses || b.lastAt - a.lastAt);
+}

@@ -120,6 +120,11 @@ async function flush() {
   }
 }
 
+async function call(kind, fn, args) {
+  if (!client) throw new Error("Sign-in isn't set up on this site yet.");
+  try { return await client[kind](fn, { token: read(TOKEN), ...args }); } catch (e) { throw new Error(message(e)); }
+}
+
 export const Account = {
   /** Progress saving, used by lessons/engine.js and quiz.html. */
   track: {
@@ -143,6 +148,15 @@ export const Account = {
   },
   flush,
   resume: loadResume,
+
+  /** Parent/teacher page. Every call needs the parent's session; errors come back as readable messages. */
+  parent: {
+    students: () => call("query", api.parent.students, {}),
+    student: (studentId) => call("query", api.parent.student, { studentId }),
+    add: (username, nickname, password) => call("action", api.students.createStudent, { username, nickname, password }),
+    resetPassword: (studentId, password) => call("action", api.students.resetPassword, { studentId, password }),
+    remove: (studentId) => call("mutation", api.students.removeStudent, { studentId }),
+  },
 
   /** The student's overview for the home page (lessons, quiz stars, Lessons to revise), cached for offline use. */
   async overview() {

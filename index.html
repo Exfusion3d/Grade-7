@@ -22,6 +22,7 @@ body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif
 .hero{background:linear-gradient(135deg,#2a2f6b,#6a45d8 60%,#2c66cf);color:#fff;border-radius:26px;padding:24px;position:relative;overflow:hidden}
 .hero .atom{position:absolute;right:-6px;top:-16px;font-size:110px;opacity:.18;transform:rotate(15deg)}
 .who{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:10px;font-size:15px;font-weight:700;margin:-6px -4px 8px}
+.parent-only{display:none!important}html[data-role=parent] .parent-only{display:inline-block!important}
 .who a{color:#fff;background:rgba(255,255,255,.18);border-radius:12px;padding:5px 12px;text-decoration:none;font-weight:800}
 .hero small{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
 .hero h1{margin:6px 0 6px;font-size:clamp(30px,7vw,44px);font-weight:800}
@@ -72,7 +73,7 @@ footer{text-align:center;color:#8a86a0;font-size:13px;margin-top:18px}
 <div class="wrap">
   <div class="hero">
     <div class="atom">⚛️</div>
-    <div class="who">👋 Hi, <b data-nickname></b> <a href="#" data-signout>Sign out</a></div>
+    <div class="who">👋 Hi, <b data-nickname></b> <a class="parent-only" href="admin.html">👪 Parent page</a> <a href="#" data-signout>Sign out</a></div>
     <small>Grade 7 · Cambridge Science</small>
     <h1>Exam Review 🚀</h1>
     <p>14 animated lessons with Professor Atom, a quiz and a study guide for Units 4, 5 and 9.</p>

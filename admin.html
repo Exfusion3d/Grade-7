@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parent page · Grade 7 Science</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:#1f2433;background:#f1eefe;min-height:100vh;
+  background-image:radial-gradient(circle at 8% 10%,#e2d9ff 0,transparent 35%),radial-gradient(circle at 92% 85%,#d6e9ff 0,transparent 40%);
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 40px}
+.hero{background:linear-gradient(135deg,#2a2f6b,#6a45d8 60%,#2c66cf);color:#fff;border-radius:26px;padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.hero h1{margin:0;font-size:clamp(24px,5vw,32px);flex:1;min-width:220px}
+.hero a{color:#fff;background:rgba(255,255,255,.18);border-radius:12px;padding:6px 12px;text-decoration:none;font-weight:800;font-size:15px}
+h2{font-size:21px;margin:24px 4px 10px}
+.box{background:#fff;border-radius:22px;padding:16px 18px;box-shadow:0 6px 18px rgba(80,50,180,.08)}
+.muted{color:#626a80;font-weight:600}
+.err{color:#c43535;font-weight:700}
+.ok{color:#17935b;font-weight:700}
+.students{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.st{background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 4px 0 #e2ddf5;display:flex;flex-direction:column;gap:8px}
+.st h3{margin:0;font-size:19px}
+.st .u{font-size:13px;color:#8a78cc;font-weight:800}
+.bar{background:#ece8f8;border-radius:10px;height:10px;overflow:hidden}.bar i{display:block;height:100%;background:#6a45d8;border-radius:10px}
+.small{font-size:14px}
+.tag{display:inline-block;background:#fff1cc;color:#8a5300;border-radius:10px;padding:2px 8px;font-size:13px;font-weight:800;margin:2px 4px 0 0}
+.tag.good{background:#e3f7ec;color:#17935b}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+button{font:inherit;cursor:pointer}
+.b{border:none;border-radius:12px;padding:8px 12px;font-weight:800;font-size:14px;background:#efe9ff;color:#4a2ea6}
+.b.main{background:#6a45d8;color:#fff;box-shadow:0 3px 0 #4a2ea6}
+.b.danger{background:#fde3e3;color:#c43535}
+form.add{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));align-items:end}
+label{display:block;font-weight:800;font-size:13.5px;color:#4a2ea6;margin-bottom:4px}
+input{width:100%;font:inherit;font-size:16px;font-weight:600;padding:10px 12px;border:3px solid #e3dcff;border-radius:12px;background:#fbfaff;outline:none}
+input:focus{border-color:#6a45d8;background:#fff}
+#detail[hidden]{display:none}
+.lgrid{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.lg{border-radius:12px;padding:8px 10px;font-size:13.5px;font-weight:700;background:#f5f3fc}
+.lg.done{background:#e3f7ec}.lg.prog{background:#e6f0ff}
+.lg b{display:block;font-size:12px;color:#8a78cc;letter-spacing:.04em;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:8px 6px;border-top:2px solid #f0edf9;vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a78cc;border-top:none}
+dialog{border:none;border-radius:20px;padding:20px;max-width:360px;width:calc(100% - 32px);box-shadow:0 20px 50px rgba(30,20,80,.3)}
+dialog::backdrop{background:rgba(31,36,51,.45)}
+dialog h3{margin:0 0 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>👪 Parent &amp; teacher page</h1>
+    <a href="index.html">🏠 Home</a><a href="#" data-signout>Sign out</a>
+  </div>
+  <p id="notParent" class="box err" hidden>This page is only for the parent or teacher login. <a href="index.html">Back to the lessons</a></p>
+
+  <div id="main" hidden>
+    <h2>Your students</h2>
+    <div id="students" class="students"><p class="muted">Loading…</p></div>
+
+    <section id="detail" hidden>
+      <h2 id="dTitle"></h2>
+      <div class="box">
+        <h3 style="margin-top:0">Lessons</h3>
+        <div id="dLessons" class="lgrid"></div>
+        <h3>Quiz</h3>
+        <div id="dQuiz" class="small"></div>
+        <h3>Questions to fix <span class="muted small">(the latest answer was wrong)</span></h3>
+        <div id="dWrong"></div>
+        <p><button class="b" id="dClose">Close details</button></p>
+      </div>
+    </section>
+
+    <h2>➕ Add a student</h2>
+    <form class="box add" id="addForm" autocomplete="off">
+      <div><label for="aNick">Nickname (shown on the site)</label><input id="aNick" required maxlength="30" placeholder="e.g. Sara"></div>
+      <div><label for="aUser">Username (to sign in)</label><input id="aUser" required autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="e.g. sara.k"></div>
+      <div><label for="aPass">Starting password (6+ characters)</label><input id="aPass" required minlength="6" autocomplete="new-password"></div>
+      <div><button class="b main" type="submit" style="width:100%;padding:12px">Add student</button></div>
+      <div id="addMsg" style="grid-column:1/-1" role="status"></div>
+    </form>
+    <p class="muted small" style="margin:10px 4px">Only you can create logins, reset passwords or remove students. Students sign in with the username and password you give them.</p>
+  </div>
+</div>
+
+<dialog id="pwDialog">
+  <form method="dialog" id="pwForm">
+    <h3 id="pwTitle">New password</h3>
+    <label for="pwInput">New password (6+ characters)</label>
+    <input id="pwInput" minlength="6" required autocomplete="new-password">
+    <p class="muted small">They will be signed out on every device and need the new password.</p>
+    <div id="pwMsg" role="status"></div>
+    <div class="btns"><button class="b main" value="ok" id="pwOk">Set password</button><button class="b" value="cancel" formnovalidate>Cancel</button></div>
+  </form>
+</dialog>
+
+<script type="module">
+import { Account } from "./src/account.js";
+
+const LESSONS = {l01:'Is it alive? The 7 life processes',l02:'Viruses: alive or not?',l03:'What is a species?',l04:'Dichotomous keys',
+  l05:'Metals & non-metals: Periodic Table Adventure',l06:'Choosing materials: the property toolkit',l07:'Alloys and rusting',l08:'Particles and heat',
+  l09:'Acids, alkalis & the pH scale',l10:'Hazard symbols & lab safety',l11:'Current & circuit components',l12:'Measuring current: ammeters & amps',
+  l13:'Series circuits: brighter, dimmer, off',l14:'Conductors & insulators'};
+const MODES = [['u4','🦓 Unit 4'],['u5','⚗️ Unit 5'],['u9','⚡ Unit 9'],['boss','👑 Final Boss']];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const lessonName = (id) => `Lesson ${+id.slice(1)}: ${LESSONS[id] || id}`;
+const stars = (n) => "⭐".repeat(n) + "☆".repeat(3 - n);
+function ago(t) {
+  if (!t) return "not yet";
+  const d = Math.floor((Date.now() - t) / 86400000);
+  if (d <= 0) { const h = Math.floor((Date.now() - t) / 3600000); return h <= 0 ? "just now" : `${h} hour${h > 1 ? "s" : ""} ago`; }
+  return d === 1 ? "yesterday" : `${d} days ago`;
+}
+
+/* Quiz question wording, read from quiz.html so the "questions to fix" list can show the question itself. */
+let quizText = {};
+fetch("quiz.html").then((r) => r.text()).then((html) => {
+  for (const m of html.matchAll(/^\{id:'(u\d-\d\d)',[^\n]*?\bq:'((?:[^'\\]|\\.)*)'/gm)) quizText[m[1]] = m[2].replace(/\\'/g, "'");
+}).catch(() => {});
+/* Exam check wording, read from each lesson file the same way (questionId is "l05:Worksheet · Unit 5 · MCQ 1"). */
+const FILES = {l01:'l01-life-processes',l02:'l02-viruses',l03:'l03-species',l04:'l04-keys',l05:'l05-metals-nonmetals',l06:'l06-choosing-materials',
+  l07:'l07-alloys-rusting',l08:'l08-particles-heat',l09:'l09-acids-alkalis',l10:'l10-hazards-safety',l11:'l11-current-components',
+  l12:'l12-measuring-current',l13:'l13-series-circuits',l14:'l14-conductors-insulators'};
+const examText = {};
+async function loadExamText(lessonIds) {
+  await Promise.all([...new Set(lessonIds)].filter((id) => FILES[id] && !examText[id]).map(async (id) => {
+    examText[id] = {};
+    try {
+      const html = await (await fetch(`lessons/${FILES[id]}.html`)).text();
+      for (const m of html.matchAll(/src:(['`])(.*?)\1,\s*q:(['"`])((?:(?!\3)[^\\]|\\.)*)\3/g))
+        examText[id][m[2].replace(/<[^>]*>/g, "").trim()] = m[4].replace(/\\(.)/g, "$1").replace(/<br>/g, " ");
+    } catch (e) {}
+  }));
+}
+function questionLabel(q) {
+  if (q.source === "quiz") return `<b>Quiz</b> · ${esc(quizText[q.questionId] || q.questionId)}`;
+  const src = q.questionId.slice(q.questionId.indexOf(":") + 1);
+  const text = examText[q.lessonId]?.[src];
+  return `<b>Exam check</b> · ${text ? text.replace(/<(?!\/?b>)[^>]*>/g, "") : ""} <span class="muted small">(${esc(src.replace(/^Worksheet · /, "Worksheet "))})</span>`;
+}
+
+let students = [];
+async function load() {
+  try {
+    students = await Account.parent.students();
+    students.sort((a, b) => (b.lastActive || 0) - (a.lastActive || 0) || a.nickname.localeCompare(b.nickname));
+    renderStudents();
+  } catch (e) { $("students").innerHTML = `<p class="box err">${esc(e.message)}</p>`; }
+}
+
+function renderStudents() {
+  const box = $("students");
+  if (!students.length) { box.innerHTML = `<p class="box muted">No students yet. Add one below.</p>`; return; }
+  box.innerHTML = students.map((s) => {
+    const done = s.lessons.filter((l) => l.done).length;
+    const quiz = MODES.filter(([m]) => s.quizBest[m]).map(([m, n]) => `${n} ${stars(s.quizBest[m].stars)}`).join(" · ") || "No quiz levels finished yet";
+    const rev = s.revise.slice(0, 3).map((r) => `<span class="tag" title="${esc(lessonName(r.lessonId))}">Lesson ${+r.lessonId.slice(1)}: ${r.wrong} to fix</span>`).join("")
+      + (s.revise.length > 3 ? `<span class="tag">+${s.revise.length - 3} more</span>` : "");
+    return `<div class="st">
+      <div><h3>${esc(s.nickname)}</h3><div class="u">@${esc(s.username)}${s.locked ? " · 🔒 locked for a few minutes (wrong passwords)" : ""}</div></div>
+      <div class="small muted">Last active: ${ago(s.lastActive)}</div>
+      <div class="small"><b>${done} of 14</b> lessons finished<div class="bar"><i style="width:${(done / 14) * 100}%"></i></div></div>
+      <div class="small">${quiz}</div>
+      <div class="small">${s.answered ? (rev || '<span class="tag good">Nothing to revise</span>') : '<span class="muted">No answers yet</span>'}</div>
+      <div class="btns"><button class="b main" data-act="detail" data-id="${s.id}">See details</button><button class="b" data-act="pw" data-id="${s.id}">Reset password</button><button class="b danger" data-act="remove" data-id="${s.id}">Remove</button></div>
+    </div>`;
+  }).join("");
+}
+
+$("students").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  const s = students.find((x) => x.id === b.dataset.id); if (!s) return;
+  if (b.dataset.act === "detail") showDetail(s.id);
+  if (b.dataset.act === "pw") askPassword(s);
+  if (b.dataset.act === "remove") {
+    if (!confirm(`Remove ${s.nickname} (@${s.username})?\n\nThis deletes their login and all their progress. It can't be undone.`)) return;
+    try { await Account.parent.remove(s.id); $("detail").hidden = true; await load(); } catch (err) { alert(err.message); }
+  }
+});
+
+async function showDetail(id) {
+  try {
+    const d = await Account.parent.student(id);
+    await loadExamText(d.wrongQuestions.filter((q) => q.source === "lesson").map((q) => q.lessonId));
+    $("dTitle").textContent = `📋 ${d.nickname} (@${d.username})`;
+    const prog = Object.fromEntries(d.lessons.map((l) => [l.lessonId, l]));
+    $("dLessons").innerHTML = Object.keys(LESSONS).map((id) => {
+      const p = prog[id], cls = p?.done ? "done" : p ? "prog" : "";
+      const st = p?.done ? "✅ finished" : p ? `▶ at scene ${p.lastScene}` : "– not started";
+      return `<div class="lg ${cls}"><b>Lesson ${+id.slice(1)}</b>${esc(LESSONS[id])}<div class="muted">${st}</div></div>`;
+    }).join("");
+    $("dQuiz").innerHTML = `<p>${MODES.map(([m, n]) => `${n}: ${d.quizBest[m] ? `${stars(d.quizBest[m].stars)} best ${d.quizBest[m].right}/${d.quizBest[m].total} (${d.quizBest[m].pct}%)` : "not finished yet"}`).join("<br>")}</p>`
+      + (d.recentRuns.length ? `<p class="muted">Recent levels: ${d.recentRuns.map((r) => `${(MODES.find(([m]) => m === r.mode) || [, "🔁 Mistakes practice"])[1]} ${r.right}/${r.total} (${ago(r.at)})`).join(" · ")}</p>` : "");
+    $("dWrong").innerHTML = d.wrongQuestions.length
+      ? `<table><tr><th>Lesson</th><th>Question</th><th>Missed</th></tr>${d.wrongQuestions.map((q) =>
+          `<tr><td>${esc(lessonName(q.lessonId))}</td><td>${questionLabel(q)}</td><td>${q.misses} of ${q.tries}<div class="muted small">${ago(q.lastAt)}</div></td></tr>`).join("")}</table>`
+      : `<p class="ok">${d.answered ? "Nothing to fix right now." : "No answers yet."}</p>`;
+    $("detail").hidden = false;
+    $("detail").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (e) { alert(e.message); }
+}
+$("dClose").onclick = () => { $("detail").hidden = true; };
+
+let pwFor = null;
+function askPassword(s) {
+  pwFor = s; $("pwTitle").textContent = `New password for ${s.nickname}`; $("pwInput").value = ""; $("pwMsg").textContent = "";
+  $("pwDialog").showModal(); $("pwInput").focus();
+}
+$("pwForm").addEventListener("submit", async (e) => {
+  if (e.submitter?.value !== "ok") return;
+  e.preventDefault();
+  try {
+    await Account.parent.resetPassword(pwFor.id, $("pwInput").value);
+    $("pwDialog").close(); alert(`Done. ${pwFor.nickname} can now sign in with the new password.`);
+  } catch (err) { $("pwMsg").innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+});
+
+$("addForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nick = $("aNick").value.trim(), user = $("aUser").value.trim(), pass = $("aPass").value;
+  $("addMsg").textContent = "Adding…";
+  try {
+    await Account.parent.add(user, nick, pass);
+    $("addMsg").innerHTML = `<p class="ok">✅ ${esc(nick)} can now sign in with the username <b>${esc(user.toLowerCase())}</b> and the password you chose.</p>`;
+    e.target.reset(); await load();
+  } catch (err) { $("addMsg").innerHTML = `<p class="err">${esc(err.message)}</p>`; }
+});
+
+/* Only the parent login can use this page (the server checks this too). */
+async function start() {
+  await Account.verify();
+  if (Account.user()?.role !== "parent") { $("notParent").hidden = false; return; }
+  $("main").hidden = false;
+  load();
+}
+start();
+</script>
+</body>
+</html>
