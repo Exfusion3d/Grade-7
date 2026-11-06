@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-public>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in · Grade 7 Science</title>
+<meta name="apple-mobile-web-app-title" content="Grade 7 Science">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:#1f2433;background:#f1eefe;min-height:100vh;
+  background-image:radial-gradient(circle at 8% 10%,#e2d9ff 0,transparent 35%),radial-gradient(circle at 92% 85%,#d6e9ff 0,transparent 40%);
+  display:flex;align-items:center;justify-content:center;padding:20px calc(16px + env(safe-area-inset-right)) 20px calc(16px + env(safe-area-inset-left))}
+.box{width:100%;max-width:400px;background:#fff;border-radius:26px;padding:26px 24px 22px;box-shadow:0 10px 30px rgba(80,50,180,.14);text-align:center}
+#mascot{width:96px;height:96px}
+#mascot .orb{transform-origin:40px 40px;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+h1{margin:6px 0 2px;font-size:26px;color:#4a2ea6}
+.sub{margin:0 0 18px;color:#626a80;font-weight:600;font-size:15px}
+label{display:block;text-align:left;font-weight:800;font-size:14px;color:#4a2ea6;margin:12px 2px 6px}
+.field{position:relative}
+input{width:100%;font:inherit;font-size:18px;font-weight:600;padding:12px 14px;border:3px solid #e3dcff;border-radius:14px;background:#fbfaff;color:#1f2433;outline:none}
+input:focus{border-color:#6a45d8;background:#fff}
+.show{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:#efe9ff;color:#4a2ea6;font:inherit;font-size:13px;font-weight:800;border-radius:10px;padding:6px 10px;cursor:pointer}
+#pw{padding-right:76px}
+button.go{width:100%;margin-top:20px;border:none;border-radius:16px;padding:14px;font:inherit;font-size:20px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,#6a45d8,#2c66cf);box-shadow:0 5px 0 #4a2ea6;cursor:pointer}
+button.go:active{transform:translateY(3px);box-shadow:0 2px 0 #4a2ea6}
+button.go:disabled{opacity:.6}
+#err{min-height:22px;margin-top:12px;color:#c43535;font-weight:700;font-size:15px}
+.help{margin-top:6px;color:#8a86a0;font-size:13.5px;font-weight:600}
+</style>
+</head>
+<body>
+<form class="box" id="form" novalidate>
+  <svg id="mascot" viewBox="0 0 80 80" aria-hidden="true">
+    <g class="orb" fill="none" stroke="#6a45d8" stroke-width="3">
+      <ellipse cx="40" cy="40" rx="37" ry="13"/><ellipse cx="40" cy="40" rx="37" ry="13" transform="rotate(60 40 40)"/><ellipse cx="40" cy="40" rx="37" ry="13" transform="rotate(-60 40 40)"/>
+    </g>
+    <circle cx="40" cy="40" r="18" fill="#ffd84d" stroke="#e0a800" stroke-width="2"/>
+    <circle cx="34" cy="37" r="2.8" fill="#1f2433"/><circle cx="46" cy="37" r="2.8" fill="#1f2433"/>
+    <path d="M33 45 Q40 52 47 45" stroke="#1f2433" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <circle cx="29" cy="44" r="3" fill="#ff9f9f" opacity=".7"/><circle cx="51" cy="44" r="3" fill="#ff9f9f" opacity=".7"/>
+  </svg>
+  <h1>Welcome back!</h1>
+  <p class="sub">Sign in to carry on with Professor Atom.</p>
+  <label for="user">Username</label>
+  <input id="user" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+  <label for="pw">Password</label>
+  <div class="field">
+    <input id="pw" name="password" type="password" autocomplete="current-password" required>
+    <button type="button" class="show" id="show" aria-label="Show password">Show</button>
+  </div>
+  <button class="go" id="go" type="submit">Sign in ▶</button>
+  <div id="err" role="alert"></div>
+  <div class="help">Forgot your password? Ask your parent or teacher to reset it.</div>
+</form>
+<script type="module">
+import { Account } from "./src/account.js";
+
+/* Only come back to a page on this site. */
+function nextPage() {
+  const n = new URLSearchParams(location.search).get("next") || "";
+  return n.startsWith("/") && !n.startsWith("//") ? n : "/";
+}
+
+if (Account.token()) location.replace(nextPage());
+
+const $ = (id) => document.getElementById(id);
+$("show").onclick = () => {
+  const pw = $("pw"), hidden = pw.type === "password";
+  pw.type = hidden ? "text" : "password";
+  $("show").textContent = hidden ? "Hide" : "Show";
+  $("show").setAttribute("aria-label", hidden ? "Hide password" : "Show password");
+};
+$("form").onsubmit = async (e) => {
+  e.preventDefault();
+  const username = $("user").value.trim(), password = $("pw").value;
+  if (!username || !password) { $("err").textContent = "Type your username and password."; return; }
+  $("go").disabled = true; $("go").textContent = "Signing in…"; $("err").textContent = "";
+  try {
+    await Account.signIn(username, password);
+    location.replace(nextPage());
+  } catch (err) {
+    $("err").textContent = err.message;
+    $("go").disabled = false; $("go").textContent = "Sign in ▶";
+    $("pw").select();
+  }
+};
+$("user").focus();
+</script>
+</body>
+</html>

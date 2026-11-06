@@ -27,7 +27,8 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `quiz.html` | **Science Quest**: 111 interactive questions in 4 levels (Unit 4, Unit 5, Unit 9, and a 25-question mixed "Final Boss"), 10 question types, points, streaks, stars and "practise my mistakes". Each question has `l:` (the lesson that teaches it); the results screen lists "Lessons to revise" from the mistakes |
 | `study-guide.pdf` | 16-page printable study guide with a one-page cheat sheet. Printed from `source/study-guide-source.html` |
 | `source/worksheet-by-lesson.md` | Every worksheet question grouped by the lesson that teaches it (the coverage map) |
-| `convex/` | **Student accounts (in progress, stage 1 of 6 done):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
+| `convex/` | **Student accounts (in progress, stages 1–2 of 6 done):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
+| `login.html`, `gate.js`, `src/account.js` | Sign-in page and login gate. Every page loads `gate.js` and `src/account.js` (tagged `data-account`) at the top of `<head>`; signed-out visitors go to `login.html?next=…`. The session token is in localStorage (`g7_token`, cached user `g7_me`). The scene tester strips the `data-account` lines so lessons run without an account. New pages need the same two tags |
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
 | `icon-180.png` | Home-screen icon (Professor Atom) |
 | `package.json`, `vite.config.mjs`, `bun.lock` | Vite multi-page build: `bun run dev` previews the site; `bun run build` outputs it to `dist/` (git-ignored), which is what Cortex deploys to tutor.gocortex.app. New pages in the root or `lessons/` are picked up automatically; files only linked with `<a>` or loaded from JS go in the `copied` list in `vite.config.mjs` |
@@ -62,8 +63,9 @@ Every worksheet question is taught in at least one lesson and asked in that less
 - **Accuracy:** the worksheet's answer key is the authority for exam answers. Where the key simplifies, teach the key's
   answer and add a gentle note. Notes already added: steel is an alloy, not a pure metal (the key lists it as a metal);
   ligers are treated as infertile (in reality, females occasionally are not).
-- **No personal data:** the site is public. Progress and settings are stored only in the browser's localStorage:
-  `g7_done_l01`…`g7_done_l14`, `pta_voice`, `pta_vname`, `pta_rate`, `pta_sound`, and `sq_*` (quiz).
+- **Minimal personal data:** every page needs a login that the parent creates (username + password, no email). Only a
+  username and nickname are stored per student, in Convex. Progress and settings are still in the browser's localStorage
+  (`g7_done_l01`…`g7_done_l14`, `pta_*`, `sq_*`) until stage 3 moves progress to the account.
 
 ## How to continue
 - **New lesson:** copy `lessons/_template.html`, follow `lessons/LESSON-GUIDE.md`, give it the next id (`l15`…), and add

@@ -8,6 +8,8 @@ wait = float(sys.argv[4]) if len(sys.argv) > 4 and not sys.argv[4].startswith('-
 fast = '--fast' in sys.argv
 here = os.path.dirname(os.path.abspath(__file__))
 src = open(f).read()
+# lessons run here without an account: drop the login gate and account scripts
+src = '\n'.join(l for l in src.split('\n') if 'data-account' not in l)
 patch = open(os.path.join(here, 'fastpatch.html')).read()
 if not fast:  # keep only error capture + autoplayer, real speed
     patch = patch.split('window.__errs=[]', 1)[1]

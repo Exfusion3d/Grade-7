@@ -9,9 +9,9 @@ const pages = (dir) =>
   readdirSync(join(root, dir))
     .filter((name) => name.endsWith(".html") && !name.startsWith("_"))
     .map((name) => resolve(root, dir, name));
-// Vite doesn't pick these up: engine.js is a classic script and the PDF is a
+// Vite doesn't pick these up: gate.js and engine.js are classic scripts and the PDF is a
 // plain link, so they are copied into dist as they are.
-const copied = ["lessons/engine.js", "study-guide.pdf", "source"];
+const copied = ["gate.js", "lessons/engine.js", "study-guide.pdf", "source"];
 
 export default defineConfig({
   root,
