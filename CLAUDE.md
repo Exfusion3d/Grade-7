@@ -27,6 +27,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `quiz.html` | **Science Quest**: 111 interactive questions in 4 levels (Unit 4, Unit 5, Unit 9, and a 25-question mixed "Final Boss"), 10 question types, points, streaks, stars and "practise my mistakes". Each question has `l:` (the lesson that teaches it); the results screen lists "Lessons to revise" from the mistakes |
 | `study-guide.pdf` | 16-page printable study guide with a one-page cheat sheet. Printed from `source/study-guide-source.html` |
 | `source/worksheet-by-lesson.md` | Every worksheet question grouped by the lesson that teaches it (the coverage map) |
+| `convex/` | **Student accounts (in progress, stage 1 of 6 done):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
 | `icon-180.png` | Home-screen icon (Professor Atom) |
 | `package.json`, `vite.config.mjs`, `bun.lock` | Vite multi-page build: `bun run dev` previews the site; `bun run build` outputs it to `dist/` (git-ignored), which is what Cortex deploys to tutor.gocortex.app. New pages in the root or `lessons/` are picked up automatically; files only linked with `<a>` or loaded from JS go in the `copied` list in `vite.config.mjs` |
