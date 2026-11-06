@@ -27,7 +27,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `quiz.html` | **Science Quest**: 111 interactive questions in 4 levels (Unit 4, Unit 5, Unit 9, and a 25-question mixed "Final Boss"), 10 question types, points, streaks, stars and "practise my mistakes". Each question has `l:` (the lesson that teaches it); the results screen lists "Lessons to revise" from the mistakes |
 | `study-guide.pdf` | 16-page printable study guide with a one-page cheat sheet. Printed from `source/study-guide-source.html` |
 | `source/worksheet-by-lesson.md` | Every worksheet question grouped by the lesson that teaches it (the coverage map) |
-| `convex/` | **Student accounts (in progress, stages 1–2 of 6 done):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
+| `convex/` | **Student accounts (in progress, stages 1–3 of 6 done):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
 | `login.html`, `gate.js`, `src/account.js` | Sign-in page and login gate. Every page loads `gate.js` and `src/account.js` (tagged `data-account`) at the top of `<head>`; signed-out visitors go to `login.html?next=…`. The session token is in localStorage (`g7_token`, cached user `g7_me`). The scene tester strips the `data-account` lines so lessons run without an account. New pages need the same two tags |
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
 | `icon-180.png` | Home-screen icon (Professor Atom) |
@@ -65,7 +65,13 @@ Every worksheet question is taught in at least one lesson and asked in that less
   ligers are treated as infertile (in reality, females occasionally are not).
 - **Minimal personal data:** every page needs a login that the parent creates (username + password, no email). Only a
   username and nickname are stored per student, in Convex. Progress and settings are still in the browser's localStorage
-  (`g7_done_l01`…`g7_done_l14`, `pta_*`, `sq_*`) until stage 3 moves progress to the account.
+  (`g7_done_l01`…`g7_done_l14`, `pta_*`, `sq_*`); progress is also saved to the student's account: lesson scenes and
+  completion and Exam check answers from `engine.js`, quiz answers and level results from `quiz.html`, via `track()` →
+  `window.__track` → `Account.track` (an offline-safe queue in localStorage, `g7_queue_<username>`). Quiz questions have
+  permanent ids (`u4-01`…): never renumber them; add new questions at the end of their unit.
+  **Resuming:** a lesson's start screen offers "Continue at scene N" (and the Exam check question reached) or "Start
+  from the beginning"; the quiz menu lists unfinished levels under "Continue where you left off". Resume points are
+  cached in `g7_resume_<username>` and merged with Convex (`progress:resumeInfo`), so they follow the student between devices.
 
 ## How to continue
 - **New lesson:** copy `lessons/_template.html`, follow `lessons/LESSON-GUIDE.md`, give it the next id (`l15`…), and add

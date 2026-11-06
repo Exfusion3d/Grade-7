@@ -196,6 +196,7 @@ async function ask(w,{q,o,a,why,src,top=40,cols=2,optH=58}){
   say(`<b>Exam check:</b> ${q.replace(/<br>/g,' ')} Tap your answer!`);
   await w.until(()=>picked>=0);
   const ok=picked===a;opts.forEach(e=>e.classList.add('locked'));opts[a].classList.add('ok');
+  track('answer',{questionId:LCFG.id+':'+(src?src.replace(/<[^>]*>/g,'').trim():q.replace(/<[^>]*>/g,'').slice(0,60)),lessonId:LCFG.id,source:'lesson',correct:ok});
   if(!ok){opts[picked].classList.add('bad');shake(opts[picked]);boo();}else{yay();confetti(40);}
   const yb=yy+4;
   if(why){const wb=mk('ex-why',`top:${yb}px`,(ok?'✅ <b>Correct!</b> ':'💡 <b>The answer is '+'ABCDEF'[a]+'.</b> ')+why);pop(wb);}
@@ -220,8 +221,10 @@ function wsCard(css,{src,q,a},parent){const c=mk('ws-card',css+';z-index:20',`<d
 
 /* Run a list of exam questions one after another, with a "Next question" button between them. */
 async function examCheck(w,list,{title='Exam check'}={}){
-  let right=0,mcq=0;
-  for(let i=0;i<list.length;i++){stage.innerHTML='';
+  let right=0,mcq=0,i0=0;
+  if(RESUME&&RESUME.lastScene===cur+1)i0=Math.max(0,Math.min(RESUME.step||0,list.length-1));/* continue at the question reached last time */
+  RESUME=null;
+  for(let i=i0;i<list.length;i++){stage.innerHTML='';track('lesson',LCFG.id,cur+1,false,i);
     mk('ex-head','',`📝 ${title} · question ${i+1} of ${list.length}`);
     const it=list[i];
     if(it.o){mcq++;if(await ask(w,it))right++;}else await reveal(w,it);
@@ -257,7 +260,7 @@ async function sortGame(w,{bins,items,top=150,colors=['#f7ad5f','#5d9cf5','#45c2
 /* ====================== navigation ====================== */
 function dots(){const d=$('#dots');d.innerHTML='';SC.forEach((s,i)=>{const b=document.createElement('button');b.title=s.t;b.className=i===cur?'cur':i<cur?'done':'';b.onclick=()=>go(i);d.appendChild(b);});
   $('#count').textContent=`Scene ${cur+1} of ${SC.length}`;$('#back').style.visibility=cur?'visible':'hidden';$('#next').textContent=cur===SC.length-1?'Start over ⟲':'Next ▶';}
-async function run(){const my=++token;stopVoice();window.AUTOPLAY=null;stage.getAnimations&&stage.getAnimations({subtree:true}).forEach(a=>a.cancel());stage.innerHTML='';
+async function run(){const my=++token;started=true;if(RESUME&&RESUME.lastScene!==cur+1)RESUME=null;track('lesson',LCFG.id,cur+1,false,RESUME?RESUME.step:undefined);stopVoice();window.AUTOPLAY=null;stage.getAnimations&&stage.getAnimations({subtree:true}).forEach(a=>a.cancel());stage.innerHTML='';
   $('#next').classList.remove('ready');$('#stitle').textContent=`Scene ${cur+1} · ${SC[cur].t}`;dots();
   try{await SC[cur].run(makeWait(my));if(my===token){$('#next').classList.add('ready');if(cur===SC.length-1)markDone();}}catch(e){if(e!=='cancel')console.error(e);}}
 function go(i){cur=(i+SC.length)%SC.length;run();}
@@ -280,15 +283,35 @@ function fit(){const side=innerWidth>innerHeight;document.body.classList.toggle(
 $('#vset').onclick=()=>document.body.classList.toggle('vopen');
 addEventListener('resize',fit);fit();
 addEventListener('scroll',()=>{if(scrollX||scrollY)scrollTo(0,0);});$('#holder').addEventListener('scroll',e=>{e.target.scrollLeft=0;e.target.scrollTop=0;});
-function markDone(){try{localStorage.setItem('g7_done_'+LCFG.id,'1');}catch(e){}}
+function markDone(){try{localStorage.setItem('g7_done_'+LCFG.id,'1');}catch(e){}track('lesson',LCFG.id,cur+1,true);}
+/* Progress saving: handed to src/account.js (which may load after this file), via window.__track. */
+function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
 window.Lesson={start(cfg){LCFG=cfg;SC=cfg.scenes;document.title=cfg.title+' · Grade 7 Science';
   $('#brand').textContent=(cfg.emoji||'⚛️')+' '+cfg.title;
   const st=new URLSearchParams(location.search).get('scene');
   if(st){go(Math.max(0,Math.min(SC.length-1,+st-1)));return;}
   dots();$('#stitle').textContent=`Lesson ${cfg.num} · Unit ${cfg.unit}`;say(cfg.intro||`Hi! I'm <b>Professor Atom</b> ⚛️ Ready? Press <b>Start</b>!`);
-  mk('','left:0;top:70px;width:960px;text-align:center;font-size:84px',cfg.emoji||'⚛️');
-  mk('','left:0;top:170px;width:960px;text-align:center;font-size:34px;font-weight:800;color:#4a2ea6',cfg.title);
-  const b=mk('bigbtn','left:290px;top:250px;width:380px;height:100px;background:linear-gradient(135deg,#6a45d8,#2c66cf);display:flex;align-items:center;justify-content:center;font-size:30px;white-space:nowrap','▶ Start the lesson!');
-  loop(b,[{transform:'scale(1)'},{transform:'scale(1.06)'}],700,{direction:'alternate'});
-  mk('','left:0;top:380px;width:960px;text-align:center;font-size:17px;color:#626a80;font-weight:700',`${SC.length} short animated scenes · tap ▶ Next to move on · 🔊 sound on`);
-  b.onclick=()=>{beep(660,.1);go(0);};}};
+  startScreen();addEventListener('g7-resume',()=>{if(!started)startScreen();});}};
+
+/* ====================== start screen and resuming ====================== */
+let RESUME=null,started=false;
+/* Where this student stopped in this lesson last time (cached by src/account.js), or null. */
+function resumePoint(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const p=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).lessons[LCFG.id];
+  if(p&&p.lastScene>=2&&p.lastScene<=SC.length&&!(p.done&&p.lastScene===SC.length))return p;}catch(e){}return null;}
+function startScreen(){stage.getAnimations&&stage.getAnimations({subtree:true}).forEach(a=>a.cancel());stage.innerHTML='';
+  mk('','left:0;top:70px;width:960px;text-align:center;font-size:84px',LCFG.emoji||'⚛️');
+  mk('','left:0;top:170px;width:960px;text-align:center;font-size:34px;font-weight:800;color:#4a2ea6',LCFG.title);
+  const p=resumePoint();
+  if(!p){
+    const b=mk('bigbtn','left:290px;top:250px;width:380px;height:100px;background:linear-gradient(135deg,#6a45d8,#2c66cf);display:flex;align-items:center;justify-content:center;font-size:30px;white-space:nowrap','▶ Start the lesson!');
+    loop(b,[{transform:'scale(1)'},{transform:'scale(1.06)'}],700,{direction:'alternate'});
+    mk('','left:0;top:380px;width:960px;text-align:center;font-size:17px;color:#626a80;font-weight:700',`${SC.length} short animated scenes · tap ▶ Next to move on · 🔊 sound on`);
+    b.onclick=()=>{beep(660,.1);go(0);};return;}
+  const where=`Scene ${p.lastScene}: ${SC[p.lastScene-1].t}`+(p.step?` · question ${p.step+1}`:'');
+  const c=mk('bigbtn','left:140px;top:250px;width:400px;height:100px;background:linear-gradient(135deg,#6a45d8,#2c66cf);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:30px;line-height:1.15',
+    `▶ Continue<span style="font-size:15px;font-weight:700;opacity:.92;max-width:370px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${where}</span>`);
+  loop(c,[{transform:'scale(1)'},{transform:'scale(1.05)'}],700,{direction:'alternate'});
+  const s=mk('bigbtn','left:560px;top:250px;width:260px;height:100px;background:#fff;color:#4a2ea6;border:3px solid #d9d2f5;box-shadow:0 6px 0 #e3dcff;display:flex;align-items:center;justify-content:center;text-align:center;font-size:21px;line-height:1.2','⟲ Start from<br>the beginning');
+  mk('','left:0;top:380px;width:960px;text-align:center;font-size:17px;color:#626a80;font-weight:700',`You stopped at scene ${p.lastScene} of ${SC.length} last time.`);
+  c.onclick=()=>{beep(660,.1);RESUME=p;go(p.lastScene-1);};
+  s.onclick=()=>{beep(660,.1);go(0);};}

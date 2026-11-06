@@ -35,7 +35,7 @@ export const resetPassword = action({
   },
 });
 
-/** Parent only: delete a student's login and sign them out everywhere. */
+/** Parent only: delete a student's login and progress, and sign them out everywhere. */
 export const removeStudent = mutation({
   args: { token: v.string(), studentId: v.id("profiles") },
   handler: async (ctx, { token, studentId }) => {
@@ -45,6 +45,14 @@ export const removeStudent = mutation({
     for (const session of await ctx.db.query("sessions").withIndex("by_profile", (q) => q.eq("profileId", studentId)).collect()) {
       await ctx.db.delete(session._id);
     }
+    // and everything recorded about them
+    const rows = [
+      ...(await ctx.db.query("lessonProgress").withIndex("by_profile_lesson", (q) => q.eq("profileId", studentId)).collect()),
+      ...(await ctx.db.query("answers").withIndex("by_profile", (q) => q.eq("profileId", studentId)).collect()),
+      ...(await ctx.db.query("quizRuns").withIndex("by_profile", (q) => q.eq("profileId", studentId)).collect()),
+      ...(await ctx.db.query("quizState").withIndex("by_profile_mode", (q) => q.eq("profileId", studentId)).collect()),
+    ];
+    for (const r of rows) await ctx.db.delete(r._id);
     await ctx.db.delete(studentId);
   },
 });

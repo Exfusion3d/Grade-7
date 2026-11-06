@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as lib_crypto from "../lib/crypto.js";
 import type * as lib_session from "../lib/session.js";
+import type * as progress from "../progress.js";
 import type * as setup from "../setup.js";
 import type * as students from "../students.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "lib/crypto": typeof lib_crypto;
   "lib/session": typeof lib_session;
+  progress: typeof progress;
   setup: typeof setup;
   students: typeof students;
 }>;

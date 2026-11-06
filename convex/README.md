@@ -1,15 +1,16 @@
 # Convex backend
 
-Student accounts for the site. The project is linked to a Convex deployment: Preview pushes these functions to
+Student accounts and progress for the site. The project is linked to a Convex deployment: Preview pushes these functions to
 Development, and each Cortex release deploys them to Production before the website.
 
 | File | What it does |
 |---|---|
-| `schema.ts` | Tables: `profiles` (username, nickname, role, hashed password) and `sessions` (hashed sign-in tokens) |
+| `schema.ts` | Tables: `profiles` (username, nickname, role, hashed password), `sessions` (hashed sign-in tokens), `lessonProgress` (incl. `step`, the Exam check question reached), `answers`, `quizRuns`, `quizState` |
 | `auth.ts` | `signIn` (username + password → session token), `signOut`, `me` |
 | `students.ts` | Parent-only: `createStudent`, `resetPassword`, `removeStudent`, `listStudents`. There is no self sign-up |
+| `progress.ts` | Each student's progress: `saveLesson` (last scene, done), `recordAnswers` (quiz and Exam check answers, first try), `recordQuizRun` (finished quiz levels), `myProgress`, and resuming: `saveQuizState` (unfinished quiz level, one per level), `resumeInfo`. Resent saves are ignored by `clientId` |
 | `setup.ts` | One-time `createParent`: makes the parent login, reading its password from the `PARENT_PASSWORD` variable |
 | `lib/` | Password hashing (PBKDF2), token hashing, session checks and input rules |
-| `auth.test.ts` | Tests, run with `bun run test` |
+| `*.test.ts` | Tests, run with `bun run test` |
 
 Passwords and session tokens are only stored hashed. Five wrong passwords lock a login for 5 minutes.
