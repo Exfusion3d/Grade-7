@@ -2,3 +2,4 @@
 .claude/
 .cdp_*
 .t_*
+dist/

@@ -2,6 +2,7 @@
   "name": "grade7-science-review",
   "private": true,
   "scripts": {
+    "build": "node build.js",
     "dev": "node dev-server.js",
     "start": "node dev-server.js"
   }
