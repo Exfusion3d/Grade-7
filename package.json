@@ -1,9 +1,12 @@
 {
   "name": "grade7-science-review",
   "private": true,
+  "packageManager": "bun@1.4.4",
   "scripts": {
-    "build": "node build.js",
-    "dev": "node dev-server.js",
-    "start": "node dev-server.js"
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^8.3.6"
   }
 }

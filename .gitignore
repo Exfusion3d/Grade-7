@@ -5,3 +5,4 @@
 dist/
 tools/test/shots/
 .venv/
+node_modules/

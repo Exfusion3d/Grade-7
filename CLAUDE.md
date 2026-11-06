@@ -29,7 +29,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
 | `.github/workflows/pages.yml` | Publishes the site on every push to `main` |
 | `icon-180.png` | Home-screen icon (Professor Atom) |
-| `package.json`, `dev-server.js`, `build.js` | Added by another tool ("Cortex"): `npm run dev` previews the site at http://localhost:3000; `npm run build` copies the site into `dist/` (git-ignored). The live site does **not** use `dist/`; the Pages workflow publishes the repo root |
+| `package.json`, `vite.config.mjs`, `bun.lock` | Vite multi-page build: `bun run dev` previews the site; `bun run build` outputs it to `dist/` (git-ignored), which is what Cortex deploys. New pages in the root or `lessons/` are picked up automatically; files only linked with `<a>` or loaded from JS go in the `copied` list in `vite.config.mjs`. The Pages workflow still publishes the repo root |
 
 ### The 14 lessons (worksheet coverage)
 Unit 4: 1 Life processes (MRS GREN, plants vs animals) · 2 Viruses · 3 Species & classification · 4 Dichotomous keys.

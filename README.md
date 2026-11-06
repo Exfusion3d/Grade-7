@@ -16,10 +16,12 @@ Revision site for the Grade 7 Cambridge Science review worksheet (Units 4, 5 and
 | `source/worksheet-by-lesson.md` | Every worksheet question, grouped by the lesson that teaches it |
 | `source/study-guide-source.html` | HTML source the PDF was printed from |
 
-Everything is plain HTML, CSS and JavaScript with no build step and no external dependencies.
+Everything is plain HTML, CSS and JavaScript. Vite builds it as a multi-page site (`bun run build` outputs to `dist/`; `bun run dev` serves it locally).
 The tutor voice uses the device's built-in speech (Web Speech API).
 
 ## Updating the site
+
+New pages in the root or `lessons/` are picked up automatically. Any new file that is only linked with a plain `<a>` tag or loaded from JavaScript must be added to the `copied` list in `vite.config.mjs`, or it won't be published.
 
 Edit the files, then commit and push to `main`. GitHub Pages republishes automatically within a minute or two.
 
