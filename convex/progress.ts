@@ -131,3 +131,26 @@ export const myOverview = query({
   args: { token: v.string() },
   handler: async (ctx, { token }) => overviewFor(ctx, (await requireProfile(ctx, token))._id),
 });
+
+/** Mark lessons finished that were ticked on a device before logins existed (stage 6 import). Safe to repeat. */
+export const importFinished = mutation({
+  args: { token: v.string(), lessonIds: v.array(v.string()) },
+  handler: async (ctx, { token, lessonIds }) => {
+    const me = await requireProfile(ctx, token);
+    if (me.role !== "student") throw new ConvexError("Only a student's progress can be imported.");
+    if (lessonIds.length > 30) throw new ConvexError("Too many lessons.");
+    let added = 0;
+    for (const lessonId of new Set(lessonIds)) {
+      checkLesson(lessonId);
+      const row = await ctx.db
+        .query("lessonProgress")
+        .withIndex("by_profile_lesson", (q) => q.eq("profileId", me._id).eq("lessonId", lessonId))
+        .unique();
+      if (row?.done) continue;
+      if (row) await ctx.db.patch(row._id, { done: true, updatedAt: Date.now() });
+      else await ctx.db.insert("lessonProgress", { profileId: me._id, lessonId, lastScene: 0, done: true, updatedAt: Date.now() });
+      added++;
+    }
+    return added;
+  },
+});

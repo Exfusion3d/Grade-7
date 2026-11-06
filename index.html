@@ -53,6 +53,12 @@ a.card h3{margin:0 0 3px;font-size:20px}
 a.card p{margin:0;font-size:14.5px;opacity:.95}
 .c2{background:linear-gradient(135deg,#17935b,#45c288)}
 .c3{background:linear-gradient(135deg,#e06a1b,#f5a54a)}
+/* one-time offer to bring ticks from before logins into the student's account */
+.box-import{margin-top:18px;background:#e9f6ff;border:3px solid #9cc9f5;border-radius:22px;padding:14px 18px}
+.box-import h2{margin:0 0 4px;font-size:19px;color:#1c4a9c}
+.box-import p{margin:4px 0;font-size:15px;font-weight:600}
+.box-import button{font:inherit;font-weight:800;font-size:15px;border:none;border-radius:12px;padding:9px 14px;margin:6px 6px 0 0;cursor:pointer}
+.box-import .yes{background:#2c66cf;color:#fff;box-shadow:0 3px 0 #1c4a9c}.box-import .no{background:#fff;color:#1c4a9c}
 #revise{margin-top:18px;background:#fff;border-radius:22px;padding:16px 18px 10px;box-shadow:0 6px 18px rgba(80,50,180,.10);border:3px solid #ffe08a}
 #revise h2{margin:0;font-size:21px;color:#b06a00}
 #revise .why{margin:4px 0 8px;color:#626a80;font-size:14px;font-weight:600}
@@ -64,6 +70,10 @@ a.rv .cnt{margin-left:auto;flex:none;background:#fff1cc;color:#8a5300;font-weigh
 #revise .clear{margin:0 0 6px;font-size:16px;color:#17935b}
 .cont{color:#2c66cf;text-transform:none;letter-spacing:0;font-weight:800}
 .qbest{margin-top:6px!important;font-weight:800;font-size:14px!important}
+.voicehelp{margin-top:12px}
+.voicehelp summary{cursor:pointer;line-height:1.45}
+.voicehelp ol{margin:10px 0;padding-left:22px}.voicehelp li{margin:5px 0}
+.voicehelp p{margin:8px 0}.voicehelp .small{font-size:14px;color:#626a80}
 .tip{margin-top:20px;background:#fff;border-radius:20px;padding:14px 18px;font-size:15px;line-height:1.5;box-shadow:0 6px 18px rgba(80,50,180,.08)}
 .tip b{color:#4a2ea6}
 footer{text-align:center;color:#8a86a0;font-size:13px;margin-top:18px}
@@ -81,6 +91,7 @@ footer{text-align:center;color:#8a86a0;font-size:13px;margin-top:18px}
     <div class="progtxt" id="ptxt"></div>
   </div>
 
+  <div id="importBox" class="box-import" hidden></div>
   <div id="revise" hidden></div>
   <div id="units"></div>
 
@@ -95,6 +106,26 @@ footer{text-align:center;color:#8a86a0;font-size:13px;margin-top:18px}
     🔊 <b>Turn the sound on</b> (flip off silent mode) to hear Professor Atom explain everything.<br>
     ↔️ Lessons work best with the phone <b>sideways</b>. A ✅ appears when you finish a lesson.
   </div>
+
+  <details class="tip voicehelp" id="voice-help">
+    <summary>🗣️ <b>Does Professor Atom sound robotic?</b> Make him sound more natural on iPhone and iPad</summary>
+    <p>Professor Atom reads aloud with your device's own voices. iPhones and iPads come with basic voices, but Apple also
+      has free <b>Premium</b> and <b>Enhanced</b> voices that sound far more natural. You download one once per device:</p>
+    <ol>
+      <li>Open <b>Settings</b> → <b>Accessibility</b> → <b>Spoken Content</b> → <b>Voices</b>.</li>
+      <li>Tap <b>English</b>. Look under <b>English (UK)</b> for a voice marked <b>Premium</b> (best) or <b>Enhanced</b>,
+        for example <b>Serena</b>, <b>Jamie</b>, <b>Kate</b> or <b>Daniel</b>. The list depends on your iOS version.</li>
+      <li>Tap the <b>download</b> button (☁️ or ⬇) next to the Premium or Enhanced version. It is a large download
+        (often a few hundred MB), so use Wi-Fi and wait until it finishes.</li>
+      <li><b>Close this site completely</b> and open it again: swipe Safari (or the Home Screen app) away in the app
+        switcher. New voices only show up after a fresh start.</li>
+      <li>Open any lesson, tap <b>⚙️</b> (or the voice box at the bottom when the device is upright) and choose the new
+        voice from the list, e.g. “Serena (Premium)”. The site remembers your choice.</li>
+    </ol>
+    <p class="small">💡 Try the <b>🐢 Slow</b> or <b>Normal</b> speed too. Siri's own voice can't be used by websites.
+      On a <b>Mac</b>: System Settings → Accessibility → Spoken Content → System voice → Manage Voices, then pick the voice
+      the same way.</p>
+  </details>
   <footer>Good luck in the exam! 🍀</footer>
 </div>
 <script>
@@ -145,11 +176,42 @@ function renderHome(ov){
   best.hidden=!best.innerHTML;
 }
 renderHome(cachedOverview());
+if(location.hash==='#voice-help'){const d=document.getElementById('voice-help');d.open=true;setTimeout(()=>d.scrollIntoView({block:'start'}),50);}
 </script>
 <script type="module">
 import { Account } from "./src/account.js";
 const load = () => Account.overview().then((ov) => { if (ov) renderHome(ov); });
 load();
+
+/* Stage 6: lessons ticked on this device before logins existed (device-wide g7_done_<id> keys). The first student
+   to sign in here is asked once whether they are theirs; the answer is remembered for the device (g7_legacy_done). */
+function offerImport() {
+  const u = Account.user();
+  let asked = null; try { asked = localStorage.getItem("g7_legacy_done"); } catch (e) {}
+  if (!u || u.role !== "student" || asked) return;
+  const ids = Object.keys(LES).filter((id) => { try { return localStorage.getItem("g7_done_" + id) === "1"; } catch (e) { return false; } });
+  if (!ids.length) return;
+  const box = document.getElementById("importBox");
+  const names = ids.map((id) => `Lesson ${+id.slice(1)}`).join(", ");
+  box.innerHTML = `<h2>📲 Lessons finished on this device</h2>
+    <p>Before logins, ${ids.length} lesson${ids.length > 1 ? "s were" : " was"} finished here: <b>${names}</b>.</p>
+    <p>Were these yours, ${esc(u.nickname)}? If so, add them to your progress.</p>
+    <button class="yes">✅ Yes, add them</button><button class="no">No, they're not mine</button><p class="msg" role="status"></p>`;
+  box.hidden = false;
+  const done = (answer) => { try { localStorage.setItem("g7_legacy_done", u.username + ":" + answer); } catch (e) {} };
+  box.querySelector(".no").onclick = () => { done("no"); box.hidden = true; };
+  box.querySelector(".yes").onclick = async (e) => {
+    e.target.disabled = true; box.querySelector(".msg").textContent = "Adding…";
+    try {
+      await Account.importDeviceLessons(ids);
+      done("yes");
+      box.innerHTML = `<p>🎉 Added! ${names} ${ids.length > 1 ? "are" : "is"} now in your progress.</p>`;
+      setTimeout(() => { box.hidden = true; }, 4000);
+      load();
+    } catch (err) { e.target.disabled = false; box.querySelector(".msg").textContent = err.message; }
+  };
+}
+offerImport();
 addEventListener("g7-synced", load);
 </script>
 </body>

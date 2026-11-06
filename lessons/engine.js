@@ -26,7 +26,7 @@ document.body.insertAdjacentHTML('afterbegin',`<canvas id="fx"></canvas>
   <footer>
     <button class="nav" id="back">◀ Back</button>
     <button class="nav" id="replay">⟲ Replay</button>
-    <div class="voice"><button id="vbtn">🗣️ Tutor voice: on</button><select id="vsel" title="Choose a voice"></select><select id="vrate" title="Speaking speed"><option value="0.85">🐢 Slow</option><option value="1" selected>Normal</option><option value="1.15">🐇 Fast</option></select></div>
+    <div class="voice"><button id="vbtn">🗣️ Tutor voice: on</button><select id="vsel" title="Choose a voice"></select><select id="vrate" title="Speaking speed"><option value="0.85">🐢 Slow</option><option value="1" selected>Normal</option><option value="1.15">🐇 Fast</option></select><a class="vhelp" href="../index.html#voice-help">🗣️ Sound robotic? Get a better voice ➜</a></div>
     <div class="sp" id="count"></div>
     <button class="nav" id="next">Next ▶</button>
   </footer>
@@ -283,7 +283,9 @@ function fit(){const side=innerWidth>innerHeight;document.body.classList.toggle(
 $('#vset').onclick=()=>document.body.classList.toggle('vopen');
 addEventListener('resize',fit);fit();
 addEventListener('scroll',()=>{if(scrollX||scrollY)scrollTo(0,0);});$('#holder').addEventListener('scroll',e=>{e.target.scrollLeft=0;e.target.scrollTop=0;});
-function markDone(){try{localStorage.setItem('g7_done_'+LCFG.id,'1');}catch(e){}track('lesson',LCFG.id,cur+1,true);}
+/* Finishing the last scene marks the lesson done in the student's account. (Before logins this was a device-wide
+   g7_done_<id> key; the home page offers to import those once, see index.html.) */
+function markDone(){track('lesson',LCFG.id,cur+1,true);}
 /* Progress saving: handed to src/account.js (which may load after this file), via window.__track. */
 function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
 window.Lesson={start(cfg){LCFG=cfg;SC=cfg.scenes;document.title=cfg.title+' · Grade 7 Science';

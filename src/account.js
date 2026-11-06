@@ -149,6 +149,9 @@ export const Account = {
   flush,
   resume: loadResume,
 
+  /** Add lessons ticked on this device before logins existed to the signed-in student's progress. */
+  importDeviceLessons: (lessonIds) => call("mutation", api.progress.importFinished, { lessonIds }),
+
   /** Parent/teacher page. Every call needs the parent's session; errors come back as readable messages. */
   parent: {
     students: () => call("query", api.parent.students, {}),

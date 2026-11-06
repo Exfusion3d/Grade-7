@@ -19,7 +19,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 ## What exists
 | Path | What it is |
 |---|---|
-| `index.html` | Home page: "Hi, nickname" and Sign out, **Lessons to revise** (lessons with questions whose latest answer was wrong, from `progress:myOverview`; decided: quiz questions and lesson Exam check questions count separately, so each is cleared only where it was missed), 14 lessons grouped by unit (the `UNITS` array in its script) with ✅ per finished lesson and "continue at scene N", a progress bar, best quiz stars, plus links to the quiz and the study guide. All per student: it no longer reads the device-wide `g7_done_*` keys |
+| `index.html` | Home page: "Hi, nickname" and Sign out, **Lessons to revise** (lessons with questions whose latest answer was wrong, from `progress:myOverview`; decided: quiz questions and lesson Exam check questions count separately, so each is cleared only where it was missed), 14 lessons grouped by unit (the `UNITS` array in its script) with ✅ per finished lesson and "continue at scene N", a progress bar, best quiz stars, plus links to the quiz and the study guide. All per student. Once per device, the first student to sign in is offered to import lessons ticked before logins existed (old device-wide `g7_done_*` keys, no longer written; remembered in `g7_legacy_done`) |
 | `lessons/l01`–`l14-*.html` | All 14 lessons on the shared engine, each with about 9 animated, narrated scenes. Lesson 5 (`l05-metals-nonmetals.html`, 14 scenes) is the approved pilot and the style reference for all lessons |
 | `adventure.html` | Redirect to Lesson 5 (its old address), so old links and Home Screen bookmarks keep working |
 | `lessons/engine.js`, `lessons/engine.css` | Shared lesson engine: page layout, Professor Atom narration and voice, animation helpers, exam check, sort game, navigation, progress saving |
@@ -27,7 +27,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `quiz.html` | **Science Quest**: 111 interactive questions in 4 levels (Unit 4, Unit 5, Unit 9, and a 25-question mixed "Final Boss"), 10 question types, points, streaks, stars and "practise my mistakes". Each question has `l:` (the lesson that teaches it); the results screen lists "Lessons to revise" from the mistakes |
 | `study-guide.pdf` | 16-page printable study guide with a one-page cheat sheet. Printed from `source/study-guide-source.html` |
 | `source/worksheet-by-lesson.md` | Every worksheet question grouped by the lesson that teaches it (the coverage map) |
-| `convex/` | **Student accounts (in progress, stages 1–5 of 6 done):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
+| `convex/` | **Student accounts (all 6 stages built; not live yet, see "Going live" below):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
 | `admin.html` | **Parent/teacher page** (parent login only; the home page shows a "👪 Parent page" button to the parent): a card per student (last active, lessons finished, quiz stars, lessons to revise), details (all lessons, quiz results, questions to fix with their wording), add a student, reset a password, remove a student. Uses `convex/parent.ts` |
 | `login.html`, `gate.js`, `src/account.js` | Sign-in page and login gate. Every page loads `gate.js` and `src/account.js` (tagged `data-account`) at the top of `<head>`; signed-out visitors go to `login.html?next=…`. The session token is in localStorage (`g7_token`, cached user `g7_me`). The scene tester strips the `data-account` lines so lessons run without an account. New pages need the same two tags |
 | `tools/test/` | Headless-Chrome scene tester (`runall.py`, `cdp.py`, `fastpatch.html`) |
@@ -66,7 +66,7 @@ Every worksheet question is taught in at least one lesson and asked in that less
   ligers are treated as infertile (in reality, females occasionally are not).
 - **Minimal personal data:** every page needs a login that the parent creates (username + password, no email). Only a
   username and nickname are stored per student, in Convex. Progress and settings are still in the browser's localStorage
-  (`g7_done_l01`…`g7_done_l14`, `pta_*`, `sq_*`); progress is also saved to the student's account: lesson scenes and
+  (`pta_*` voice and sound settings, `sq_*` quiz best scores, `g7_resume_*`/`g7_overview_*`/`g7_queue_*` per-user caches); progress is also saved to the student's account: lesson scenes and
   completion and Exam check answers from `engine.js`, quiz answers and level results from `quiz.html`, via `track()` →
   `window.__track` → `Account.track` (an offline-safe queue in localStorage, `g7_queue_<username>`). Quiz questions have
   permanent ids (`u4-01`…): never renumber them; add new questions at the end of their unit.
@@ -85,6 +85,13 @@ Every worksheet question is taught in at least one lesson and asked in that less
   deploys it to https://tutor.gocortex.app after the user confirms. Note that unknown paths there return the home page,
   not a 404, so check a new page's title (not just the status code) when confirming a deploy.
 - **Rebuild the study guide PDF** after editing `source/study-guide-source.html` (command in `README.md`).
+
+## Going live with student accounts (not done yet)
+`main` needs logins on the **Production** Convex database before it is released, or every page asks for a login nobody has:
+1. Save `PARENT_PASSWORD` for Production (secure Cortex box), then run `setup:createParent` on Production.
+2. Sign in on the live site as the parent and add each student on the parent page.
+3. Remove the Development test logins `test.student` and `test.parent` (and their progress).
+4. Release, and check the live bundle points at the Production Convex URL (`VITE_CONVEX_URL` at build time).
 
 ## Known gaps and ideas (not done yet)
 - Not yet tested on a real iPhone or iPad. Lesson 13 uses CSS `offset-path`, which needs Safari 16 or newer.

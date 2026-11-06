@@ -116,4 +116,16 @@ describe("progress", () => {
     expect(o2.revise.map((r) => r.lessonId)).toEqual(["l05"]);
     expect(o2).toMatchObject({ answered: 7, correct: 3 });
   });
+
+  test("lessons ticked on a device before logins can be added to a student's progress, once", async () => {
+    const s = await ctx.addStudent("sara");
+    await ctx.t.mutation(api.progress.saveLesson, { token: s.token, lessonId: "l03", scene: 4, done: false });
+    expect(await ctx.t.mutation(api.progress.importFinished, { token: s.token, lessonIds: ["l01", "l03", "l01"] })).toBe(2);
+    expect(await ctx.t.mutation(api.progress.importFinished, { token: s.token, lessonIds: ["l01", "l03"] })).toBe(0);
+    const o = await ctx.t.query(api.progress.myOverview, { token: s.token });
+    expect(o.lessons.filter((l) => l.done).map((l) => l.lessonId).sort()).toEqual(["l01", "l03"]);
+    expect(o.lessons.find((l) => l.lessonId === "l03")).toMatchObject({ lastScene: 4 });
+    await expect(ctx.t.mutation(api.progress.importFinished, { token: s.token, lessonIds: ["bad"] })).rejects.toThrow(/Unknown lesson/);
+    await expect(ctx.t.mutation(api.progress.importFinished, { token: ctx.parent.token, lessonIds: ["l01"] })).rejects.toThrow(/Only a student/);
+  });
 });
