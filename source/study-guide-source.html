@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grade 7 Science – Exam Study Guide</title>
+<style>
+@page { size: A4; margin: 14mm 15mm 16mm 15mm;
+  @bottom-center { content: counter(page); font: 600 9pt "Avenir Next", sans-serif; color: #8a90a2; }
+}
+@page :first { @bottom-center { content: none; } }
+:root{
+  --ink:#1f2433; --muted:#5b6275; --line:#dfe3ec;
+  --g:#17935b; --gl:#e4f6ec; --gd:#0e6b41;
+  --o:#e06a1b; --ol:#fdeedf; --od:#a84a0c;
+  --b:#2c66cf; --bl:#e5eefc; --bd:#1c4a9c;
+  --y:#fff4c2; --yb:#f2c200; --r:#fde6e6; --rb:#e04848; --p:#f0e9ff; --pb:#7d55d6;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+body{font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif; color:var(--ink); font-size:11pt; line-height:1.45; margin:0}
+h1,h2,h3{line-height:1.15; margin:0}
+h2{font-size:17pt; font-weight:800; margin:18px 0 8px; display:flex; align-items:center; gap:10px}
+h2 .n{display:inline-flex; align-items:center; justify-content:center; min-width:34px; height:34px; padding:0 8px; border-radius:10px; color:#fff; font-size:13pt}
+h3{font-size:12.5pt; font-weight:700; margin:12px 0 4px}
+p{margin:5px 0}
+ul{margin:4px 0; padding-left:20px} li{margin:2px 0}
+b,strong{font-weight:700}
+.u4 h2 .n{background:var(--g)} .u4 h2{color:var(--gd)} .u4 h3{color:var(--gd)}
+.u5 h2 .n{background:var(--o)} .u5 h2{color:var(--od)} .u5 h3{color:var(--od)}
+.u9 h2 .n{background:var(--b)} .u9 h2{color:var(--bd)} .u9 h3{color:var(--bd)}
+.unit{break-before:page}
+.banner{border-radius:18px; padding:18px 22px; color:#fff; display:flex; align-items:center; gap:18px; margin-bottom:6px}
+.banner .big{font-size:38pt; font-weight:800; line-height:1}
+.banner h1{font-size:22pt; font-weight:800}
+.banner p{margin:4px 0 0; font-size:11pt; opacity:.95}
+.u4 .banner{background:linear-gradient(120deg,#17935b,#4cc28a)}
+.u5 .banner{background:linear-gradient(120deg,#e06a1b,#f5a54a)}
+.u9 .banner{background:linear-gradient(120deg,#2c66cf,#5aa0f0)}
+.bigidea{border:2px dashed currentColor; border-radius:14px; padding:10px 14px; margin:10px 0; font-size:11.5pt}
+.u4 .bigidea{color:var(--gd); background:var(--gl)} .u5 .bigidea{color:var(--od); background:var(--ol)} .u9 .bigidea{color:var(--bd); background:var(--bl)}
+.bigidea span{color:var(--ink)}
+.box{border-radius:12px; padding:9px 13px 9px 13px; margin:9px 0; break-inside:avoid; border-left:6px solid}
+.box .lab{font-weight:800; font-size:9.5pt; letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:2px}
+.tip{background:var(--y); border-color:var(--yb)} .tip .lab{color:#8a6a00}
+.warn{background:var(--r); border-color:var(--rb)} .warn .lab{color:#b02525}
+.trick{background:var(--p); border-color:var(--pb)} .trick .lab{color:#5a35b0}
+.real{background:#eef3f7; border-color:#7a8ca3} .real .lab{color:#4b5d75}
+table{border-collapse:collapse; width:100%; margin:8px 0; font-size:10.3pt}
+tr{break-inside:avoid}
+h2,h3{break-after:avoid; break-inside:avoid}
+h2 + *, h3 + *{break-before:avoid}
+.fig svg{break-inside:avoid}
+th,td{border:1px solid var(--line); padding:5px 8px; text-align:left; vertical-align:top}
+th{font-weight:700}
+.u4 th{background:var(--gl)} .u5 th{background:var(--ol)} .u9 th{background:var(--bl)}
+.letter{font-size:16pt; font-weight:800; text-align:center; width:34px}
+.u4 .letter{color:var(--g)}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+.fig{text-align:center; margin:8px 0; break-inside:avoid}
+.fig .cap{font-size:9pt; color:var(--muted); margin-top:2px}
+.qa{break-inside:avoid; margin:4px 0}
+.ans td:first-child{width:36px; font-weight:700; text-align:center}
+.small{font-size:9.5pt; color:var(--muted)}
+.chip{display:inline-block; padding:1px 8px; border-radius:20px; font-weight:700; font-size:9.5pt}
+.keep{break-inside:avoid}
+.pb{break-before:page}
+/* cover */
+.cover{height:262mm; display:flex; flex-direction:column; justify-content:space-between}
+.cover .top{background:linear-gradient(135deg,#2a2f6b,#5b3fb5 55%,#2c66cf); color:#fff; border-radius:24px; padding:34px 30px}
+.cover .top .k{font-size:12pt; letter-spacing:.14em; text-transform:uppercase; opacity:.85; font-weight:600}
+.cover .top h1{font-size:40pt; font-weight:800; margin:8px 0 6px}
+.cover .top p{font-size:13pt; margin:0; opacity:.95}
+.cards{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+.card{border-radius:18px; padding:16px; color:#fff; min-height:150px}
+.card .u{font-weight:800; font-size:10pt; letter-spacing:.1em; text-transform:uppercase; opacity:.9}
+.card h3{color:#fff; font-size:15pt; margin:4px 0 6px}
+.card p{font-size:10pt; margin:0}
+.how{border:2px solid var(--line); border-radius:18px; padding:14px 18px}
+.how h3{margin-top:0}
+.legend{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; margin-top:8px}
+.legend .box{margin:0; padding:5px 10px; font-size:10pt}
+/* cheat sheet */
+.cheat{break-before:page}
+.cheat h1{font-size:22pt; text-align:center; margin-bottom:8px}
+.cheatgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:9.4pt; line-height:1.35}
+.cheatgrid section{border-radius:12px; padding:10px 11px}
+.cheatgrid h3{margin:0 0 4px; font-size:11.5pt}
+.cheatgrid ul{padding-left:15px}
+.cg{background:var(--gl)} .cg h3{color:var(--gd)}
+.co{background:var(--ol)} .co h3{color:var(--od)}
+.cb{background:var(--bl)} .cb h3{color:var(--bd)}
+svg text{font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="top">
+    <div class="k">Grade 7 · Cambridge Science · Exam Review</div>
+    <h1>The Science<br>Study Guide</h1>
+    <p>Everything on your review worksheet, explained in plain English, with pictures, memory tricks and the answers to every question.</p>
+  </div>
+  <div class="cards">
+    <div class="card" style="background:linear-gradient(140deg,#17935b,#4cc28a)">
+      <div class="u">Unit 4</div><h3>Grouping &amp; Identifying Organisms</h3>
+      <p>What makes something alive, why viruses are weird, species, and how to use a key.</p>
+    </div>
+    <div class="card" style="background:linear-gradient(140deg,#e06a1b,#f5a54a)">
+      <div class="u">Unit 5</div><h3>Properties of Materials</h3>
+      <p>Metals and non-metals, alloys, acids and alkalis, the pH scale and hazard symbols.</p>
+    </div>
+    <div class="card" style="background:linear-gradient(140deg,#2c66cf,#5aa0f0)">
+      <div class="u">Unit 9</div><h3>Electricity</h3>
+      <p>Current, circuit symbols, ammeters, series circuits, conductors and insulators.</p>
+    </div>
+  </div>
+  <div class="how">
+    <h3>How to use this guide</h3>
+    <p>Read one unit at a time. Each unit starts with the <b>big idea</b>, then explains every topic from your worksheet. At the end of each unit there is a table with <b>all the worksheet answers</b> so you can check yourself. The very last page is a <b>one-page cheat sheet</b> for the night before the exam.</p>
+    <div class="legend">
+      <div class="box tip"><span class="lab">Exam tip</span>How to get the marks.</div>
+      <div class="box warn"><span class="lab">Watch out!</span>A common mistake to avoid.</div>
+      <div class="box trick"><span class="lab">Memory trick</span>An easy way to remember.</div>
+      <div class="box real"><span class="lab">Real life</span>Where you see this every day.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ UNIT 4 ============ -->
+<div class="unit u4">
+  <div class="banner"><div class="big">4</div><div><h1>Grouping &amp; Identifying Organisms</h1><p>Living or not living? Same species or not? And how do scientists sort millions of living things?</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>All living things do the same <b>seven life processes</b>. Scientists use these to decide what is alive, and they sort living things into <b>groups</b> (like species) so the huge variety of life is easier to study.</span></div>
+
+  <h2><span class="n">4.1</span> The seven life processes (MRS GREN)</h2>
+  <p>To count as <b>alive</b>, an organism must be able to do <b>all seven</b> of these things. An <b>organism</b> is just a fancy word for "a living thing".</p>
+  <div class="box trick"><span class="lab">Memory trick</span>Meet <b>MRS GREN</b>. Each letter is one life process: <b>M</b>ovement, <b>R</b>espiration, <b>S</b>ensitivity, <b>G</b>rowth, <b>R</b>eproduction, <b>E</b>xcretion, <b>N</b>utrition.</div>
+  <table>
+    <tr><th></th><th style="width:22%">Life process</th><th style="width:40%">What it means</th><th>Example</th></tr>
+    <tr><td class="letter">M</td><td><b>Movement</b></td><td>Changing the shape or position of part or all of the body.</td><td>A cheetah running; a sunflower turning to face the Sun.</td></tr>
+    <tr><td class="letter">R</td><td><b>Respiration</b></td><td>Breaking down nutrients (food) inside cells to <b>release energy</b>.</td><td>Your cells break down sugar from breakfast to give you energy for football.</td></tr>
+    <tr><td class="letter">S</td><td><b>Sensitivity</b></td><td>Detecting changes in the environment and responding to them.</td><td>A polar bear <b>smells</b> meat from far away with its nose.</td></tr>
+    <tr><td class="letter">G</td><td><b>Growth</b></td><td>A <b>permanent</b> increase in size and mass. Young plants and animals get bigger.</td><td>A baby zebra growing into an adult zebra.</td></tr>
+    <tr><td class="letter">R</td><td><b>Reproduction</b></td><td>Making new individuals of the <b>same kind</b> of organism ("producing young ones").</td><td>A zebra having a foal; a plant making seeds.</td></tr>
+    <tr><td class="letter">E</td><td><b>Excretion</b></td><td>Getting rid of <b>waste materials the body has made</b>.</td><td>Animals excrete <b>carbon dioxide</b> when they breathe out.</td></tr>
+    <tr><td class="letter">N</td><td><b>Nutrition</b></td><td>Feeding: taking in materials for energy and growth. <b>Another word for nutrition is "feeding".</b></td><td>A lion eating meat; a plant making its own food.</td></tr>
+  </table>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Respiration is NOT the same as breathing.</b> Breathing just moves air in and out. Respiration is the chemical process in every cell that releases energy from food. A plant respires but has no lungs!</div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>"Growth" must be permanent.</b> A balloon getting bigger, or you getting puffy after a big lunch, is not growth. Growth is a lasting increase in size <b>and</b> mass.</div>
+
+  <h2><span class="n">4.2</span> Plants vs animals</h2>
+  <div class="two">
+    <div>
+      <h3>How plants get food</h3>
+      <p>Plants make their own food by <b>photosynthesis</b>. They need three things:</p>
+      <ul><li>☀️ <b>Sunlight</b> (energy)</li><li>💧 <b>Water</b> (from the soil, through the roots)</li><li>💨 <b>Carbon dioxide</b> (from the air, through the leaves)</li></ul>
+      <p>So an <b>oak tree</b> can make its own food, but a mushroom, an earthworm and a lion cannot.</p>
+      <div class="box warn"><span class="lab">Watch out!</span>A <b>mushroom is NOT a plant</b>. It is a fungus and cannot use sunlight to make food.</div>
+    </div>
+    <div>
+      <h3>Why animals move but plants stay put</h3>
+      <p>Two reasons, which is why the answer is <b>"Both A and C"</b>:</p>
+      <ul>
+        <li><b>A:</b> Plants do not have muscles or legs to walk.</li>
+        <li><b>C:</b> Animals must go and <b>find</b> their food. Plants make their food right where they are.</li>
+      </ul>
+      <div class="box real"><span class="lab">Real life</span>A plant is like a kitchen that cooks its own meals. An animal has to go shopping!</div>
+    </div>
+  </div>
+
+  <h2><span class="n">4.3</span> Viruses: alive or not?</h2>
+  <div class="two">
+    <div>
+      <p>Viruses make us ill (a virus can even make a zebra ill!), but <b>most scientists say viruses are NOT living</b>.</p>
+      <ul>
+        <li>Viruses are <b>very small</b>, much smaller than a cell.</li>
+        <li>Viruses are <b>not made of cells</b>. They are just a coat of <b>protein</b> with instructions (genetic material) inside.</li>
+        <li>Viruses can only <b>replicate</b> (make copies of themselves) when they are <b>inside a living cell</b>.</li>
+        <li>They <b>cannot carry out the seven life processes on their own</b>. They don't feed, grow, respire or excrete.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="fig">
+        <svg width="300" height="190" viewBox="0 0 300 190">
+          <rect x="120" y="20" width="170" height="150" rx="40" fill="#e4f6ec" stroke="#17935b" stroke-width="3"/>
+          <text x="205" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#0e6b41">host cell</text>
+          <rect x="175" y="70" width="60" height="38" rx="6" fill="#fff" stroke="#17935b" stroke-width="2"/>
+          <text x="205" y="86" text-anchor="middle" font-size="9" fill="#0e6b41">cell's</text>
+          <text x="205" y="98" text-anchor="middle" font-size="9" fill="#0e6b41">"factory"</text>
+          <g fill="#e04848">
+            <polygon points="40,90 52,83 64,90 64,104 52,111 40,104"/>
+            <polygon points="160,135 168,130 176,135 176,145 168,150 160,145"/>
+            <polygon points="190,138 198,133 206,138 206,148 198,153 190,148"/>
+            <polygon points="220,135 228,130 236,135 236,145 228,150 220,145"/>
+          </g>
+          <line x1="68" y1="97" x2="118" y2="97" stroke="#e04848" stroke-width="3" marker-end="url(#ar)"/>
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#e04848"/></marker></defs>
+          <text x="52" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#b02525">virus</text>
+          <text x="198" y="125" text-anchor="middle" font-size="10" fill="#b02525">new copies!</text>
+        </svg>
+        <div class="cap">A virus invades a host cell and forces the cell to make copies of the virus.</div>
+      </div>
+    </div>
+  </div>
+  <div class="box real"><span class="lab">Think of it like this</span>A virus is like a <b>pirate USB stick</b>. On its own it does nothing. Plug it into a computer (a cell), and it takes over the computer to make more copies of itself.</div>
+  <div class="box tip"><span class="lab">Exam tip</span><b>"Mia thinks a virus is a living organism. Is she correct?"</b> Tick <b>No</b>. Explain: "A virus is not a living organism because it <b>cannot reproduce on its own</b>. It can only replicate inside a living cell, and it cannot carry out all seven life processes."</div>
+
+  <h2><span class="n">4.4</span> What is a species?</h2>
+  <p>A <b>species</b> is a group of organisms that can <b>mate with each other</b> to produce <b>fertile offspring</b>. <i>Fertile</i> means the babies can grow up and have babies of their own.</p>
+  <ul>
+    <li>Organisms of the same species usually <b>look similar</b> to one another.</li>
+    <li>They look <b>different</b> from organisms of other species.</li>
+    <li>Every species has a two-part scientific name. The mountain zebra is <i>Equus zebra</i>.</li>
+  </ul>
+  <div class="fig">
+    <svg width="560" height="95" viewBox="0 0 560 95">
+      <rect x="5" y="20" width="110" height="50" rx="12" fill="#fdeedf" stroke="#e06a1b" stroke-width="2"/><text x="60" y="51" text-anchor="middle" font-size="15" font-weight="700">🦁 Lion</text>
+      <text x="135" y="51" text-anchor="middle" font-size="24" font-weight="800" fill="#5b6275">+</text>
+      <rect x="155" y="20" width="110" height="50" rx="12" fill="#fdeedf" stroke="#e06a1b" stroke-width="2"/><text x="210" y="51" text-anchor="middle" font-size="15" font-weight="700">🐯 Tiger</text>
+      <text x="290" y="51" text-anchor="middle" font-size="24" font-weight="800" fill="#5b6275">=</text>
+      <rect x="310" y="20" width="110" height="50" rx="12" fill="#fff" stroke="#5b6275" stroke-width="2"/><text x="365" y="45" text-anchor="middle" font-size="15" font-weight="700">Liger</text><text x="365" y="61" text-anchor="middle" font-size="10" fill="#5b6275">(lion + tiger baby)</text>
+      <text x="440" y="51" font-size="22" fill="#e04848">→</text>
+      <text x="468" y="42" font-size="12" font-weight="700" fill="#b02525">Infertile:</text>
+      <text x="468" y="58" font-size="12" fill="#b02525">can't have</text>
+      <text x="468" y="72" font-size="12" fill="#b02525">babies 🚫</text>
+    </svg>
+  </div>
+  <div class="box tip"><span class="lab">Exam tip</span><b>Why are lions and tigers different species, even though they can sometimes reproduce together?</b><br>"Organisms belong to the same species only if they reproduce to produce <b>fertile</b> offspring. Lions and tigers produce <b>infertile</b> offspring (ligers), which cannot reproduce." Use the word <b>fertile</b>!</div>
+
+  <h2><span class="n">4.5</span> Classification and dichotomous keys</h2>
+  <p><b>Classification</b> means putting living things into groups. Scientists do this to make it <b>easier to study and understand</b> the huge variety of life on Earth, a bit like a library sorting books into sections.</p>
+  <p>A <b>dichotomous key</b> helps you <b>identify an unknown organism</b>. At each step you choose between <b>two</b> options (a pair of features). The prefix <b>"di-"</b> means <b>two</b>, just like in <i>di</i>oxide (two oxygens).</p>
+  <div class="fig">
+    <svg width="600" height="230" viewBox="0 0 600 230">
+      <defs><marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0e6b41"/></marker></defs>
+      <g font-size="11.5">
+      <rect x="10" y="10" width="190" height="40" rx="10" fill="#e4f6ec" stroke="#17935b" stroke-width="2"/><text x="105" y="35" text-anchor="middle" font-weight="700">1. Does it have feathers?</text>
+      <rect x="10" y="95" width="190" height="52" rx="10" fill="#e4f6ec" stroke="#17935b" stroke-width="2"/><text x="105" y="117" text-anchor="middle" font-weight="700">2. Does it have six legs</text><text x="105" y="133" text-anchor="middle" font-weight="700">and an exoskeleton?</text>
+      <rect x="10" y="185" width="190" height="40" rx="10" fill="#e4f6ec" stroke="#17935b" stroke-width="2"/><text x="105" y="210" text-anchor="middle" font-weight="700">3. Does it have fur or hair?</text>
+      <rect x="300" y="12" width="140" height="36" rx="18" fill="#17935b"/><text x="370" y="35" text-anchor="middle" fill="#fff" font-weight="700">🐦 Bird</text>
+      <rect x="300" y="103" width="140" height="36" rx="18" fill="#17935b"/><text x="370" y="126" text-anchor="middle" fill="#fff" font-weight="700">🐞 Insect</text>
+      <rect x="300" y="187" width="140" height="36" rx="18" fill="#17935b"/><text x="370" y="210" text-anchor="middle" fill="#fff" font-weight="700">🐻 Mammal</text>
+      <rect x="460" y="187" width="130" height="36" rx="18" fill="#fff" stroke="#17935b" stroke-width="2"/><text x="525" y="210" text-anchor="middle" font-weight="700" fill="#0e6b41">keep going…</text>
+      <line x1="200" y1="30" x2="296" y2="30" stroke="#0e6b41" stroke-width="2" marker-end="url(#ag)"/><text x="248" y="24" text-anchor="middle" fill="#0e6b41" font-weight="700">YES</text>
+      <line x1="105" y1="50" x2="105" y2="92" stroke="#0e6b41" stroke-width="2" marker-end="url(#ag)"/><text x="118" y="76" fill="#b02525" font-weight="700">NO</text>
+      <line x1="200" y1="121" x2="296" y2="121" stroke="#0e6b41" stroke-width="2" marker-end="url(#ag)"/><text x="248" y="115" text-anchor="middle" fill="#0e6b41" font-weight="700">YES</text>
+      <line x1="105" y1="147" x2="105" y2="182" stroke="#0e6b41" stroke-width="2" marker-end="url(#ag)"/><text x="118" y="170" fill="#b02525" font-weight="700">NO</text>
+      <line x1="200" y1="205" x2="296" y2="205" stroke="#0e6b41" stroke-width="2" marker-end="url(#ag)"/><text x="248" y="199" text-anchor="middle" fill="#0e6b41" font-weight="700">YES</text>
+      <line x1="440" y1="205" x2="456" y2="205" stroke="#0e6b41" stroke-width="2" marker-end="url(#ag)"/><text x="448" y="181" text-anchor="middle" fill="#b02525" font-weight="700">NO</text>
+      </g>
+    </svg>
+    <div class="cap">A simple dichotomous key. Every question has exactly two answers.</div>
+  </div>
+  <ul>
+    <li>To separate <b>birds from mammals</b>, the best feature is <b>having feathers</b>. Both have eyes and mouths and need water, so those features don't help!</li>
+    <li>An animal with <b>six legs and an exoskeleton</b> (a hard outer skeleton) is an <b>insect</b>.</li>
+  </ul>
+  <div class="box tip"><span class="lab">Exam tip</span>A good key question uses a feature you can <b>see</b> and that splits the group into <b>two</b> clearly. "Is it cute?" is a bad question; "Does it have feathers?" is a good one.</div>
+
+  <h2><span class="n">4.6</span> The zebra question (Q7)</h2>
+  <p><b>(a) Define species:</b> a group of living things that can reproduce together to produce <b>fertile offspring</b>.<br>
+  <b>(b) Three other characteristics</b> (besides growth) shown by the zebras: one is eating grass (<b>nutrition</b>), one is walking (<b>movement</b>), one has a foal (<b>reproduction</b>). The worksheet accepts <b>reproduction, respiration, movement</b>. Any three of the seven (except growth) are correct.<br>
+  <b>(c) Is a virus living?</b> <b>No.</b> It cannot reproduce on its own.</p>
+
+  <h2><span class="n">✓</span> Unit 4 worksheet answers at a glance</h2>
+  <table class="ans">
+    <tr><th>Q</th><th>Answer</th><th>Why</th></tr>
+    <tr><td>1</td><td>B) Reproduction</td><td>Reproduction = making young ones.</td></tr>
+    <tr><td>2</td><td>A) Sunlight, water, carbon dioxide</td><td>The three ingredients of photosynthesis.</td></tr>
+    <tr><td>3</td><td>B) Can't do the 7 life processes on its own</td><td>Viruses need a host cell.</td></tr>
+    <tr><td>4</td><td>C) Invades a host cell, forces it to make copies</td><td>Viruses replicate only inside living cells.</td></tr>
+    <tr><td>5</td><td>C) Species</td><td>Same species = can make fertile offspring.</td></tr>
+    <tr><td>6</td><td>C) Identifying unknown organisms</td><td>You choose between pairs of features.</td></tr>
+    <tr><td>7</td><td>B) Two</td><td>"Di-" means two.</td></tr>
+    <tr><td>8</td><td>B) Nutrition</td><td>Taking in food for energy and growth.</td></tr>
+    <tr><td>9</td><td>B) Excretion</td><td>Getting rid of waste the body made.</td></tr>
+    <tr><td>10</td><td>B) Oak tree</td><td>Plants photosynthesise; a mushroom is a fungus.</td></tr>
+    <tr><td>11</td><td>D) Both A and C</td><td>No muscles/legs, and plants make food in place.</td></tr>
+    <tr><td>12</td><td>B) Having feathers</td><td>Only birds have feathers.</td></tr>
+    <tr><td>13</td><td>B) Insects</td><td>Six legs + exoskeleton = insect.</td></tr>
+    <tr><td>14</td><td>B) Permanent increase in size and mass</td><td>Growth must be permanent.</td></tr>
+    <tr><td>15</td><td>A) Easier to study the variety of life</td><td>Grouping makes life easier to understand.</td></tr>
+  </table>
+  <p class="qa"><b>Complete the sentences:</b> nutrition = <b>feeding</b> · polar bears <b>sense</b> smells · animals excrete <b>carbon dioxide</b> · organisms <b>reproduce</b> · getting bigger = <b>growth</b> · breaking down food for energy = <b>respiration</b> · changing shape/position = <b>movement</b>.</p>
+  <p class="qa"><b>Viruses word list:</b> Viruses are very <b>small</b>. Viruses are not made of <b>cells</b>. Viruses can only <b>replicate</b> when they are inside a living cell.</p>
+  <p class="qa"><b>Matching (Q6):</b> nutrition → feeding · respiration → breaking down nutrients to release energy · excretion → getting rid of waste · reproduction → making new individuals · growth → getting bigger · sensitivity → detecting changes · movement → changing position.</p>
+</div>
+
+<!-- ============ UNIT 5 ============ -->
+<div class="unit u5">
+  <div class="banner"><div class="big">5</div><div><h1>Properties of Materials</h1><p>Why are pans made of metal but their handles made of plastic? Why is gold used for rings? What makes lemon juice sour?</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>Every material has <b>properties</b> (what it is like and how it behaves). We choose a material for a job <b>because of its properties</b>. Most elements are <b>metals</b> or <b>non-metals</b>, and they have opposite properties.</span></div>
+
+  <h2><span class="n">5.1</span> Metals vs non-metals</h2>
+  <div class="two">
+    <div>
+      <p>On the <b>Periodic Table</b> (the big chart of all the elements), <b>metals</b> are on the <b>left and in the middle</b>. <b>Non-metals</b> are mostly in the <b>top right corner</b>.</p>
+      <div class="fig">
+        <svg id="pt" width="300" height="150" viewBox="0 0 300 150"></svg>
+        <div class="cap"><span class="chip" style="background:#f5a54a;color:#fff">metals</span> &nbsp; <span class="chip" style="background:#2c66cf;color:#fff">non-metals</span></div>
+      </div>
+    </div>
+    <table>
+      <tr><th>Metals</th><th>Non-metals</th></tr>
+      <tr><td>Most are <b>solid</b> at room temperature</td><td>Many are <b>gases</b> at room temperature</td></tr>
+      <tr><td><b>Shiny</b></td><td><b>Dull</b></td></tr>
+      <tr><td><b>Conduct heat</b> well (feel cold to touch)</td><td>Do <b>not</b> conduct heat well</td></tr>
+      <tr><td><b>Conduct electricity</b></td><td>Do <b>not</b> conduct electricity</td></tr>
+      <tr><td>Malleable &amp; ductile</td><td><b>Brittle</b> if solid</td></tr>
+      <tr><td>Sonorous (they ring)</td><td>Not sonorous</td></tr>
+      <tr><td>Strong and tough</td><td>Usually weak</td></tr>
+    </table>
+  </div>
+  <div class="box warn"><span class="lab">The two famous exceptions</span>
+    <b>Mercury</b> is a metal, but it is the <b>only metal that is liquid</b> at room temperature (it was used in old thermometers).<br>
+    <b>Carbon in the form of graphite</b> (pencil "lead") is a non-metal that <b>can conduct electricity</b>.</div>
+  <div class="box tip"><span class="lab">Exam tip</span>"A material is <b>brittle, dull</b> and <b>does not conduct electricity</b>. Metal or non-metal?" → <b>Non-metal.</b> All three are non-metal properties.</div>
+
+  <div class="two">
+    <div>
+      <h3>Ten metals</h3>
+      <p>Iron, gold, silver, copper, nickel, cobalt, mercury, aluminium, zinc, and the answer key also lists <b>steel</b>.</p>
+      <div class="box warn" style="margin-top:4px"><span class="lab">Good to know</span><b>Steel is really an alloy</b> (iron mixed with carbon), not a pure metal. Write what your teacher expects, but if you want to be extra safe, use <b>lead</b> or <b>tin</b> instead.</div>
+    </div>
+    <div>
+      <h3>Five non-metals (other than sulfur &amp; helium)</h3>
+      <p>Carbon, oxygen, nitrogen, chlorine, phosphorus.</p>
+      <h3>Uses of non-metals</h3>
+      <ul>
+        <li><b>Sulfur:</b> making <b>sulfuric acid</b> and <b>fertiliser</b>.</li>
+        <li><b>Helium:</b> balloons, because it is a <b>very light gas</b> and <b>does not react</b> easily, so it is safe (it won't catch fire).</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="n">5.2</span> The property dictionary</h2>
+  <p>These words come up again and again. Learn them and you can answer many questions!</p>
+  <table>
+    <tr><th style="width:19%">Word</th><th style="width:42%">Meaning</th><th>Memory trick / example</th></tr>
+    <tr><td><b>Malleable</b></td><td>Can be <b>hammered</b> or rolled into flat <b>sheets</b>.</td><td>A <b>mallet</b> is a hammer → <b>mall</b>eable. Aluminium foil!</td></tr>
+    <tr><td><b>Ductile</b></td><td>Can be pulled or drawn into thin <b>wires</b>.</td><td>Think "<b>duct</b> tape on a <b>wire</b>". Copper wire.</td></tr>
+    <tr><td><b>Brittle</b></td><td>Breaks or <b>shatters</b> easily when hit.</td><td>Glass, sulfur, a biscuit.</td></tr>
+    <tr><td><b>Sonorous</b></td><td>Makes a <b>ringing sound</b> when hit.</td><td><b>Son</b>orous sounds like <b>son</b>g. Brass bells.</td></tr>
+    <tr><td><b>Hardness</b></td><td>How well it resists being <b>scratched or dented</b>.</td><td>Diamond is the hardest natural material.</td></tr>
+    <tr><td><b>Strength</b></td><td>How much <b>pulling or pushing force</b> it can take before breaking.</td><td>Steel cables hold up bridges.</td></tr>
+    <tr><td><b>Density</b></td><td>How much <b>mass</b> is packed into a given <b>volume</b>.</td><td>A cube of lead feels much heavier than the same-size cube of wood.</td></tr>
+    <tr><td><b>Flexible</b></td><td>Bends without breaking.</td><td>A rubber band.</td></tr>
+    <tr><td><b>Transparent</b></td><td>Lets light pass <b>straight through clearly</b>.</td><td>Window glass, clear plastic bottles.</td></tr>
+    <tr><td><b>Conductor</b></td><td>Lets heat or electricity pass through easily.</td><td>Copper, silver, aluminium, iron.</td></tr>
+    <tr><td><b>Insulator</b></td><td>Does <b>not</b> let heat or electricity pass through easily.</td><td>Wood, plastic, rubber, air.</td></tr>
+    <tr><td><b>Magnetic</b></td><td>Attracted to a magnet.</td><td><b>Only</b> iron, steel, nickel, cobalt. Gold, silver, copper and aluminium are <b>not</b> magnetic!</td></tr>
+  </table>
+  <div class="box trick"><span class="lab">Memory trick</span>Magnetic metals: <b>"I Should Never Cry"</b>: <b>I</b>ron, <b>S</b>teel, <b>N</b>ickel, <b>C</b>obalt.</div>
+
+  <h2><span class="n">5.3</span> Choosing the right material for the job</h2>
+  <table>
+    <tr><th style="width:30%">Use</th><th style="width:25%">Material</th><th>Because it is…</th></tr>
+    <tr><td>Electrical wiring in homes</td><td><b>Copper</b></td><td>a good <b>electrical conductor</b> (and ductile)</td></tr>
+    <tr><td>Building bridges</td><td><b>Iron</b> (steel)</td><td><b>strong and tough</b></td></tr>
+    <tr><td>Jewellery</td><td><b>Gold, silver</b></td><td><b>shiny</b>, attractive and <b>do not corrode</b> easily</td></tr>
+    <tr><td>Aeroplanes</td><td><b>Aluminium</b></td><td><b>lightweight</b>, <b>strong</b> and <b>resistant to corrosion</b></td></tr>
+    <tr><td>Pot handles, tool handles</td><td><b>Plastic</b></td><td>a good <b>thermal and electrical insulator</b></td></tr>
+    <tr><td>Cooking spoons</td><td><b>Wood</b></td><td>a good <b>thermal insulator</b> (won't burn your hand)</td></tr>
+    <tr><td>Balloons</td><td><b>Helium</b></td><td>very <b>light</b> and <b>unreactive</b></td></tr>
+  </table>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Silver is actually a better conductor than copper</b>, so why don't we use it for wires? Because silver is <b>too expensive</b>!</div>
+  <div class="box tip"><span class="lab">Circle the metal properties</span>Metal properties: <b>malleable, ductile, feels cold to the touch, makes a ringing sound when tapped, conducts heat, has a shiny surface</b>. NOT metal properties: has a dull surface, does not conduct electricity, brittle.</div>
+
+  <h2><span class="n">5.4</span> Alloys and carat gold</h2>
+  <p>An <b>alloy</b> is a <b>mixture of a metal with one or more other elements</b> (often other metals). Mixing makes the metal better: stronger, harder or less likely to rust.</p>
+  <ul>
+    <li><b>Steel</b> = iron + carbon (stronger than iron)</li>
+    <li><b>Brass</b> = copper + zinc (sonorous, used for bells and trumpets)</li>
+  </ul>
+  <p>Pure gold is very soft, so jewellery gold is mixed with other metals. Gold purity is measured in <b>carats</b>, out of <b>24</b>.</p>
+  <div class="fig">
+    <svg width="560" height="100" viewBox="0 0 560 100" id="carat"></svg>
+    <div class="cap">24-carat gold is nearly pure gold. 18-carat gold is 18 parts out of 24, which is <b>75% gold</b>.</div>
+  </div>
+  <div class="box tip"><span class="lab">How to work it out</span>18 ÷ 24 = 0.75 = <b>75%</b>. (And 12-carat gold would be 12 ÷ 24 = 50%.)</div>
+
+  <h2><span class="n">5.5</span> Changes to metals: rusting and expanding</h2>
+  <div class="two">
+    <div>
+      <h3>Rusting (corrosion)</h3>
+      <p>When <b>iron</b> is left in <b>air</b> (oxygen) and <b>moisture</b> (water) over time, it reacts and forms orange-brown <b>rust</b>. This is a chemical reaction called <b>rusting</b>, a type of <b>corrosion</b>.</p>
+      <p class="small">iron + oxygen + water → rust</p>
+    </div>
+    <div>
+      <h3>Expansion</h3>
+      <p>When most solid metals are <b>heated</b>, they <b>expand</b> (get slightly bigger). The particles <b>vibrate more</b> and push each other further apart.</p>
+      <div class="box warn" style="margin:4px 0"><span class="lab">Watch out!</span>The particles do <b>not</b> get bigger; they just take up more space.</div>
+    </div>
+  </div>
+
+  <h2><span class="n">5.6</span> Sofia's metal mix-up</h2>
+  <div class="two">
+    <table>
+      <tr><th>Material</th><th>Sofia said</th><th>Correct?</th></tr>
+      <tr><td>Silver</td><td>Metal</td><td>✅</td></tr>
+      <tr><td>Oxygen</td><td>Non-metal</td><td>✅</td></tr>
+      <tr><td>Helium</td><td>Non-metal</td><td>✅</td></tr>
+      <tr><td>Carbon</td><td>Metal</td><td>❌ (non-metal)</td></tr>
+      <tr><td>Copper</td><td>Metal</td><td>✅</td></tr>
+      <tr><td>Nitrogen</td><td>Non-metal</td><td>✅</td></tr>
+      <tr><td>Sulfur</td><td>Metal</td><td>❌ (non-metal)</td></tr>
+      <tr><td>Iron</td><td>Metal</td><td>✅</td></tr>
+    </table>
+    <div>
+      <p>Sofia thinks there are <b>5</b> metals and <b>3</b> non-metals. Really there are <b>3 metals</b> (silver, copper, iron) and <b>5 non-metals</b>.</p>
+      <svg width="270" height="170" viewBox="0 0 270 170">
+        
+        <line x1="40" y1="10" x2="40" y2="140" stroke="#1f2433" stroke-width="2"/>
+        <line x1="40" y1="140" x2="260" y2="140" stroke="#1f2433" stroke-width="2"/>
+        <g font-size="11" text-anchor="end" fill="#5b6275">
+          <text x="34" y="144">0</text><text x="34" y="118">1</text><text x="34" y="92">2</text><text x="34" y="66">3</text><text x="34" y="40">4</text><text x="34" y="14">5</text>
+        </g>
+        <g stroke="#eef0f5"><line x1="41" y1="114" x2="260" y2="114"/><line x1="41" y1="88" x2="260" y2="88"/><line x1="41" y1="62" x2="260" y2="62"/><line x1="41" y1="36" x2="260" y2="36"/><line x1="41" y1="10" x2="260" y2="10"/></g>
+        <rect x="70" y="62" width="60" height="78" fill="#fff" stroke="#e06a1b" stroke-width="3"/>
+        <rect x="170" y="10" width="60" height="130" fill="#fff" stroke="#2c66cf" stroke-width="3"/>
+        <text x="100" y="158" text-anchor="middle" font-size="12" font-weight="700">Metals</text>
+        <text x="200" y="158" text-anchor="middle" font-size="12" font-weight="700">Non-metals</text>
+        <text x="12" y="80" font-size="10" fill="#5b6275" transform="rotate(-90 12 80)" text-anchor="middle">Number</text>
+      </svg>
+      <p class="small">Bar chart tips: use a ruler, label both bars, number the axis, and <b>don't shade</b> the bars if the question says not to.</p>
+    </div>
+  </div>
+
+  <h2><span class="n">5.7</span> Boiling and condensing</h2>
+  <div class="two">
+    <div class="fig">
+      <svg width="320" height="190" viewBox="0 0 320 190">
+        <defs><marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2c66cf"/></marker></defs>
+        <path d="M45,60 L45,95 Q10,110 15,140 Q25,165 60,165 Q95,165 105,140 Q110,110 75,95 L75,60 Z" fill="#fff" stroke="#1f2433" stroke-width="2"/>
+        <path d="M22,130 Q60,125 98,130 Q100,150 85,160 Q60,168 35,160 Q20,150 22,130Z" fill="#9fd0ff"/>
+        <path d="M50,172 Q60,150 70,172 Z" fill="#f5a54a"/><text x="60" y="186" text-anchor="middle" font-size="10">heat</text>
+        <line x1="60" y1="60" x2="60" y2="40" stroke="#1f2433" stroke-width="2"/>
+        <line x1="60" y1="40" x2="250" y2="110" stroke="#1f2433" stroke-width="3"/>
+        <polygon points="110,45 250,97 240,125 100,73" fill="#e5eefc" stroke="#2c66cf" stroke-width="2"/>
+        <text x="170" y="58" font-size="10" fill="#1c4a9c" transform="rotate(20 170 58)">condenser</text>
+        <line x1="250" y1="110" x2="270" y2="140" stroke="#1f2433" stroke-width="2"/>
+        <path d="M250,140 L250,180 L295,180 L295,140" fill="none" stroke="#1f2433" stroke-width="2"/>
+        <rect x="252" y="165" width="41" height="13" fill="#9fd0ff"/>
+        <line x1="235" y1="140" x2="235" y2="122" stroke="#2c66cf" stroke-width="2" marker-end="url(#ab)"/><text x="205" y="152" font-size="9" fill="#1c4a9c">cold water in</text>
+        <line x1="120" y1="56" x2="120" y2="30" stroke="#2c66cf" stroke-width="2" marker-end="url(#ab)"/><text x="95" y="24" font-size="9" fill="#1c4a9c">water out</text>
+        <text x="85" y="100" font-size="9" fill="#5b6275">steam ↑</text>
+      </svg>
+    </div>
+    <div>
+      <p><b>Boiling:</b> the water in the flask <b>absorbs heat energy</b> and boils into <b>steam</b> (a gas) at <b>100 °C</b>.</p>
+      <p><b>Condensing:</b> the steam travels into the <b>condenser</b>. <b>Cold water</b> flowing around the outside cools the steam, so it <b>condenses</b> back into <b>liquid water</b> and drips into the beaker.</p>
+      <div class="box real"><span class="lab">Real life</span>Breathe on a cold mirror: your warm breath condenses into tiny water droplets.</div>
+    </div>
+  </div>
+
+  <h2><span class="n">5.8</span> Acids, alkalis and the pH scale</h2>
+  <p>The <b>pH scale</b> goes from <b>1 to 14</b> and tells us how acidic or alkaline a liquid is.</p>
+  <div class="fig"><svg id="ph" width="640" height="150" viewBox="0 0 640 150"></svg></div>
+  <ul>
+    <li><b>pH 1–6 = acid.</b> The <b>lower</b> the number, the <b>stronger</b> the acid. pH 1 is <b>strongly acidic</b>.</li>
+    <li><b>pH 7 = neutral.</b> Pure <b>water</b> is neutral because its pH is <b>7</b>.</li>
+    <li><b>pH 8–14 = alkali.</b> The <b>higher</b> the number, the stronger the alkali.</li>
+  </ul>
+  <div class="two">
+    <div>
+      <h3>Indicators</h3>
+      <p><b>Universal indicator</b> changes to a different colour for each pH: <b>red</b> for strong acids, <b>green</b> for neutral, <b>purple</b> for strong alkalis.</p>
+      <p><b>Litmus paper:</b> <b>blue litmus turns red</b> in an acid. Red litmus turns blue in an alkali.</p>
+      <div class="box trick"><span class="lab">Memory trick</span><b>A</b>cid turns litmus <b>red</b>. Think "<b>A</b>cid = <b>A</b>pple red".</div>
+    </div>
+    <div>
+      <h3>Chen's pH chart answers</h3>
+      <ul>
+        <li>pH of <b>vinegar</b> = <b>4</b></li>
+        <li>Paint stripper (pH 14) turns universal indicator <b>purple</b></li>
+        <li>pH of a <b>neutral</b> solution = <b>7</b></li>
+        <li>Most acidic = <b>lemon juice</b> (pH 2, the lowest number)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><span class="n">5.9</span> Hazard symbols and lab safety</h2>
+  <div class="fig"><svg id="haz" width="600" height="150" viewBox="0 0 600 150"></svg></div>
+  <ul>
+    <li><b>Corrosive</b> means a substance that can <b>damage skin tissues</b> and materials, causing <b>chemical burns</b>. Strong acids and alkalis are often corrosive.</li>
+    <li><b>Flammable</b> means it <b>catches fire easily</b>.</li>
+    <li><b>Hazardous to the environment</b> means it can harm plants, fish and nature.</li>
+  </ul>
+  <div class="box tip"><span class="lab">Exam tip</span><b>What should you do if you spill acid?</b> → <b>Wash the area with lots of water</b> (and tell your teacher).</div>
+  <div class="box tip"><span class="lab">Drawing the labels</span>All hazard symbols are a <b>red diamond</b> (a square on its point) with a <b>black picture</b> inside. Corrosive = liquid dripping from two test tubes onto a surface and a hand. Flammable = a flame.</div>
+
+  <h2><span class="n">✓</span> Unit 5 worksheet answers at a glance</h2>
+  <table class="ans">
+    <tr><th>Q</th><th>Answer</th><th>Q</th><th>Answer</th></tr>
+    <tr><td>1</td><td>B) Left and middle</td><td>10</td><td>A) Hardness</td></tr>
+    <tr><td>2</td><td>C) Mercury</td><td>11</td><td>B) Force it can take before breaking</td></tr>
+    <tr><td>3</td><td>B) Hammered into flat sheets</td><td>12</td><td>B) Mass packed into a given volume</td></tr>
+    <tr><td>4</td><td>A) Drawn into thin wires</td><td>13</td><td>A) Good electrical and thermal insulator</td></tr>
+    <tr><td>5</td><td>B) Brittle</td><td>14</td><td>B) Carbon (graphite)</td></tr>
+    <tr><td>6</td><td>B) Good electrical conductor</td><td>15</td><td>B) Makes a ringing sound</td></tr>
+    <tr><td>7</td><td>C) Wood</td><td>16</td><td>B) Rusting (corrosion)</td></tr>
+    <tr><td>8</td><td>B) Iron, steel, nickel, cobalt</td><td>17</td><td>B) Lets light pass straight through</td></tr>
+    <tr><td>9</td><td>B) Metal mixed with other elements</td><td>18</td><td>B) They expand as particles vibrate more</td></tr>
+  </table>
+  <p class="qa"><b>Short answers:</b> Gold/silver jewellery: shiny, attractive, don't corrode · Copper: good conductor of heat and electricity · Helium: very light, unreactive · Aluminium planes: light, strong, corrosion-resistant · 18-carat = 75% gold, 24-carat ≈ pure · Water = neutral, pH 7 · pH 1 = strongly acidic · Blue litmus → red in acid · Spill acid → wash with lots of water.</p>
+</div>
+
+<!-- ============ UNIT 9 ============ -->
+<div class="unit u9">
+  <div class="banner"><div class="big">9</div><div><h1>Electricity</h1><p>What is actually moving inside a wire? Why do lamps get dim? And why are plugs made of plastic AND metal?</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>An <b>electric current</b> is a flow of tiny particles called <b>electrons</b>. Current only flows when there is a <b>complete loop</b> (a circuit) from the cell and back again.</span></div>
+
+  <h2><span class="n">9.1</span> What is electric current?</h2>
+  <p><b>Electric current</b> is the flow of <b>electrons</b> around a circuit. Electrons are tiny particles found in atoms. In <b>metals</b>, some electrons are <b>free to move</b>, which is why metals conduct electricity.</p>
+  <ul>
+    <li>The <b>greater the current</b>, the <b>faster the flow of electrons</b>.</li>
+    <li>Current is measured in <b>amperes</b> (amps), with the unit <b>A</b>.</li>
+    <li>Current is measured with an <b>ammeter</b>.</li>
+  </ul>
+  <div class="box real"><span class="lab">Think of it like this</span>A circuit is like a <b>bicycle chain</b>. The cell is the pedals, pushing the chain. The electrons are the links. When you pedal, <b>every link moves at once</b>, all the way round. Break the chain (open a switch) and everything stops.</div>
+  <div class="box warn"><span class="lab">Watch out!</span>It's <b>electrons</b> that move, not atoms, protons or neutrons.</div>
+
+  <h2><span class="n">9.2</span> Components and circuit symbols</h2>
+  <p>Scientists draw circuits using <b>symbols</b> instead of pictures. Learn these!</p>
+  <table>
+    <tr><th style="width:24%">Symbol</th><th style="width:18%">Name</th><th>Its job in a circuit</th></tr>
+    <tr><td><svg width="120" height="40" viewBox="0 0 120 40"><line x1="5" y1="20" x2="54" y2="20" stroke="#1f2433" stroke-width="2.5"/><line x1="54" y1="6" x2="54" y2="34" stroke="#1f2433" stroke-width="2.5"/><line x1="66" y1="13" x2="66" y2="27" stroke="#1f2433" stroke-width="6"/><line x1="66" y1="20" x2="115" y2="20" stroke="#1f2433" stroke-width="2.5"/></svg></td><td><b>Cell</b></td><td><b>Provides the energy</b> to make current flow. Long line = positive (+). Two or more cells = a <b>battery</b>.</td></tr>
+    <tr><td><svg width="120" height="40" viewBox="0 0 120 40"><line x1="5" y1="20" x2="45" y2="20" stroke="#1f2433" stroke-width="2.5"/><circle cx="60" cy="20" r="14" fill="#fff" stroke="#1f2433" stroke-width="2.5"/><line x1="50" y1="10" x2="70" y2="30" stroke="#1f2433" stroke-width="2.5"/><line x1="70" y1="10" x2="50" y2="30" stroke="#1f2433" stroke-width="2.5"/><line x1="74" y1="20" x2="115" y2="20" stroke="#1f2433" stroke-width="2.5"/></svg></td><td><b>Lamp</b></td><td>Gives out <b>light</b>.</td></tr>
+    <tr><td><svg width="120" height="40" viewBox="0 0 120 40"><line x1="5" y1="28" x2="40" y2="28" stroke="#1f2433" stroke-width="2.5"/><circle cx="42" cy="28" r="3" fill="#1f2433"/><line x1="42" y1="28" x2="78" y2="12" stroke="#1f2433" stroke-width="2.5"/><circle cx="80" cy="28" r="3" fill="#1f2433"/><line x1="80" y1="28" x2="115" y2="28" stroke="#1f2433" stroke-width="2.5"/></svg></td><td><b>Switch (open)</b></td><td><b>Opens or closes</b> the circuit, to stop or allow the current. Open = OFF.</td></tr>
+    <tr><td><svg width="120" height="40" viewBox="0 0 120 40"><line x1="5" y1="24" x2="40" y2="24" stroke="#1f2433" stroke-width="2.5"/><circle cx="42" cy="24" r="3" fill="#1f2433"/><line x1="42" y1="23" x2="80" y2="23" stroke="#1f2433" stroke-width="2.5"/><circle cx="80" cy="24" r="3" fill="#1f2433"/><line x1="80" y1="24" x2="115" y2="24" stroke="#1f2433" stroke-width="2.5"/></svg></td><td><b>Switch (closed)</b></td><td>The gap is closed, so current flows. Closed = ON.</td></tr>
+    <tr><td><svg width="120" height="40" viewBox="0 0 120 40"><line x1="5" y1="20" x2="45" y2="20" stroke="#1f2433" stroke-width="2.5"/><circle cx="60" cy="20" r="14" fill="#fff" stroke="#1f2433" stroke-width="2.5"/><text x="60" y="26" text-anchor="middle" font-size="16" font-weight="700">A</text><line x1="74" y1="20" x2="115" y2="20" stroke="#1f2433" stroke-width="2.5"/></svg></td><td><b>Ammeter</b></td><td><b>Measures the current</b> in amps (A).</td></tr>
+    <tr><td><svg width="120" height="44" viewBox="0 0 120 44"><line x1="5" y1="10" x2="48" y2="10" stroke="#1f2433" stroke-width="2.5"/><line x1="48" y1="10" x2="48" y2="30" stroke="#1f2433" stroke-width="2.5"/><line x1="72" y1="10" x2="72" y2="30" stroke="#1f2433" stroke-width="2.5"/><line x1="72" y1="10" x2="115" y2="10" stroke="#1f2433" stroke-width="2.5"/><path d="M42,30 L78,30 A18,14 0 0 1 42,30 Z" fill="#fff" stroke="#1f2433" stroke-width="2.5" transform="rotate(180 60 30) translate(0,-0)"/></svg></td><td><b>Buzzer</b></td><td>Turns electrical energy into <b>sound</b> energy (makes a buzzing sound).</td></tr>
+  </table>
+  <div class="box trick"><span class="lab">Memory trick</span><b>A</b>mmeter measures <b>A</b>mps. Both start with A, and the symbol has an A inside it!</div>
+
+  <h2><span class="n">9.3</span> Measuring current</h2>
+  <div class="two">
+    <div>
+      <ul>
+        <li>The <b>ammeter</b> must be connected <b>in series</b>, meaning in the <b>same loop</b> as everything else, so all the current flows through it.</li>
+        <li>A <b>multimeter</b> can measure different things. When Sofia switched hers to measure <b>current</b>, she read the <b>amps scale</b>.</li>
+      </ul>
+      <div class="box tip"><span class="lab">Reading a meter</span>Find the scale for the thing you're measuring (here, the one marked <b>A</b>). See which two numbers the needle is between, then count the small marks. Sofia's needle was just past <b>2</b>, so the reading is <b>2.2 A</b>.</div>
+    </div>
+    <div class="fig">
+      <svg id="meter" width="290" height="170" viewBox="0 0 290 170"></svg>
+      <div class="cap">The needle is just past 2 → <b>2.2 A</b></div>
+    </div>
+  </div>
+
+  <h2><span class="n">9.4</span> Series circuits</h2>
+  <p>A <b>series circuit</b> has only <b>one loop</b>. Everything is connected one after another, like beads on a necklace.</p>
+  <div class="fig"><svg id="series" width="640" height="150" viewBox="0 0 640 150"></svg></div>
+  <table>
+    <tr><th style="width:42%">If you…</th><th>What happens</th></tr>
+    <tr><td><b>Open the switch</b></td><td>The current <b>stops completely</b>. The loop is broken.</td></tr>
+    <tr><td><b>Add another cell</b></td><td>More push, so <b>more current</b>. Lamps shine <b>brighter</b>.</td></tr>
+    <tr><td><b>Add more lamps</b> (same cells)</td><td>Harder for current to flow, so <b>less current</b>. All lamps get <b>dimmer</b>.</td></tr>
+    <tr><td>One lamp <b>breaks</b></td><td>The loop is broken, so <b>all the other lamps go out</b>.</td></tr>
+    <tr><td>Measure current at different places</td><td>The current is <b>the same everywhere</b> in a series circuit.</td></tr>
+  </table>
+  <div class="box tip"><span class="lab">Exam tip</span>Circuit with two cells, a switch, three lamps and an ammeter:<br>
+  <b>To increase the current:</b> (1) add more cells, (2) remove a lamp.<br>
+  <b>To decrease the current:</b> (1) remove a cell, (2) add more lamps.</div>
+  <div class="box warn"><span class="lab">Watch out!</span>Current is <b>not "used up"</b> as it goes round. It stays the same all the way around a series circuit. The energy is used, not the current.</div>
+
+  <h3>Which circuit lights the lamp AND sounds the buzzer?</h3>
+  <div class="fig"><svg id="choose" width="640" height="130" viewBox="0 0 640 130"></svg>
+  <div class="cap">You need <b>three</b> things: a <b>cell</b> (energy), a <b>lamp</b> and a <b>buzzer</b>, all in one complete loop. Only circuit B has all three.</div></div>
+
+  <h2><span class="n">9.5</span> Conductors and insulators</h2>
+  <div class="two">
+    <div>
+      <p>A <b>conductor</b> lets electricity flow through it easily. An <b>insulator</b> does <b>not</b>.</p>
+      <table>
+        <tr><th>Conductors ⚡</th><th>Insulators 🛑</th></tr>
+        <tr><td>Copper, steel, aluminium, iron, silver, any <b>metal</b>, graphite</td><td>Plastic, wood, rubber, glass, <b>cotton</b>, air</td></tr>
+      </table>
+      <div class="box tip"><span class="lab">In terms of particles</span><b>Conductors</b> have <b>free electrons</b> that can move. <b>Insulators</b> do <b>not</b> have free electrons that can move easily.</div>
+    </div>
+    <div class="fig">
+      <svg width="270" height="170" viewBox="0 0 270 170">
+        <rect x="40" y="20" width="160" height="90" rx="16" fill="#f4f1ea" stroke="#1f2433" stroke-width="2.5"/>
+        <text x="120" y="70" text-anchor="middle" font-size="13" font-weight="700">plastic body</text>
+        <text x="120" y="88" text-anchor="middle" font-size="10" fill="#5b6275">(insulator: stops shocks)</text>
+        <rect x="70" y="110" width="16" height="45" fill="#d6a531" stroke="#1f2433" stroke-width="2"/>
+        <rect x="112" y="110" width="16" height="45" fill="#d6a531" stroke="#1f2433" stroke-width="2"/>
+        <rect x="154" y="110" width="16" height="45" fill="#d6a531" stroke="#1f2433" stroke-width="2"/>
+        <text x="190" y="140" font-size="11" font-weight="700">metal pins</text>
+        <text x="190" y="155" font-size="9" fill="#5b6275">(conductor)</text>
+        <path d="M200,60 Q240,60 240,10" fill="none" stroke="#1f2433" stroke-width="7"/>
+        <path d="M200,60 Q240,60 240,10" fill="none" stroke="#e06a1b" stroke-width="3"/>
+      </svg>
+      <div class="cap">A plug uses BOTH kinds of material.</div>
+    </div>
+  </div>
+  <ul>
+    <li><b>Why are plug bodies made of plastic?</b> Plastic is an <b>insulator</b>, so it helps <b>prevent electric shocks</b>.</li>
+    <li><b>Why are plug pins made of metal?</b> Metal is a <b>conductor</b>, so electricity can flow into the appliance.</li>
+    <li><b>Why are wires coated in plastic?</b> Plastic is a good <b>insulator</b> that <b>prevents electric shocks</b>.</li>
+    <li><b>Which could NOT make electric wires?</b> <b>Cotton</b> (it's an insulator). Steel, copper and aluminium all conduct.</li>
+  </ul>
+
+  <h2><span class="n">9.6</span> Lily's investigation</h2>
+  <p>Lily's battery had two hazard symbols: <b>A = Corrosive</b> (it has chemicals that can burn skin) and <b>B = Hazardous to the environment</b> (dead tree and fish, so don't throw batteries in the bin!). The meter she used to measure current is an <b>ammeter</b>.</p>
+
+  <h2><span class="n">✓</span> Unit 9 worksheet answers at a glance</h2>
+  <table class="ans">
+    <tr><th>Q</th><th>Answer</th><th>Q</th><th>Answer</th></tr>
+    <tr><td>1</td><td>B) Electrons</td><td>9</td><td>B) All other lamps go out</td></tr>
+    <tr><td>2</td><td>B) Cell (or battery)</td><td>10</td><td>A) Conductor</td></tr>
+    <tr><td>3</td><td>B) Current stops completely</td><td>11</td><td>B) Copper</td></tr>
+    <tr><td>4</td><td>B) Amperes / amps (A)</td><td>12</td><td>B) Insulator</td></tr>
+    <tr><td>5</td><td>C) Ammeter</td><td>13</td><td>B) Plastic is an insulator, prevents shocks</td></tr>
+    <tr><td>6</td><td>A) In series</td><td>14</td><td>B) Switch</td></tr>
+    <tr><td>7</td><td>B) Shines brighter</td><td>15</td><td>B) Buzzer</td></tr>
+    <tr><td>8</td><td>B) All get dimmer</td><td></td><td></td></tr>
+  </table>
+  <p class="qa"><b>Short answers:</b> Particles that move = electrons · "The greater the current, the <b>faster</b> the flow of <b>electrons</b>" · "When current flows, particles called <b>electrons</b> move. In metals, these particles are <b>free to move</b>" · Silver not used for wires: too expensive · Current in series: stays the same · Good conductor: <b>metal</b> · Can't make wires: <b>cotton</b> · Symbols: cell, lamp, ammeter, (open) switch · Multimeter reading: <b>2.2 A</b>.</p>
+</div>
+
+<!-- ============ CHEAT SHEET ============ -->
+<div class="cheat">
+  <h1><span style="color:#f2c200">★</span> One-Page Cheat Sheet <span style="color:#f2c200">★</span></h1>
+  <div class="cheatgrid">
+    <section class="cg"><h3>Unit 4 · Living things</h3>
+      <ul>
+        <li><b>MRS GREN</b>: Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition</li>
+        <li>Respiration = releasing energy from food (≠ breathing)</li>
+        <li>Excretion = removing waste the body made (e.g. CO₂)</li>
+        <li>Nutrition = feeding</li>
+        <li>Growth = <b>permanent</b> increase in size &amp; mass</li>
+        <li>Photosynthesis needs <b>sunlight, water, CO₂</b></li>
+        <li>Mushroom = fungus, not a plant</li>
+        <li><b>Virus</b>: very small, not made of cells, replicates only inside a living cell → not living</li>
+        <li><b>Species</b>: can breed to make <b>fertile</b> offspring</li>
+        <li>Lion + tiger = liger (infertile) → different species</li>
+        <li><b>Dichotomous key</b>: "di" = two; pairs of features</li>
+        <li>Feathers → bird. 6 legs + exoskeleton → insect</li>
+        <li>We classify to make life easier to study</li>
+      </ul>
+    </section>
+    <section class="co"><h3>Unit 5 · Materials</h3>
+      <ul>
+        <li>Metals: left &amp; middle of Periodic Table</li>
+        <li>Metals: shiny, conduct heat &amp; electricity, malleable, ductile, sonorous, strong</li>
+        <li>Non-metals: dull, brittle, insulators, many are gases</li>
+        <li>Mercury = liquid metal. Graphite = conducting non-metal</li>
+        <li><b>Malleable</b> = sheets · <b>Ductile</b> = wires · <b>Brittle</b> = shatters · <b>Sonorous</b> = rings</li>
+        <li>Hardness = resists scratches. Strength = force before breaking. Density = mass per volume</li>
+        <li>Magnetic: <b>I</b>ron, <b>S</b>teel, <b>N</b>ickel, <b>C</b>obalt</li>
+        <li>Alloy = metal + other element(s). 18 ct = 75% gold</li>
+        <li>Iron + air + water → rust. Heated metals expand</li>
+        <li>pH 1–6 acid · 7 neutral (water) · 8–14 alkali</li>
+        <li>Blue litmus → red in acid. UI: red = acid, green = neutral, purple = strong alkali</li>
+        <li>Corrosive = burns skin. Spill acid → lots of water</li>
+      </ul>
+    </section>
+    <section class="cb"><h3>Unit 9 · Electricity</h3>
+      <ul>
+        <li>Current = flow of <b>electrons</b></li>
+        <li>Unit: <b>amps (A)</b>. Measured with an <b>ammeter</b>, connected <b>in series</b></li>
+        <li>Cell = energy · Switch = on/off · Lamp = light · Buzzer = sound</li>
+        <li>Open switch → current stops</li>
+        <li>More cells → more current, brighter</li>
+        <li>More lamps → less current, dimmer</li>
+        <li>One lamp breaks → all go out (series)</li>
+        <li>Current is the <b>same everywhere</b> in series</li>
+        <li>Conductors (metals) have <b>free electrons</b>; insulators don't</li>
+        <li>Plug: plastic body (insulator), metal pins (conductor)</li>
+        <li>Wires: copper, not silver (too expensive)</li>
+        <li>Cotton can't make wires</li>
+        <li>Lamp + buzzer circuit needs a cell in a complete loop</li>
+      </ul>
+    </section>
+  </div>
+  <p style="text-align:center; margin-top:14px; font-size:13pt; font-weight:700; color:#5b3fb5">You've got this! Read the question twice, underline key words, and use science words in your answers. 🚀</p>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+function el(p,tag,attrs,text){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;p.appendChild(e);return e;}
+
+// Periodic table sketch
+(function(){
+  const s=document.getElementById('pt'); const w=15.5,h=18,ox=10,oy=8;
+  const nonmetal={1:[1,18],2:[14,15,16,17,18],3:[15,16,17,18],4:[16,17,18],5:[17,18],6:[18],7:[]};
+  const cols={1:[1,18],2:[1,2,13,14,15,16,17,18],3:[1,2,13,14,15,16,17,18]};
+  for(let r=1;r<=7;r++){const cs=cols[r]||Array.from({length:18},(_,i)=>i+1);
+    cs.forEach(c=>{const nm=nonmetal[r].includes(c)&&!(r===1&&c===1&&false);
+      el(s,'rect',{x:ox+(c-1)*w,y:oy+(r-1)*h,width:w-2,height:h-2,rx:2,fill:nm?'#2c66cf':'#f5a54a'});});}
+})();
+
+// Carat bar
+(function(){
+  const s=document.getElementById('carat'); const w=19;
+  [['24 carat',24,10],['18 carat',18,58]].forEach(([lab,n,y])=>{
+    el(s,'text',{x:0,y:y+20,'font-size':12,'font-weight':700},lab);
+    for(let i=0;i<24;i++) el(s,'rect',{x:80+i*w,y:y,width:w-2,height:28,rx:3,fill:i<n?'#e7b416':'#d9dde6'});
+  });
+  el(s,'text',{x:80+24*w-2,y:50,'font-size':10,'text-anchor':'end',fill:'#5b6275'},'≈ 100% gold');
+  el(s,'text',{x:80+24*w-2,y:98,'font-size':10,'text-anchor':'end',fill:'#5b6275'},'18 of 24 parts gold = 75%');
+})();
+
+// pH scale
+(function(){
+  const s=document.getElementById('ph');
+  const cols=['#e5262a','#ee4b2b','#f47c20','#f9a11b','#fcd20f','#c9dc22','#3fae49','#1f9e6e','#14a3a0','#2a86c8','#2f62b4','#3f43a0','#5b2d8e','#6d1f7c'];
+  const x0=12,w=44,y=40;
+  cols.forEach((c,i)=>{el(s,'rect',{x:x0+i*w,y:y,width:w-2,height:34,rx:4,fill:c});
+    el(s,'text',{x:x0+i*w+w/2-1,y:y+23,'text-anchor':'middle','font-size':14,'font-weight':800,fill:'#fff'},i+1);});
+  el(s,'text',{x:x0+3*w,y:28,'text-anchor':'middle','font-size':13,'font-weight':800,fill:'#c2261f'},'← ACIDS (stronger to the left)');
+  el(s,'text',{x:x0+6.5*w,y:28,'text-anchor':'middle','font-size':13,'font-weight':800,fill:'#2f8a3a'},'NEUTRAL');
+  el(s,'text',{x:x0+10.5*w,y:28,'text-anchor':'middle','font-size':13,'font-weight':800,fill:'#5b2d8e'},'ALKALIS (stronger to the right) →');
+  [[2,'lemon juice'],[4,'vinegar'],[7,'pure water'],[9,'bath salts'],[12,'floor cleaner'],[14,'paint stripper']].forEach(([p,l])=>{
+    const cx=x0+(p-1)*w+w/2-1; el(s,'line',{x1:cx,y1:80,x2:cx,y2:96,stroke:'#1f2433','stroke-width':2});
+    el(s,'text',{x:cx,y:112,'text-anchor':'middle','font-size':11,'font-weight':600},l);});
+})();
+
+// Hazard symbols
+(function(){
+  const s=document.getElementById('haz');
+  function diamond(cx,lab,draw){
+    const g=el(s,'g',{});
+    el(g,'rect',{x:cx-42,y:20,width:84,height:84,fill:'#fff',stroke:'#e02020','stroke-width':7,transform:`rotate(45 ${cx} 62)`});
+    draw(g,cx,62); el(s,'text',{x:cx,y:142,'text-anchor':'middle','font-size':13,'font-weight':700},lab);}
+  diamond(100,'Corrosive',(g,x,y)=>{
+    el(g,'rect',{x:x-30,y:y-28,width:8,height:22,fill:'#1f2433',transform:`rotate(-55 ${x-26} ${y-17})`});
+    el(g,'rect',{x:x+14,y:y-28,width:8,height:22,fill:'#1f2433',transform:`rotate(55 ${x+18} ${y-17})`});
+    [[-20,-6],[-18,2],[18,-6],[20,2]].forEach(([dx,dy])=>el(g,'circle',{cx:x+dx,cy:y+dy,r:2.2,fill:'#1f2433'}));
+    el(g,'rect',{x:x-30,y:y+10,width:22,height:6,fill:'#1f2433'});
+    el(g,'path',{d:`M${x+8},${y+16} q4,-10 10,-8 q6,-6 10,0 v8 z`,fill:'#1f2433'});
+  });
+  diamond(300,'Flammable',(g,x,y)=>{
+    el(g,'path',{d:`M${x},${y-32} C${x+22},${y-12} ${x+22},${y+4} ${x+12},${y+14} C${x+14},${y+2} ${x+6},${y-4} ${x+4},${y-8} C${x+2},${y+4} ${x-4},${y+8} ${x-2},${y+14} C${x-20},${y+6} ${x-18},${y-12} ${x},${y-32} Z`,fill:'#1f2433'});
+    el(g,'rect',{x:x-20,y:y+18,width:40,height:5,fill:'#1f2433'});
+  });
+  diamond(500,'Hazardous to the environment',(g,x,y)=>{
+    el(g,'line',{x1:x-14,y1:y+14,x2:x-14,y2:y-24,stroke:'#1f2433','stroke-width':4});
+    el(g,'line',{x1:x-14,y1:y-10,x2:x-26,y2:y-20,stroke:'#1f2433','stroke-width':3});
+    el(g,'line',{x1:x-14,y1:y-16,x2:x-2,y2:y-26,stroke:'#1f2433','stroke-width':3});
+    el(g,'line',{x1:x-26,y1:y+16,x2:x+30,y2:y+16,stroke:'#1f2433','stroke-width':3});
+    el(g,'ellipse',{cx:x+12,cy:y+4,rx:11,ry:5,fill:'#1f2433'});
+    el(g,'path',{d:`M${x+22},${y+4} l8,-6 v12 z`,fill:'#1f2433'});
+  });
+})();
+
+// Meter
+(function(){
+  const s=document.getElementById('meter'); const cx=145,cy=150,R=115;
+  el(s,'rect',{x:5,y:5,width:280,height:160,rx:16,fill:'#f7f8fb',stroke:'#1f2433','stroke-width':2});
+  const ang=v=>Math.PI*(1-(v/10))*0.8+Math.PI*0.1;
+  el(s,'path',{d:`M${cx+R*Math.cos(ang(0))},${cy-R*Math.sin(ang(0))} A${R},${R} 0 0 0 ${cx+R*Math.cos(ang(10))},${cy-R*Math.sin(ang(10))}`,fill:'none',stroke:'#1f2433','stroke-width':2});
+  for(let v=0;v<=10;v+=0.5){const a=ang(v),L=(v%2===0)?14:7;
+    el(s,'line',{x1:cx+R*Math.cos(a),y1:cy-R*Math.sin(a),x2:cx+(R-L)*Math.cos(a),y2:cy-(R-L)*Math.sin(a),stroke:'#1f2433','stroke-width':v%2===0?2:1});
+    if(v%2===0) el(s,'text',{x:cx+(R-26)*Math.cos(a),y:cy-(R-26)*Math.sin(a)+4,'text-anchor':'middle','font-size':12,'font-weight':700},v);}
+  const a=ang(2.2); el(s,'line',{x1:cx,y1:cy-6,x2:cx+(R+6)*Math.cos(a),y2:cy-6-(R+6)*Math.sin(a),stroke:'#e02020','stroke-width':3});
+  el(s,'circle',{cx:cx,cy:cy-6,r:6,fill:'#1f2433'});
+  el(s,'text',{x:cx,y:cy-30,'text-anchor':'middle','font-size':18,'font-weight':800,fill:'#2c66cf'},'A');
+})();
+
+// Circuit drawing helpers
+function wire(g,x1,y1,x2,y2){el(g,'line',{x1,y1,x2,y2,stroke:'#1f2433','stroke-width':2.2});}
+function cell(g,x,y){wire(g,x-14,y,x-4,y);el(g,'line',{x1:x-4,y1:y-12,x2:x-4,y2:y+12,stroke:'#1f2433','stroke-width':2.2});el(g,'line',{x1:x+4,y1:y-6,x2:x+4,y2:y+6,stroke:'#1f2433','stroke-width':5});wire(g,x+4,y,x+14,y);}
+function lamp(g,x,y,on){if(on)el(g,'circle',{cx:x,cy:y,r:16,fill:'#ffe680'});el(g,'circle',{cx:x,cy:y,r:10,fill:'#fff',stroke:'#1f2433','stroke-width':2.2});el(g,'line',{x1:x-7,y1:y-7,x2:x+7,y2:y+7,stroke:'#1f2433','stroke-width':2});el(g,'line',{x1:x+7,y1:y-7,x2:x-7,y2:y+7,stroke:'#1f2433','stroke-width':2});}
+function sw(g,x,y,open){el(g,'circle',{cx:x-10,cy:y,r:2.5,fill:'#1f2433'});el(g,'circle',{cx:x+10,cy:y,r:2.5,fill:'#1f2433'});el(g,'line',{x1:x-10,y1:y,x2:open?x+8:x+10,y2:open?y-10:y,stroke:'#1f2433','stroke-width':2.2});}
+function buzzer(g,x,y){el(g,'path',{d:`M${x-12},${y} A12,12 0 0 1 ${x+12},${y} Z`,fill:'#fff',stroke:'#1f2433','stroke-width':2.2,transform:`rotate(180 ${x} ${y})`});}
+function loop(g,x,y,w,h,top,bottom){ // top/bottom: arrays of [type,fraction]
+  const draw=(items,yy)=>{let pts=[x];items.forEach(([t,f])=>{pts.push(x+w*f-14,x+w*f+14);});pts.push(x+w);
+    for(let i=0;i<pts.length;i+=2)wire(g,pts[i],yy,pts[i+1],yy);
+    items.forEach(([t,f,on])=>{const cx=x+w*f;
+      if(t==='cell')cell(g,cx,yy);if(t==='lamp'){wire(g,cx-14,yy,cx-10,yy);wire(g,cx+10,yy,cx+14,yy);lamp(g,cx,yy,on);}
+      if(t==='sw')sw(g,cx,yy,false),wire(g,cx-14,yy,cx-10,yy),wire(g,cx+10,yy,cx+14,yy);
+      if(t==='swo')sw(g,cx,yy,true),wire(g,cx-14,yy,cx-10,yy),wire(g,cx+10,yy,cx+14,yy);
+      if(t==='bz'){wire(g,cx-14,yy,cx-8,yy);wire(g,cx+8,yy,cx+14,yy);el(g,'line',{x1:cx-8,y1:yy,x2:cx-8,y2:yy+2,stroke:'#1f2433'});buzzer(g,cx,yy+2);}});};
+  draw(top,y);draw(bottom,y+h);wire(g,x,y,x,y+h);wire(g,x+w,y,x+w,y+h);}
+
+(function(){
+  const s=document.getElementById('series');
+  const panels=[['1 cell, 1 lamp: normal',[['cell',.3],['sw',.7]],[['lamp',.5,true]]],
+                ['2 cells: BRIGHTER',[['cell',.25],['cell',.5],['sw',.78]],[['lamp',.5,true]]],
+                ['2 lamps: DIMMER',[['cell',.3],['sw',.7]],[['lamp',.3,false],['lamp',.7,false]]]];
+  panels.forEach(([lab,t,b],i)=>{const g=el(s,'g',{});const x=20+i*212;
+    loop(g,x,25,170,80,t,b);
+    if(i===2){[.3,.7].forEach(f=>el(g,'circle',{cx:x+170*f,cy:105,r:13,fill:'#ffe680',opacity:.55}));
+      [.3,.7].forEach(f=>lamp(g,x+170*f,105,false));}
+    if(i===1)el(g,'circle',{cx:x+85,cy:105,r:22,fill:'#ffd000',opacity:.35});
+    el(s,'text',{x:x+85,y:140,'text-anchor':'middle','font-size':12,'font-weight':700},lab);});
+})();
+
+(function(){
+  const s=document.getElementById('choose');
+  const opts=[['A',[['sw',.5]],[['lamp',.3],['bz',.7]],false],
+              ['B',[['sw',.35],['cell',.7]],[['lamp',.3],['bz',.7]],true],
+              ['C',[['sw',.35],['cell',.7]],[['bz',.5]],false],
+              ['D',[['sw',.35],['cell',.7]],[['lamp',.5]],false]];
+  opts.forEach(([lab,t,b,ok],i)=>{const g=el(s,'g',{});const x=12+i*158;
+    loop(g,x+10,22,120,70,t,b);
+    el(s,'text',{x:x+70,y:122,'text-anchor':'middle','font-size':13,'font-weight':800,fill:ok?'#17935b':'#b02525'},lab+(ok?'  ✔ correct':'  ✘'));});
+})();
+</script>
+</body>
+</html>
