@@ -84,6 +84,7 @@ async function flush() {
   const token = read(TOKEN);
   if (flushing || !client || !token) return;
   flushing = true;
+  let synced = false;
   try {
     for (;;) {
       const q = loadQueue();
@@ -109,10 +110,14 @@ async function flush() {
         if (typeof e?.data !== "string" || /sign in/i.test(e.data)) throw e;
       }
       saveQueue(loadQueue().slice(sent));
+      synced = true;
     }
   } catch (e) {
     /* offline or server busy: keep the queue and try again later */
-  } finally { flushing = false; }
+  } finally {
+    flushing = false;
+    if (synced) dispatchEvent(new Event("g7-synced")); // pages showing progress can refresh
+  }
 }
 
 export const Account = {
@@ -138,6 +143,17 @@ export const Account = {
   },
   flush,
   resume: loadResume,
+
+  /** The student's overview for the home page (lessons, quiz stars, Lessons to revise), cached for offline use. */
+  async overview() {
+    const token = read(TOKEN), u = Account.user();
+    if (!client || !token || !u) return null;
+    try {
+      const ov = await client.query(api.progress.myOverview, { token });
+      write("g7_overview_" + u.username, JSON.stringify(ov));
+      return ov;
+    } catch (e) { return null; }
+  },
 
   token: () => read(TOKEN),
   user: () => { try { return JSON.parse(read(ME)); } catch (e) { return null; } },

@@ -97,4 +97,23 @@ describe("progress", () => {
     const other = await ctx.addStudent("omar");
     expect((await ctx.t.query(api.progress.resumeInfo, { token: other.token })).lessons).toEqual([]);
   });
+
+  test("Lessons to revise: latest answer per question counts, most mistakes first", async () => {
+    const s = await ctx.addStudent("sara");
+    const t0 = Date.now() - 10_000;
+    const a = (clientId: string, questionId: string, lessonId: string, correct: boolean, at: number) =>
+      ({ clientId, questionId, lessonId, source: "quiz" as const, correct, at });
+    await ctx.t.mutation(api.progress.recordAnswers, { token: s.token, answers: [
+      a("1", "u5-01", "l05", false, t0), a("2", "u5-02", "l05", false, t0 + 1), a("3", "u5-05", "l06", false, t0 + 2),
+      a("4", "u4-01", "l01", true, t0 + 3),
+      a("5", "u5-01", "l05", true, t0 + 4), // fixed later
+      a("6", "u5-03", "l05", false, t0 + 5),
+    ] });
+    const o = await ctx.t.query(api.progress.myOverview, { token: s.token });
+    expect(o.revise.map((r) => [r.lessonId, r.wrong])).toEqual([["l05", 2], ["l06", 1]]);
+    await ctx.t.mutation(api.progress.recordAnswers, { token: s.token, answers: [a("7", "u5-05", "l06", true, t0 + 6)] });
+    const o2 = await ctx.t.query(api.progress.myOverview, { token: s.token });
+    expect(o2.revise.map((r) => r.lessonId)).toEqual(["l05"]);
+    expect(o2).toMatchObject({ answered: 7, correct: 3 });
+  });
 });

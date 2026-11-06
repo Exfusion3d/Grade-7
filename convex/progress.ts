@@ -1,6 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { requireProfile } from "./lib/session";
+import { overviewFor } from "./lib/overview";
 
 const LESSON = /^l\d\d$/;
 const checkLesson = (id: string) => { if (!LESSON.test(id)) throw new ConvexError("Unknown lesson."); };
@@ -123,4 +124,10 @@ export const resumeInfo = query({
       lessons: lessons.map((l) => ({ lessonId: l.lessonId, lastScene: l.lastScene, step: l.step, done: l.done, updatedAt: l.updatedAt })),
     };
   },
+});
+
+/** The signed-in student's home page: finished lessons, best quiz results and Lessons to revise. */
+export const myOverview = query({
+  args: { token: v.string() },
+  handler: async (ctx, { token }) => overviewFor(ctx, (await requireProfile(ctx, token))._id),
 });

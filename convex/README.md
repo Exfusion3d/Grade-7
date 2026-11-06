@@ -10,7 +10,7 @@ Development, and each Cortex release deploys them to Production before the websi
 | `students.ts` | Parent-only: `createStudent`, `resetPassword`, `removeStudent`, `listStudents`. There is no self sign-up |
 | `progress.ts` | Each student's progress: `saveLesson` (last scene, done), `recordAnswers` (quiz and Exam check answers, first try), `recordQuizRun` (finished quiz levels), `myProgress`, and resuming: `saveQuizState` (unfinished quiz level, one per level), `resumeInfo`. Resent saves are ignored by `clientId` |
 | `setup.ts` | One-time `createParent`: makes the parent login, reading its password from the `PARENT_PASSWORD` variable |
-| `lib/` | Password hashing (PBKDF2), token hashing, session checks and input rules |
+| `lib/` | Password hashing (PBKDF2), token hashing, session checks, input rules, and `overview.ts` (a student's summary and Lessons to revise, shared by `progress:myOverview` and the parent page) |
 | `*.test.ts` | Tests, run with `bun run test` |
 
 Passwords and session tokens are only stored hashed. Five wrong passwords lock a login for 5 minutes.
