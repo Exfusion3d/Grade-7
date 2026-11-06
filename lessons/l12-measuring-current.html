@@ -123,7 +123,8 @@ Lesson.start({
   cards.forEach((c,i)=>{c.querySelector('.n').style.opacity=1;if(i!==1){c.style.transition='opacity .5s';c.style.opacity=.45;}});
   cards[1].style.borderColor='#18a058';cards[1].style.background='#f1fbf5';loop(cards[1],[{transform:'scale(1)'},{transform:'scale(1.05)'}],600,{direction:'alternate'});
   say(`Current is measured in <b>amperes</b>, or <b>amps</b> for short. Its symbol is a capital <b>A</b>.`);await w(1400);
-  stampAt(30,450,'✔ MCQ 4: B) Amperes or Amps (A)',null,22,-3);await w(2600);
+  an(P1,[{opacity:1},{opacity:0}],{duration:300,fill:'forwards'});
+  wsCard('left:13px;top:8px;width:460px',{src:'Worksheet · Unit 9 · MCQ 4',q:'What unit is used to measure electric current?',a:'✔ B) Amperes or Amps (A)'});await w(2600);
   const f=mk('tag','left:560px;top:458px;background:#e6f0ff;color:#1c4a9c;font-size:17px;padding:8px 14px','🇫🇷 Named after André-Marie Ampère');pop(f);
   say(`Amps are named after <b>André-Marie Ampère</b>, a French scientist. Volts, joules and grams measure <b>other</b> things.`);await w(3200);}},
 
@@ -149,8 +150,9 @@ Lesson.start({
   mk('','left:212px;top:126px;font-size:34px;font-weight:800;color:#6a45d8','➜',T);
   const sy=mk('','left:270px;top:110px',symSVG('amm',2.4),T);an(sy,[{transform:'scale(0) rotate(-30deg)',opacity:0},{transform:'none',opacity:1}],{duration:600,easing:'cubic-bezier(.3,1.5,.5,1)'});
   say(`In a circuit diagram, an ammeter is drawn as a <b>circle with a capital A</b> inside.`);await w(2400);
-  stampAt(24,206,'✔ MCQ 5: C) Ammeter',T,22,-3);await w(1200);
-  const S=box(587,244,359,268,`<div style="font-size:15px;font-weight:800;color:#8a78cc;letter-spacing:.04em">✏️ SHORT ANSWER 3</div><div style="font-size:17px;font-weight:700;margin-top:6px;line-height:1.35">Name the component used to measure current, and its unit.</div>
+  [A[0],A[1]].forEach(a=>an(a.parentElement,[{opacity:.4},{opacity:0}],{duration:300,fill:'forwards'}));
+  wsCard('left:13px;top:8px;width:459px',{src:'Worksheet · Unit 9 · MCQ 5',q:'Which measuring instrument is used to measure electric current in a circuit?',a:'✔ C) Ammeter'});await w(1200);
+  const S=box(587,244,359,268,`<div style="font-size:15px;font-weight:800;color:#8a78cc;letter-spacing:.04em">✏️ SHORT ANSWER 3</div><div style="font-size:17px;font-weight:700;margin-top:6px;line-height:1.35">Name the component used in a circuit to measure current and its unit.</div>
     <div style="font-size:19px;font-weight:700;line-height:1.9;margin-top:10px">Component: <span class="b1" style="${BL}">ammeter</span><br>Unit: <span class="b2" style="${BL}">amperes (A)</span></div>`);pop(S);
   say(`Exam answer: the component that measures current is an <b>ammeter</b>, and its unit is <b>amperes</b>, or amps.`);
   await w(1200);fill(S.querySelector('.b1'));await w(1200);fill(S.querySelector('.b2'));await w(800);}},
@@ -183,7 +185,8 @@ Lesson.start({
   say(`Your turn! Which ammeter is connected the <b>right</b> way? Tap a choice. 👉`);
   await w.until(()=>done);window.AUTOPLAY=null;
   if(!P1.bad){const t=mk('tag','left:12px;top:162px;background:#fde3e3;color:#e04848;font-size:14px','❌ separate branch: not in the loop',P1);pop(t);P1.style.opacity=.6;}
-  strip.innerHTML='';stampAt(120,18,'✔ MCQ 6: A) In series (in the same loop)',strip,22,-2);
+  [M,strip].forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:300,fill:'forwards'}));
+  wsCard('left:13px;top:156px;width:600px',{src:'Worksheet · Unit 9 · MCQ 6',q:'How must an ammeter be connected in a circuit to measure current?',a:'✔ A) In series (in the same loop)'});
   say(`Yes! Choice 2 is <b>in series</b>: the ammeter is <b>in the same loop</b>. Choice 1 is on a separate branch, which is wrong.`);await w(3800);}},
 
 /* 4 */ {t:'How to read a scale',run:async w=>{
@@ -251,7 +254,7 @@ Lesson.start({
   Object.assign(lab.A.style,{background:'#18a058',color:'#fff',transform:'scale(1.2)'});
   say(`She turns the dial to <b>A</b>, for <b>amps</b>. Now it works as an <b>ammeter</b>, measuring current! 📟`);await w(3000);
   await m.set(2.2,1500);
-  const Q=box(467,8,479,112,`<div style="font-size:13px;font-weight:800;color:#8a78cc;letter-spacing:.05em">WORKSHEET · UNIT 9 · Q18</div><div style="font-size:18px;font-weight:700;line-height:1.35;margin-top:4px">Sofia's multimeter is switched to measure current. Which is the current in her circuit?</div>`);pop(Q);
+  const Q=box(467,8,479,112,`<div style="font-size:13px;font-weight:800;color:#8a78cc;letter-spacing:.05em">WORKSHEET · UNIT 9 · Q18</div><div style="font-size:17px;font-weight:700;line-height:1.3;margin-top:4px">Sofia switches her multimeter to measure current. Which of these is the current in Sofia's circuit?</div>`);pop(Q);
   say(`The needle stops just past 2. Which is the current in her circuit? Tap your answer! 👉`);
   await pickOpts(w,['60 A','2.2 A','12 A','75 A'],1,{x:467,y:134,cols:2,ow:233,oh:58,gap:13,onWrong:i=>say(`Not quite! Look at the scale: it only goes up to <b>10 A</b>. Find the last number the needle passed.`)});
   const E=box(467,290,479,222,`<div style="font-size:18px;font-weight:800;color:#6a45d8">How to get it</div><div style="font-size:17px;font-weight:700;line-height:1.55;margin-top:4px">1️⃣ Scale: 0 to 10 A<br>2️⃣ Last number passed: <b>2</b><br>3️⃣ One small space more: + 0.2 A<br>👉 2 + 0.2 = <b>2.2 A</b></div>`);pop(E);
@@ -279,10 +282,8 @@ Lesson.start({
   say(`With <b>2 lamps</b>, the reading drops to <b>0.3 A</b>. The electrons flow more slowly. Add another one!`);goal=3;await w(2400);
   await w.until(()=>N>=3);
   say(`With <b>3 lamps</b>, only <b>0.2 A</b>. More lamps make the current <b>smaller</b>, so the lamps are dimmer too.`);await w(3400);window.AUTOPLAY=null;
-  const Q=box(587,272,359,240,`<div style="font-size:13px;font-weight:800;color:#8a78cc;letter-spacing:.05em">WORKSHEET · UNIT 9 · Q14 (b)</div><div style="font-size:17px;font-weight:700;line-height:1.35;margin-top:4px">Lily uses a meter to measure the current. Name the meter.</div>
-    <div style="font-size:21px;font-weight:800;margin-top:12px">📟 <span class="b1" style="${BL};min-width:120px">ammeter</span></div>`);pop(Q);
   say(`Exam question: what is the name of Lily's meter? It measures <b>current</b>, so it is an <b>ammeter</b>!`);await w(1400);
-  fill(Q.querySelector('.b1'));await w(400);stampAt(40,170,'✔ Ammeter',Q,22,-4);await w(2400);}},
+  wsCard('left:587px;top:272px;width:359px',{src:'Worksheet · Unit 9 · Q14 (b)',q:'The meter is used to measure current. Write down the name of the meter used to measure current.',a:'✔ Ammeter'});await w(2800);}},
 
 /* 8 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
@@ -290,8 +291,8 @@ Lesson.start({
     {src:'Worksheet · Unit 9 · MCQ 5',q:'Which measuring instrument is used to measure electric current in a circuit?',o:['Thermometer','Voltmeter','Ammeter','Ruler'],a:2,why:'The <b>am</b>meter measures <b>am</b>ps!'},
     {src:'Worksheet · Unit 9 · MCQ 6',q:'How must an ammeter be connected in a circuit to measure current?',o:['In series (in the same loop)','In parallel (on a separate branch)','Outside the circuit completely','Across the switch only'],a:0,why:'<b>In series</b>: in the same loop, so every electron passes through it.'},
     {src:'Worksheet · Unit 9 · Short answer 3',q:'Name the component used in a circuit to measure current and its unit.',model:'<b>Ammeter</b>. Its unit is <b>amperes (A)</b>.'},
-    {src:'Worksheet · Unit 9 · Q14 (b)',q:'Lily investigates how the number of lamps affects the current. She uses a meter to measure the current. Name the meter.',model:'An <b>ammeter</b>.'},
-    {src:`Worksheet · Unit 9 · Q18<div style="margin:8px 0 4px">${meterImg(2.2,230)}</div>`,q:"Sofia's multimeter is switched to measure current. Which is the current in her circuit?",o:['60 A','2.2 A','12 A','75 A'],a:1,cols:4,why:'The needle is one small space (0.2 A) past 2, so the current is <b>2.2 A</b>.'},
+    {src:'Worksheet · Unit 9 · Q14 (b)',q:'Lily investigates how the number of lamps in an electrical circuit affects the current. The meter is used to measure current. Write down the name of the meter used to measure current.',model:'An <b>ammeter</b>.'},
+    {src:`Worksheet · Unit 9 · Q18<div style="margin:8px 0 4px">${meterImg(2.2,230)}</div>`,q:"Sofia switches her multimeter to measure current. Which of these is the current in Sofia's circuit?",o:['60 A','2.2 A','12 A','75 A'],a:1,cols:4,why:'The needle is one small space (0.2 A) past 2, so the current is <b>2.2 A</b>.'},
   ]);}},
 
 /* 9 */ {t:'You did it!',run:async w=>{

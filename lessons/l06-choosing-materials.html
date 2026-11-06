@@ -14,7 +14,6 @@
 <script src="engine.js"></script>
 <script>
 /* Lesson 6 · Choosing materials: the property toolkit (Unit 5) */
-const STAMP=(txt,css,rot=-4)=>{const s=mk('stamp',css,txt);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:`rotate(${rot}deg)`,opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
 async function wipe(w){const k=[...stage.children];k.forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:350}));await w(400);k.forEach(e=>e.remove());}
 /* a steel nail drawn with CSS: outer box moves, inner box is rotated */
 function nail(par,x,y,len,rot){const o=mk('',`left:${x}px;top:${y}px;width:1px;height:1px;z-index:4`,null,par);
@@ -91,7 +90,8 @@ Lesson.start({
   say(`Here's a <b>hardness ladder</b>. A harder material can scratch a softer one, but not the other way round.`);
   for(let i=0;i<H.length;i++){const c=mk('tag',`left:${92+i*142}px;top:9px;background:#fff;border:2px solid #d9d2f5;font-size:16px`,H[i],bar);pop(c);beep(400+i*90,.07);await w(350);}
   await w(2600);
-  STAMP('✔ Exam MCQ 10: A) Hardness','left:300px;top:448px');
+  an(P1,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:8px;width:460px',{src:'Worksheet · Unit 5 · MCQ 10',q:'What property measures how well a material resists being scratched or dented?',a:'✔ A) Hardness'});
   say(`✅ Exam question 10: the property that measures how well a material resists being <b>scratched or dented</b> is <b>A) Hardness</b>.`);
   await w(4200);
   await wipe(w);
@@ -126,7 +126,8 @@ Lesson.start({
   D.forEach((d,i)=>{const e=mk('',`left:${12+(i%2)*458}px;top:${10+Math.floor(i/2)*52}px;width:446px;height:44px;border-radius:12px;padding:0 12px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;background:#f6f4fd`,`<b style="min-width:112px">${d[0]}</b> = ${d[1]}`,WD);pop(e,i*150);
     if(d[2])setTimeout(()=>{e.style.background='#e3f7ec';e.style.boxShadow='0 0 0 3px #18a058';},900);});
   await w(2600);
-  STAMP('✔ Exam MCQ 5: B) Brittle','left:330px;top:452px');
+  an(P4,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:487px;top:8px;width:460px',{src:'Worksheet · Unit 5 · MCQ 5',q:'Which term describes a material that breaks or shatters easily when struck?',a:'✔ B) Brittle'});
   say(`✅ Exam question 5: a material that breaks or shatters easily when struck is <b>B) Brittle</b>. Watch out: glass is <b>hard</b> to scratch, but still brittle!`);}},
 
 /* 3 */ {t:'Strength: the pull test',run:async w=>{
@@ -173,7 +174,8 @@ Lesson.start({
   const cr=label(B2,'left:40px;top:146px;color:#e04848','crumbles!');pop(cr);const hd=label(B2,'left:356px;top:146px;color:#17935b','holds ✔');pop(hd);
   say(`The chalk <b>crumbles</b>, but the steel rod holds. Strong materials can take a big <b>pull</b> or <b>push</b> without breaking.`);
   await w(3400);
-  STAMP('✔ Exam MCQ 11: B) How much pulling or pushing force it can take before breaking','left:40px;top:458px;font-size:17px',-2);
+  an(B1,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:268px;width:460px',{src:'Worksheet · Unit 5 · MCQ 11',q:'What does "strength" mean in material science?',a:'✔ B) How much pulling or pushing force it can take before breaking'});
   say(`✅ Exam question 11: strength means <b>B) how much pulling or pushing force a material can take before breaking</b>.`);}},
 
 /* 4 */ {t:'Density: packed in',run:async w=>{
@@ -211,7 +213,8 @@ Lesson.start({
     `<b style="color:#6a45d8">Density</b> = how much <b>mass</b> is packed into a given <b>volume</b>.<br><span style="font-size:15.5px">High density = heavy for its size. Low density = light for its size.</span>`);pop(DF);
   say(`Drop them in water: low-density wood <b>floats</b>, high-density lead <b>sinks</b>. Density tells us how heavy a material is <b>for its size</b>.`);
   await w(3800);
-  STAMP('✔ Exam MCQ 12: B) How much mass is packed into a given volume','left:120px;top:458px;font-size:19px',-2);
+  an(B1,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:318px;width:460px',{src:'Worksheet · Unit 5 · MCQ 12',q:'What does "density" tell us about a material?',a:'✔ B) How much mass is packed into a given volume'});
   say(`✅ Exam question 12: density tells us <b>B) how much mass is packed into a given volume</b>.`);}},
 
 /* 5 */ {t:'The light test',run:async w=>{
@@ -234,19 +237,22 @@ Lesson.start({
       `🌫️ Frosted glass is <b>translucent</b>: some light gets through, but it is scattered, so everything looks blurry.`],
     wd:['🪵 Wood','#b0703a','repeating-linear-gradient(0deg,#dca46a 0 10px,#c98d52 10px 16px)','2px solid #a8743f',0,'none',0,'66px',`OPAQUE ✘<br><span style="font-weight:600">blocks all the light</span>`,'#a14c00',
       `🪵 Wood is <b>opaque</b>: it blocks <b>all</b> the light. The wall behind it stays dark.`]};
-  const tried=new Set();
+  const tried=new Set(),tags=[];
   ['g','f','wd'].forEach((k,i)=>{const s=S[k];const b=mk('bigbtn lt',`left:${22+i*313}px;top:322px;width:290px;height:62px;background:${s[1]};display:flex;align-items:center;justify-content:center;font-size:23px`,s[0]);pop(b,i*120);
     b.onclick=()=>{b.dataset.t=1;tried.add(k);beep(600+i*100,.08);
       sheet.style.background=s[2];sheet.style.border=s[3];nm.textContent=s[0];nm.style.color=s[9];
       b2.style.opacity=s[4];b2.style.filter=s[5];spot.style.opacity=s[6];spot.style.width=spot.style.height=s[7];spot.style.left=k==='f'?'2px':'12px';spot.style.top=k==='f'?'72px':'77px';spot.style.filter=k==='f'?'blur(8px)':'none';
       res.innerHTML=s[8];res.style.color=s[9];res.animate([{opacity:0,transform:'translateX(-14px)'},{opacity:1,transform:'none'}],{duration:350});
       sheet.animate([{transform:'translateY(-30px)',opacity:0},{transform:'none',opacity:1}],{duration:350});
-      if(!b.dataset.r){b.dataset.r=1;const t=mk('tag',`left:${22+i*313}px;top:396px;width:290px;text-align:center;background:#fff;border:2px solid ${s[1]};color:${s[9]}`,s[8].split('<br>')[0]);pop(t);}
+      if(!b.dataset.r){b.dataset.r=1;const t=mk('tag',`left:${22+i*313}px;top:396px;width:290px;text-align:center;background:#fff;border:2px solid ${s[1]};color:${s[9]}`,s[8].split('<br>')[0]);pop(t);tags.push(t);}
       say(s[10]);};});
   window.AUTOPLAY=()=>{const b=[...document.querySelectorAll('.lt')].find(x=>!x.dataset.t);if(b)b.click();};
   await w.until(()=>tried.size===3);
   await w(3200);
-  STAMP('✔ Exam MCQ 17: B) It lets light pass straight through clearly','left:120px;top:452px;font-size:19px',-2);
+  window.AUTOPLAY=null;
+  stage.querySelectorAll('.lt').forEach(b=>{b.style.pointerEvents='none';an(b,[{opacity:1},{opacity:0}],{duration:300});});
+  tags.forEach(t=>an(t,[{transform:'none'},{transform:'translateY(50px)'}],{duration:400}));
+  wsCard('left:13px;top:318px;width:933px',{src:'Worksheet · Unit 5 · MCQ 17',q:'What does "transparent" mean when describing glass or clear plastic?',a:'✔ B) It lets light pass straight through clearly'});
   say(`✅ Exam question 17: <b>transparent</b> means <b>B) it lets light pass straight through clearly</b>, like window glass or clear plastic.`);}},
 
 /* 6 */ {t:'Hot handles',run:async w=>{
@@ -291,10 +297,11 @@ Lesson.start({
     `<span style="color:#e04848">Heat flows through: 🥈 silver · 🥫 aluminium · 🔩 iron (metals)</span><span>|</span><span style="color:#17935b">Heat is stopped by: 🪵 wood · 🧴 plastic</span>`);pop(S);
   say(`Remember: silver, aluminium and iron are metals, so they <b>conduct</b> heat. Wood and plastic are <b>insulators</b>.`);
   await w(3400);
-  STAMP('✔ Exam MCQ 7: C) Wood','left:30px;top:422px;font-size:20px',-3);
+  an(S,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:348px;width:460px',{src:'Worksheet · Unit 5 · MCQ 7',q:'Which material is a good thermal insulator (does not conduct heat well)?',a:'✔ C) Wood'});
   say(`✅ Exam question 7: the good thermal insulator is <b>C) Wood</b>.`);
   await w(2600);
-  STAMP('✔ Exam MCQ 13: A) It is a good electrical and thermal insulator','left:300px;top:462px;font-size:17px',-2);
+  wsCard('left:487px;top:348px;width:460px',{src:'Worksheet · Unit 5 · MCQ 13',q:'Why is plastic used to cover the handles of cooking pots and electrical tools?',a:'✔ A) It is a good electrical and thermal insulator'});
   say(`✅ Exam question 13: plastic covers pot and tool handles because <b>A) it is a good electrical and thermal insulator</b>.`);}},
 
 /* 7 */ {t:'Engineer challenge',run:async w=>{

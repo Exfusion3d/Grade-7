@@ -19,7 +19,6 @@
 .ion{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
 .lbl{position:absolute;background:#1f2433;color:#fff;border-radius:12px;padding:6px 12px;font-size:15px;font-weight:700;line-height:1.3}
 .ansbox{position:absolute;background:#fff8e6;border:3px solid #f2c200;border-radius:18px;padding:10px 16px;font-size:17px;font-weight:700;line-height:1.35}
-.sum small{display:block;font-size:12.5px;color:#8a78cc;font-weight:800;letter-spacing:.05em}
 .ansbox small{display:block;font-size:12.5px;color:#8a78cc;font-weight:800;letter-spacing:.05em}
 </style>
 </head>
@@ -100,14 +99,14 @@ Lesson.start({
   await w.until(()=>done.size===keys.length&&!busy);
   await w(1500);
   tiles.forEach(t=>an(t,[{opacity:.45},{opacity:0}],{duration:400}));
-  const S=mk('sum','left:527px;top:8px;width:419px;height:300px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 16px;font-size:16.5px;font-weight:700;line-height:1.4');pop(S);
   const h1=mk('','left:14px;top:150px;font-size:15px;font-weight:700;color:#17935b','⚙️ They are all <b>metals</b>!',B1),h2=mk('','left:14px;top:150px;font-size:15px;font-weight:700;color:#c43030','🧴 Non-metals, plastics, natural materials and air',B2);pop(h1);pop(h2);
   say(`Great testing! 🎉 Every <b>metal</b> lit the bulb. Everything else was an <b>insulator</b>.`);await w(3000);
-  const L=[[`<small>MCQ 11 · good electrical conductor?</small>✔ <b>B) Copper</b> (not plastic, glass or rubber)`],[`<small>Q15 · underline the good conductor</small>wood, plastic, <u><b>metal</b></u>, air`],[`<small>Q16 · could NOT make electric wires</small>steel, copper, <u><b>cotton</b></u>, aluminium`]];
+  an(P,[{opacity:1},{opacity:0}],{duration:300});
+  const L=[['left:13px;top:8px;width:933px',{src:'Worksheet · Unit 9 · MCQ 11',q:'Which of the following materials is a good electrical conductor?',a:'✔ B) Copper'}],
+    ['left:13px;top:126px;width:460px',{src:'Worksheet · Unit 9 · Q15',q:'Which of these materials is a good conductor of electricity? Underline one material.<br><span style="font-weight:600;color:#626a80">wood &nbsp; plastic &nbsp; metal &nbsp; air</span>',a:'✔ metal'}],
+    ['left:487px;top:126px;width:459px',{src:'Worksheet · Unit 9 · Q16',q:'Which of these materials could not be used to make electric wires? Underline one material.<br><span style="font-weight:600;color:#626a80">steel &nbsp; copper &nbsp; cotton &nbsp; aluminium</span>',a:'✔ cotton'}]];
   const says=[`Exam time! <b>MCQ 11</b>: which is a good electrical conductor? <b>B) Copper</b>.`,`<b>Q15</b>: which is a good conductor: wood, plastic, metal or air? <b>Metal</b>!`,`<b>Q16</b>: which could <b>not</b> make electric wires? <b>Cotton</b>, because it's an insulator. ✅`];
-  for(let i=0;i<3;i++){const d=mk('',`position:relative;margin-bottom:12px;background:#e3f7ec;border-radius:14px;padding:8px 12px`,L[i][0],S);d.style.position='relative';
-    an(d,[{opacity:0,transform:'translateX(30px)'},{opacity:1,transform:'none'}],{duration:450});beep(700+i*80,.08);say(says[i]);await w(3000);}
-  yay();}},
+  for(let i=0;i<3;i++){wsCard(L[i][0],L[i][1]);say(says[i]);await w(3000);}}},
 
 /* 3 */ {t:'Free electrons',run:async w=>{
   say(`Why do metals conduct, but plastic doesn't? Let's zoom in to the <b>particles</b>! 🔍`);await w(2400);
@@ -134,9 +133,8 @@ Lesson.start({
   const ok=mk('tag','left:120px;top:286px;background:#18a058;color:#fff;z-index:5','➡️ Electrons flow = current!',M);pop(ok);
   const no=mk('tag','left:140px;top:286px;background:#e04848;color:#fff;z-index:5','🔒 Stuck: no current',Pl);pop(no);loop(no,[{transform:'translateX(-4px)'},{transform:'translateX(4px)'}],120,{direction:'alternate',iterations:8});
   say(`In the metal, the free electrons <b>flow</b> along. That's an electric current! In the plastic… nothing moves.`);await w(4000);
-  const A=mk('ansbox','left:13px;top:350px;width:933px;height:96px;font-size:19px',`<small>SHORT ANSWER 10 · the difference in terms of particles</small>Conductors have <b>free electrons</b> that can move, while insulators do <b>not</b> have free electrons that can move easily.`);pop(A);
-  say(`So here's the exam answer: conductors have <b>free electrons</b> that can move, while insulators do <b>not</b> have free electrons that can move easily.`);await w(5000);
-  stampIt('left:640px;top:458px;font-size:20px','✔ Short answer 10');await w(800);}},
+  wsCard('left:13px;top:350px;width:933px',{src:'Worksheet · Unit 9 · Short answer 10',q:'Explain the difference between conductors and insulators in terms of particles.',a:'✔ Conductors have free electrons that can move, while<br>insulators do not have free electrons that can move easily.'}).querySelector('.stamp').style.marginTop='4px';
+  say(`So here's the exam answer: conductors have <b>free electrons</b> that can move, while insulators do <b>not</b> have free electrons that can move easily.`);await w(5800);}},
 
 /* 4 */ {t:'Inside a wire',run:async w=>{
   const P=panel(13,8,933,300,'✂️ A cut-away electric wire','');pop(P);
@@ -195,17 +193,16 @@ Lesson.start({
   lamp.style.filter='none';lamp.style.opacity=1;loop(lamp,[{filter:'drop-shadow(0 0 2px #ffd000)'},{filter:'drop-shadow(0 0 16px #ffc400)'}],600,{direction:'alternate'});
   say(`Plugged in! ⚡ Electricity flows through the <b>metal pins</b>, along the wires, and the lamp lights up.`);await w(3600);
   const p1=mk('lbl','left:330px;top:44px;z-index:5','🟡 Metal pins',g);pop(p1);
-  const A9=mk('ansbox','left:587px;top:8px;width:359px;height:166px',`<small>SHORT ANSWER 9 · why are the pins metal?</small>🟡 Metal is a <b>conductor</b>, so electricity can <b>flow into the appliance</b>.`);pop(A9);
+  wsCard('left:587px;top:8px;width:359px',{src:'Worksheet · Unit 9 · Short answer 9',q:'Explain why the pins on plugs are made from metal.',a:'✔ Metal is a conductor, so electricity can flow into the appliance.'});
   say(`Why are the <b>pins</b> made of metal? Metal is a <b>conductor</b>, so electricity can flow into the appliance.`);await w(4000);
   const hand=mk('','left:150px;top:300px;font-size:60px;line-height:1;z-index:6','✊',g);
   await an(hand,[{transform:'translateY(60px)'},{transform:'translateY(-110px)'}],{duration:700});
   const p2=mk('lbl','left:120px;top:300px;z-index:5','⚪ Plastic body',g);pop(p2);
   const ok=mk('tag','left:290px;top:250px;background:#18a058;color:#fff;z-index:6','✔ No shock!',g);pop(ok);
-  const A8=mk('ansbox','left:587px;top:186px;width:359px;height:166px',`<small>SHORT ANSWER 8 · why is the body plastic?</small>⚪ Plastic is an <b>insulator</b>. It helps <b>prevent electric shocks</b> when you hold the plug.`);pop(A8);
+  wsCard('left:587px;top:192px;width:359px',{src:'Worksheet · Unit 9 · Short answer 8',q:'Explain why the bodies of plugs are made from plastic.',a:'✔ Plastic is an insulator that helps prevent electric shocks.'});
   say(`And the <b>body</b>? Plastic is an <b>insulator</b>, so it helps <b>prevent electric shocks</b> when you hold the plug. ✊`);await w(4200);
-  const S=mk('','left:13px;top:364px;width:933px;height:148px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;padding:14px 20px;font-size:20px;font-weight:800;color:#4a2ea6;text-align:center;line-height:1.6',
+  const S=mk('','left:13px;top:376px;width:933px;height:136px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;padding:14px 20px;font-size:20px;font-weight:800;color:#4a2ea6;text-align:center;line-height:1.6',
     `🧠 Memory trick:<br><span style="color:#b08400">Metal = the path</span> for electricity &nbsp;·&nbsp; <span style="color:#555">Plastic = the shield</span> for your hand`);pop(S);
-  stampIt('left:680px;top:440px;font-size:18px','✔ Short answers 8 & 9');
   say(`Remember: <b>metal is the path</b> for the electricity, and <b>plastic is the shield</b> for your hand. 🛡️`);await w(3400);}},
 
 /* 6 */ {t:'Why not silver?',run:async w=>{
@@ -241,10 +238,8 @@ Lesson.start({
     items:[['🟠 Copper',0],['⚙️ Steel',0],['🥫 Aluminium',0],['🥈 Silver',0],['🔩 Iron',0],['🧴 Plastic',1],['🪵 Wood',1],['🧤 Rubber',1],['🪟 Glass',1],['🧵 Cotton',1],['💨 Air',1]],
     intro:`Sorting time! 🧺 Tap a material, then tap <b>Conductors</b> or <b>Insulators</b>. Press <b>Check</b> when you're done.`});
   say(r.ok===r.total?`Perfect sorting! 🎉 All the <b>metals</b> are conductors. Everything else is an insulator.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box. Remember: <b>metals conduct</b>!`);await w(3200);
-  const A=mk('ansbox','left:13px;top:10px;width:933px;height:122px;font-size:21px;z-index:10;box-shadow:0 10px 30px rgba(0,0,0,.18)',
-    `<small>SHORT ANSWER 6 · two conductors and two insulators</small>⚡ Conductors: <b>steel</b> and <b>aluminium</b><br>🚫 Insulators: <b>plastic</b> and <b>wood</b>`);pop(A);
-  say(`Short answer 6 asks for <b>two conductors</b> and <b>two insulators</b>. Use <b>steel and aluminium</b>, and <b>plastic and wood</b>. ✅`);await w(4000);
-  stampIt('left:680px;top:50px;z-index:11','✔ Short answer 6');}},
+  wsCard('left:13px;top:10px;width:933px;box-shadow:0 10px 30px rgba(0,0,0,.18)',{src:'Worksheet · Unit 9 · Short answer 6',q:'Give two examples of electrical conductors and two examples of electrical insulators.',a:'✔ Conductors: steel and aluminium.<br>Insulators: plastic and wood.'});
+  say(`Short answer 6 asks for <b>two conductors</b> and <b>two insulators</b>. Use <b>steel and aluminium</b>, and <b>plastic and wood</b>. ✅`);await w(4000);}},
 
 /* 8 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
@@ -253,8 +248,8 @@ Lesson.start({
     {src:'Worksheet · Unit 9 · MCQ 12',q:'What is a material called that does NOT allow electric current to pass through it easily?',o:['Conductor','Insulator','Circuit','Magnet'],a:1,why:'An <b>insulator</b> does not let current pass through it easily.'},
     {src:'Worksheet · Unit 9 · MCQ 13',q:'Why are electrical wires usually coated in plastic?',o:['Plastic is a good conductor that speeds up electricity','Plastic is a good insulator that prevents electric shocks','Plastic makes the wire heavier','Plastic makes the electricity shine brighter'],a:1,why:'Plastic is a good <b>insulator</b>, so it <b>prevents electric shocks</b>.',optH:72},
     {src:'Worksheet · Unit 9 · Q15',q:'Which of these materials is a good conductor of electricity?',o:['Wood','Plastic','Metal','Air'],a:2,why:'<b>Metal</b> is the conductor. Wood, plastic and air are insulators.'},
-    {src:'Worksheet · Unit 9 · Q16',q:'Which of these materials could NOT be used to make electric wires?',o:['Steel','Copper','Cotton','Aluminium'],a:2,why:'<b>Cotton</b> is an insulator, so it cannot carry a current.'},
-    {src:'Worksheet · Short answer 6',q:'Give two examples of electrical conductors and two of insulators.',model:'Conductors: <b>steel</b> and <b>aluminium</b>. Insulators: <b>plastic</b> and <b>wood</b>.'},
+    {src:'Worksheet · Unit 9 · Q16',q:'Which of these materials could not be used to make electric wires?',o:['Steel','Copper','Cotton','Aluminium'],a:2,why:'<b>Cotton</b> is an insulator, so it cannot carry a current.'},
+    {src:'Worksheet · Unit 9 · Short answer 6',q:'Give two examples of electrical conductors and two examples of electrical insulators.',model:'Conductors: <b>steel</b> and <b>aluminium</b>. Insulators: <b>plastic</b> and <b>wood</b>.'},
     {src:'Worksheet · Short answer 7',q:'Why are wires for home use not made from silver, even though silver is a better conductor than copper?',model:'<b>Silver is too expensive.</b>'},
     {src:'Worksheet · Short answer 8',q:'Explain why the bodies of plugs are made from plastic.',model:'Plastic is an <b>insulator</b> that helps <b>prevent electric shocks</b>.'},
     {src:'Worksheet · Short answer 9',q:'Explain why the pins on plugs are made from metal.',model:'Metal is a <b>conductor</b>, so electricity can <b>flow into the appliance</b>.'},

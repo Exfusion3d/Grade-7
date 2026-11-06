@@ -62,6 +62,7 @@ Lesson.start({
   say(`This is the key to today's big question: <b>what is a species?</b> Let's find out! 🔍`);}},
 
 /* 2 */ {t:'Lion + tiger = liger?',run:async w=>{
+  const pre=new Set(stage.children);
   const lion=mk('','left:40px;top:40px;font-size:100px;line-height:1','🦁'),tiger=mk('','left:250px;top:40px;font-size:100px;line-height:1','🐯');
   an(lion,[{transform:'translateX(-200px)'},{transform:'none'}],{duration:1000});an(tiger,[{transform:'translateX(700px)'},{transform:'none'}],{duration:1200});
   mk('','left:18px;top:160px;width:160px;text-align:center;font-size:15px;font-weight:800;color:#d66a0a','Lion');
@@ -94,7 +95,9 @@ Lesson.start({
   mk('','left:20px;top:116px;width:420px;font-size:17px;font-weight:700;line-height:1.35','Ligers are <b style="color:#e04848">infertile</b>.<br>➜ <b>DIFFERENT species</b>',B);
   say(`Lion plus tiger gives an <b>infertile</b> liger, so lions and tigers are <b>different species</b>.`);
   await w(3000);
-  stampIn('✔ Q3: ligers are infertile, so lions &amp; tigers are different species','left:78px;top:446px;font-size:20px');
+  // The lion + tiger animation above makes way for the worksheet question (the two panels stay).
+  [...stage.children].filter(e=>!pre.has(e)&&e!==A&&e!==B).forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:300}));
+  wsCard('left:13px;top:8px;width:933px',{src:'Worksheet · Unit 4 · Q3',q:'Explain why biologists say that lions and tigers belong to different species, even though they can sometimes reproduce together.',a:'✔ Lions and tigers produce infertile offspring (ligers) that cannot reproduce.'});
   say(`✅ Exam answer: you're only the same species if your offspring are <b>fertile</b>. Lions and tigers make <b>infertile</b> ligers, so they are <b>different species</b>.`);}},
 
 /* 3 */ {t:'What is a species?',run:async w=>{
@@ -108,8 +111,11 @@ Lesson.start({
   for(const s of words){s.style.opacity=1;if(s.animate)s.animate([{opacity:0,transform:'translateY(8px)'},{opacity:1,transform:'none'}],{duration:250});await w(70);}
   await w(800);
   say(`A <b>species</b> is a group of living things that can mate with each other to produce <b>fertile offspring</b>. 🌟`);
-  const t7=mk('tag','left:640px;top:112px;background:#e3f7ec;color:#17935b','✔ This is the Q7(a) answer!',P);pop(t7);
-  await w(4200);
+  await w(3000);
+  an(P,[{opacity:1},{opacity:0}],{duration:300});
+  // (extra space under the long one-line question so the tilted answer stamp does not touch it)
+  wsCard('left:13px;top:8px;width:933px',{src:'Worksheet · Unit 4 · Q7(a)',q:'The mountain zebra belongs to the species <i>Equus zebra</i>. Define the term <b>species</b>.',a:'✔ A group of living things that can produce fertile offspring.'}).querySelector('.q').style.marginBottom='18px';
+  await w(2400);
   const N=panel(13,170,560,342,'🏷️ Every species has a two-part name','Mountain zebras are <i>Equus zebra</i>. Scientists everywhere use the same name, in any language.');pop(N);
   const tag=mk('','left:130px;top:52px;width:300px;height:64px;border-radius:16px;background:#fff8e6;border:3px solid #f2c200',null,N);pop(tag);
   const g=mk('','left:150px;top:58px;font-size:38px;font-weight:800;font-style:italic;color:#2c66cf','Equus',N),s=mk('','left:290px;top:58px;font-size:38px;font-weight:800;font-style:italic;color:#d66a0a','zebra',N);pop(g);pop(s,150);
@@ -129,14 +135,15 @@ Lesson.start({
   say(`The second part tells you the <b>exact species</b>: only mountain zebras. Together, <b><i>Equus zebra</i></b>! 🏷️`);
   await w(3400);
   const Q=panel(587,170,359,342,'📝 Worksheet MCQ 5','');pop(Q);
-  mk('','left:16px;top:42px;width:325px;font-size:15px;font-weight:700;line-height:1.35','A group of organisms that can mate to produce <b>fertile offspring</b> is a…',Q);
+  mk('','left:16px;top:42px;width:325px;font-size:15px;font-weight:700;line-height:1.35','Which term describes a group of living organisms that can mate with each other to produce fertile offspring?',Q);
   const O=['A) Family','B) Kingdom','C) Species','D) Habitat'].map((t,i)=>{const e=mk('',`left:${16+(i%2)*168}px;top:${108+Math.floor(i/2)*66}px;width:152px;height:52px;border-radius:14px;border:3px solid #e3e0f0;background:#fff;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;transition:all .2s`,t,Q);pop(e,i*80);return e;});
   say(`Your worksheet asks this as a multiple-choice question. Which word is it? 🤔`);
   await w(1200);
   for(let k=0;k<7;k++){O.forEach((e,i)=>{e.style.background=i===k%4?'#efe9ff':'#fff';e.style.borderColor=i===k%4?'#6a45d8':'#e3e0f0';});beep(500+k*40,.05);await w(220);}
   O.forEach((e,i)=>{e.style.background=i===2?'#e3f7ec':'#fff';e.style.borderColor=i===2?'#18a058':'#e3e0f0';e.style.opacity=i===2?1:.45;});
   an(O[2],[{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:500});
-  stampIn('✔ C) Species','left:690px;top:430px;font-size:24px');
+  await w(700);an(Q,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:587px;top:170px;width:359px',{src:'Worksheet · Unit 4 · MCQ 5',q:'Which term describes a group of living organisms that can mate with each other to produce fertile offspring?',a:'✔ C) Species'});
   say(`✅ It's <b>C) Species</b>! Not family, kingdom or habitat. Species is all about <b>fertile offspring</b>.`);}},
 
 /* 4 */ {t:'Look-alikes',run:async w=>{
@@ -192,7 +199,9 @@ Lesson.start({
     an(d,[{transform:'none'},{transform:`translate(${x-x0}px,${y-y0}px)`}],{duration:700,delay:i*120,easing:'cubic-bezier(.3,1.3,.5,1)'});beep(600+i*40,.05,'triangle',.08,i*.12);});
   say(`So scientists <b>classify</b> them: they put living things into <b>groups</b>, just like the library shelves. 🗂️`);
   await w(3600);
-  stampIn('✔ MCQ 15: A) To make it easier to study the huge variety of life','left:86px;top:440px;font-size:21px');
+  // The library analogy is done: its panel makes way for the worksheet question.
+  an(L,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:8px;width:460px',{src:'Worksheet · Unit 4 · MCQ 15',q:'Why do scientists put living things into groups (classification)?',a:'✔ A) To make it easier to study and understand the huge variety of life on Earth'});
   say(`✅ Why do we classify? <b>A) To make it easier to study and understand the huge variety of life on Earth.</b>`);}},
 
 /* 6 */ {t:'Sort the animals',run:async w=>{

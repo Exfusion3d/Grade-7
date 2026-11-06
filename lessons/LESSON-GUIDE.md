@@ -1,7 +1,7 @@
 # How to build a lesson
 
 Every lesson is ONE html file in `lessons/` that loads the shared engine. Copy `lessons/_template.html` to start.
-The style reference is `../adventure.html` (the approved pilot): read its scenes to match tone, pacing, colours and animation richness.
+The style reference is `l05-metals-nonmetals.html` (the approved pilot): read its scenes to match tone, pacing, colours and animation richness.
 The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 
 ## Audience and tone
@@ -14,7 +14,8 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 ## Lesson shape (6–9 scenes)
 1. A hook scene that sets up the big idea with an animation.
 2. 3–6 teaching scenes, each explaining one idea with its own animation, covering ALL the lesson's worksheet questions.
-   Say the exam answer out loud and show it on screen (e.g. a `stamp`), as the pilot does ("✔ Answer: B) Left and middle").
+   Say the exam answer out loud and show it on screen with `wsCard`, which shows the worksheet question word for word
+   and stamps the answer under it. Never show an answer without its question.
 3. At least one hands-on moment (sortGame, a button the student taps, a slider, a toggle, a "which one?" pick).
 4. A last-but-one or last "Exam check" scene using `examCheck(w,[...])` with the lesson's real worksheet questions:
    MCQs as `{src,q,o,a,why}`, written questions as `{src,q,model}`. Cover every worksheet question of the lesson
@@ -41,6 +42,8 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 - `panel(x,y,w,h,title,caption)` → panel element (children are positioned inside it).
 - `btn(cls, css, html, onclick)` — clickable element. Classes: `bigbtn` (big coloured), `ex-btn` (purple), `ex-btn green`.
 - `sortGame(w,{bins, items:[[text,binIndex]], top, colors, intro})` → `{ok,total,wrong}` after the student presses Check.
+- `wsCard(css,{src,q,a},parent?)` — worksheet card: `src` label ('Worksheet · Unit 5 · MCQ 10'), the question `q`
+  word for word, then the answer `a` ('✔ A) Hardness') stamped underneath. `css` gives left/top/width; height is automatic.
 - `ask(w,{q,o,a,why,src,top})`, `reveal(w,{q,model,src,top})`, `examCheck(w, list, {title})`.
 - CSS helper classes: `stamp`, `card`, `panel`, `tag`, `chipk`, `clue`, `info`, `big-emoji`, `legend`.
 - Periodic-table helpers also exist (`makeTable`, `flyFrom`, `SYM`, `NAME`, `kind`) if useful.

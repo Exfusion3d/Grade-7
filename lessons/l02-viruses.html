@@ -23,7 +23,6 @@
 .chk .n{flex:none;width:130px;font-size:18px;font-weight:800}
 .chk .why{padding-right:40px;font-size:15.5px;font-weight:600;color:#3a3f52;line-height:1.25}
 .chk .x{position:absolute;right:14px;top:10px;font-size:30px}
-.mstamp{white-space:normal!important;text-align:center;font-size:15px!important;padding:5px 10px!important;border-width:3px!important;line-height:1.25}
 .speech{position:absolute;background:#fff;border:3px solid #d63f8c;border-radius:20px;padding:12px 18px;font-size:20px;font-weight:800;color:#8a1f55}
 </style>
 </head>
@@ -133,7 +132,9 @@ const SCENES=[
   an(v,[{opacity:1},{opacity:0}],{duration:400});
   await w(1800);bang.remove();
   const res=mk('','left:200px;top:150px;width:530px;text-align:center;font-size:28px;white-space:nowrap;font-weight:800;color:#4a2ea6;background:#ffffffd9;border-radius:18px;padding:8px','1 virus in ➜ many copies out!',P);pop(res);
-  STAMP(290,260,'MCQ 4 ✔ C) By invading a host cell and forcing it to make copies of the virus',P,'width:350px','mstamp');
+  // Clear the scattered copies from the middle, then show the worksheet card there.
+  copies.forEach((c,i)=>{const x=spots[i][0]+(spots[i][0]-600)*0.6,y=spots[i][1]+(spots[i][1]-190)*0.6;if(x>125&&x<765&&y>178&&y<370)an(c,[{opacity:1},{opacity:0}],{duration:300});});
+  wsCard('left:170px;top:222px;width:590px',{src:'Worksheet · Unit 4 · MCQ 4',q:'How do viruses multiply or spread?',a:'✔ C) By invading a host cell and forcing it to make copies of the virus'},P);
   say(`So for MCQ 4: viruses multiply <b>by invading a host cell and forcing it to make copies</b> of the virus. Answer C!`);await w(3600);
   const s=mk('sent','left:13px;top:418px;width:933px;height:90px;font-size:22px','<span>Viruses can only&nbsp;</span><span class="gap">?</span><span>&nbsp;when they are inside a living cell.</span>');pop(s);await w(1200);
   fillGap(s.querySelector('.gap'),'replicate');
@@ -152,7 +153,7 @@ const SCENES=[
     if(i===0)say(S[0]);if(i===2)say(S[1]);if(i===4)say(S[2]);
     await w(500);const x=r.querySelector('.x');x.textContent='❌';pop(x);beep(260,.12,'square',.05);r.style.background='#fff5f5';await w(i===1||i===3?2600:900);}
   await w(1200);
-  STAMP(18,330,'MCQ 3 ✔ B) It cannot carry out the seven life processes on its own',L,'width:286px','mstamp');
+  wsCard('left:9px;top:280px;width:306px',{src:'Worksheet · Unit 4 · MCQ 3',q:'Why is a virus considered non-living by most scientists?',a:'✔ B) It cannot carry out the seven life processes on its own.'},L);
   say(`Zero out of seven! ❌ That's why most scientists say a virus is <b>non-living</b>: it <b>cannot carry out the seven life processes on its own</b>. Answer B!`);await w(3800);}},
 
 /* 6 */ {t:'Fill the gaps',run:async w=>{

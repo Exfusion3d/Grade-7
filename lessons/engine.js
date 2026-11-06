@@ -211,6 +211,12 @@ async function reveal(w,{q,model,src,top=40,think='Think of your answer first…
   const m=mk('ex-model',`top:${y}px`,`<b class="t">Model answer</b>${model}`);pop(m);beep(700,.1);
   say('Here is a model answer. '+model);return true;}
 
+/* Worksheet card: the exam question word for word, then its answer stamped underneath.
+   css positions the card (left/top/width); src like 'Worksheet · Unit 5 · MCQ 10'; a like '✔ A) Hardness'. */
+function wsCard(css,{src,q,a},parent){const c=mk('ws-card',css+';z-index:20',`<div class="src">${src}</div><div class="q">${q}</div><div class="stamp">${a}</div>`,parent);
+  pop(c);an(c.querySelector('.stamp'),[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-2deg)',opacity:1}],{duration:500,delay:500,fill:'both',easing:'cubic-bezier(.5,1.6,.5,1)'});
+  setTimeout(yay,500);return c;}
+
 /* Run a list of exam questions one after another, with a "Next question" button between them. */
 async function examCheck(w,list,{title='Exam check'}={}){
   let right=0,mcq=0;

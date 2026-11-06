@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Atom Adventure">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Periodic Table Adventure: Metals &amp; Non-metals</title>
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+<script src="engine.js"></script>
+<script>
+/* Lesson 5: the original pilot lesson (formerly adventure.html), now on the shared engine. */
+Lesson.start({
+  id:'l05', num:5, unit:5, emoji:'⚛️', title:'Periodic Table Adventure',
+  intro:`Hi! I'm <b>Professor Atom</b> ⚛️ Ready to explore the Periodic Table? Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Meet the Periodic Table',run:async w=>{
+  const T=makeTable({x:66,y:14,s:46,nums:true});
+  T.all().forEach(o=>{o.el.style.opacity=0;an(o.el,[{transform:'translateY(-460px) rotate(-40deg)',opacity:0},{transform:'none',opacity:1}],{duration:750,delay:o.z*11,easing:'cubic-bezier(.3,1.35,.5,1)'});});
+  for(let i=0;i<12;i++)beep(400+i*60,.04,'sine',.05,i*.1);
+  say(`Hi! I'm <b>Professor Atom</b> 👋 This is the <b>Periodic Table</b>: a map of all <b>118 elements</b>, the building blocks of EVERYTHING!`);
+  await w(3000);
+  const info=mk('info','left:230px;top:466px;width:500px;height:46px','👆 Tap any box to meet that element!');pop(info);
+  T.all().forEach(o=>{o.el.classList.add('click');o.el.onclick=()=>{const k=kind(o.sym),L=KLABEL[k];o.el.classList.add('on');beep(500+o.z*4,.08);
+    o.el.animate([{transform:'scale(1)'},{transform:'scale(1.5)'},{transform:'scale(1)'}],{duration:400});
+    info.innerHTML=`<b style="font-size:22px">${o.sym}</b> = ${NAME[o.z-1]} &nbsp;<span class="k" style="background:${L[1]};color:${L[2]}">${L[0]}</span>`;};});
+  say(`Every box is <b>one element</b>. Tap any box to find out its name, and whether it is a <b>metal</b> or a <b>non-metal</b>. Try Fe, Au and O!`);}},
+
+/* 1 */ {t:'Where do metals live?',run:async w=>{
+  const T=makeTable({x:66,y:14,s:46,nums:true});
+  say(`🎯 Exam question: <b>Where are metals found on the Periodic Table?</b> Let's colour it in and find out!`);
+  await w(2800);
+  T.all().filter(o=>kind(o.sym)==='metal').forEach(o=>{o.el.style.transitionDelay=(o.c*70+(o.r>=9?250:0))+'ms';o.el.classList.add('on');});
+  for(let i=0;i<18;i++)beep(300+i*30,.05,'sine',.05,i*.07);
+  say(`<b style="color:#d66a0a">Metals</b> live on the <b>LEFT</b> and in the <b>MIDDLE</b>. That's most of the table: about <b>4 out of every 5</b> elements are metals!`);
+  await w(4600);
+  T.all().filter(o=>kind(o.sym)==='nonmetal').forEach(o=>{o.el.style.transitionDelay=(o.r*110)+'ms';o.el.classList.add('on');});
+  for(let i=0;i<6;i++)beep(700+i*50,.06,'sine',.05,i*.1);
+  say(`<b style="color:#2c66cf">Non-metals</b> live in the <b>TOP RIGHT</b> corner. Sneaky one: <b>hydrogen (H)</b> is a non-metal too, even though it sits on the left!`);
+  await w(1400);T.tiles.H.el.classList.add('hl');await w(3200);T.tiles.H.el.classList.remove('hl');
+  const X=c=>66+(c-1)*46-1.5,Y=r=>14+(r-1)*46-1.5;
+  const svg=mk('','left:0;top:0;width:960px;height:520px;pointer-events:none;z-index:8',`<svg width="960" height="520"><path d="M${X(13)} ${Y(2)} V${Y(3)} H${X(14)} V${Y(5)} H${X(15)} V${Y(6)} H${X(17)} V${Y(8)}" fill="none" stroke="#1f2433" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="700" stroke-dashoffset="700"/></svg>`);
+  an(svg.querySelector('path'),[{strokeDashoffset:700},{strokeDashoffset:0}],{duration:1800,easing:'ease-in-out'});
+  T.all().filter(o=>kind(o.sym)==='semi').forEach(o=>{o.el.style.transitionDelay='1s';o.el.classList.add('on');});
+  say(`The zig-zag <b>staircase line</b> separates them. The purple elements next to it are "in-between" (you don't need those for your exam).`);
+  const lg=mk('legend','left:168px;top:22px;width:440px',`<span class="chipk" style="background:#f7ad5f;color:#5c2c00">Metals</span><span class="chipk" style="background:#5d9cf5;color:#fff">Non-metals</span><span class="chipk" style="background:#c9b6f4;color:#3b2477">In-between</span>`);pop(lg);
+  await w(4400);
+  an(lg,[{transform:'none'},{transform:'translate(92px,444px)'}],{duration:500});
+  wsCard('left:164px;top:10px;width:446px',{src:'Worksheet · Unit 5 · MCQ 1',q:'Where are metals generally located on the Periodic Table?',a:'✔ B) Left and middle'});
+  say(`✅ So the exam answer is <b>B) Left and middle</b>. Metals on the left and middle, non-metals top right!`);}},
+
+/* 2 */ {t:'Metal superpowers',run:async w=>{
+  say(`Metals have <b>superpowers</b>! 🦸 These are the <b>properties of metals</b>. Let's see them one at a time…`);
+  await w(2000);
+  const D=[['✨ Shiny','Metals have a <b>shiny</b> surface.','shiny',`Metals are <b>shiny</b>. Polish a spoon and it gleams! ✨`],
+    ['⚡ Conduct electricity','Electricity flows through metals easily.','elec',`Metals <b>conduct electricity</b>. Tiny electrons zoom through them and light the bulb!`],
+    ['🔥 Conduct heat','Heat travels through fast, so metals <b>feel cold</b> to touch.','heat',`Metals <b>conduct heat</b>. That's also why metal <b>feels cold</b>: it carries heat away from your hand.`],
+    ['🔨 Malleable','Can be <b>hammered</b> into flat sheets.','mall',`<b>Malleable</b> = can be hammered into flat sheets without breaking. A <b>mall</b>et is a hammer!`],
+    ['〰️ Ductile','Can be pulled into thin <b>wires</b>.','duct',`<b>Ductile</b> = can be pulled into thin <b>wires</b>, like the copper wire in your walls.`],
+    ['🔔 Sonorous','Makes a <b>ringing</b> sound when hit.','bell',`<b>Sonorous</b> = rings when you hit it. <b>Son</b>orous sounds like <b>son</b>g! 🎵`],
+    ['💪 Strong & solid','Strong and tough. Most are <b>solid</b> at room temperature.','strong',`Metals are <b>strong and tough</b>, and most are <b>solid</b> at room temperature.`]];
+  for(let i=0;i<D.length;i++){const x=i<4?13+i*237:131+(i-4)*237,y=i<4?8:266;const a=card(x,y,222,244,D[i][0],D[i][1],'#d66a0a');M[D[i][2]](a);say(D[i][3]);beep(600+i*60,.1);await w(3400);}
+  say(`That's the full set! 🏆 <b>Shiny, conduct heat and electricity, malleable, ductile, sonorous, strong</b>. Most are solid. These answer LOTS of exam questions!`);}},
+
+/* 3 */ {t:'Non-metals are the opposite',run:async w=>{
+  say(`Non-metals are pretty much the <b>OPPOSITE</b> of metals. Watch…`);await w(1600);
+  const D=[['🪨 Dull','Non-metals have a <b>dull</b> surface: no shine.','dull',`Non-metals are <b>dull</b>. No sparkle at all!`],
+    ['💥 Brittle','Solid non-metals <b>shatter</b> when hit (like sulfur).','brittle',`Solid non-metals are <b>brittle</b>: hit them and they shatter into pieces instead of flattening.`],
+    ['🚫 Insulators','They do <b>not</b> conduct heat or electricity.','ins',`Non-metals are <b>insulators</b>: they do <b>not</b> conduct heat or electricity. The electrons get stuck!`],
+    ['☁️ Many are gases','Lots of non-metals are <b>gases</b> at room temperature.','gases',`<b>Many non-metals are gases</b> at room temperature, like oxygen, nitrogen and helium.`]];
+  for(let i=0;i<4;i++){const a=card(13+i*237,8,222,244,D[i][0],D[i][1],'#2c66cf');M[D[i][2]](a);say(D[i][3]);beep(500+i*80,.1);await w(3300);}
+  const rows=[['','METALS','NON-METALS'],['At room temp','Most are solid','Many are gases'],['Look','Shiny ✨','Dull 🪨'],['Heat','Conduct heat 🔥','Do not conduct heat'],['Electricity','Conduct electricity ⚡','Do not conduct electricity'],['When hit','Malleable &amp; ring 🔔','Brittle 💥']];
+  const box=mk('cmp','left:13px;top:262px;width:933px;height:250px','');
+  say(`Here's the side-by-side summary. This is exactly the <b>"properties of metals and non-metals"</b> question on your sheet!`);
+  for(let i=0;i<rows.length;i++){const r=document.createElement('div');r.className='row'+(i?'':' h');r.innerHTML=`<div>${rows[i][0]}</div><div class="${i?'m':''}">${rows[i][1]}</div><div class="${i?'n':''}">${rows[i][2]}</div>`;box.appendChild(r);
+    r.animate([{opacity:0,transform:'translateX(-30px)'},{opacity:1,transform:'none'}],{duration:400,fill:'backwards'});beep(500+i*70,.06);await w(500);}}},
+
+/* 4 */ {t:'Detective time',run:async w=>{
+  const h=mk('','left:0;top:14px;width:960px;text-align:center;font-size:28px;font-weight:800;color:#4a2ea6','🕵️ CASE FILE: The Mystery Material');pop(h);
+  say(`Detective time! 🕵️ A material has been found. Let's read the clues and work out if it's a <b>metal</b> or a <b>non-metal</b>.`);
+  await w(2200);
+  const C=[['💥','It is <b>brittle</b>'],['🪨','It is <b>dull</b>'],['🚫⚡','It does <b>not</b> conduct electricity']];
+  const mag=mk('','left:60px;top:60px;font-size:54px;z-index:9','🔍');
+  for(let i=0;i<3;i++){const c=mk('clue',`left:${95+i*280}px;top:76px;width:210px;height:130px`,`<div class="e">${C[i][0]}</div>${C[i][1]}`);
+    an(c,[{transform:'rotateY(90deg)',opacity:0},{transform:'none',opacity:1}],{duration:500});
+    an(mag,[{transform:`translate(${i?(i-1)*280+60:0}px,0)`},{transform:`translate(${i*280+60}px,60px)`}],{duration:500});beep(700,.08);await w(1500);}
+  an(mag,[{opacity:1},{opacity:0}],{duration:300});
+  const q=mk('','left:0;top:232px;width:960px;text-align:center;font-size:26px;font-weight:800','Is it a METAL or a NON-METAL?');pop(q);
+  const bm=mk('bigbtn','left:230px;top:290px;width:230px;height:84px;background:#e8862e;display:flex;align-items:center;justify-content:center','🔩 Metal');
+  const bn=mk('bigbtn','left:500px;top:290px;width:230px;height:84px;background:#2c66cf;display:flex;align-items:center;justify-content:center','💨 Non-metal');
+  say(`What do you think? Tap your answer! 👇`);let done=false;
+  bm.onclick=()=>{if(done)return;boo();shake(bm);say(`Hmm, not quite! 🤔 Are metals shiny or dull? Do metals conduct electricity? Try again!`);};
+  bn.onclick=()=>{if(done)return;done=true;yay();confetti(90);bm.style.opacity=.3;
+    wsCard('left:13px;top:392px;width:934px',{src:'Worksheet · Unit 5 · Short answer 9',q:'A material is brittle, dull and does not conduct electricity. Is it a metal or a non-metal?',a:'✔ It is a non-metal.'});
+    say(`Case solved! 🎉 <b>Brittle</b>, <b>dull</b> and <b>doesn't conduct electricity</b> are ALL non-metal properties, so it's a <b>non-metal</b>.`);};}},
+
+/* 5 */ {t:'The rule-breakers',run:async w=>{
+  const T=makeTable({x:300,y:8,s:20,on:true});
+  say(`Every rule has <b>rule-breakers</b>! 😈 Meet the two famous <b>exceptions</b> from your worksheet.`);await w(2400);
+  T.tiles.Hg.el.classList.add('hl');beep(600,.1);await w(900);
+  const L=panel(13,200,460,312,'💧 Mercury (Hg): a liquid metal!','<b>Mercury</b> is a metal, but it\'s the <b>ONLY metal that is liquid</b> at room temperature. It was used in old thermometers.');pop(L);
+  const tl=mk('tile on metal','left:30px;top:254px;width:60px;height:60px;font-size:24px;border-radius:12px;z-index:9','Hg');flyFrom(T.tiles.Hg,tl,30,254);
+  const drop=mk('','left:150px;top:80px;width:130px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#d2d6de 25%,#8a909c 70%,#5d636e)',null,L);
+  loop(drop,[{borderRadius:'50% 50% 50% 50%',transform:'scale(1,1)'},{borderRadius:'60% 40% 55% 45%',transform:'scale(1.12,.86) translateY(6px)'},{borderRadius:'45% 55% 40% 60%',transform:'scale(.92,1.08)'},{borderRadius:'50%',transform:'scale(1,1)'}],1800);
+  [[300,140],[110,160]].forEach(([x,y],i)=>{const d=mk('',`left:${x}px;top:${y}px;width:22px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9aa0ab 60%,#5d636e)`,null,L);loop(d,[{transform:'translateX(0)'},{transform:`translateX(${i?-12:12}px)`}],900,{direction:'alternate'});});
+  mk('','left:340px;top:56px;font-size:58px','🌡️',L);
+  say(`<b>Mercury</b> is a metal, but it's the <b>only metal that is LIQUID</b> at room temperature. Look at it wobble! 💧`);
+  await w(4600);
+  T.tiles.C.el.classList.add('hl');beep(700,.1);await w(900);
+  const R=panel(487,200,460,312,'✏️ Graphite (carbon): a non-metal that conducts!','<b>Graphite</b> is a form of <b>carbon</b>, a non-metal, but it <b>CAN conduct electricity</b>. It\'s the "lead" in your pencil!');pop(R);
+  const tc=mk('tile on nonmetal','left:504px;top:254px;width:60px;height:60px;font-size:26px;border-radius:12px;z-index:9','C');flyFrom(T.tiles.C,tc,504,254);
+  const sv=mk('','left:20px;top:40px;width:420px;height:200px',`<svg width="420" height="200"><path d="M180 50 H60 V170 H360 V50 H250" fill="none" stroke="#c86a2a" stroke-width="6" stroke-linecap="round"/><line x1="183" y1="50" x2="247" y2="50" stroke="#3a3a3a" stroke-width="12" stroke-linecap="round" stroke-dasharray="64" stroke-dashoffset="64"/></svg>`,R);
+  mk('','left:192px;top:192px;font-size:34px;background:#fff;line-height:1','🔋',R);
+  const bulb=mk('','left:362px;top:112px;font-size:40px;background:#fff;line-height:1;border-radius:50%;filter:grayscale(1);opacity:.6','💡',R);
+  const pen=mk('','left:186px;top:46px;font-size:40px;z-index:3','✏️',R);
+  say(`<b>Carbon</b> is a non-metal… but in the form of <b>graphite</b> it CAN conduct electricity! Watch the pencil complete the circuit… ✏️`);
+  await w(1800);
+  an(sv.querySelector('line'),[{strokeDashoffset:64},{strokeDashoffset:0}],{duration:1400,easing:'linear'});
+  await an(pen,[{transform:'translateX(0)'},{transform:'translateX(62px)'}],{duration:1400,easing:'linear'});
+  bulb.style.filter='none';bulb.style.opacity=1;loop(bulb,[{filter:'drop-shadow(0 0 3px #ffd000)'},{filter:'drop-shadow(0 0 20px #ffc400)'}],600,{direction:'alternate'});yay();
+  say(`💡 The bulb lights up! Graphite (carbon) is the non-metal that <b>conducts electricity</b>. Remember both rule-breakers: <b>mercury</b> and <b>graphite</b>.`);}},
+
+/* 6 */ {t:'The magnet test',run:async w=>{
+  const C=[['Fe','Iron',1,'#b9bec8'],['Au','Gold',0,'#f1c94a'],['Ni','Nickel',1,'#c7ccd4'],['Cu','Copper',0,'#e0915a'],['Co','Cobalt',1,'#9fb0c8'],['Ag','Silver',0,'#e3e7ee'],['Steel','(alloy)',1,'#a9b0bb'],['Al','Aluminium',0,'#d5d9e0']];
+  const coins=C.map((c,i)=>{const e=mk('',`left:${24+i*116}px;top:370px;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,${c[3]} 55%,#777);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.15)`,`<span style="font-size:${c[0].length>2?18:26}px">${c[0]}</span><span style="font-size:12px">${c[1]}</span>`);pop(e,i*80);return e;});
+  const mag=mk('','left:0;top:150px;font-size:96px;z-index:10;line-height:1','🧲');
+  say(`Which metals are <b>magnetic</b>? 🧲 Let's test each one with a magnet!`);
+  an(mag,[{transform:'translateX(-140px)'},{transform:'translateX(-140px)'}],{duration:10});await w(2000);
+  let px=-140;
+  for(let i=0;i<C.length;i++){const x=24+i*116-2;await an(mag,[{transform:`translateX(${px}px)`},{transform:`translateX(${x}px)`}],{duration:650,easing:'ease-in-out'});px=x;
+    if(C[i][2]){beep(1200,.06,'square',.06);await an(coins[i],[{transform:'translateY(0)'},{transform:'translateY(-128px)'}],{duration:220,easing:'ease-in'});
+      say(`${C[i][1]==='(alloy)'?'Steel':C[i][1]}… <b>CLICK!</b> It jumps to the magnet. Magnetic! ✅`);await w(700);
+      await an(coins[i],[{transform:'translateY(-128px)'},{transform:'translateY(0)'}],{duration:420,easing:'cubic-bezier(.5,0,.5,1.5)'});
+      const b=mk('',`left:${24+i*116+28}px;top:472px;font-size:30px`,'✅');pop(b);}
+    else{coins[i].animate([{transform:'rotate(0)'},{transform:'rotate(-12deg)'},{transform:'rotate(12deg)'},{transform:'rotate(0)'}],{duration:400});
+      say(`${C[i][1]}… nothing happens. <b>Not magnetic</b>. ❌`);const b=mk('',`left:${24+i*116+28}px;top:472px;font-size:30px`,'❌');pop(b);await w(900);}}
+  await an(mag,[{transform:`translateX(${px}px)`},{transform:'translateX(1000px)'}],{duration:700});
+  const m=mk('','left:150px;top:24px;width:660px;height:120px;background:#efe9ff;border:3px solid #6a45d8;border-radius:20px;text-align:center;padding:12px;font-size:22px;font-weight:800;color:#4a2ea6',
+    `Memory trick: "<u>I</u> <u>S</u>hould <u>N</u>ever <u>C</u>ry"<div style="font-size:19px;color:#1f2433;margin-top:8px">Iron · Steel · Nickel · Cobalt are magnetic 🧲</div>`);pop(m);await w(1200);
+  wsCard('left:150px;top:160px;width:660px',{src:'Worksheet · Unit 5 · MCQ 8',q:'Which set of metals are all magnetic?',a:'✔ B) Iron, steel, nickel, cobalt'});
+  say(`Only <b>iron, steel, nickel and cobalt</b> are magnetic. Gold, silver, copper and aluminium are <b>NOT</b>. That's answer <b>B</b> on your sheet!`);}},
+
+/* 7 */ {t:'Metals at work',run:async w=>{
+  say(`We choose a metal for a job <b>because of its properties</b>. Let's see four famous jobs! 👷`);await w(1800);
+  const P1=panel(13,8,460,200,'💍 Jewellery: gold &amp; silver','Gold and silver are <b>shiny</b>, attractive and <b>do not corrode</b> easily, so they stay beautiful.');pop(P1);
+  const ring=mk('','left:180px;top:40px;font-size:64px;line-height:1','💍',P1);loop(ring,[{transform:'rotate(-8deg) scale(1)'},{transform:'rotate(8deg) scale(1.08)'}],1200,{direction:'alternate'});
+  [[150,40,0],[260,60,500],[200,100,900]].forEach(([x,y,d])=>{const s=mk('',`left:${x}px;top:${y}px;font-size:22px`,'✨',P1);loop(s,[{transform:'scale(0)',opacity:0},{transform:'scale(1.2)',opacity:1},{transform:'scale(0)',opacity:0}],1400,{delay:d});});
+  say(`💍 <b>Gold and silver → jewellery</b>, because they're <b>shiny</b>, attractive and <b>don't corrode</b>.`);await w(3400);
+  const P2=panel(487,8,460,200,'🔌 Electrical wiring: copper','Copper is a great <b>conductor</b> of electricity and heat, and it\'s ductile, so it makes great wires.');pop(P2);
+  mk('','left:24px;top:62px;font-size:40px;line-height:1','⚡',P2);mk('','left:76px;top:84px;width:240px;height:7px;background:#c86a2a;border-radius:4px',null,P2);
+  for(let i=0;i<5;i++){const d=mk('','left:76px;top:82px;width:11px;height:11px;border-radius:50%;background:#2c66cf;box-shadow:0 0 6px #5aa0f0',null,P2);d.animate([{transform:'translateX(0)'},{transform:'translateX(230px)'}],{duration:1500,iterations:Infinity,delay:-i*300,easing:'linear'});}
+  const house=mk('','left:322px;top:40px;font-size:66px;line-height:1','🏠',P2);loop(house,[{filter:'drop-shadow(0 0 0 #ffd000)'},{filter:'drop-shadow(0 0 16px #ffc400)'}],700,{direction:'alternate'});
+  say(`🔌 <b>Copper → electrical wiring</b>, because it's a great <b>conductor of electricity</b>.`);await w(3400);
+  const P3=panel(13,216,460,200,'✈️ Aeroplanes: aluminium','Aluminium is <b>lightweight</b>, <b>strong</b> and <b>resistant to corrosion</b>.');pop(P3);
+  mk('','left:60px;top:44px;font-size:30px;opacity:.5','☁️',P3);mk('','left:300px;top:70px;font-size:36px;opacity:.5','☁️',P3);
+  const pl=mk('','left:0;top:60px;font-size:54px;line-height:1','✈️',P3);pl.animate([{transform:'translate(-80px,20px)'},{transform:'translate(200px,-6px)',offset:.5},{transform:'translate(500px,14px)'}],{duration:3200,iterations:Infinity,easing:'linear'});
+  say(`✈️ <b>Aluminium → aeroplanes</b>, because it's <b>lightweight</b>, <b>strong</b> and <b>doesn't corrode</b>.`);await w(3400);
+  const P4=panel(487,216,460,200,'🌉 Bridges: iron (steel)','Iron and steel are <b>strong and tough</b>, so they hold up heavy loads.');pop(P4);
+  mk('','left:50px;top:46px;width:360px;height:80px;border:7px solid #7d8796;border-bottom:none;border-radius:180px 180px 0 0',null,P4);
+  mk('','left:20px;top:118px;width:420px;height:12px;background:#5d6573;border-radius:3px',null,P4);
+  const tr=mk('','left:0;top:80px;font-size:40px;line-height:1','🚚',P4);tr.animate([{transform:'translateX(-50px) scaleX(-1)'},{transform:'translateX(470px) scaleX(-1)'}],{duration:3600,iterations:Infinity,easing:'linear'});
+  say(`🌉 <b>Iron (steel) → bridges</b>, because it's <b>strong and tough</b>.`);await w(3400);
+  const B=mk('','left:13px;top:424px;width:933px;height:88px;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:12px 18px;font-size:19px;font-weight:700',
+    `🤔 Silver is an even <b>better</b> conductor than copper… so why aren't home wires made of silver?`);pop(B);
+  say(`Tricky question: silver conducts electricity even <b>better</b> than copper. So why don't we use silver wires? 🤔`);await w(3200);
+  const tag=mk('','left:340px;top:466px;font-size:24px;font-weight:800;color:#c26a00;background:#ffe9a8;border-radius:14px;padding:4px 14px','💰 TOO EXPENSIVE!');pop(tag);loop(tag,[{transform:'rotate(-4deg) scale(1)'},{transform:'rotate(4deg) scale(1.06)'}],500,{direction:'alternate'});beep(900,.1);
+  say(`💰 Because <b>silver is too expensive</b>! Copper works well and costs much less.`);}},
+
+/* 8 */ {t:'Non-metals at work',run:async w=>{
+  say(`Non-metals have jobs too! Let's meet <b>helium</b> and <b>sulfur</b>. 🎈🟡`);await w(1800);
+  const L=panel(13,8,460,300,'🎈 Helium (He): balloons','Helium is a <b>very light gas</b> (so balloons float) and it <b>does not react</b> easily, so it\'s safe: it won\'t catch fire.');pop(L);
+  const bal=mk('','left:190px;top:150px;width:90px;height:110px;text-align:center',`<div style="font-size:80px;line-height:1">🎈</div><div style="position:absolute;left:24px;top:18px;font-weight:800;color:#fff;font-size:20px">He</div>`,L);
+  bal.animate([{transform:'translate(0,40px)'},{transform:'translate(-14px,-30px)',offset:.5},{transform:'translate(10px,-110px)'}],{duration:4200,iterations:Infinity,easing:'ease-out',direction:'alternate'});
+  say(`🎈 <b>Helium → balloons</b>. It's a <b>very light gas</b>, so balloons float up!`);await w(3200);
+  const f=mk('','left:330px;top:120px;font-size:44px','🔥',L);pop(f);loop(f,[{transform:'scale(1)'},{transform:'scale(1.15)'}],350,{direction:'alternate'});
+  const nr=mk('','left:300px;top:90px;font-size:16px;font-weight:800;color:#18a058','no reaction! 😎',L);pop(nr,300);
+  say(`And helium <b>doesn't react</b> easily, so even near a flame it's <b>safe</b>. Unlike hydrogen, which would go BOOM! 💥`);await w(3800);
+  const R=panel(487,8,460,300,'🟡 Sulfur (S): acid &amp; fertiliser','Sulfur is used to make <b>sulfuric acid</b> and <b>fertiliser</b> (to help crops grow).');pop(R);
+  const s=mk('','left:30px;top:110px;width:80px;height:80px;border-radius:14px;background:#f5d64a;color:#6b5600;font-size:40px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 #d6b21a','S',R);pop(s);
+  const a1=mk('','left:122px;top:84px;font-size:34px;transform:rotate(-25deg)','➡️',R),a2=mk('','left:122px;top:162px;font-size:34px;transform:rotate(25deg)','➡️',R);
+  await w(600);pop(a1);const fl=mk('','left:180px;top:52px;font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px','<span style="font-size:50px">🧪</span>sulfuric acid',R);pop(fl,200);
+  await w(900);pop(a2);const pl=mk('','left:180px;top:150px;font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px','<span style="font-size:50px;display:inline-block" class="plant">🌱</span>fertiliser',R);pop(pl,200);
+  loop(pl.querySelector('.plant'),[{transform:'scale(.8)'},{transform:'scale(1.25)'}],900,{direction:'alternate'});
+  say(`🟡 <b>Sulfur → sulfuric acid and fertiliser</b>.`);await w(3400);
+  const B=panel(13,316,933,196,'🔵 Name five non-metals (other than sulfur and helium)','');pop(B);
+  const F=[['C','Carbon','in pencils &amp; diamonds ✏️💎'],['O','Oxygen','the gas we breathe 🫁'],['N','Nitrogen','most of the air 🌬️'],['Cl','Chlorine','cleans swimming pools 🏊'],['P','Phosphorus','on match heads 🔥']];
+  say(`Your sheet asks for <b>five more non-metals</b>. Here they are: <b>carbon, oxygen, nitrogen, chlorine, phosphorus</b>!`);
+  for(let i=0;i<5;i++){const c=mk('',`left:${18+i*182}px;top:48px;width:170px;height:134px;text-align:center`,`<div style="width:60px;height:60px;margin:0 auto;border-radius:12px;background:#5d9cf5;color:#fff;font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center">${F[i][0]}</div><div style="font-weight:800;font-size:18px;margin-top:4px">${F[i][1]}</div><div style="font-size:13.5px;color:#555">${F[i][2]}</div>`,B);pop(c);beep(600+i*90,.08);await w(700);}}},
+
+/* 9 */ {t:'Ten metals (and an alloy!)',run:async w=>{
+  const T=makeTable({x:318,y:6,s:18,on:true});
+  say(`Your sheet asks you to <b>list ten metals</b>. Let's pull them out of the table one by one! 🎣`);await w(2200);
+  const L=[['Fe','Iron'],['Au','Gold'],['Ag','Silver'],['Cu','Copper'],['Ni','Nickel'],['Co','Cobalt'],['Hg','Mercury'],['Al','Aluminium'],['Zn','Zinc']];
+  for(let k=0;k<L.length;k++){const o=T.tiles[L[k][0]];o.el.classList.add('hl');const x=25+(k%5)*184,y=k<5?184:272;
+    const c=mk('mcard',`left:${x}px;top:${y}px;width:170px;height:78px`,`<b>${L[k][0]}</b><span>${L[k][1]}</span><em>${k+1}</em>`);flyFrom(o,c,x,y,700);beep(500+k*60,.08);
+    say(`<b>${k+1}.</b> ${L[k][1]} (${L[k][0]})`);await w(800);o.el.classList.remove('hl');}
+  say(`Number 10 on the answer key is <b>steel</b>… but wait! Steel is <b>not on the Periodic Table</b>. 🤔`);await w(2600);
+  const fe=mk('mcard','left:761px;top:272px;width:80px;height:78px;padding:0 8px','<b>Fe</b>'),c=mk('tile on nonmetal','left:860px;top:272px;width:78px;height:78px;font-size:30px;border-radius:14px','C');
+  flyFrom(T.tiles.Fe,fe,761,272);flyFrom(T.tiles.C,c,860,272);await w(1100);
+  say(`Steel is made by mixing <b>iron (Fe)</b> with a little <b>carbon (C)</b>. Mix… mix… 🌀`);
+  an(fe,[{transform:'none'},{transform:'translateX(45px) rotate(360deg) scale(.5)',opacity:0}],{duration:900});await an(c,[{transform:'none'},{transform:'translateX(-55px) rotate(-360deg) scale(.5)',opacity:0}],{duration:900});
+  const st=mk('mcard',`left:761px;top:272px;width:170px;height:78px;background:linear-gradient(135deg,#c3cad5,#8a94a3);color:#1f2433;box-shadow:0 4px 0 #6b7380`,`<b style="font-size:22px;min-width:0">⚙️</b><span>Steel</span><em style="background:#ffd84d">ALLOY</em>`);pop(st);yay();
+  say(`✨ <b>Steel is an ALLOY</b>! It's fine for your answer, but if you want a "pure" metal, use <b>lead</b> or <b>tin</b> instead.`);await w(3800);
+  const A=mk('','left:13px;top:364px;width:430px;height:148px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 16px;font-size:16.5px;line-height:1.4',
+    `<b style="font-size:19px;color:#6a45d8">What is an alloy?</b><br>A <b>mixture of a metal with one or more other elements</b>. Alloys are often stronger or harder.<br>⚙️ Steel = iron + carbon<br>🎺 Brass = copper + zinc`);pop(A);
+  say(`An <b>alloy</b> is a mixture of a metal with other elements. Steel and brass are alloys, and so is the gold in jewellery!`);await w(3000);
+  const G=mk('','left:457px;top:364px;width:489px;height:148px;background:#fff;border:3px solid #ece8f8;border-radius:20px;padding:12px 16px',
+    `<b style="font-size:19px;color:#b08400">💍 24 carat vs 18 carat gold</b><div style="font-size:14px;font-weight:800;margin-top:8px">24 carat</div><div class="g24" style="display:flex;gap:2px;height:22px"></div><div style="font-size:14px;font-weight:800;margin-top:6px">18 carat</div><div class="g18" style="display:flex;gap:2px;height:22px"></div><div class="gt" style="font-size:15px;font-weight:800;margin-top:6px;opacity:0">18 ÷ 24 = <span style="color:#b08400">75% gold</span> · 24 carat = nearly pure gold</div>`);pop(G);
+  const sq=(box,n)=>{for(let i=0;i<24;i++){const d=document.createElement('div');d.style.cssText='width:17px;border-radius:3px;background:#e2e4ea;transition:background .25s';box.appendChild(d);}return [...box.children];};
+  const a24=sq(G.querySelector('.g24')),a18=sq(G.querySelector('.g18'));
+  say(`Gold purity is measured in <b>carats</b>, out of <b>24</b>. Let's fill them up! 🟨`);await w(800);
+  for(let i=0;i<24;i++){a24[i].style.background='#e7b416';if(i<18)a18[i].style.background='#e7b416';beep(400+i*25,.03,'sine',.04);await w(90);}
+  an(G.querySelector('.gt'),[{opacity:0},{opacity:1}]);
+  say(`<b>24 carat</b> is nearly pure gold. <b>18 carat</b> is 18 parts out of 24, which is <b>75% gold</b>. The rest is other metals, so it's an alloy!`);}},
+
+/* 10 */ {t:'Sofia\'s mix-up',run:async w=>{
+  const items=[['Silver','M'],['Oxygen','N'],['Helium','N'],['Carbon','M'],['Copper','M'],['Nitrogen','N'],['Sulfur','M'],['Iron','M']];
+  const paper=mk('paper','left:20px;top:20px;width:240px;height:330px',`<div style="font-weight:800;font-family:inherit;font-size:20px;height:34px">👧 Sofia's list</div>`+items.map(i=>`<div class="r">${i[0]}</div>`).join(''));pop(paper);
+  const binM=mk('bin','left:290px;top:20px;width:310px;height:330px;border-color:#f7ad5f;background:#fff8ef','<h4 style="color:#d66a0a">Metals: <span class="n">0</span></h4>');
+  const binN=mk('bin','left:630px;top:20px;width:310px;height:330px;border-color:#5d9cf5;background:#f2f7ff','<h4 style="color:#2c66cf">Non-metals: <span class="n">0</span></h4>');
+  const slot=(bin,k)=>[(bin===binM?290:630)+20+(k%2)*140,20+60+Math.floor(k/2)*54];
+  say(`Sofia sorted a list into <b>metals</b> and <b>non-metals</b>… but she made some mistakes! First, let's watch how <b>she</b> sorted them. 👀`);await w(2600);
+  const rows=paper.querySelectorAll('.r');const chips={};let nm=0,nn=0;
+  for(let i=0;i<items.length;i++){const[nme,s]=items[i];const bin=s==='M'?binM:binN;const k=s==='M'?nm++:nn++;
+    const ch=mk('chip2',`left:${40}px;top:${20+14+34+i*32-6}px`,nme);chips[nme]=ch;rows[i].style.opacity=.3;
+    ch.offsetWidth;const[x,y]=slot(bin,k);ch.style.left=x+'px';ch.style.top=y+'px';beep(500+i*50,.06);
+    setTimeout(()=>{const n=bin.querySelector('.n');n.textContent=s==='M'?nm:nn;n.animate([{transform:'scale(1.8)'},{transform:'scale(1)'}],{duration:300});},500);await w(650);}
+  await w(600);
+  say(`Sofia thinks there are <b>5 metals</b> and <b>3 non-metals</b>. But <b>two</b> of her answers are WRONG! Can you spot them? 🤔`);await w(4200);
+  for(const n of ['Carbon','Sulfur']){chips[n].classList.add('bad');shake(chips[n]);}boo();
+  say(`Got it? <b>Carbon</b> and <b>sulfur</b> are <b>NON-METALS</b>! They're dull and brittle, and they live on the right of the table.`);await w(3600);
+  [['Carbon',binN,3],['Sulfur',binN,4],['Copper',binM,1],['Iron',binM,2]].forEach(([n,b,k])=>{const[x,y]=slot(b,k);chips[n].style.left=x+'px';chips[n].style.top=y+'px';});
+  ['Carbon','Sulfur'].forEach(n=>setTimeout(()=>{chips[n].classList.remove('bad');chips[n].classList.add('good');},800));
+  setTimeout(()=>{binM.querySelector('.n').textContent=3;binN.querySelector('.n').textContent=5;[binM,binN].forEach(b=>b.querySelector('.n').animate([{transform:'scale(1.8)'},{transform:'scale(1)'}],{duration:300}));yay();},800);
+  await w(1600);
+  say(`Now it's right: <b>3 metals</b> (silver, copper, iron) and <b>5 non-metals</b> (oxygen, helium, carbon, nitrogen, sulfur). ✅`);await w(3400);
+  const S=mk('','left:20px;top:362px;width:260px;height:150px;background:#fff;border:3px solid #ece8f8;border-radius:18px;padding:10px 14px;font-size:15.5px;line-height:1.55;font-weight:700',
+    `Sofia's metals: <b style="color:#e04848">5</b><br>Correct metals: <b style="color:#18a058">3</b><br>Sofia's non-metals: <b style="color:#e04848">3</b><br>Correct non-metals: <b style="color:#18a058">5</b>`);pop(S);
+  const ch=mk('','left:300px;top:362px;width:400px;height:150px;background:#fff;border:3px solid #ece8f8;border-radius:18px');pop(ch);
+  const ax=mk('','left:50px;top:12px;width:3px;height:112px;background:#1f2433',null,ch);mk('','left:50px;top:122px;width:330px;height:3px;background:#1f2433',null,ch);
+  for(let k=0;k<=5;k++)mk('',`left:30px;top:${116-k*21}px;font-size:12px;font-weight:800;color:#626a80`,k,ch);
+  const b1=mk('','left:110px;top:122px;width:70px;height:0;border:3px solid #e06a1b;border-bottom:none;background:#fff;transition:all 1s cubic-bezier(.3,1.3,.5,1)',null,ch);
+  const b2=mk('','left:240px;top:122px;width:70px;height:0;border:3px solid #2c66cf;border-bottom:none;background:#fff;transition:all 1s cubic-bezier(.3,1.3,.5,1) .3s',null,ch);
+  mk('','left:100px;top:126px;font-size:13px;font-weight:800','Metals',ch);mk('','left:226px;top:126px;font-size:13px;font-weight:800','Non-metals',ch);
+  b1.offsetWidth;b1.style.top=(122-63)+'px';b1.style.height='63px';b2.style.top=(122-105)+'px';b2.style.height='105px';
+  const tip=mk('','left:718px;top:362px;width:222px;height:150px;background:#fff8e6;border:3px solid #f2c200;border-radius:18px;padding:10px 14px;font-size:15px;font-weight:700;line-height:1.5',
+    `📏 Bar chart tips<br>✏️ Use a pencil &amp; ruler<br>🏷️ Label both bars<br>🚫 Don't shade the bars`);pop(tip,600);
+  say(`Then draw the <b>bar chart</b> with the correct numbers: <b>3</b> and <b>5</b>. Use a pencil and ruler, label both bars, and <b>don't shade</b> them! 📊`);}},
+
+/* 11 */ {t:'Circle the metal properties',run:async w=>{
+  const W=[['malleable',1],['has a dull surface',0],['does not conduct electricity',0],['ductile',1],['feels cold to the touch',1],['makes a ringing sound when tapped',1],['conducts heat',1],['brittle',0],['has a shiny surface',1]];
+  const h=mk('','left:0;top:14px;width:960px;text-align:center;font-size:26px;font-weight:800;color:#d66a0a','⭕ Circle every property of METALS');pop(h);
+  say(`Your turn! 🎮 <b>Tap</b> every word that describes a property of <b>metals</b> to circle it. Then press <b>Check</b>.`);
+  const sel=new Set();let checked=false;
+  const els=W.map((wd,i)=>{const x=24+(i%3)*310,y=70+Math.floor(i/3)*104;const e=mk('word',`left:${x}px;top:${y}px;width:290px;height:76px`,wd[0]);pop(e,i*70);
+    e.onclick=()=>{if(checked)return;beep(650,.05);if(sel.has(i)){sel.delete(i);const s=e.querySelector('svg');if(s)s.remove();}else{sel.add(i);circle(e,'#6a45d8');}};return e;});
+  function circle(e,col,dash){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('width',314);s.setAttribute('height',100);
+    s.innerHTML=`<ellipse cx="157" cy="50" rx="150" ry="44" fill="none" stroke="${col}" stroke-width="4" ${dash?'stroke-dasharray="10 8"':'pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"'}/>`;e.appendChild(s);
+    if(!dash)s.querySelector('ellipse').animate([{strokeDashoffset:100},{strokeDashoffset:0}],{duration:450,fill:'forwards'});}
+  const btn=mk('bigbtn','left:370px;top:398px;width:220px;height:70px;background:#6a45d8;display:flex;align-items:center;justify-content:center;font-size:24px','Check ✔');pop(btn,700);
+  btn.onclick=()=>{if(checked)return;checked=true;let right=0,wrong=0,miss=0;
+    W.forEach((wd,i)=>{const e=els[i];if(wd[1]&&sel.has(i)){e.classList.add('good');right++;}else if(!wd[1]&&sel.has(i)){e.classList.add('bad');wrong++;shake(e);}else if(wd[1]){circle(e,'#18a058',true);miss++;}});
+    btn.style.opacity=.3;
+    if(!wrong&&!miss){yay();confetti(120);say(`🏆 PERFECT! Malleable, ductile, feels cold, rings when tapped, conducts heat and shiny are all <b>metal</b> properties!`);}
+    else{boo();say(`You got <b>${right}</b> of 6. ${wrong?`The red ones are <b>non-metal</b> properties (dull, brittle, doesn't conduct). `:''}${miss?`The dashed green ones were missed. `:''}Press <b>Replay</b> to try again!`);}};}},
+
+
+/* 12 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Unit 5 · MCQ 1',q:'Where are metals generally located on the Periodic Table?',o:['Right side','Left and middle','Bottom row only','Top right corner'],a:1,why:'Metals are on the <b>left and in the middle</b>. Non-metals are in the top right.'},
+    {src:'Worksheet · Unit 5 · MCQ 2',q:'Which metal is unique because it is a liquid at room temperature?',o:['Iron','Copper','Mercury','Gold'],a:2,why:'<b>Mercury</b> is the only metal that is liquid at room temperature.'},
+    {src:'Worksheet · Unit 5 · MCQ 3',q:'What does "malleable" mean when describing a material?',o:['Can be drawn into long wires','Can be hammered or rolled into flat sheets','Snaps easily when hit with a hammer','Dissolves quickly in water'],a:1,why:'Think <b>mall</b>et (a hammer): <b>mall</b>eable means it can be hammered into flat sheets.'},
+    {src:'Worksheet · Unit 5 · MCQ 4',q:'What does "ductile" mean?',o:['Can be pulled or drawn into thin wires','Bends without breaking','Makes a ringing sound when hit','Blocks heat from passing through'],a:0,why:'<b>Ductile</b> means it can be pulled into thin <b>wires</b>, like copper wire.'},
+    {src:'Worksheet · Unit 5 · MCQ 6',q:'Why is copper widely used for electrical wiring in homes?',o:['It is cheap and magnetic','It is a good electrical conductor','It is a good electrical insulator','It is transparent'],a:1,why:'Copper is a great <b>conductor of electricity</b>. (And copper is not magnetic!)'},
+    {src:'Worksheet · Unit 5 · MCQ 8',q:'Which set of metals are all magnetic?',o:['Gold, silver, copper','Iron, steel, nickel, cobalt','Aluminium, lead, zinc','Calcium, magnesium, sodium'],a:1,why:'Remember "<b>I S</b>hould <b>N</b>ever <b>C</b>ry": iron, steel, nickel, cobalt.'},
+    {src:'Worksheet · Unit 5 · MCQ 14',q:'Which non-metal is an exception to the rule and can conduct electricity?',o:['Sulfur','Carbon (in the form of graphite)','Oxygen','Nitrogen'],a:1,why:'<b>Graphite</b> is a form of carbon. It is the "lead" in your pencil, and it conducts electricity!'},
+    {src:'Worksheet · Unit 5 · MCQ 15',q:'What does the term "sonorous" mean for metals like brass?',o:['It turns reddish-brown when wet','It makes a ringing sound when hit','It bends easily in hands','It floats on water'],a:1,why:'<b>Son</b>orous sounds like <b>son</b>g: it rings when you hit it. 🔔'},
+  ]);}},
+
+/* 13 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished the <b>Periodic Table Adventure</b>! Here's everything you learned…`);
+  const B=[['🗺️','Metals: <b>left &amp; middle</b>. Non-metals: <b>top right</b>.'],['✨','Metals: shiny, conduct heat &amp; electricity, malleable, ductile, sonorous.'],['🪨','Non-metals: dull, brittle, insulators, many are gases.'],['💧','<b>Mercury</b>: the only liquid metal.'],
+    ['✏️','<b>Graphite</b> (carbon): a non-metal that conducts.'],['🧲','Magnetic: <b>iron, steel, nickel, cobalt</b>.'],['🎈','Helium: light &amp; unreactive.<br>Sulfur: acid &amp; fertiliser.'],['⚙️','Alloy = metal + other elements.<br>18 carat = 75% gold.']];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:130px;top:448px;width:700px;height:58px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🎮 Now try the Materials level in your Science Quest quiz! ➜');f.onclick=()=>{location.href='../quiz.html';};pop(f);
+  say(`You're a <b>Periodic Table pro</b>! 🧠 Now test yourself with the <b>Materials</b> level in the Science Quest quiz.`);}},
+  ]
+});
+</script>
+</body>
+</html>

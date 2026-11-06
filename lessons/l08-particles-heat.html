@@ -27,7 +27,6 @@
 <script src="engine.js"></script>
 <script>
 /* Lesson 8 · Particles and heat (Unit 5) */
-const STAMP=(t,css)=>{const s=mk('stamp',css,t);an(s,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-5deg)',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();return s;};
 const P=(x,y,d,c,parent)=>mk('pt',`left:${x}px;top:${y}px;width:${d}px;height:${d}px;background:${c}`,null,parent);
 const R=(a,b)=>a+Math.random()*(b-a);
 /* make a particle jiggle on the spot; amplitude a px, period ms */
@@ -108,7 +107,8 @@ Lesson.start({
   say(`So when a metal is heated, its particles <b>vibrate more</b> and take up more space. The metal <b>expands</b>!`);
   await w(3600);
   const x=mk('note','left:590px;top:350px;width:356px;height:84px;font-size:14.5px;color:#9a3030;background:#fdf0f0;border-color:#f2b0b0',`❌ A) shrink &nbsp;❌ C) turn into gas<br>❌ D) lose all their weight`);pop(x);
-  STAMP('✔ MCQ 18 answer: B) They expand as particles vibrate more','left:40px;top:450px;font-size:21px');
+  an(n,[{opacity:1},{opacity:0}],{duration:300,fill:'forwards'});
+  wsCard('left:13px;top:350px;width:560px',{src:'Worksheet · Unit 5 · MCQ 18',q:'What happens to most solid metals when they are heated?',a:'✔ B) They expand as particles vibrate more'});
   say(`✅ That's <b>MCQ 18</b>: heated metals <b>expand as particles vibrate more</b>. Answer <b>B</b>! They don't shrink, turn to gas or lose weight.`);
   await w(3000);
 }},
@@ -277,9 +277,7 @@ Lesson.start({
   say(`The <b>cold water cools the steam</b>. Its particles lose energy, slow down and come together. The steam <b>condenses</b> into liquid water! 💧`);
   an(bw,[{height:'0px',top:'500px'},{height:'64px',top:'436px'}],{duration:6000,easing:'linear'});
   await w(4200);
-  const m=mk('note','left:452px;top:8px;width:494px;height:128px;background:#e3f7ec;border-color:#18a058;font-size:15.5px;z-index:6',
-    `<b style="color:#18a058;font-size:13px;letter-spacing:.08em">✔ SHORT ANSWER 14: MODEL ANSWER</b><br>Water <b>absorbs heat energy</b> and <b>boils</b> into <b>steam at 100 °C</b>. In the condenser, <b>cold water cools the steam</b>, causing it to <b>condense</b> into liquid water.`);
-  an(m,[{transform:'scale(2.4) rotate(-10deg)',opacity:0},{transform:'none',opacity:1}],{duration:500,easing:'cubic-bezier(.5,1.6,.5,1)'});yay();
+  wsCard('left:488px;top:8px;width:458px',{src:'Worksheet · Unit 5 · Short answer 14',q:'Explain how the water in the flask changes to a gas and how steam changes back into a liquid in the condenser.',a:'✔ It absorbs heat and boils into steam at 100 °C. Cold water cools the steam, so it condenses.'});
   say(`✅ Exam answer: water <b>absorbs heat energy</b> and <b>boils</b> into <b>steam at 100 °C</b>. In the condenser, <b>cold water cools the steam</b>, so it <b>condenses</b> into liquid water.`);
   await w(4000);
 }},

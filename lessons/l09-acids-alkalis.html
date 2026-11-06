@@ -96,22 +96,22 @@ Lesson.start({
   say(`Here's the key rule: <b>the lower the number, the stronger the acid</b>. 👇`);
   for(let p=6;p>=1;p--){await an(pt,[{transform:'translateY(-6px)'},{transform:'translateY(4px)'}],{duration:300});pt.style.left=(BX(p)+12)+'px';b[p].classList.add('glow');beep(500-p*30,.08);await w(250);if(p>1)b[p].classList.remove('glow');}
   await w(2200);
-  STAMP('✔ Q19: pH 1 = strongly acidic','left:24px;top:270px;font-size:21px');
+  wsCard('left:13px;top:258px;width:460px',{src:'Worksheet · Unit 5 · Short answer 19',q:'A liquid has a pH of 1. What type of liquid is it?',a:'✔ It is a strongly acidic liquid.'});
   say(`✅ So a liquid with <b>pH 1</b> is a <b>strongly acidic</b> liquid. That's short answer 19!`);
   await w(3200);
   b[1].classList.remove('glow');pt.remove();
   const dr=mk('','left:960px;top:30px;font-size:40px;line-height:1;z-index:5','💧');
   await an(dr,[{transform:'translateX(0)'},{transform:`translateX(${BX(7)+11-960}px)`}],{duration:1200,easing:'cubic-bezier(.3,1.2,.5,1)'});
   b[7].classList.add('glow');beep(700,.1);
-  STAMP('✔ Q18: Water is neutral because its pH is 7','left:410px;top:270px;font-size:21px');
+  wsCard('left:487px;top:258px;width:459px',{src:'Worksheet · Unit 5 · Short answer 18',q:'Is water an acid, an alkali or neutral? Give the reason for your answer.',a:'✔ Neutral, because its pH is 7.'});
   say(`💧 And <b>water</b>? It's <b>neutral</b>, because its <b>pH is 7</b>. That's short answer 18!`);
   await w(3400);
   // quick pick
-  const q=mk('','left:24px;top:372px;width:470px;font-size:23px;font-weight:800;color:#4a2ea6;line-height:1.25','🤔 Quick! Which is the <u>stronger</u> acid?');pop(q);
+  const q=mk('','left:24px;top:410px;width:470px;font-size:21px;font-weight:800;color:#4a2ea6;line-height:1.25','🤔 Quick! Which is the <u>stronger</u> acid?');pop(q);
   let picked=false;
-  const b2=btn('bigbtn','left:500px;top:356px;width:200px;height:84px;background:'+UI[2]+';display:flex;align-items:center;justify-content:center','pH 2',()=>{if(picked)return;picked=true;b5.style.opacity=.3;yay();confetti(70);
-    STAMP('✔ pH 2: lower number!','left:540px;top:456px;font-size:20px');});
-  const b5=btn('bigbtn','left:730px;top:356px;width:200px;height:84px;background:'+UI[5]+';color:#4a3a00;display:flex;align-items:center;justify-content:center','pH 5',()=>{if(picked)return;boo();shake(b5);say(`Not quite! 🤔 Remember: the <b>lower</b> the number, the <b>stronger</b> the acid. Try again!`);});
+  const b2=btn('bigbtn','left:500px;top:402px;width:200px;height:70px;background:'+UI[2]+';display:flex;align-items:center;justify-content:center','pH 2',()=>{if(picked)return;picked=true;b5.style.opacity=.3;yay();confetti(70);
+    STAMP('✔ pH 2: lower number!','left:40px;top:448px;font-size:20px');});
+  const b5=btn('bigbtn','left:730px;top:402px;width:200px;height:70px;background:'+UI[5]+';color:#4a3a00;display:flex;align-items:center;justify-content:center','pH 5',()=>{if(picked)return;boo();shake(b5);say(`Not quite! 🤔 Remember: the <b>lower</b> the number, the <b>stronger</b> the acid. Try again!`);});
   pop(b2,100);pop(b5,200);
   window.AUTOPLAY=()=>{if(!picked)b2.click();};
   say(`Your turn! 👆 Which is the <b>stronger acid</b>: pH 2 or pH 5? Tap it!`);
@@ -123,7 +123,7 @@ Lesson.start({
 /* 3 */ {t:'The litmus test', run:async w=>{
   const BXs=[110,405,700],LQ=['#fff0a0','#dff0ff','#e6ddff'],NM=['🍋 lemon juice (acid)','💧 pure water (neutral)','🧼 soapy water (alkali)'];
   const beaks=BXs.map((x,i)=>{const b=mk('beak',`left:${x}px;top:290px;width:150px;height:150px`);mk('','left:0;right:0;bottom:0;height:106px;background:'+LQ[i],null,b);pop(b,i*120);
-    const t=mk('tag',`left:${x-20}px;top:452px;width:190px;text-align:center;background:#f4f2fb;color:#1f2433`,NM[i]);pop(t,i*120);return b;});
+    const t=mk('tag ltag',`left:${x-20}px;top:452px;width:190px;text-align:center;background:#f4f2fb;color:#1f2433`,NM[i]);pop(t,i*120);return b;});
   const strips=BXs.map(x=>[['#2c66cf',x+44],['#e04848',x+84]].map(([c,sx])=>{const s=mk('strip',`left:${sx}px;top:70px;background:${c}`);s.innerHTML=`<div class="tip" style="background:${c}"></div>`;pop(s);return s;}));
   say(`<b>Litmus paper</b> is a simple indicator. It comes in two colours: <b>blue</b> and <b>red</b>. Let's dip them into three liquids! 🧻`);
   await w(3600);
@@ -151,7 +151,10 @@ Lesson.start({
   res(1,'no change 😐','#18a058');
   say(`Nothing happened! In a <b>neutral</b> liquid, litmus does <b>not change colour</b>.`);
   await w(3000);
-  STAMP('✔ Q17: Blue litmus turns RED in acid','left:250px;top:226px;font-size:23px');
+  strips.flat().forEach(e=>an(e,[{transform:'none'},{transform:'translateY(-8px)'}],{duration:400}));
+  stage.querySelectorAll('.beak,.ltag').forEach(e=>an(e,[{transform:'none'},{transform:'translateY(28px)'}],{duration:400}));
+  await w(400);
+  wsCard('left:13px;top:198px;width:933px',{src:'Worksheet · Unit 5 · Short answer 17',q:'What colour does litmus change to in an acid?',a:'✔ Blue litmus turns red.'});
   say(`✅ Exam answer for short answer 17: in an acid, <b>blue litmus turns red</b>. In an alkali, red litmus turns blue.`);
   await w(3600);
 }},
@@ -201,8 +204,8 @@ Lesson.start({
   await w(2200);
   say(`Lemon juice is <b>2</b>, vinegar <b>4</b>, bath salts <b>9</b>, floor cleaner <b>12</b> and paint stripper <b>14</b>. Now let's answer Chen's questions!`);
   await w(3800);
-  const Q=[['(a) Write down the pH of vinegar.'],['(b) Colour of Universal Indicator with paint stripper?'],['(c) The pH of a neutral solution?'],['(d) Which chemical is the most acidic?']];
-  const rows=Q.map((q,i)=>mk('qrow',`top:${226+i*72}px`,q[0]));rows.forEach((r,i)=>pop(r,i*80));
+  const Q=[['(a) Write down the pH of vinegar.'],['(b) Paint stripper is tested with Universal Indicator. Write down the colour of the Universal Indicator after the test.'],['(c) Pure water is neutral. Write down the pH of a neutral solution.'],['(d) Which chemical in the pH chart is the most acidic?']];
+  const rows=Q.map((q,i)=>mk('qrow',`top:${226+i*72}px;line-height:1.25;padding-right:${i===1?190:240}px`,q[0]));rows.forEach((r,i)=>pop(r,i*80));
   await w(800);
   // (a)
   b[4].classList.add('glow');subs[1].classList.add('ok');

@@ -123,7 +123,8 @@ Lesson.start({
   mk('tag','left:28px;top:150px;background:#5d9cf522;color:#2c66cf','Birds',P3);mk('tag','left:176px;top:150px;background:#f7ad5f33;color:#d66a0a','Mammals',P3);
   say(`In fact, <b>dichotomous</b> means <b>cut in two</b>. Every question cuts a group into <b>two</b> smaller groups. ✂️`);
   await w(3600);
-  stampIn('✔ MCQ 7: "di-" means B) Two','left:290px;top:440px;font-size:26px');
+  an(P1,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:100px;width:300px',{src:'Worksheet · Unit 4 · MCQ 7',q:'What does the prefix "di-" mean in the word dichotomous?',a:'✔ B) Two'});
   say(`✅ So the exam answer is <b>B) Two</b>. Di means two!`);}},
 
 /* 3 */ {t:'A key builds itself',run:async w=>{
@@ -145,7 +146,8 @@ Lesson.start({
   await K.drawEdge('q3','bear');await K.showNode('bear');
   await K.drawEdge('q3','fish');await K.showNode('fish');
   say(`<b>Yes</b>: it's the <b>bear</b>, a mammal. <b>No</b>: it's the <b>fish</b>. Every animal now has its own name at the end! 🎉`);await w(3600);
-  stampIn('✔ MCQ 6: C) Identifying unknown organisms by choosing between pairs of features','left:70px;top:452px;font-size:17px');
+  AN.forEach(d=>an(d,[{opacity:1},{opacity:0}],{duration:300}));
+  wsCard('left:13px;top:214px;width:356px',{src:'Worksheet · Unit 4 · MCQ 6',q:'What is a "dichotomous key" used for?',a:'✔ C) Identifying unknown organisms by choosing between pairs of features'});
   say(`✅ What is a dichotomous key for? <b>C) Identifying unknown organisms by choosing between pairs of features.</b>`);}},
 
 /* 4 */ {t:'Use the key!',run:async w=>{
@@ -224,7 +226,8 @@ Lesson.start({
   const st=mk('tag','left:340px;top:104px;background:#fde3e3;color:#e04848;font-size:13px','8 legs ✘',R2);pop(st);
   mk('','left:16px;top:146px;width:440px;font-size:14.5px;font-weight:700;color:#3a3f52','🕷️ A spider has <b>eight</b> legs, so it is <b>not</b> an insect.',R2);
   say(`Careful! A spider has <b>eight</b> legs, so a spider is <b>not</b> an insect. 🕷️`);await w(3000);
-  stampIn('✔ MCQ 13: six legs + exoskeleton = B) Insects','left:180px;top:442px;font-size:23px');
+  an(R2,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:467px;top:216px;width:479px',{src:'Worksheet · Unit 4 · MCQ 13',q:'If you find an animal with six legs and an exoskeleton, which major group does it likely belong to?',a:'✔ B) Insects'});
   say(`✅ Six legs and an exoskeleton? It's an insect! The answer is <b>B) Insects</b>.`);}},
 
 /* 6 */ {t:'Good question or useless?',run:async w=>{
@@ -254,7 +257,8 @@ Lesson.start({
     if(good){yay();}else{boo();shake(NO);}
     say(qq.s);await w(3200);}
   await w(600);vd.remove();
-  stampIn('✔ MCQ 12: B) Having feathers','left:300px;top:436px;font-size:26px');
+  an(Q,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:8px;width:934px',{src:'Worksheet · Unit 4 · MCQ 12',q:'Which feature is best used to separate birds from mammals in a key?',a:'✔ B) Having feathers'});
   say(`✅ To separate birds from mammals, use <b>B) Having feathers</b>. Eyes, a mouth and needing water are useless, because <b>every</b> animal has them!`);}},
 
 /* 7 */ {t:'Pick the best question',run:async w=>{

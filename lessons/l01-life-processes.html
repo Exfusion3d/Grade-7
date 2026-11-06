@@ -16,7 +16,6 @@
 .lt .L{font-size:58px;font-weight:900;line-height:1;margin-top:10px}
 .lt .ic{font-size:30px;line-height:1;margin-top:4px}
 .lt .wd{font-size:14px;font-weight:800;margin-top:6px;opacity:0}
-.mstamp{white-space:normal!important;text-align:center;font-size:15px!important;padding:4px 10px!important;border-width:3px!important;line-height:1.25}
 .mt{position:absolute;display:flex;align-items:center;background:#fff;border:3px solid #e3e0f0;border-radius:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #e3e0f0;transition:background .2s,border-color .2s}
 .mt.l{justify-content:center;font-size:19px}
 .mt.r{padding:0 14px;font-size:15.5px;font-weight:700;line-height:1.25}
@@ -117,7 +116,9 @@ const SCENES=[
 
 /* 3 */ {t:'G · R · E · N',run:async w=>{
   say(`Now the last four letters: <b>G</b>, <b>R</b>, <b>E</b> and <b>N</b>. Four exam answers are hiding here! 🎯`);await w(2200);
-  const ST='left:236px;top:46px;width:204px;';
+  // When a panel's exam answer arrives, its picture fades and the worksheet card takes that space (title and sentence stay).
+  const C3=(P,n,q,a)=>{[...P.children].forEach(c=>{if(c.tagName!=='H4'&&!c.classList.contains('cap'))an(c,[{opacity:1},{opacity:0}],{duration:300});});
+    return wsCard('left:9px;top:40px;width:436px',{src:'Worksheet · Unit 4 · MCQ '+n,q,a},P);};
   // Growth
   const pG=panel(13,8,460,248,'🌱 Growth',`Young plants and animals get bigger. This is called ${GAP}: a <b>permanent</b> increase in size and mass.`);pop(pG);
   mk('','left:14px;top:162px;width:210px;height:4px;background:#b98b5a;border-radius:2px',null,pG);
@@ -125,7 +126,7 @@ const SCENES=[
   G.forEach(([e,s,x],i)=>{const g=mk('big-emoji',`left:${x}px;top:${164-s*1.15}px;font-size:${s}px`,e,pG);pop(g,i*600);loop(g,[{transform:'scale(1)'},{transform:'scale(1.06)'}],900,{direction:'alternate',delay:i*200});});
   const ar=mk('','left:18px;top:44px;font-size:13px;font-weight:800;color:#18a058','size ↑ &nbsp; mass ↑',pG);pop(ar,1400);
   say(`<b>Growth</b> 🌱 A seed grows into a giant tree. It gets bigger <b>and</b> heavier, and it stays that way.`);await w(3200);
-  fillGap(pG.querySelector('.gap'),'growth');STAMP(236,48,'MCQ 14 ✔ B) A permanent increase in size and mass',pG,'width:204px');pG.lastChild.classList.add('mstamp');
+  fillGap(pG.querySelector('.gap'),'growth');C3(pG,14,'What does "growth" mean in biology?','✔ B) A permanent increase in size and mass');
   say(`In biology, growth is <b>a permanent increase in size and mass</b>. That's answer <b>B</b> for MCQ 14.`);await w(3400);
   // Reproduction
   const pR=panel(487,8,460,248,'🐣 Reproduction',`Living organisms ${GAP} to make more of the same kind of organism.`);pop(pR);
@@ -135,7 +136,7 @@ const SCENES=[
   say(`<b>Reproduction</b> 🐣 Living things make <b>young ones</b>, more of the same kind. Watch the egg…`);await w(2400);
   wob.cancel();egg.textContent='🐣';pop(egg);beep(1000,.1);
   const ck=mk('big-emoji','left:176px;top:110px;font-size:34px','🐥',pR);pop(ck,300);loop(ck,[{transform:'translateY(0)'},{transform:'translateY(-8px)'}],350,{direction:'alternate'});
-  await w(900);fillGap(pR.querySelector('.gap'),'reproduce');STAMP(236,48,'MCQ 1 ✔ B) Reproduction',pR,ST);pR.lastChild.classList.add('mstamp');
+  await w(900);fillGap(pR.querySelector('.gap'),'reproduce');C3(pR,1,'Living things produce young ones by __________.','✔ B) Reproduction');
   say(`Living things produce young ones by <b>reproduction</b>. Answer <b>B</b> for MCQ 1.`);await w(3000);
   // Excretion
   const pE=panel(13,264,460,248,'💨 Excretion',`All living organisms ${GAP} waste substances. Animals excrete ${GAP} when they breathe out.`);pop(pE);
@@ -143,7 +144,7 @@ const SCENES=[
   for(let i=0;i<4;i++){const b=bubble(pE,86,96,'CO₂','#2c66cf');b.animate([{transform:'translate(0,0) scale(.4)',opacity:0},{opacity:1,offset:.2},{transform:`translate(130px,${(i%2?-1:1)*30}px) scale(1)`,opacity:0}],{duration:2400,iterations:Infinity,delay:i*600});}
   say(`<b>Excretion</b> 💨 means getting rid of <b>waste</b> your body has made. Every breath out carries away <b>carbon dioxide</b>.`);await w(3400);
   const gE=pE.querySelectorAll('.gap');fillGap(gE[0],'excrete');await w(500);fillGap(gE[1],'carbon dioxide');
-  STAMP(236,48,'MCQ 9 ✔ B) Excretion',pE,ST);pE.lastChild.classList.add('mstamp');
+  C3(pE,9,'What is the term for getting rid of waste products that the body has made?','✔ B) Excretion');
   say(`Getting rid of waste the body has made is <b>excretion</b>. Answer <b>B</b> for MCQ 9. Careful: digestion is a different thing!`);await w(3400);
   // Nutrition
   const pN=panel(487,264,460,248,'🍎 Nutrition',`Another word for taking in nutrition is ${GAP}. Food gives energy and materials for growth.`);pop(pN);
@@ -152,7 +153,7 @@ const SCENES=[
   const z=mk('big-emoji','left:110px;top:66px;font-size:76px;transform-origin:20% 80%','🦓',pN);loop(z,[{transform:'rotate(0)'},{transform:'rotate(-10deg) translateY(4px)'}],400,{direction:'alternate'});
   const mu=mk('','left:20px;top:48px;font-size:15px;font-weight:800;color:#c58a00','munch munch!',pN);loop(mu,[{opacity:.2},{opacity:1}],400,{direction:'alternate'});
   say(`<b>Nutrition</b> 🍎 means taking in food for <b>energy and growth</b>. This zebra is grazing on grass!`);await w(3200);
-  fillGap(pN.querySelector('.gap'),'feeding');STAMP(236,48,'MCQ 8 ✔ B) Nutrition',pN,ST);pN.lastChild.classList.add('mstamp');
+  fillGap(pN.querySelector('.gap'),'feeding');C3(pN,8,'Which process involves taking in food for energy and growth?','✔ B) Nutrition');
   say(`Another word for nutrition is <b>feeding</b>. Taking in food for energy and growth is <b>nutrition</b>: answer <b>B</b> for MCQ 8.`);await w(3400);}},
 
 /* 4 */ {t:'Plants make their own food',run:async w=>{
@@ -170,8 +171,8 @@ const SCENES=[
   for(let i=0;i<5;i++){const r=mk('',`left:96px;top:${86+i*14}px;width:130px;height:5px;border-radius:3px;background:linear-gradient(90deg,#ffd84d,#ffb300);transform-origin:0 50%;transform:rotate(${8+i*4}deg)`,null,L);
     r.animate([{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0 0 0)'},{clipPath:'inset(0 0 0 100%)'}],{duration:1400,iterations:Infinity,delay:i*200});}
   say(`First, the leaf traps <b>sunlight</b> ☀️ That gives the energy to make food.`);await w(2600);
-  mk('','left:322px;top:372px;font-size:15px;font-weight:800;color:#2c66cf','💧 water (from the roots)',L);
-  for(let i=0;i<4;i++){const d=mk('big-emoji','left:291px;top:340px;font-size:20px','💧',L);
+  const wl=mk('','left:322px;top:372px;font-size:15px;font-weight:800;color:#2c66cf','💧 water (from the roots)',L);const drops=[];
+  for(let i=0;i<4;i++){const d=drops[drops.length]=mk('big-emoji','left:291px;top:340px;font-size:20px','💧',L);
     d.animate([{transform:'translateY(0)',opacity:0},{opacity:1,offset:.15},{transform:'translateY(-150px)',opacity:1,offset:.85},{transform:'translateY(-160px)',opacity:0}],{duration:2400,iterations:Infinity,delay:i*600});}
   say(`Next, <b>water</b> 💧 travels up from the roots, through the stem, to the leaf.`);await w(2600);
   mk('','left:420px;top:92px;font-size:15px;font-weight:800;color:#626a80;width:160px;text-align:center','carbon dioxide (from the air)',L);
@@ -181,20 +182,22 @@ const SCENES=[
   const food=mk('','left:150px;top:250px;width:120px;height:44px;border-radius:14px;background:#fff1c9;border:3px solid #e0a800;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:4px','🍬 food!',L);pop(food);
   loop(food,[{transform:'scale(1)'},{transform:'scale(1.1)'}],500,{direction:'alternate'});
   for(let i=0;i<3;i++){const o=bubble(L,330,170,'O₂','#18a058');o.animate([{transform:'translate(0,0)',opacity:0},{opacity:1,offset:.2},{transform:'translate(70px,-110px)',opacity:0}],{duration:2600,iterations:Infinity,delay:i*870});}
-  STAMP(330,282,'MCQ 2 ✔ A) Sunlight, water and carbon dioxide',L,'font-size:15px;white-space:normal;width:250px;text-align:center');
+  // The ground, roots, water label and caption make way for the worksheet card.
+  const sv=L.querySelector('svg');[sv.children[0],sv.children[2],wl,L.querySelector('.cap'),...drops].forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:300}));
+  wsCard('left:9px;top:352px;width:576px',{src:'Worksheet · Unit 4 · MCQ 2',q:'What do plants need to make their own food through photosynthesis?',a:'✔ A) Sunlight, water, and carbon dioxide'},L);
   say(`The plant makes <b>food</b> 🍬 and gives out oxygen. So for MCQ 2: plants need <b>sunlight, water and carbon dioxide</b>. Answer <b>A</b>!`);await w(3600);
   // Right: who makes its own food?
   const R=panel(627,8,320,504,'☀️ Who makes its own food?','');pop(R);
   const Q=[['🍄','Mushroom'],['🌳','Oak tree'],['🪱','Earthworm'],['🦁','Lion']];
-  const rows=Q.map((q,i)=>{const r=mk('row4',`left:12px;top:${46+i*86}px;width:290px;height:74px`,`<span class="e">${q[0]}</span><span class="n">${q[1]}</span><span class="v"></span>`,R);pop(r,i*150);return r;});
+  const rows=Q.map((q,i)=>{const r=mk('row4',`left:12px;top:${42+i*66}px;width:290px;height:58px`,`<span class="e">${q[0]}</span><span class="n">${q[1]}</span><span class="v"></span>`,R);pop(r,i*150);return r;});
   say(`MCQ 10: which of these can make its own food using sunlight? Watch the sunbeam… 🔦`);await w(2400);
-  const beam=mk('','left:0;top:40px;width:320px;height:90px;background:linear-gradient(rgba(255,216,77,0),rgba(255,216,77,.55),rgba(255,216,77,0));pointer-events:none',null,R);
-  for(let i=0;i<4;i++){await an(beam,[{transform:`translateY(${(i?i-1:0)*86}px)`},{transform:`translateY(${i*86}px)`}],{duration:500});
+  const beam=mk('','left:0;top:36px;width:320px;height:70px;background:linear-gradient(rgba(255,216,77,0),rgba(255,216,77,.55),rgba(255,216,77,0));pointer-events:none',null,R);
+  for(let i=0;i<4;i++){await an(beam,[{transform:`translateY(${(i?i-1:0)*66}px)`},{transform:`translateY(${i*66}px)`}],{duration:500});
     const v=rows[i].querySelector('.v');v.textContent=i===1?'✅':'❌';pop(v);if(i===1){rows[i].style.background='#e3f7ec';rows[i].style.borderColor='#18a058';yay();}else beep(300,.1);await w(450);}
   beam.remove();
   const fg=mk('tag','left:92px;top:-13px;background:#e04848;color:#fff;font-size:12.5px;padding:2px 10px','a fungus, not a plant!',rows[0]);pop(fg);
   say(`A mushroom looks a bit like a plant, but it's a <b>fungus</b>! 🍄 It can't make food. Earthworms and lions must eat other things too.`);await w(3600);
-  STAMP(30,416,'MCQ 10 ✔ B) Oak tree',R,'font-size:19px');
+  wsCard('left:9px;top:312px;width:296px',{src:'Worksheet · Unit 4 · MCQ 10',q:'Which of these living things can make its own food using sunlight?',a:'✔ B) Oak tree'},R);
   say(`Only the <b>oak tree</b> 🌳 is a plant, so only it makes food using sunlight. Answer <b>B</b>!`);await w(2800);}},
 
 /* 5 */ {t:'Why do plants stay put?',run:async w=>{

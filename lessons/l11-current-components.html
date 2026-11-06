@@ -91,7 +91,8 @@ Lesson.start({
   say(`Now connect a <b>cell</b>. It gives the electrons a push, so they all drift along the wire together. ➡️`);await w(3600);
   const A=box(13,320,460,192,`<div style="font-size:19px;font-weight:800;color:#2c66cf">⚡ What is an electric current?</div><div style="font-size:17px;font-weight:700;margin-top:8px;line-height:1.4">A <b>flow of electrons</b> round a circuit.<br>The particles that move are <b>electrons</b>.</div>`);pop(A);
   say(`That flow of electrons is an <b>electric current</b>! So the particles that move round a circuit are <b>electrons</b>. Not atoms, protons or neutrons.`);await w(1400);
-  stampAt(20,118,'✔ MCQ 1: B) Electrons',A);await w(3400);
+  an(A,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:320px;width:460px',{src:'Worksheet · Unit 9 · MCQ 1',q:'What particles create an electric current in a wire?',a:'✔ B) Electrons'});await w(3400);
   const B=box(487,320,459,192,`<div style="font-size:15px;font-weight:800;color:#8a78cc;letter-spacing:.04em">✏️ SHORT ANSWER 5</div><div style="font-size:19px;font-weight:700;line-height:1.75;margin-top:4px">When current flows, particles called <span class="b1" style="${BL}">electrons</span> move. In metals, these particles are <span class="b2" style="${BL}">free to move</span>.</div>`);pop(B);
   say(`Exam sentence: when current flows, particles called <b>electrons</b> move. In metals, these particles are <b>free to move</b>.`);
   await w(1200);fill(B.querySelector('.b1'));await w(1400);fill(B.querySelector('.b2'));await w(800);}},
@@ -160,20 +161,19 @@ Lesson.start({
   say(`Put them all in <b>one complete loop</b> and close the switch: the electrons flow, the lamp shines and the buzzer buzzes! 🎉`);await w(3000);}},
 
 /* 4 */ {t:'Switch it on!',run:async w=>{
-  const L=panel(13,8,540,504,'🔦 Your circuit','');pop(L);
+  const L=panel(13,8,460,504,'🔦 Your circuit','');pop(L);
   const parts=[{t:'cell',side:'top',f:.5},{t:'lamp',side:'right',f:.5},{t:'bz',side:'bottom',f:.5},{t:'swo',side:'left',f:.5}];
-  const c=circ(L,90,100,360,260,parts);c.flow(18,8000);c.stop();
-  [['🔋 Cell',306,46],['💡 Lamp',346,216],['🔊 Buzzer',228,310],['🔘 Switch',112,216]].forEach(([t,x,y],i)=>{const g=mk('tag',`left:${x}px;top:${y}px;background:#efe9ff;color:#4a2ea6`,t,L);pop(g,i*120);});
-  const S=box(567,8,379,112,'');pop(S);
+  const c=circ(L,50,100,360,260,parts);c.flow(18,8000);c.stop();
+  [['🔋 Cell',266,46],['💡 Lamp',306,216],['🔊 Buzzer',188,310],['🔘 Switch',72,216]].forEach(([t,x,y],i)=>{const g=mk('tag',`left:${x}px;top:${y}px;background:#efe9ff;color:#4a2ea6`,t,L);pop(g,i*120);});
+  const S=box(487,8,459,84,'');pop(S);
   const upd=on=>{S.innerHTML=`<div style="font-size:20px;font-weight:800">Switch: ${on?'<span style="color:#18a058">CLOSED ✅</span>':'<span style="color:#e04848">OPEN ⛔</span>'}</div><div style="font-size:18px;font-weight:700;margin-top:8px">Current: ${on?'<span style="color:#18a058">flowing ⚡</span>':'<span style="color:#e04848">none, there is a gap</span>'}</div>`;};upd(false);
-  const rows=[0,1,2].map(i=>box(567,132+i*128,379,116,''));
-  const row=(i,stamp,txt)=>{pop(rows[i]);stampAt(14,8,stamp,rows[i],20);mk('',`left:16px;top:62px;width:340px;font-size:16px;font-weight:700;line-height:1.3`,txt,rows[i]);};
-  const cellHalo=mk('','left:226px;top:56px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(255,216,77,.8),rgba(255,216,77,0) 70%)',null,L);
+  const row=(i,n,q,a)=>wsCard(`left:487px;top:${100+i*136}px;width:459px`,{src:'Worksheet · Unit 9 · MCQ '+n,q,a});
+  const cellHalo=mk('','left:186px;top:56px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(255,216,77,.8),rgba(255,216,77,0) 70%)',null,L);
   loop(cellHalo,[{transform:'scale(.7)',opacity:.4},{transform:'scale(1.2)',opacity:1}],500,{direction:'alternate'});
   say(`Here's a circuit with a <b>cell</b>, a <b>switch</b>, a <b>lamp</b> and a <b>buzzer</b>. Which part provides the energy? The <b>cell</b>! 🔋`);await w(1800);
-  row(0,'✔ MCQ 2: B) Cell','The <b>cell</b> (or battery) provides the electrical energy.');await w(2200);cellHalo.remove();
+  row(0,2,'Which symbol or component provides the electrical energy in a circuit?','✔ B) Cell (or battery)');await w(2200);cellHalo.remove();
   let on=false,want=true,taps=0;
-  const b=mk('bigbtn','left:163px;top:440px;width:240px;height:58px;background:#18a058;display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer','👆 Close the switch');pop(b);
+  const b=mk('bigbtn','left:123px;top:440px;width:240px;height:58px;background:#18a058;display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer','👆 Close the switch');pop(b);
   const set=v=>{on=v;parts[3].t=v?'sw':'swo';c.light(v?1:0);c.buzz(v);v?c.go():c.stop();upd(v);
     b.textContent=v?'👆 Open the switch':'👆 Close the switch';b.style.background=v?'#e04848':'#18a058';beep(v?900:300,.08,'square',.06);};
   b.onclick=()=>{set(!on);taps++;};
@@ -181,11 +181,11 @@ Lesson.start({
   say(`But the switch is <b>open</b>: there's a gap, so no current flows. Tap <b>Close the switch</b>! 👇`);
   await w.until(()=>on);
   say(`It works! The <b>lamp</b> changes electrical energy into <b>light</b>, and the <b>buzzer</b> changes it into <b>sound</b>. 🔊`);await w(1600);
-  row(2,'✔ MCQ 15: B) Buzzer','The <b>buzzer</b> converts electrical energy into <b>sound</b>.');await w(2400);
+  row(2,15,'What component converts electrical energy into sound energy in a circuit?','✔ B) Buzzer');await w(2400);
   want=false;say(`Now tap the switch again to <b>open</b> it. 👇`);
   await w.until(()=>!on);
   say(`Everything stops at once! A <b>switch</b> safely turns a circuit <b>on and off</b> by closing or opening a gap.`);await w(1600);
-  row(1,'✔ MCQ 14: B) Switch','Closed = current flows. Open = current stops.');await w(2600);
+  row(1,14,'What component is used to safely turn a circuit on and off?','✔ B) Switch');await w(2600);
   window.AUTOPLAY=null;
   say(`Play with the switch as much as you like! Closed: on. Open: off. 😀`);}},
 

@@ -95,7 +95,10 @@ Lesson.start({
     `<b style="color:#6a45d8">📜 Alloy</b> = a <b>mixture of two or more metals</b>, or a <b>metal mixed with another element</b>.<br><span style="font-size:16px">Brass and bronze: metal + metal. Steel: metal + non-metal (carbon). An alloy is a <b>mixture</b>, not a new element.</span>`);pop(D);
   say(`So an <b>alloy</b> is a mixture of two or more metals, or a metal mixed with another element. That's short answer 11!`);
   await w(4200);
-  STAMP('✔ Exam MCQ 9: B) A mixture of a metal with one or more other elements','left:90px;top:420px;font-size:18px',-2);
+  an(D,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:292px;width:460px',{src:'Worksheet · Unit 5 · Short answer 11',q:'What is an alloy?',a:'✔ An alloy is a mixture of two or more metals, or a metal mixed with another element.'});
+  await w(1400);
+  wsCard('left:487px;top:292px;width:460px',{src:'Worksheet · Unit 5 · MCQ 9',q:'What is an alloy?',a:'✔ B) A mixture of a metal with one or more other elements'});
   say(`✅ Exam question 9: an alloy is <b>B) a mixture of a metal with one or more other elements</b>.`);}},
 
 /* 3 */ {t:'Why alloys are stronger',run:async w=>{
@@ -172,11 +175,9 @@ Lesson.start({
   const ok=label(L,'left:20px;top:40px;color:#17935b;font-size:18px','Keeps its shape! ✔');pop(ok);
   say(`It keeps its shape! The other metals make the gold <b>harder</b>, just like we saw with alloys.`);
   await w(3200);
-  const A=mk('','left:13px;top:340px;width:933px;height:100px;background:#e3f7ec;border:3px solid #18a058;border-radius:20px;padding:12px 20px;font-size:19px;font-weight:700;line-height:1.45',
-    `<b style="color:#18a058;font-size:13px;letter-spacing:.08em">SHORT ANSWER 13</b><br><b>18-carat</b> gold is <b>75% gold</b> (18 out of 24 parts), while <b>24-carat</b> gold is <b>nearly pure</b> gold.`);pop(A);
-  say(`✅ Short answer 13: <b>18-carat</b> gold is <b>75%</b> gold, while <b>24-carat</b> gold is <b>nearly pure</b> gold.`);
-  await w(4200);
-  STAMP('✔ 18 ÷ 24 = 75% gold','left:340px;top:456px;font-size:20px',-3);}},
+  const SA=wsCard('left:13px;top:340px;width:933px',{src:'Worksheet · Unit 5 · Short answer 13',q:'Explain the difference between the purity of 18-carat gold and 24-carat gold.',a:'✔ 18-carat gold is 75% gold, while 24-carat gold is nearly pure gold.'});
+  SA.querySelector('.q').style.marginBottom='16px'; /* the long stamp tilts up at its right end: keep it clear of the question */
+  say(`✅ Short answer 13: <b>18-carat</b> gold is <b>75%</b> gold, while <b>24-carat</b> gold is <b>nearly pure</b> gold.`);}},
 
 /* 5 */ {t:'What is rust?',run:async w=>{
   say(`Now for our second mystery: <b>rust</b> 🟠. Here is an iron nail, out in the damp air.`);
@@ -212,7 +213,8 @@ Lesson.start({
     `😟 Rust <b>flakes off</b>, so the fresh iron underneath rusts too. The iron gets <b>weaker</b> and weaker.`);pop(C2,300);
   say(`Rusting is a kind of <b>corrosion</b>. Rust flakes off, so the iron underneath rusts too, and it gets weaker and weaker.`);
   await w(4200);
-  STAMP('✔ Exam MCQ 16: B) Rusting (Corrosion)','left:260px;top:456px;font-size:21px',-3);
+  an(C1,[{opacity:1},{opacity:0}],{duration:300});an(C2,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:360px;width:933px',{src:'Worksheet · Unit 5 · MCQ 16',q:'What chemical reaction happens when iron is exposed to air and moisture over time?',a:'✔ B) Rusting (Corrosion)'});
   say(`✅ Exam question 16: when iron meets air and moisture over time, the reaction is <b>B) Rusting</b>, which is a type of <b>corrosion</b>.`);}},
 
 /* 6 */ {t:'The three test tubes',run:async w=>{
@@ -312,7 +314,7 @@ Lesson.start({
     {src:'Worksheet · Unit 5 · MCQ 16',q:'What chemical reaction happens when iron is exposed to air and moisture over time?',o:['Evaporation','Rusting (Corrosion)','Photosynthesis','Condensation'],a:1,why:'Iron + oxygen + water → <b>rust</b>. Rusting is a type of <b>corrosion</b>.'},
     {src:'Worksheet · Unit 5 · Short answer 11',q:'What is an alloy?',model:'An alloy is a <b>mixture of two or more metals</b>, or a <b>metal mixed with another element</b>. For example, steel is iron mixed with carbon.'},
     {src:'Worksheet · Unit 5 · Short answer 13',q:'Explain the difference between the purity of 18-carat gold and 24-carat gold.',model:'<b>18-carat</b> gold is <b>75% gold</b> (18 out of 24 parts), while <b>24-carat</b> gold is <b>nearly pure gold</b>.'},
-    {src:'Worksheet · Unit 5 · Short answer 2',q:'Why are gold and silver used to make jewellery?',model:'Because they are <b>shiny</b> and <b>attractive</b>, and they <b>do not corrode</b> easily.'},
+    {src:'Worksheet · Unit 5 · Short answer 2',q:'Why are gold and silver used for jewellery?',model:'Because they are <b>shiny</b> and <b>attractive</b>, and they <b>do not corrode</b> easily.'},
   ],{title:'Exam check: alloys and rusting'});}},
 
 /* 9 */ {t:'You did it!',run:async w=>{

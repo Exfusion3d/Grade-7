@@ -54,7 +54,7 @@ Answers are the worksheet's own answer key. MCQ = the "Choose the correct answer
 - MCQ 12. Which feature is best used to separate birds from mammals in a key? A) Having eyes B) **Having feathers** C) Having a mouth D) Needing water
 - MCQ 13. If you find an animal with six legs and an exoskeleton, which major group does it likely belong to? A) Fish B) **Insects** C) Birds D) Amphibians
 
-## Lesson 5 · Metals & non-metals (Unit 5) → `adventure.html` (already built)
+## Lesson 5 · Metals & non-metals (Unit 5) → `lessons/l05-metals-nonmetals.html`
 
 MCQ 1, 2, 3, 4, 6, 8, 14, 15 · Short answers 1–10, 12 · bridge/jewellery/wiring sentences · circle the metal properties · Sofia's metals table and bar chart.
 

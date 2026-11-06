@@ -139,7 +139,8 @@ Lesson.start({
   const ans=mk('','left:13px;top:340px;width:933px;height:104px;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:12px 20px;font-size:21px;font-weight:700;line-height:1.4',
     `🧠 <b>Corrosive</b> means a substance that can <b>damage skin tissues</b> and cause <b>chemical burns</b>.<br><span style="font-size:16px;color:#7a6a2a">It can also eat away other materials, like metal.</span>`);pop(ans);
   say(`Learn this exam answer: corrosive means a substance that can <b>damage skin tissues</b> and cause <b>chemical burns</b>.`);await w(3800);
-  stampIt('left:640px;top:458px','✔ Short answer 15');
+  an(ans,[{opacity:1},{opacity:0}],{duration:300});
+  wsCard('left:13px;top:340px;width:933px',{src:'Worksheet · Unit 5 · Short answer 15',q:'What does ‘corrosive’ mean and what should you do if you spill acid?',a:'✔ It damages skin tissues and causes chemical burns. Wash with lots of water.'});
   say(`✅ That's <b>short answer 15</b>. Next: what to do if it ever touches you!`);await w(2400);}},
 
 /* 3 */ {t:'Spill drill!',run:async w=>{
@@ -171,8 +172,8 @@ Lesson.start({
   an(burn,[{opacity:.85},{opacity:0}],{duration:3000});
   say(`✅ Yes! <b>Wash the area with lots of water</b>. The water washes the acid away and makes it weaker. Keep the tap running!`);await w(3800);
   opts.forEach(x=>{if(!x.classList.contains('ok'))an(x,[{opacity:1},{opacity:0}],{duration:400});});Q.innerHTML='✅ The right thing to do FIRST:';
-  stampIt('left:540px;top:150px;font-size:22px','✔ Wash with lots of water!');
-  const tt=mk('clue','left:487px;top:220px;width:459px;height:76px;padding:8px;font-size:18px',`🙋 Then <b>tell your teacher</b> straight away!`);pop(tt);
+  wsCard('left:487px;top:132px;width:459px',{src:'Worksheet · Unit 5 · Short answer 16',q:'What should you do if you spill acid?',a:'✔ Wash the area with lots of water.'});
+  const tt=mk('clue','left:487px;top:250px;width:459px;height:58px;padding:8px;font-size:18px',`🙋 Then <b>tell your teacher</b> straight away!`);pop(tt);
   say(`Then <b>tell your teacher</b> straight away. That's <b>short answer 16</b>: if you spill acid, wash the area with lots of water.`);await w(4200);
   const R=[['🥽','Wear safety goggles','#2c66cf','Protects your eyes from splashes.'],['🎀','Tie long hair back','#6a45d8','So it can\'t catch fire in a flame.'],['🚫🍔','No eating or drinking','#e06a1b','Chemicals could get into your food.'],['🙋','Tell the teacher about any spill','#18a058','Even small spills and accidents.']];
   say(`More lab safety rules to keep you safe. Quick-fire! ⚡`);
