@@ -1,19 +1,22 @@
 """Play every scene of every lesson (or the ones named) in headless Chrome and report problems.
 
-usage:  python3 tools/test/runall.py                 # all lessons
-        python3 tools/test/runall.py l03 l13         # only these lessons
+usage:  python3 tools/test/runall.py                 # all lessons of every subject
+        python3 tools/test/runall.py l03 m01         # only these lessons (l = Science, m = Maths)
 Needs: Google Chrome installed, and `pip install websocket-client`.
 Screenshots of each scene's final frame go to tools/test/shots/<lesson>-s<scene>.png (git-ignored)."""
 import subprocess, json, sys, os, concurrent.futures as cf
 here = os.path.dirname(os.path.abspath(__file__))
-D = os.path.normpath(os.path.join(here, '..', '..', 'lessons'))
+root = os.path.normpath(os.path.join(here, '..', '..'))
+DIRS = {'lessons': 'l', 'maths': 'm'}  # lesson folder -> lesson id letter
 only = sys.argv[1:]
-files = sorted(f for f in os.listdir(D) if f.startswith('l') and f.endswith('.html') and (not only or f[:3] in only))
+where = {f: os.path.join(root, d) for d, letter in DIRS.items() for f in os.listdir(os.path.join(root, d))
+         if f.startswith(letter) and f[1:3].isdigit() and f.endswith('.html') and (not only or f[:3] in only)}
+files = sorted(where)
 os.makedirs(here + '/shots', exist_ok=True)
 
 def run(f, n, wait=22):
     out = f"{here}/shots/{f[:3]}-s{n}.png"
-    r = subprocess.run([sys.executable, here + '/cdp.py', f"{D}/{f}", str(n), out, str(wait), '--fast'],
+    r = subprocess.run([sys.executable, here + '/cdp.py', f"{where[f]}/{f}", str(n), out, str(wait), '--fast'],
                        capture_output=True, text=True, timeout=wait + 120)
     try:
         return f, n, json.loads(r.stdout.strip().splitlines()[-1])

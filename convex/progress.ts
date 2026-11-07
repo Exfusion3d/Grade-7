@@ -3,7 +3,8 @@ import { mutation, query } from "./_generated/server";
 import { requireProfile } from "./lib/session";
 import { overviewFor } from "./lib/overview";
 
-const LESSON = /^l\d\d$/;
+// one letter per subject (l = Science, m = Maths, see subjects.js) and a two-digit number
+const LESSON = /^[a-z]\d\d$/;
 const checkLesson = (id: string) => { if (!LESSON.test(id)) throw new ConvexError("Unknown lesson."); };
 const MAX_BATCH = 200;
 

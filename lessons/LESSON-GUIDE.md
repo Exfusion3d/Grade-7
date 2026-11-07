@@ -1,6 +1,10 @@
 # How to build a lesson
 
-Every lesson is ONE html file in `lessons/` that loads the shared engine. Copy `lessons/_template.html` to start.
+Every lesson is ONE html file that loads the shared engine. Science lessons live in `lessons/` (copy `lessons/_template.html`);
+Maths lessons live in `maths/` and also load `maths/maths.js` (copy `maths/m01-writing-expressions.html`). The rest of this
+guide applies to every subject; for Maths read "Pi the Robot" for "Professor Atom", and the questions are in
+`../source/maths/worksheet-transcript.md` (teach the correct answer where the sheet's `[CHECK]` says it is wrong,
+without mentioning the sheet). Once a lesson passes the tester, set its `href` in `subjects.js` so it appears on the site.
 The style reference is `l05-metals-nonmetals.html` (the approved pilot): read its scenes to match tone, pacing, colours and animation richness.
 The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 
@@ -30,7 +34,11 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
   (13|487, 8|216); full-width panel 933 wide at x=13.
 
 ## Engine API (globals from engine.js)
-- `Lesson.start({id, num, unit, emoji, title, intro, scenes:[{t, run:async w=>{...}}]})`
+- `Lesson.start({id, num, unit, emoji, title, intro, scenes:[{t, run:async w=>{...}}]})`. Other subjects add
+  `subject`, `home`, `guide`, `mascot` (all in `MATHS` for Maths) and `part` ('Chapter 2', shown instead of 'Unit N').
+- Maths only (`maths.js`): `frac(n,d)` draws a fraction (spoken "n over d"); `buildExpr(w,{q,tiles,answer})` lets the
+  student tap tiles to build an expression and resolves to `{ok,built,y}`. In Maths lessons the voice reads × − + / &lt; &gt;
+  as times, minus, plus, over, less than, greater than.
 - `w(ms)` — wait at least ms AND until the voice finishes the current line. Always `await w(...)` after `say(...)`
   before the next `say` (typical 2500–4000 ms). Cancel-safe when the student changes scene.
 - `w.until(()=>cond)` — wait for an interactive condition (e.g. a button was tapped).
@@ -65,7 +73,7 @@ python3 -m venv .venv && .venv/bin/pip install websocket-client
 Play every scene of a lesson in headless Chrome (an auto-player answers questions, plays sort games and presses
 "Reveal / Next question / Finish / Check" buttons; sound and voice are muted; animations run 40× faster):
 ```bash
-.venv/bin/python tools/test/runall.py l07          # one lesson (or several: l07 l08), or no args for all lessons
+.venv/bin/python tools/test/runall.py l07          # one lesson (or several: l07 m01), or no args for all lessons
 ```
 It prints `total scenes: N passing: N` plus a `PROBLEM` line for any scene that errors or never finishes, and saves
 each scene's final frame to `tools/test/shots/<lesson>-s<scene>.png`. LOOK at those screenshots (Read the png) and fix

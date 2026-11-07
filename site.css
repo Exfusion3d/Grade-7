@@ -1,0 +1,84 @@
+/* Shared styles for the home page and the subject pages (science.html, maths.html, …). */
+*{box-sizing:border-box}
+body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:#1f2433;background:#f1eefe;min-height:100vh;
+  background-image:radial-gradient(circle at 8% 10%,#e2d9ff 0,transparent 35%),radial-gradient(circle at 92% 85%,#d6e9ff 0,transparent 40%);
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:820px;margin:0 auto;padding:20px 16px 40px}
+.hero{background:linear-gradient(135deg,#2a2f6b,#6a45d8 60%,#2c66cf);color:#fff;border-radius:26px;padding:24px;position:relative;overflow:hidden}
+.hero .atom{position:absolute;right:-6px;top:-16px;font-size:110px;opacity:.18;transform:rotate(15deg)}
+.who{position:relative;display:flex;align-items:center;justify-content:flex-end;gap:10px;font-size:15px;font-weight:700;margin:-6px -4px 8px}
+.parent-only{display:none!important}html[data-role=parent] .parent-only{display:inline-block!important}
+.who a{color:#fff;background:rgba(255,255,255,.18);border-radius:12px;padding:5px 12px;text-decoration:none;font-weight:800}
+.hero small{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.hero h1{margin:6px 0 6px;font-size:clamp(30px,7vw,44px);font-weight:800}
+.hero p{margin:0;font-size:17px;opacity:.95}
+.prog{margin-top:14px;background:rgba(255,255,255,.2);border-radius:20px;height:14px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:#ffd84d;border-radius:20px;transition:width .6s}
+.progtxt{font-size:14px;font-weight:700;margin-top:6px;opacity:.95}
+h2.sec{font-size:22px;margin:26px 4px 10px;display:flex;align-items:center;gap:10px}
+h2.sec .u{white-space:nowrap;flex:none;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;padding:4px 10px;border-radius:20px}
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+a.les{display:flex;align-items:center;gap:12px;text-decoration:none;color:#1f2433;background:#fff;border-radius:18px;padding:12px 14px;
+  box-shadow:0 4px 0 #e2ddf5;border:3px solid transparent;transition:transform .12s}
+a.les:active{transform:translateY(3px);box-shadow:0 1px 0 #e2ddf5}
+a.les .e{font-size:34px;flex:none}
+a.les .n{font-size:12px;font-weight:800;letter-spacing:.06em;color:#8a78cc;text-transform:uppercase}
+a.les .t{font-size:16px;font-weight:800;line-height:1.25}
+a.les .ok{margin-left:auto;flex:none;font-size:22px;opacity:.18}
+a.les.done{border-color:#9fdcbb}
+a.les.done .ok{opacity:1}
+.lessons a.les{box-shadow:0 4px 0 var(--soft,#e2ddf5)}
+.cards{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media(max-width:600px){.cards{grid-template-columns:1fr}}
+a.card{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff;border-radius:22px;padding:16px 18px;box-shadow:0 6px 0 rgba(0,0,0,.15);transition:transform .12s}
+a.card:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+a.card .e{font-size:42px;flex:none}
+a.card h3{margin:0 0 3px;font-size:20px}
+a.card p{margin:0;font-size:14.5px;opacity:.95}
+.c2{background:linear-gradient(135deg,#17935b,#45c288)}
+.c3{background:linear-gradient(135deg,#e06a1b,#f5a54a)}
+/* one-time offer to bring ticks from before logins into the student's account */
+.box-import{margin-top:18px;background:#e9f6ff;border:3px solid #9cc9f5;border-radius:22px;padding:14px 18px}
+.box-import h2{margin:0 0 4px;font-size:19px;color:#1c4a9c}
+.box-import p{margin:4px 0;font-size:15px;font-weight:600}
+.box-import button{font:inherit;font-weight:800;font-size:15px;border:none;border-radius:12px;padding:9px 14px;margin:6px 6px 0 0;cursor:pointer}
+.box-import .yes{background:#2c66cf;color:#fff;box-shadow:0 3px 0 #1c4a9c}.box-import .no{background:#fff;color:#1c4a9c}
+#revise{margin-top:18px;background:#fff;border-radius:22px;padding:16px 18px 10px;box-shadow:0 6px 18px rgba(80,50,180,.10);border:3px solid #ffe08a}
+#revise h2{margin:0;font-size:21px;color:#b06a00}
+#revise .why{margin:4px 0 8px;color:#626a80;font-size:14px;font-weight:600}
+a.rv{display:flex;align-items:center;gap:12px;text-decoration:none;color:#1f2433;padding:10px 4px;border-top:2px solid #f3efe0}
+a.rv .e{font-size:30px;flex:none}
+a.rv .n{font-size:12px;font-weight:800;letter-spacing:.06em;color:#8a78cc;text-transform:uppercase}
+a.rv .t{font-size:16px;font-weight:800;line-height:1.25}
+a.rv .cnt{margin-left:auto;flex:none;background:#fff1cc;color:#8a5300;font-weight:800;font-size:13.5px;border-radius:12px;padding:5px 10px;white-space:nowrap}
+#revise .clear{margin:0 0 6px;font-size:16px;color:#17935b}
+.cont{color:#2c66cf;text-transform:none;letter-spacing:0;font-weight:800}
+.qbest{margin-top:6px!important;font-weight:800;font-size:14px!important}
+.voicehelp{margin-top:12px}
+.voicehelp summary{cursor:pointer;line-height:1.45}
+.voicehelp ol{margin:10px 0;padding-left:22px}.voicehelp li{margin:5px 0}
+.voicehelp p{margin:8px 0}.voicehelp .small{font-size:14px;color:#626a80}
+.tip{margin-top:20px;background:#fff;border-radius:20px;padding:14px 18px;font-size:15px;line-height:1.5;box-shadow:0 6px 18px rgba(80,50,180,.08)}
+.tip b{color:#4a2ea6}
+footer{text-align:center;color:#8a86a0;font-size:13px;margin-top:18px}
+/* subjects */
+.hero.science{background:linear-gradient(135deg,#2a2f6b,#6a45d8 60%,#2c66cf)}
+.hero.maths{background:linear-gradient(135deg,#7a2e00,#e06a1b 60%,#f5a54a)}
+.back{display:inline-block;position:relative;color:#fff;background:rgba(255,255,255,.18);border-radius:12px;padding:5px 12px;text-decoration:none;font-weight:800;font-size:15px;margin:-6px 0 8px -4px}
+.hero .who.inline{float:right;margin:-6px -4px 0 0}
+.subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.subj{display:block;position:relative;text-decoration:none;color:#fff;border-radius:22px;padding:16px 18px;min-height:150px;box-shadow:0 6px 0 rgba(0,0,0,.15);transition:transform .12s}
+a.subj:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.subj .e{font-size:42px;line-height:1.1}
+.subj h3{margin:6px 0 4px;font-size:22px}
+.subj p{margin:0;font-size:14.5px;opacity:.95}
+.subj .bar{margin-top:10px;background:rgba(255,255,255,.25);height:9px;border-radius:9px;overflow:hidden}
+.subj .bar i{display:block;height:100%;background:#fff;border-radius:9px}
+.subj .tag{position:absolute;right:12px;top:12px;font-size:12px;font-weight:800;background:rgba(0,0,0,.22);padding:3px 9px;border-radius:10px}
+.subj.soon{opacity:.55;filter:saturate(.6)}
+.rv .chip{display:inline-block;color:#fff;font-size:11px;letter-spacing:.04em;padding:2px 8px;border-radius:9px;margin-right:6px;vertical-align:1px}
+.les.soon{display:flex;align-items:center;gap:12px;color:#8a86a0;background:rgba(255,255,255,.55);border-radius:18px;padding:12px 14px;border:3px dashed #ddd6f3}
+.les.soon .e{font-size:34px;flex:none;filter:grayscale(.7);opacity:.7}
+.les.soon .n{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.les.soon .t{font-size:16px;font-weight:800;line-height:1.25}
+.card.soon{opacity:.55;filter:saturate(.6)}

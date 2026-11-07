@@ -4,14 +4,14 @@ import { defineConfig } from "vite";
 
 const root = import.meta.dirname;
 // Every page in these folders is built automatically, so new lessons deploy
-// without a config change. Names starting with _ are skipped.
+// without a config change. Names starting with _ (templates) or . (tester temp files) are skipped.
 const pages = (dir) =>
   readdirSync(join(root, dir))
-    .filter((name) => name.endsWith(".html") && !name.startsWith("_"))
+    .filter((name) => name.endsWith(".html") && !/^[_.]/.test(name))
     .map((name) => resolve(root, dir, name));
-// Vite doesn't pick these up: gate.js and engine.js are classic scripts and the PDF is a
+// Vite doesn't pick these up: gate.js, subjects.js, engine.js and maths.js are classic scripts and the PDF is a
 // plain link, so they are copied into dist as they are.
-const copied = ["gate.js", "lessons/engine.js", "study-guide.pdf", "source"];
+const copied = ["gate.js", "subjects.js", "lessons/engine.js", "maths/maths.js", "study-guide.pdf", "source"];
 
 export default defineConfig({
   root,
@@ -22,7 +22,7 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: true,
   },
-  build: { rollupOptions: { input: [...pages("."), ...pages("lessons")] } },
+  build: { rollupOptions: { input: [...pages("."), ...pages("lessons"), ...pages("maths")] } },
   plugins: [
     {
       name: "copy-unbundled-files",

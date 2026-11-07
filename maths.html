@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grade 7 Maths: Exam Review</title>
+<meta name="description" content="Grade 7 Cambridge Maths exam review: animated lessons with a talking tutor, Pi the Robot.">
+<meta name="apple-mobile-web-app-title" content="Grade 7 Maths">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="stylesheet" href="site.css">
+<script src="subjects.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero maths">
+    <div class="atom">🤖</div>
+    <div class="who"><a class="back" href="index.html">← All subjects</a><span style="flex:1"></span>👋 Hi, <b data-nickname></b> <a href="#" data-signout>Sign out</a></div>
+    <small>Grade 7 · Cambridge Maths · 2nd Term</small>
+    <h1>Maths ➗</h1>
+    <p>Animated lessons with Pi the Robot for Chapters 2, 4, 6, 9 and 10, built from your worksheet.</p>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="progtxt" id="ptxt"></div>
+  </div>
+
+  <div id="revise" hidden></div>
+  <div id="units"></div>
+
+  <h2 class="sec">🎯 Practise</h2>
+  <div class="cards" id="practise"></div>
+
+  <div class="tip">
+    🔊 <b>Turn the sound on</b> (flip off silent mode) to hear Pi the Robot explain everything.<br>
+    ✏️ Keep a pencil and paper handy: try each question yourself before Pi shows the answer.<br>
+    ↔️ Lessons work best with the phone <b>sideways</b>. A ✅ appears when you finish a lesson.
+  </div>
+  <footer>Good luck in the exam! 🍀</footer>
+</div>
+<script>
+renderSubject('maths',cachedOverview());
+</script>
+<script type="module">
+import { Account } from "./src/account.js";
+const load = () => Account.overview().then((ov) => { if (ov) renderSubject("maths", ov); });
+load();
+addEventListener("g7-synced", load);
+</script>
+</body>
+</html>

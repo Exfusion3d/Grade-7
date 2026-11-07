@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#6a45d8">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
+<script src="subjects.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:#1f2433;background:#f1eefe;min-height:100vh;
@@ -45,6 +46,7 @@ input:focus{border-color:#6a45d8;background:#fff}
 .lgrid{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 .lg{border-radius:12px;padding:8px 10px;font-size:13.5px;font-weight:700;background:#f5f3fc}
 .lg.done{background:#e3f7ec}.lg.prog{background:#e6f0ff}
+.lgh{grid-column:1/-1;font-weight:800;font-size:15px;margin:8px 0 0}
 .lg b{display:block;font-size:12px;color:#8a78cc;letter-spacing:.04em;text-transform:uppercase}
 table{width:100%;border-collapse:collapse;font-size:14.5px}
 th,td{text-align:left;padding:8px 6px;border-top:2px solid #f0edf9;vertical-align:top}
@@ -105,14 +107,12 @@ dialog h3{margin:0 0 10px}
 <script type="module">
 import { Account } from "./src/account.js";
 
-const LESSONS = {l01:'Is it alive? The 7 life processes',l02:'Viruses: alive or not?',l03:'What is a species?',l04:'Dichotomous keys',
-  l05:'Metals & non-metals: Periodic Table Adventure',l06:'Choosing materials: the property toolkit',l07:'Alloys and rusting',l08:'Particles and heat',
-  l09:'Acids, alkalis & the pH scale',l10:'Hazard symbols & lab safety',l11:'Current & circuit components',l12:'Measuring current: ammeters & amps',
-  l13:'Series circuits: brighter, dimmer, off',l14:'Conductors & insulators'};
-const MODES = [['u4','🦓 Unit 4'],['u5','⚗️ Unit 5'],['u9','⚡ Unit 9'],['boss','👑 Final Boss']];
+/* Subjects and lessons come from subjects.js (window.SUBJECTS and window.LESSONS); only built lessons are listed. */
+const BUILT = SUBJECTS.filter((S) => !S.soon).map((S) => ({ S, ids: S.units.flatMap((U) => U.les).filter((l) => l[1]).map((l) => l[0]) })).filter((x) => x.ids.length);
+const MODES = [['u4','🦓 Unit 4'],['u5','⚗️ Unit 5'],['u9','⚡ Unit 9'],['boss','👑 Final Boss']]; // Science quiz levels
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const lessonName = (id) => `Lesson ${+id.slice(1)}: ${LESSONS[id] || id}`;
+const lessonName = (id) => LESSONS[id] ? `${LESSONS[id].subject.name} · Lesson ${LESSONS[id].num}: ${LESSONS[id].t}` : id;
 const stars = (n) => "⭐".repeat(n) + "☆".repeat(3 - n);
 function ago(t) {
   if (!t) return "not yet";
@@ -127,15 +127,12 @@ fetch("quiz.html").then((r) => r.text()).then((html) => {
   for (const m of html.matchAll(/^\{id:'(u\d-\d\d)',[^\n]*?\bq:'((?:[^'\\]|\\.)*)'/gm)) quizText[m[1]] = m[2].replace(/\\'/g, "'");
 }).catch(() => {});
 /* Exam check wording, read from each lesson file the same way (questionId is "l05:Worksheet · Unit 5 · MCQ 1"). */
-const FILES = {l01:'l01-life-processes',l02:'l02-viruses',l03:'l03-species',l04:'l04-keys',l05:'l05-metals-nonmetals',l06:'l06-choosing-materials',
-  l07:'l07-alloys-rusting',l08:'l08-particles-heat',l09:'l09-acids-alkalis',l10:'l10-hazards-safety',l11:'l11-current-components',
-  l12:'l12-measuring-current',l13:'l13-series-circuits',l14:'l14-conductors-insulators'};
 const examText = {};
 async function loadExamText(lessonIds) {
-  await Promise.all([...new Set(lessonIds)].filter((id) => FILES[id] && !examText[id]).map(async (id) => {
+  await Promise.all([...new Set(lessonIds)].filter((id) => LESSONS[id]?.href && !examText[id]).map(async (id) => {
     examText[id] = {};
     try {
-      const html = await (await fetch(`lessons/${FILES[id]}.html`)).text();
+      const html = await (await fetch(LESSONS[id].href)).text();
       for (const m of html.matchAll(/src:(['`])(.*?)\1,\s*q:(['"`])((?:(?!\3)[^\\]|\\.)*)\3/g))
         examText[id][m[2].replace(/<[^>]*>/g, "").trim()] = m[4].replace(/\\(.)/g, "$1").replace(/<br>/g, " ");
     } catch (e) {}
@@ -161,15 +158,18 @@ function renderStudents() {
   const box = $("students");
   if (!students.length) { box.innerHTML = `<p class="box muted">No students yet. Add one below.</p>`; return; }
   box.innerHTML = students.map((s) => {
-    const done = s.lessons.filter((l) => l.done).length;
+    const fin = new Set(s.lessons.filter((l) => l.done).map((l) => l.lessonId));
+    const bySubject = BUILT.map(({ S, ids }) => { const n = ids.filter((id) => fin.has(id)).length;
+      return `${S.emoji} ${S.name}: <b>${n} of ${ids.length}</b> lessons finished<div class="bar"><i style="width:${(n / ids.length) * 100}%"></i></div>`; }).join("");
     const quiz = MODES.filter(([m]) => s.quizBest[m]).map(([m, n]) => `${n} ${stars(s.quizBest[m].stars)}`).join(" · ") || "No quiz levels finished yet";
-    const rev = s.revise.slice(0, 3).map((r) => `<span class="tag" title="${esc(lessonName(r.lessonId))}">Lesson ${+r.lessonId.slice(1)}: ${r.wrong} to fix</span>`).join("")
+    const quizLine = `🔬 Science quiz: ${quiz}`;
+    const rev = s.revise.slice(0, 3).map((r) => `<span class="tag" title="${esc(lessonName(r.lessonId))}">${LESSONS[r.lessonId] ? LESSONS[r.lessonId].subject.emoji + " " : ""}Lesson ${+r.lessonId.slice(1)}: ${r.wrong} to fix</span>`).join("")
       + (s.revise.length > 3 ? `<span class="tag">+${s.revise.length - 3} more</span>` : "");
     return `<div class="st">
       <div><h3>${esc(s.nickname)}</h3><div class="u">@${esc(s.username)}${s.locked ? " · 🔒 locked for a few minutes (wrong passwords)" : ""}</div></div>
       <div class="small muted">Last active: ${ago(s.lastActive)}</div>
-      <div class="small"><b>${done} of 14</b> lessons finished<div class="bar"><i style="width:${(done / 14) * 100}%"></i></div></div>
-      <div class="small">${quiz}</div>
+      <div class="small">${bySubject}</div>
+      <div class="small">${quizLine}</div>
       <div class="small">${s.answered ? (rev || '<span class="tag good">Nothing to revise</span>') : '<span class="muted">No answers yet</span>'}</div>
       <div class="btns"><button class="b main" data-act="detail" data-id="${s.id}">See details</button><button class="b" data-act="pw" data-id="${s.id}">Reset password</button><button class="b danger" data-act="remove" data-id="${s.id}">Remove</button></div>
     </div>`;
@@ -193,11 +193,11 @@ async function showDetail(id) {
     await loadExamText(d.wrongQuestions.filter((q) => q.source === "lesson").map((q) => q.lessonId));
     $("dTitle").textContent = `📋 ${d.nickname} (@${d.username})`;
     const prog = Object.fromEntries(d.lessons.map((l) => [l.lessonId, l]));
-    $("dLessons").innerHTML = Object.keys(LESSONS).map((id) => {
+    $("dLessons").innerHTML = BUILT.map(({ S, ids }) => `<div class="lgh">${S.emoji} ${S.name}</div>` + ids.map((id) => {
       const p = prog[id], cls = p?.done ? "done" : p ? "prog" : "";
       const st = p?.done ? "✅ finished" : p ? `▶ at scene ${p.lastScene}` : "– not started";
-      return `<div class="lg ${cls}"><b>Lesson ${+id.slice(1)}</b>${esc(LESSONS[id])}<div class="muted">${st}</div></div>`;
-    }).join("");
+      return `<div class="lg ${cls}"><b>Lesson ${LESSONS[id].num}</b>${esc(LESSONS[id].t)}<div class="muted">${st}</div></div>`;
+    }).join("")).join("");
     $("dQuiz").innerHTML = `<p>${MODES.map(([m, n]) => `${n}: ${d.quizBest[m] ? `${stars(d.quizBest[m].stars)} best ${d.quizBest[m].right}/${d.quizBest[m].total} (${d.quizBest[m].pct}%)` : "not finished yet"}`).join("<br>")}</p>`
       + (d.recentRuns.length ? `<p class="muted">Recent levels: ${d.recentRuns.map((r) => `${(MODES.find(([m]) => m === r.mode) || [, "🔁 Mistakes practice"])[1]} ${r.right}/${r.total} (${ago(r.at)})`).join(" · ")}</p>` : "");
     $("dWrong").innerHTML = d.wrongQuestions.length

@@ -1,13 +1,13 @@
-/* Grade 7 Science lesson engine (shared by every lesson page).
+/* Grade 7 lesson engine, shared by every lesson page of every subject.
    A lesson page loads engine.css + engine.js, then calls Lesson.start({...}). */
 document.body.insertAdjacentHTML('afterbegin',`<canvas id="fx"></canvas>
-<div id="rotate"><div class="ph">📱</div><h2>Turn your phone sideways!</h2><p>Professor Atom's lessons fit best in landscape.</p><button onclick="document.body.classList.add('anyway')">Keep it upright anyway</button></div>
+<div id="rotate"><div class="ph">📱</div><h2>Turn your phone sideways!</h2><p>These lessons fit best in landscape.</p><button onclick="document.body.classList.add('anyway')">Keep it upright anyway</button></div>
 <div id="holder"><div id="app">
   <header>
     <div class="brand" id="brand"></div>
     <div id="dots"></div>
     <button class="icon" id="vset" title="Voice settings">⚙️</button>
-    <a class="icon home" href="../index.html" title="All activities">🏠</a>
+    <a class="icon home" id="home" href="../science.html" title="All lessons">🏠</a>
     <button class="icon" id="snd">🔊</button>
   </header>
   <div id="narr">
@@ -74,12 +74,14 @@ function pickVoice(){const vs=voices();const saved=savedVoice();
   if(sel)sel.innerHTML=`<option value="${DEVICE}" ${voice?'':'selected'}>${IOS?'📱 iPhone/iPad voice (from Settings)':'💻 Device voice (from Settings)'}</option>`+
     vs.map(x=>`<option value="${x.voiceURI.replace(/"/g,'&quot;')}" ${x===voice?'selected':''}>${vlabel(x)}</option>`).join('');}
 if(HAS_TTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;[300,1000,3000].forEach(t=>setTimeout(pickVoice,t));} /* iOS fills the voice list late */
-function cleanSpeech(html){let t=html.replace(/<br\s*\/?>/gi,'. ').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,' and ');
+function cleanSpeech(html){let t=html.replace(/<span class="fr"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g,' $1 over $2 ').replace(/<br\s*\/?>/gi,'. ').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,' and ');
   t=t.replace(/\((?:[A-Z][a-z]?)\)/g,'').replace(/÷/g,' divided by ').replace(/≈/g,' about ').replace(/[→➡]/g,', ').replace(/=/g,' equals ').replace(/%/g,' percent').replace(/°C/g,' degrees Celsius')
      .replace(/\bB\)/g,'B,').replace(/\bvs\b/g,'versus').replace(/\be\.g\./g,'for example');
   const EMO=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{2190}-\u{21FF}\u{FE0F}\u{200D}\u{20E3}]+/gu;
   t=t.replace(/Try Fe, Au and O!/,'Try iron, gold and oxygen!');
   t=t.replace(/_{2,}/g,' blank ');
+  if(LCFG.subject==='Maths')t=t.replace(/&lt;/g,' is less than ').replace(/&gt;/g,' is greater than ').replace(/≠/g,' is not equal to ').replace(/×/g,' times ')
+    .replace(/[−–]/g,' minus ').replace(/ - /g,' minus ').replace(/\+/g,' plus ').replace(/(\w)\s*\/\s*(\w)/g,'$1 over $2').replace(/\^2|²/g,' squared').replace(/(\d)([a-z]+)\b/g,'$1 $2');
   t=t.replace(/(\d)\s*A\b/g,'$1 amps').replace(/\bamps \(A\)/g,'amps');
   t=t.replace(new RegExp('([a-z0-9])\\s*'+EMO.source+'\\s+(?=[A-Z])','gu'),'$1. ').replace(EMO,' ');
   t=t.replace(/\b[A-Z]{3,}\b/g,w=>w.toLowerCase());
@@ -307,11 +309,15 @@ addEventListener('scroll',()=>{if(scrollX||scrollY)scrollTo(0,0);});$('#holder')
 function markDone(){track('lesson',LCFG.id,cur+1,true);}
 /* Progress saving: handed to src/account.js (which may load after this file), via window.__track. */
 function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
-window.Lesson={start(cfg){LCFG=cfg;SC=cfg.scenes;document.title=cfg.title+' · Grade 7 Science';
+/* cfg.subject (default 'Science'), cfg.home (the subject page), cfg.part ('Chapter 2'; default 'Unit <unit>'),
+   cfg.guide (the tutor's name) and cfg.mascot (SVG markup for a 80x80 viewBox with a #mouth) let other subjects
+   bring their own tutor; Science lessons leave them out and get Professor Atom. */
+window.Lesson={start(cfg){LCFG=cfg;SC=cfg.scenes;document.title=cfg.title+' · Grade 7 '+(cfg.subject||'Science');
+  if(cfg.home)$('#home').href=cfg.home;if(cfg.mascot)$('#mascot').innerHTML=cfg.mascot;
   $('#brand').textContent=(cfg.emoji||'⚛️')+' '+cfg.title;
   const st=new URLSearchParams(location.search).get('scene');
   if(st){go(Math.max(0,Math.min(SC.length-1,+st-1)));return;}
-  dots();$('#stitle').textContent=`Lesson ${cfg.num} · Unit ${cfg.unit}`;say(cfg.intro||`Hi! I'm <b>Professor Atom</b> ⚛️ Ready? Press <b>Start</b>!`);
+  dots();$('#stitle').textContent=`Lesson ${cfg.num} · ${cfg.part||'Unit '+cfg.unit}`;say(cfg.intro||`Hi! I'm <b>${cfg.guide||'Professor Atom'}</b> Ready? Press <b>Start</b>!`);
   startScreen();addEventListener('g7-resume',()=>{if(!started)startScreen();});}};
 
 /* ====================== start screen and resuming ====================== */

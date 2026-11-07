@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grade 7 Science: Exam Review</title>
+<meta name="description" content="Grade 7 Cambridge Science exam review: 14 animated lessons with a talking tutor, an interactive quiz and a study guide.">
+<meta name="apple-mobile-web-app-title" content="Grade 7 Science">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6a45d8">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="stylesheet" href="site.css">
+<script src="subjects.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero science">
+    <div class="atom">⚛️</div>
+    <div class="who"><a class="back" href="index.html">← All subjects</a><span style="flex:1"></span>👋 Hi, <b data-nickname></b> <a href="#" data-signout>Sign out</a></div>
+    <small>Grade 7 · Cambridge Science</small>
+    <h1>Science 🔬</h1>
+    <p>14 animated lessons with Professor Atom, a quiz and a study guide for Units 4, 5 and 9.</p>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="progtxt" id="ptxt"></div>
+  </div>
+
+  <div id="revise" hidden></div>
+  <div id="units"></div>
+
+  <h2 class="sec">🎯 Practise</h2>
+  <div class="cards" id="practise"></div>
+
+  <div class="tip">
+    🔊 <b>Turn the sound on</b> (flip off silent mode) to hear Professor Atom explain everything.<br>
+    ↔️ Lessons work best with the phone <b>sideways</b>. A ✅ appears when you finish a lesson.
+  </div>
+  <footer>Good luck in the exam! 🍀</footer>
+</div>
+<script>
+renderSubject('science',cachedOverview());
+</script>
+<script type="module">
+import { Account } from "./src/account.js";
+const load = () => Account.overview().then((ov) => { if (ov) renderSubject("science", ov); });
+load();
+addEventListener("g7-synced", load);
+</script>
+</body>
+</html>

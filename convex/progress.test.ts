@@ -72,6 +72,15 @@ describe("progress", () => {
     await expect(ctx.t.mutation(api.progress.saveLesson, { token: s.token, lessonId: "lesson-x", scene: 1, done: false })).rejects.toThrow(/Unknown lesson/);
   });
 
+  test("lessons of other subjects are saved too (m01 = Maths Lesson 1)", async () => {
+    const s = await ctx.addStudent("sara");
+    await ctx.t.mutation(api.progress.saveLesson, { token: s.token, lessonId: "m01", scene: 10, done: true });
+    await ctx.t.mutation(api.progress.recordAnswers, { token: s.token, answers: [{ ...answer("m", "m01:Worksheet · Ex 2.1 · Q10 b)", false, "m01"), source: "lesson" as const }] });
+    const ov = await ctx.t.query(api.progress.myOverview, { token: s.token });
+    expect(ov.lessons).toEqual([{ lessonId: "m01", lastScene: 10, done: true }]);
+    expect(ov.revise.map((r) => r.lessonId)).toEqual(["m01"]);
+  });
+
   test("removing a student also removes their progress", async () => {
     const s = await ctx.addStudent("sara");
     await ctx.t.mutation(api.progress.saveLesson, { token: s.token, lessonId: "l01", scene: 9, done: true });
