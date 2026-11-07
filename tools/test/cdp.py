@@ -18,7 +18,7 @@ tmp = os.path.join(os.path.dirname(f), '.cdp_%d_' % os.getpid() + os.path.basena
 open(tmp, 'w').write(src.replace('<head>', '<head>' + patch, 1))
 s = socket.socket(); s.bind(('', 0)); port = s.getsockname()[1]; s.close()
 prof = tempfile.mkdtemp()
-p = subprocess.Popen(["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "--headless=new", "--disable-gpu", "--hide-scrollbars",
+p = subprocess.Popen([os.environ.get("CHROME", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"), "--headless=new", "--disable-gpu", "--hide-scrollbars",
     f"--remote-debugging-port={port}", f"--user-data-dir={prof}", "--window-size=980,760", "--mute-audio", "about:blank"],
     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 try:
@@ -35,7 +35,7 @@ try:
             if r.get('id') == mid[0]: return r.get('result', {})
     cmd('Page.enable'); cmd('Page.navigate', url=f"file://{tmp}?scene={scene}")
     time.sleep(wait)
-    r = cmd('Runtime.evaluate', expression="JSON.stringify({n:(typeof SC!=='undefined'?SC.length:0),errs:window.__errs,ready:document.querySelector('#next')&&document.querySelector('#next').classList.contains('ready'),text:(document.querySelector('#text')||{}).innerText})", returnByValue=True)
+    r = cmd('Runtime.evaluate', expression="JSON.stringify({n:(typeof SC!=='undefined'?SC.length:0),errs:window.__errs,ready:!!document.querySelector('#next.ready,#next.end'),text:(document.querySelector('#text')||{}).innerText})", returnByValue=True)
     print(r['result'].get('value'))
     shot = cmd('Page.captureScreenshot', format='png')
     open(out, 'wb').write(base64.b64decode(shot['data']))

@@ -282,8 +282,8 @@ async function sortGame(w,{bins,items,top=150,colors=['#f7ad5f','#5d9cf5','#45c2
 function dots(){const d=$('#dots');d.innerHTML='';SC.forEach((s,i)=>{const b=document.createElement('button');b.title=s.t;b.className=i===cur?'cur':i<cur?'done':'';b.onclick=()=>go(i);d.appendChild(b);});
   $('#count').textContent=`Scene ${cur+1} of ${SC.length}`;$('#back').style.visibility=cur?'visible':'hidden';$('#next').textContent=cur===SC.length-1?'Start over ⟲':'Next ▶';}
 async function run(){const my=++token;started=true;if(RESUME&&RESUME.lastScene!==cur+1)RESUME=null;track('lesson',LCFG.id,cur+1,false,RESUME?RESUME.step:undefined);stopVoice();window.AUTOPLAY=null;stage.getAnimations&&stage.getAnimations({subtree:true}).forEach(a=>a.cancel());stage.innerHTML='';
-  $('#next').classList.remove('ready');$('#stitle').textContent=`Scene ${cur+1} · ${SC[cur].t}`;dots();
-  try{await SC[cur].run(makeWait(my));if(my===token){$('#next').classList.add('ready');if(cur===SC.length-1)markDone();}}catch(e){if(e!=='cancel')console.error(e);}}
+  $('#next').classList.remove('ready','end');$('#stitle').textContent=`Scene ${cur+1} · ${SC[cur].t}`;dots();
+  try{await SC[cur].run(makeWait(my));if(my===token){if(cur===SC.length-1){markDone();$('#next').classList.add('end');}else $('#next').classList.add('ready');}}catch(e){if(e!=='cancel')console.error(e);}}
 function go(i){cur=(i+SC.length)%SC.length;run();}
 $('#next').onclick=()=>go(cur+1);$('#back').onclick=()=>go(cur-1);$('#replay').onclick=()=>run();
 $('#snd').onclick=()=>{soundOn=!soundOn;$('#snd').textContent=soundOn?'🔊':'🔇';try{localStorage.setItem('pta_sound',soundOn?'1':'0');}catch(e){}};

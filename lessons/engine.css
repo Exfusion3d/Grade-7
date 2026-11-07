@@ -35,7 +35,12 @@ footer .sp{flex:1;text-align:center;color:#8a86a0;font-weight:700;font-size:14px
 #bubble .again{position:absolute;right:12px;top:8px;font-size:13px;font-weight:800;color:#8a78cc;opacity:.8}
 .nav{border:none;border-radius:16px;padding:11px 22px;font-size:18px;font-weight:800;background:#fff;box-shadow:0 4px 0 #dcd6f2}
 .nav:active{transform:translateY(3px);box-shadow:0 1px 0 #dcd6f2}
-#next{background:#6a45d8;color:#fff;box-shadow:0 4px 0 #4a2ea6}
+#next{background:#6a45d8;color:#fff;box-shadow:0 4px 0 #4a2ea6;opacity:.45;transition:opacity .3s,background .3s}
+/* the scene has finished: Next turns green and blinks with a yellow glow so it is clear it is time to tap it */
+#next.end{opacity:1}
+#next.ready{opacity:1;background:#18a058;box-shadow:0 4px 0 #0f7a40;animation:nudge 1s infinite}
+@keyframes nudge{0%,100%{transform:scale(1);box-shadow:0 4px 0 #0f7a40,0 0 0 0 rgba(255,216,77,0)}
+  50%{transform:scale(1.08);background:#22c06c;box-shadow:0 4px 0 #0f7a40,0 0 0 8px #ffd84d,0 0 22px 10px rgba(255,216,77,.75)}}
 #vset{display:none}
 /* side-panel layout for phones held sideways (body.side, set by fit() in engine.js): 1286x536, stage on the left */
 body.side #app{width:1286px;height:536px;padding:8px;display:grid;grid-template-columns:960px 300px;column-gap:10px;row-gap:8px;
@@ -55,8 +60,9 @@ body.side #dots{grid-column:2;grid-row:4;gap:5px;align-self:center}
 body.side #dots button{width:12px;height:12px}
 body.side #dots button.cur{width:24px}
 body.side #next{grid-column:2;grid-row:5;font-size:24px}
-body.side #next.ready{animation:nudge-side 1.2s infinite}
-@keyframes nudge-side{50%{transform:scale(1.025);box-shadow:0 4px 0 #4a2ea6,0 0 0 4px rgba(106,69,216,.22)}}
+body.side #next.ready{animation:nudge-side 1s infinite}
+@keyframes nudge-side{0%,100%{transform:scale(1);box-shadow:0 4px 0 #0f7a40,0 0 0 0 rgba(255,216,77,0)}
+  50%{transform:scale(1.04);background:#22c06c;box-shadow:0 4px 0 #0f7a40,0 0 0 6px #ffd84d,0 0 20px 8px rgba(255,216,77,.75)}}
 body.side #back{grid-column:2;grid-row:6;justify-self:start;width:145px}
 body.side #replay{grid-column:2;grid-row:6;justify-self:end;width:145px}
 body.side .voice{display:none}
@@ -64,8 +70,6 @@ body.side.vopen .voice{display:flex;flex-wrap:wrap;position:absolute;left:978px;
 body.side.vopen .voice select{max-width:none;flex:1}
 .vhelp{display:none}
 body.side.vopen .vhelp{display:block;width:100%;font-size:13.5px;font-weight:800;color:#2c66cf;text-decoration:none;padding:4px 2px 0}
-#next.ready{animation:nudge 1.2s infinite}
-@keyframes nudge{50%{transform:scale(1.08);box-shadow:0 4px 0 #4a2ea6,0 0 0 8px rgba(106,69,216,.18)}}
 
 /* tiles */
 .tile{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:800;background:#e9e6f4;color:#9a96b0;

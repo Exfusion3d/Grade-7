@@ -12,5 +12,5 @@ setInterval(()=>{try{
  const ck=q('.ex-btn').find(b=>/Check/.test(b.textContent));if(ck){ck.click();return;}
  if(window.AUTOPLAY)window.AUTOPLAY();
 }catch(e){__errs.push('autoplayer '+e.message)}},150);
-__st(()=>{document.title='ERRS:'+JSON.stringify(__errs)+' READY:'+document.querySelector('#next')?.classList.contains('ready');},12000);
+__st(()=>{document.title='ERRS:'+JSON.stringify(__errs)+' READY:'+!!document.querySelector('#next.ready,#next.end');},12000);
 </script>
