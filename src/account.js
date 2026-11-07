@@ -44,7 +44,7 @@ function enqueue(item) {
   if (!queueKey()) return;
   let q = loadQueue();
   if (item.kind === "quizState") q = q.filter((x) => !(x.kind === "quizState" && x.mode === item.mode)); // only the latest matters
-  q.push(item); saveQueue(q); flush();
+  q.push({ ...item, k: newId() }); saveQueue(q); flush();
 }
 
 /* ---------- resume points ----------
@@ -89,17 +89,18 @@ async function flush() {
     for (;;) {
       const q = loadQueue();
       if (!q.length) break;
+      if (q.some((x) => !x.k)) { q.forEach((x) => { x.k = x.k || newId(); }); saveQueue(q); } // items queued before keys existed
       const first = q[0];
       let sent = 1;
       try {
         if (first.kind === "answer") {
           while (sent < q.length && sent < 100 && q[sent].kind === "answer") sent++;
-          await client.mutation(api.progress.recordAnswers, { token, answers: q.slice(0, sent).map(({ kind, ...a }) => a) });
+          await client.mutation(api.progress.recordAnswers, { token, answers: q.slice(0, sent).map(({ kind, k, ...a }) => a) });
         } else if (first.kind === "lesson") {
-          const { kind, ...l } = first;
+          const { kind, k, ...l } = first;
           await client.mutation(api.progress.saveLesson, { token, ...l });
         } else if (first.kind === "quizRun") {
-          const { kind, ...run } = first;
+          const { kind, k, ...run } = first;
           await client.mutation(api.progress.recordQuizRun, { token, run });
         } else if (first.kind === "quizState") {
           await client.mutation(api.progress.saveQuizState, { token, mode: first.mode, state: first.state });
@@ -109,7 +110,10 @@ async function flush() {
         // unless the session ended, in which case keep it for the next sign-in.
         if (typeof e?.data !== "string" || /sign in/i.test(e.data)) throw e;
       }
-      saveQueue(loadQueue().slice(sent));
+      // Remove what was sent by key, not position: enqueue may have replaced or dropped items meanwhile
+      // (a newer quizState replaces the one in flight), and slicing by position then lost the next save.
+      const done = new Set(q.slice(0, sent).map((x) => x.k));
+      saveQueue(loadQueue().filter((x) => !done.has(x.k)));
       synced = true;
     }
   } catch (e) {
