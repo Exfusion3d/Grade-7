@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Sequences and patterns</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 13 · Chapter 9 · Exercises 9.1 and 9.2
+   Every worksheet question type is taught with teachQ (maths.js); the rest are in the Exam check. */
+const W1='Worksheet · Ex 9.1 · ',W2='Worksheet · Ex 9.2 · ';
+const S1='Find the term-to-term rule and the next two terms.';
+const S2='For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.';
+const S3='Write down the first three terms of each of these sequences.';
+const S4='Copy these finite sequences and fill in the missing terms.';
+const S5='Write down whether each of these sequences is finite or infinite.';
+const D1='This sequence of patterns is made from dots.',D2='This sequence of patterns is made from squares.';
+const BOX='<i class="bx">____</i>'; /* a box to fill in; the voice reads it as "blank" */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.bx{display:inline-block;min-width:40px;height:1.1em;vertical-align:-.18em;border:2.5px solid #e06a1b;border-radius:6px;background:#fff7ee;color:transparent;font-style:normal;line-height:1;overflow:hidden}
+.tb{display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.15);opacity:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif}
+.arc{border:4px solid #18a058;border-bottom:none;border-radius:50% 50% 0 0/100% 100% 0 0}
+.plab{text-align:center;font-size:15px;font-weight:800;color:#5a5f70}
+.tc{display:flex;align-items:center;justify-content:center;border:2.5px solid #9aa3b5;background:#fff;font-size:21px;font-weight:800;color:#1f2433;margin:-1.25px 0 0 -1.25px}
+.tc.h{background:#efeaff;color:#4a2ea6;font-size:15px;text-align:center;line-height:1.15}
+</style>`);
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* a row of terms; null = an empty box to fill. jump(i,j,label) draws an arc from term i to term j */
+function seq(vals,y,{d=104,sz=64,col='#2c66cf',x}={}){const n=vals.length;x=x??480-((n-1)*d+sz)/2;
+  const X=i=>x+i*d;
+  const B=vals.map((v,i)=>mk('tb',`left:${X(i)}px;top:${y}px;width:${sz}px;height:${sz}px;font-size:${Math.round(sz*.42)}px;`+
+    (v==null?'background:#fff;border:3px dashed #e06a1b;color:#e06a1b':`background:${col};color:#fff`),v==null?'?':v));
+  const show=(i,delay=0)=>{pop(B[i],delay);beep(480+i*50,.06);};
+  const jump=async(i,j,lab,c='#18a058')=>{const a=X(Math.min(i,j))+sz/2,wd=Math.abs(j-i)*d;
+    const arc=mk('arc',`left:${a}px;top:${y-26}px;width:${wd}px;height:22px;border-color:${c};transform-origin:${j>i?'0':'100%'} 100%`);
+    const t=mk('mx',`left:${a+wd/2-40}px;top:${y-56}px;width:80px;text-align:center;font-size:21px;color:${c}`,lab);
+    an(arc,[{transform:'scaleX(0)',opacity:0},{transform:'scaleX(1)',opacity:1}],{duration:700});await w0(500);pop(t);beep(640,.06);await w0(500);return[arc,t];};
+  const set=(i,v,c='#18a058')=>{B[i].innerHTML=v;Object.assign(B[i].style,{background:c,color:'#fff',border:'none'});pop(B[i]);beep(720,.1);};
+  const under=(i,txt,c='#5a5f70')=>{const e=mk('plab',`left:${X(i)-20}px;top:${y+sz+6}px;width:${sz+40}px;color:${c}`,txt);pop(e);return e;};
+  return{B,X,show,jump,set,under,all:()=>vals.forEach((v,i)=>show(i,i*120))};}
+
+/* dot pattern n: a chain of n diamonds (3n + 1 dots); the 3 newest dots are orange */
+function dotPat(x,y,n,s=30,h=26){const g=mk('',`left:${x}px;top:${y}px;width:${n*s+14}px;height:${2*h+14}px`);
+  const P=[];for(let k=0;k<=n;k++)P.push([k*s,h,k===n&&n>1]);
+  for(let k=0;k<n;k++){P.push([(k+.5)*s,0,k===n-1&&n>1]);P.push([(k+.5)*s,2*h,k===n-1&&n>1]);}
+  P.forEach(([px,py,nw])=>mk('',`left:${px}px;top:${py}px;width:14px;height:14px;border-radius:50%;background:${nw?'#e06a1b':'#2c66cf'}`,'',g));
+  pop(g);return g;}
+/* square pattern n: squares joined at their corners (3n + 2 squares); the 3 newest are orange */
+function sqPat(x,y,n,c=18){const g=mk('',`left:${x}px;top:${y}px;width:${(2*n+1)*c}px;height:${3*c}px`);
+  const C=[[0,0],[0,2],[1,1],[2,0],[2,2]].map(p=>[...p,false]);
+  for(let m=2;m<=n;m++)[[2*m-1,1],[2*m,0],[2*m,2]].forEach(p=>C.push([...p,m===n]));
+  C.forEach(([cx,cy,nw])=>mk('',`left:${cx*c}px;top:${cy*c}px;width:${c}px;height:${c}px;box-sizing:border-box;border:2px solid ${nw?'#a84a0c':'#1d4b9e'};background:${nw?'#f5a54a':'#9cc0f7'}`,'',g));
+  pop(g);return g;}
+const plab=(x,y,wd,txt)=>{const e=mk('plab',`left:${x}px;top:${y}px;width:${wd}px`,txt);pop(e);return e;};
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m13', num:13, part:'Chapter 9', emoji:'🔁', title:'Sequences and patterns',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's find the patterns hiding in numbers. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'What comes next?',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today we're hunting for <b>patterns</b> in numbers. Watch these numbers appear.`);
+  await w(2600);
+  const S=seq(['3','6','9','12',null],200,{d:150,sz:84});
+  for(let i=0;i<4;i++){S.show(i);await w(600);}
+  say(`3, 6, 9, 12. A list of numbers that follows a rule is called a <b>sequence</b>.`);
+  const t1=mk('tag','left:330px;top:40px;background:#efeaff;color:#4a2ea6;font-size:24px','🔢 a sequence');pop(t1);point(t1);
+  await w(3000);
+  const t2=S.under(0,'1st term','#6a45d8');S.under(1,'2nd term','#6a45d8');S.under(2,'3rd term','#6a45d8');S.under(3,'4th term','#6a45d8');point(t2);
+  say(`Each number in a sequence is called a <b>term</b>. 3 is the first term, 6 is the second term, and so on.`);
+  await w(3200);
+  say(`How do we get from one term to the next? Watch the <b>jumps</b>.`);await w(2000);
+  for(let i=0;i<3;i++)await S.jump(i,i+1,'+3');
+  say(`Every jump is <b>add 3</b>. That's the <b>term-to-term rule</b>: the rule to get from one term to the next.`);
+  await w(3200);
+  S.show(4);point(S.B[4]);
+  say(`So what comes next? Use the rule: 12 add 3 is...`);await w(2200);
+  await S.jump(3,4,'+3');S.set(4,'15');S.under(4,'5th term','#6a45d8');
+  say(`<b>15</b>! Finding the rule lets you predict what comes next. Let's practise with the worksheet.`);
+  await w(3000);}},
+
+/* 1 */ {t:'The term-to-term rule',run:async w=>{
+  let S;
+  await teachQ(w,{src:W1+'Q1 a)',q:S1+'<br>a) 7, 11, 15, 19, . . .',read:'Find the term-to-term rule and the next two terms. 7, 11, 15, 19, and so on.',workY:286,
+    keys:[['term-to-term rule',`The <b>term-to-term rule</b> tells you how to get from one term to the <b>next</b>.`],['. . .',`The dots mean the sequence <b>keeps going</b>.`]],
+    before:[{act:async()=>{S=seq(['7','11','15','19',null,null],196);S.all();await w(900);},say:`Here are the terms. The two boxes are the next two terms we need to find.`,wait:2200}],
+    steps:[{act:async()=>{for(let i=0;i<3;i++)await S.jump(i,i+1,'+4');},show:'7 → 11 → 15 → 19: each jump is +4',say:`Find the jumps. 7 to 11 is <b>add 4</b>. 11 to 15, add 4. 15 to 19, add 4. Always the same!`,wait:2800},
+      {show:'Term-to-term rule: <b>add 4</b>',say:`So the term-to-term rule is <b>add 4</b>.`},
+      {act:async()=>{await S.jump(3,4,'+4');S.set(4,'23');await w(700);await S.jump(4,5,'+4');S.set(5,'27');},show:'19 + 4 = 23, 23 + 4 = 27',say:`Next two terms: 19 add 4 is <b>23</b>, and 23 add 4 is <b>27</b>.`,wait:2600}],
+    answer:'Add 4; 23, 27',why:'Check: the jumps between all the terms are +4, including 19 → 23 → 27. ✔'});
+  await w(1500);}},
+
+/* 2 */ {t:'Sequences that go down',run:async w=>{
+  let S;
+  await teachQ(w,{src:W1+'Q1 b)',q:S1+'<br>b) 40, 35, 30, 25, . . .',read:'Find the term-to-term rule and the next two terms. 40, 35, 30, 25, and so on.',workY:286,
+    keys:[['40, 35, 30, 25',`These numbers are getting <b>smaller</b>, so the rule will <b>take away</b>.`]],
+    before:[{act:async()=>{S=seq(['40','35','30','25',null,null],196,{col:'#6a45d8'});S.all();await w(900);},say:`Here are the terms, getting smaller each time.`,wait:1800}],
+    steps:[{act:async()=>{for(let i=0;i<3;i++)await S.jump(i,i+1,'−5','#e06a1b');},show:'Each jump is −5 → rule: <b>subtract 5</b>',say:`40 to 35 is <b>take away 5</b>. 35 to 30, take away 5. 30 to 25, take away 5. The rule is <b>subtract 5</b>.`,wait:3000},
+      {act:async()=>{await S.jump(3,4,'−5','#e06a1b');S.set(4,'20');await w(700);await S.jump(4,5,'−5','#e06a1b');S.set(5,'15');},show:'25 − 5 = 20, 20 − 5 = 15',say:`Next two terms: 25 take away 5 is <b>20</b>, then 20 take away 5 is <b>15</b>.`,wait:2600}],
+    answer:'Subtract 5; 20, 15',why:'When the terms get smaller, the rule takes away.'});
+  await w(1200);clear();
+  await teachQ(w,{src:W1+'Q2 f)',q:S2+'<br>f) 17, 14, 11, 8, '+BOX+', '+BOX,read:'For this infinite sequence, write down the term-to-term rule and the next two terms. 17, 14, 11, 8, blank, blank.',workY:300,
+    keys:[['infinite',`<b>Infinite</b> means it goes on <b>forever</b>.`],['17, 14, 11, 8',`Getting smaller again, so the rule takes away.`]],
+    before:[{act:async()=>{S=seq(['17','14','11','8',null,null],212,{col:'#6a45d8'});S.all();await w(900);},say:`Here are the terms. Find the jump first.`,wait:1800}],
+    steps:[{act:async()=>{for(let i=0;i<3;i++)await S.jump(i,i+1,'−3','#e06a1b');},show:'Each jump is −3 → rule: <b>subtract 3</b>',say:`17 to 14 is take away 3, and so is every jump. The rule is <b>subtract 3</b>.`,wait:2600},
+      {act:async()=>{await S.jump(3,4,'−3','#e06a1b');S.set(4,'5');await w(700);await S.jump(4,5,'−3','#e06a1b');S.set(5,'2');},show:'8 − 3 = 5, 5 − 3 = 2',say:`8 take away 3 is <b>5</b>. 5 take away 3 is <b>2</b>.`,wait:2400}],
+    answer:'Subtract 3; 5, 2',why:'Check: 17, 14, 11, 8, 5, 2 goes down by 3 every time. ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Using a rule to make a sequence',run:async w=>{
+  say(`Now the other way round. You're given the <b>first term</b> and the <b>rule</b>, and you make the sequence.`);
+  await w(2800);
+  let S;
+  await teachQ(w,{src:W1+'Q3 a)',q:S3+'<br>a) First term: 1 &nbsp;·&nbsp; Term-to-term rule: add 5',read:'Write down the first three terms of this sequence. The first term is 1. The term-to-term rule is add 5.',workY:290,
+    keys:[['First term: 1',`The <b>first term</b> is where the sequence <b>starts</b>: 1.`],['add 5',`The rule says <b>add 5</b> each time.`]],
+    before:[{act:async()=>{S=seq(['1',null,null],200,{d:180,sz:76});S.all();await w(900);},say:`We need three terms. The first one is given: 1.`,wait:2000}],
+    steps:[{act:async()=>{await S.jump(0,1,'+5');S.set(1,'6');},show:'1 + 5 = 6 <i>2nd term</i>',say:`Second term: 1 add 5 is <b>6</b>.`},
+      {act:async()=>{await S.jump(1,2,'+5');S.set(2,'11');},show:'6 + 5 = 11 <i>3rd term</i>',say:`Third term: 6 add 5 is <b>11</b>.`}],
+    answer:'1, 6, 11',why:'Start with the first term, then use the rule again and again.'});
+  await w(1200);clear();
+  await teachQ(w,{src:W1+'Q3 c)',q:S3+'<br>c) First term: 6 &nbsp;·&nbsp; Term-to-term rule: multiply by 2',read:'Write down the first three terms of this sequence. The first term is 6. The term-to-term rule is multiply by 2.',workY:290,
+    keys:[['multiply by 2',`This rule <b>multiplies by 2</b>. Rules don't always add!`]],
+    before:[{act:async()=>{S=seq(['6',null,null],200,{d:180,sz:76});S.all();await w(900);},say:`The first term is 6.`,wait:1600}],
+    steps:[{act:async()=>{await S.jump(0,1,'×2');S.set(1,'12');},show:'6 × 2 = 12',say:`6 times 2 is <b>12</b>.`},
+      {act:async()=>{await S.jump(1,2,'×2');S.set(2,'24');},show:'12 × 2 = 24 <i>not 18!</i>',say:`12 times 2 is <b>24</b>. Careful: it's not 18. We multiply, we don't add 6.`,wait:2400}],
+    answer:'6, 12, 24',why:'The jumps get bigger (+6, then +12) because the rule multiplies.'});
+  await w(1500);}},
+
+/* 4 */ {t:'Missing terms',run:async w=>{
+  say(`Some sequences have <b>gaps</b>. First find the rule from two terms that are <b>next to each other</b>, then fill the gaps.`);
+  await w(3000);
+  let S;
+  await teachQ(w,{src:W1+'Q4 a)',q:S4+'<br>a) 2, 5, '+BOX+', 11, '+BOX+', 17, 20',read:'Copy this finite sequence and fill in the missing terms. 2, 5, blank, 11, blank, 17, 20.',workY:290,
+    keys:[['finite',`<b>Finite</b> means it <b>stops</b>. There's no ". . ." at the end.`],['2, 5',`2 and 5 are <b>next to each other</b>, so they show us the rule.`]],
+    before:[{act:async()=>{S=seq(['2','5',null,'11',null,'17','20'],200);S.all();await w(900);},say:`Here's the sequence with its two gaps.`,wait:1800}],
+    steps:[{act:async()=>{await S.jump(0,1,'+3');},show:'2 → 5 is +3 → rule: <b>add 3</b>',say:`2 to 5 is <b>add 3</b>. So the rule is add 3.`},
+      {act:async()=>{await S.jump(1,2,'+3');S.set(2,'8');await w(400);await S.jump(3,4,'+3');S.set(4,'14');},show:'5 + 3 = 8, 11 + 3 = 14',say:`5 add 3 is <b>8</b>. 11 add 3 is <b>14</b>.`,wait:2400},
+      {act:async()=>{await S.jump(2,3,'+3');await S.jump(4,5,'+3');},show:'Check: 8 + 3 = 11 ✔, 14 + 3 = 17 ✔',say:`Check: 8 add 3 is 11, and 14 add 3 is 17. It all fits!`}],
+    answer:'8, 14',why:'Always check the numbers after each gap still fit the rule.'});
+  await w(1200);clear();
+  await teachQ(w,{src:W1+'Q4 e)',q:S4+'<br>e) 8, '+BOX+', '+BOX+', 32, 40, '+BOX+', '+BOX,read:'Copy this finite sequence and fill in the missing terms. 8, blank, blank, 32, 40, blank, blank.',workY:290,
+    keys:[['32, 40',`32 and 40 are the only two terms <b>next to each other</b>. Start there!`]],
+    before:[{act:async()=>{S=seq(['8',null,null,'32','40',null,null],200);S.all();await w(900);},say:`Lots of gaps this time. Look for two terms side by side.`,wait:2000}],
+    steps:[{act:async()=>{await S.jump(3,4,'+8');},show:'32 → 40 is +8 → rule: <b>add 8</b>',say:`32 to 40 is <b>add 8</b>. So the rule is add 8.`},
+      {act:async()=>{await S.jump(0,1,'+8');S.set(1,'16');await w(300);await S.jump(1,2,'+8');S.set(2,'24');await w(300);await S.jump(2,3,'+8');},show:'8 → 16 → 24 → 32 ✔',say:`From 8: add 8 is <b>16</b>, add 8 is <b>24</b>, add 8 is 32. It reaches 32, so it fits!`,wait:2800},
+      {act:async()=>{await S.jump(4,5,'+8');S.set(5,'48');await w(300);await S.jump(5,6,'+8');S.set(6,'56');},show:'40 + 8 = 48, 48 + 8 = 56',say:`After 40: add 8 is <b>48</b>, then <b>56</b>.`}],
+    answer:'16, 24, 48, 56',why:'These are the multiples of 8: 8, 16, 24, 32, 40, 48, 56.'});
+  await w(1500);}},
+
+/* 5 */ {t:'Working backwards',run:async w=>{
+  let S;
+  await teachQ(w,{src:W1+'Q4 f)',q:S4+'<br>f) '+BOX+', '+BOX+', 28, 23, '+BOX+', '+BOX+', 8',read:'Copy this finite sequence and fill in the missing terms. Blank, blank, 28, 23, blank, blank, 8.',workY:290,
+    keys:[['28, 23',`28 and 23 are next to each other. 28 to 23 goes <b>down</b>.`]],
+    before:[{act:async()=>{S=seq([null,null,'28','23',null,null,'8'],200,{col:'#6a45d8'});S.all();await w(900);},say:`This time the gaps are at the <b>start</b> as well. Find the rule first.`,wait:2200}],
+    steps:[{act:async()=>{await S.jump(2,3,'−5','#e06a1b');},show:'28 → 23 is −5 → rule: <b>subtract 5</b>',say:`28 to 23 is <b>take away 5</b>. So the rule is subtract 5.`},
+      {act:async()=>{await S.jump(3,4,'−5','#e06a1b');S.set(4,'18');await w(300);await S.jump(4,5,'−5','#e06a1b');S.set(5,'13');await w(300);await S.jump(5,6,'−5','#e06a1b');},show:'23 → 18 → 13 → 8 ✔',say:`Going forwards: 23 take away 5 is <b>18</b>, then <b>13</b>, then 8. It fits!`,wait:2600},
+      {act:async()=>{await S.jump(2,1,'+5','#18a058');S.set(1,'33');await w(300);await S.jump(1,0,'+5','#18a058');S.set(0,'38');},show:'Backwards: <b>undo</b> −5 by +5: 33, 38',say:`To go <b>backwards</b>, undo the rule. Undo take away 5 by <b>adding 5</b>: 28 add 5 is <b>33</b>, then <b>38</b>.`,wait:3000}],
+    answer:'38, 33, 18, 13',why:'Check forwards: 38, 33, 28, 23, 18, 13, 8 goes down by 5 every time. ✔'});
+  await w(1500);}},
+
+/* 6 */ {t:'Finite or infinite?',run:async w=>{
+  say(`Two new words: a <b>finite</b> sequence <b>stops</b>. An <b>infinite</b> sequence goes on <b>forever</b>.`);
+  await w(2800);
+  let S;
+  await teachQ(w,{src:W1+'Q5 a)',q:S5+'<br>a) 4, 6, 8, 10, . . .',read:'Write down whether this sequence is finite or infinite. 4, 6, 8, 10, dot dot dot.',workY:290,
+    keys:[['. . .',`Look at the end: three <b>dots</b>. They mean <b>and so on, forever</b>.`]],
+    before:[{act:async()=>{S=seq(['4','6','8','10'],200,{d:130});S.all();await w(900);},say:`Here's the sequence. Look carefully at how it <b>ends</b>.`,wait:2000}],
+    steps:[{act:async()=>{const g=mk('mx',`left:${S.X(3)+90}px;top:206px;font-size:40px;color:#e06a1b`,'. . . ➜ ∞');pop(g);point(g);await w(600);},show:'". . ." means it never stops',say:`The dots mean it carries on: 12, 14, 16, and on and on. It never stops.`,wait:2600},
+      {show:'It goes on forever → <b>infinite</b>',say:`A sequence that goes on forever is <b>infinite</b>.`}],
+    answer:'infinite',why:'Three dots at the end mean the sequence goes on forever.'});
+  await w(1200);clear();
+  await teachQ(w,{src:W1+'Q5 b)',q:S5+'<br>b) 3, 5, 7, 9, 11, 13, 15',read:'Write down whether this sequence is finite or infinite. 3, 5, 7, 9, 11, 13, 15.',workY:290,
+    keys:[['15',`Look at the end: it stops at <b>15</b>. No dots!`]],
+    before:[{act:async()=>{S=seq(['3','5','7','9','11','13','15'],200);S.all();await w(900);},say:`Here's the sequence. How does it end?`,wait:1800}],
+    steps:[{act:async()=>{const g=mk('mx',`left:${S.X(6)+72}px;top:212px;font-size:34px;color:#e04848`,'🛑');pop(g);point(g);await w(600);},show:'It ends at 15: no ". . ."',say:`It ends at 15. There are no dots, so it <b>stops</b> there.`},
+      {show:'It stops → <b>finite</b>',say:`A sequence that stops is <b>finite</b>.`}],
+    answer:'finite',why:'Finite sequences have an end. There are exactly 7 terms here.'});
+  await w(1500);}},
+
+/* 7 */ {t:'Sort the sequences',run:async w=>{
+  const r=await sortGame(w,{bins:['Finite: it stops 🛑','Infinite: goes on forever ∞'],colors:['#f5a54a','#5d9cf5'],top:200,
+    items:[['85, 75, 65, 55, 45, 35',0],['100, 97, 94, 91, 88, …',1],['3, 5, 7, 9, 11, 13, 15',0],['4, 6, 8, 10, …',1],['1, 2, 3, 4, 5',0],['2, 4, 8, 16, …',1],['50, 40, 30, …',1],['9, 7, 5, 3, 1',0]],
+    intro:`Your turn! Tap a sequence, then tap the box it belongs in. Look at the <b>end</b> of each one. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! Every sequence is in the right box.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`Remember: <b>dots</b> at the end mean <b>infinite</b>. No dots, it <b>stops</b>, so it's <b>finite</b>.`);
+  await w(3000);}},
+
+/* 8 */ {t:'Dot patterns',run:async w=>{
+  const X=[50,170,320,500,690];let L=[];
+  await teachQ(w,{src:W2+'Q1 a)',q:D1+'<br>a) Draw the next two patterns in the sequence.',read:'This sequence of patterns is made from dots. Draw the next two patterns in the sequence.',workY:300,
+    keys:[['next two patterns',`We need to draw <b>Pattern 4</b> and <b>Pattern 5</b>.`]],
+    before:[{act:async()=>{for(let n=1;n<=3;n++){dotPat(X[n-1],168,n);L.push(plab(X[n-1]-30,240,n*30+74,`Pattern ${n}<br>${3*n+1} dots`));await w(500);}},
+      say:`Here are the first three patterns: 4 dots, 7 dots, 10 dots. The <b>orange</b> dots are the new ones.`,wait:2600}],
+    steps:[{show:'Each pattern adds <b>3 dots</b>: one more diamond',say:`Each new pattern adds <b>3 dots</b>, making one more diamond on the end.`},
+      {act:async()=>{dotPat(X[3],168,4);plab(X[3]-30,240,194,'Pattern 4<br>13 dots');await w(500);},show:'Pattern 4: 10 + 3 = 13 dots',say:`Pattern 4: add 3 more dots to the end. 10 add 3 is <b>13 dots</b>.`},
+      {act:async()=>{dotPat(X[4],168,5);plab(X[4]-30,240,224,'Pattern 5<br>16 dots');await w(500);},show:'Pattern 5: 13 + 3 = 16 dots',say:`Pattern 5: 3 more again. 13 add 3 is <b>16 dots</b>.`}],
+    answer:'Pattern 4 has 13 dots, Pattern 5 has 16 dots',why:'Draw one more diamond each time: 3 new dots on the end.'});
+  await w(1200);clear();
+  let S;
+  await teachQ(w,{src:W2+'Q1 b)',q:D1+'<br>b) Write down the sequence of numbers of dots.',read:'Write down the sequence of numbers of dots.',workY:336,
+    keys:[['numbers of dots',`Count the dots in <b>each pattern</b>, in order.`]],
+    before:[{act:async()=>{for(let n=1;n<=5;n++)dotPat(X[n-1]+10,150,n,22,18);await w(800);},say:`Here are all five patterns.`,wait:1600}],
+    steps:[{act:async()=>{S=seq(['4','7','10','13','16'],262,{d:150,sz:56});S.all();await w(900);},show:'4, 7, 10, 13, 16',say:`Count each one: 4, 7, 10, 13, 16. That's the sequence.`,wait:2600},
+      {act:async()=>{for(let i=0;i<4;i++)await S.jump(i,i+1,'+3');},show:'Term-to-term rule: add 3',say:`And each jump is <b>add 3</b>, because each pattern adds 3 dots.`}],
+    answer:'4, 7, 10, 13, 16',why:'The number pattern matches the picture: 3 new dots each time is "add 3".'});
+  await w(1500);}},
+
+/* 9 */ {t:'Square patterns and tables',run:async w=>{
+  const X=[40,130,262,430,640];let T=[];
+  const table=(y)=>{const cw=96,hw=190,x0=480-(hw+5*cw)/2;
+    const r1=[mk('tc h',`left:${x0}px;top:${y}px;width:${hw}px;height:44px`,'Pattern number')];
+    const r2=[mk('tc h',`left:${x0}px;top:${y+44}px;width:${hw}px;height:44px`,'Number of squares')];
+    for(let i=0;i<5;i++){r1.push(mk('tc',`left:${x0+hw+i*cw}px;top:${y}px;width:${cw}px;height:44px`,i+1));
+      r2.push(mk('tc',`left:${x0+hw+i*cw}px;top:${y+44}px;width:${cw}px;height:44px;color:#18a058`,''));}
+    [...r1,...r2].forEach(e=>pop(e));return r2;};
+  const put=(c,v)=>{c.innerHTML=v;pop(c);beep(700,.08);};
+  await teachQ(w,{src:W2+'Q2 b)',q:D2+'<br>b) Complete the following table.',read:'This sequence of patterns is made from squares. Complete the following table.',workY:350,
+    keys:[['table',`The <b>table</b> matches each <b>pattern number</b> to its <b>number of squares</b>.`]],
+    before:[{act:async()=>{for(let n=1;n<=3;n++){sqPat(X[n-1],150,n);plab(X[n-1]-20,210,(2*n+1)*18+40,`Pattern ${n}`);await w(400);}T=table(244);await w(600);},
+      say:`Here are the first three patterns, and the table. The orange squares are the new ones.`,wait:2400}],
+    steps:[{act:async()=>{put(T[1],'5');await w(500);put(T[2],'8');await w(500);put(T[3],'11');},show:'Count: 5, 8, 11 squares',say:`Count the squares: Pattern 1 has <b>5</b>, Pattern 2 has <b>8</b>, Pattern 3 has <b>11</b>.`,wait:2600},
+      {act:async()=>{sqPat(X[3],150,4);plab(X[3]-20,210,202,'Pattern 4');sqPat(X[4],150,5);plab(X[4]-20,210,238,'Pattern 5');await w(500);put(T[4],'14');await w(500);put(T[5],'17');},show:'+3 each time: 14, 17',say:`Each pattern adds <b>3 squares</b>. So Pattern 4 has 11 add 3, which is <b>14</b>, and Pattern 5 has <b>17</b>.`,wait:2800}],
+    answer:'5, 8, 11, 14, 17',why:'Count the first ones, then keep adding 3.'});
+  await w(1200);clear();
+  let S;
+  await teachQ(w,{src:W2+'Q2 d)',q:D2+'<br>d) How many squares will there be in (i) Pattern 6? (ii) Pattern 8?',read:'How many squares will there be in Pattern 6, and in Pattern 8?',workY:300,
+    keys:[['Pattern 6',`Pattern 6 comes <b>after</b> Pattern 5, which had 17 squares.`],['Pattern 8',`For Pattern 8, keep going with the rule.`]],
+    before:[{act:async()=>{S=seq(['5','8','11','14','17',null,null,null],196);S.all();for(let i=0;i<8;i++)S.under(i,'P'+(i+1),i>4?'#e06a1b':'#5a5f70');await w(900);},
+      say:`Here's the sequence with the pattern numbers underneath. P means pattern.`,wait:2200}],
+    steps:[{act:async()=>{await S.jump(4,5,'+3');S.set(5,'20');},show:'Pattern 6: 17 + 3 = 20',say:`Pattern 6: 17 add 3 is <b>20</b>.`},
+      {act:async()=>{await S.jump(5,6,'+3');S.set(6,'23','#9aa3b5');await w(300);await S.jump(6,7,'+3');S.set(7,'26');},show:'Pattern 7: 23, Pattern 8: 23 + 3 = 26',say:`Don't skip Pattern 7! It has 23. Then Pattern 8 has 23 add 3, which is <b>26</b>.`,wait:2800}],
+    answer:'(i) 20 (ii) 26',why:'Keep adding 3 for every pattern, one step at a time.'});
+  await w(1500);}},
+
+/* 10 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 9.1 · Q1 a)',q:'Find the term-to-term rule and the next two terms.<br>a) 7, 11, 15, 19, . . .',o:['Add 4; next: 23, 27','Add 4; next: 22, 26','Add 7; next: 26, 33','Add 3; next: 22, 25'],a:0,
+      why:'Every jump is +4, so 19 + 4 = <b>23</b> and 23 + 4 = <b>27</b>.',whyNot:{1:'the rule is right, but 19 + 4 is 23, not 22.',2:'7 is the first term, not the jump.',3:'the jump from 7 to 11 is 4, not 3.'}},
+    {src:'Worksheet · Ex 9.1 · Q1 b)',q:'Find the term-to-term rule and the next two terms.<br>b) 40, 35, 30, 25, . . .',o:['Add 5; next: 30, 35','Subtract 5; next: 20, 15','Subtract 5; next: 25, 20','Subtract 10; next: 15, 5'],a:1,
+      why:'The terms go down by 5: 25 − 5 = <b>20</b>, then <b>15</b>.',whyNot:{0:'the terms get smaller, so it takes away.',2:'25 is already there; the next term is 20.',3:'each jump is 5, not 10.'}},
+    {src:'Worksheet · Ex 9.1 · Q2 a)',q:'For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.<br>a) 2, 4, 6, 8, <i class="bx">____</i>, <i class="bx">____</i>',o:['Add 2; 10, 12','Add 2; 9, 10','Multiply by 2; 16, 32','Add 4; 12, 16'],a:0,
+      why:'Every jump is +2: 8 + 2 = <b>10</b>, 10 + 2 = <b>12</b>.',whyNot:{1:'that adds 1, not 2.',2:'2 × 2 is 4, but 4 × 2 is 8, not 6.',3:'each jump is 2, not 4.'}},
+    {src:'Worksheet · Ex 9.1 · Q2 b)',q:'For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.<br>b) 1, 4, 7, 10, <i class="bx">____</i>, <i class="bx">____</i>',o:['Add 4; 14, 18','Add 3; 13, 16','Add 3; 12, 15','Multiply by 4; 40, 160'],a:1,
+      why:'Every jump is +3: 10 + 3 = <b>13</b>, 13 + 3 = <b>16</b>.',whyNot:{0:'the jump from 1 to 4 is 3, not 4.',2:'the rule is right, but 10 + 3 is 13.',3:'4 × 4 is 16, not 7.'}},
+    {src:'Worksheet · Ex 9.1 · Q2 c)',q:'For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.<br>c) 5, 9, 13, 17, <i class="bx">____</i>, <i class="bx">____</i>',o:['Add 5; 22, 27','Add 4; 20, 24','Add 4; 21, 25','Subtract 4; 13, 9'],a:2,
+      why:'Every jump is +4: 17 + 4 = <b>21</b>, 21 + 4 = <b>25</b>.',whyNot:{0:'5 is the first term, not the jump.',1:'the rule is right, but 17 + 4 is 21.',3:'the terms are getting bigger.'}},
+    {src:'Worksheet · Ex 9.1 · Q2 d)',q:'For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.<br>d) 3, 8, 13, 18, <i class="bx">____</i>, <i class="bx">____</i>',o:['Add 5; 23, 28','Add 3; 21, 24','Add 5; 22, 27','Add 10; 28, 38'],a:0,
+      why:'Every jump is +5: 18 + 5 = <b>23</b>, 23 + 5 = <b>28</b>.',whyNot:{1:'3 is the first term, not the jump.',2:'the rule is right, but 18 + 5 is 23.',3:'the jump is 5, not 10.'}},
+    {src:'Worksheet · Ex 9.1 · Q2 e)',q:'For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.<br>e) 30, 28, 26, 24, <i class="bx">____</i>, <i class="bx">____</i>',o:['Add 2; 26, 28','Subtract 2; 22, 20','Subtract 2; 23, 22','Subtract 4; 20, 16'],a:1,
+      why:'The terms go down by 2: 24 − 2 = <b>22</b>, 22 − 2 = <b>20</b>.',whyNot:{0:'the terms get smaller, so it takes away.',2:'that takes away 1, not 2.',3:'each jump is 2, not 4.'}},
+    {src:'Worksheet · Ex 9.1 · Q2 f)',q:'For each of these infinite sequences, write down: (i) the term-to-term rule (ii) the next two terms.<br>f) 17, 14, 11, 8, <i class="bx">____</i>, <i class="bx">____</i>',o:['Subtract 3; 5, 2','Subtract 3; 4, 1','Add 3; 11, 14','Subtract 4; 4, 0'],a:0,
+      why:'The terms go down by 3: 8 − 3 = <b>5</b>, 5 − 3 = <b>2</b>.',whyNot:{1:'the rule is right, but 8 − 3 is 5.',2:'the terms get smaller, so it takes away.',3:'17 to 14 is 3, not 4.'}},
+    {src:'Worksheet · Ex 9.1 · Q3 b)',q:'Write down the first three terms of each of these sequences.<br>b) First term: 45 · Term-to-term rule: subtract 7',o:['45, 52, 59','45, 38, 31','38, 31, 24','45, 38, 30'],a:1,
+      why:'Start at 45, then take away 7 twice: <b>45, 38, 31</b>.',whyNot:{0:'that adds 7 instead of subtracting.',2:'the first term, 45, must be included.',3:'38 − 7 is 31, not 30.'}},
+    {src:'Worksheet · Ex 9.1 · Q3 d)',q:'Write down the first three terms of each of these sequences.<br>d) First term: 60 · Term-to-term rule: divide by 2',o:['60, 58, 56','60, 120, 240','60, 30, 15','60, 30, 0'],a:2,
+      why:'Start at 60, then halve: <b>60, 30, 15</b>.',whyNot:{0:'that subtracts 2 instead of dividing.',1:'that multiplies by 2.',3:'that subtracts 30 each time; half of 30 is 15.'}},
+    {src:'Worksheet · Ex 9.1 · Q4 b)',q:'Copy these finite sequences and fill in the missing terms.<br>b) 5, 11, 17, <i class="bx">____</i>, <i class="bx">____</i>, 35, <i class="bx">____</i>',o:['23, 29, 41','22, 28, 40','23, 29, 36','21, 27, 39'],a:0,
+      why:'The rule is add 6: 17 + 6 = <b>23</b>, <b>29</b>, then 35, then <b>41</b>.',whyNot:{1:'5 to 11 is +6; 17 + 6 is 23.',2:'the last term is 35 + 6, not 35 + 1.',3:'the jump is 6, not 4.'}},
+    {src:'Worksheet · Ex 9.1 · Q4 c)',q:'Copy these finite sequences and fill in the missing terms.<br>c) 26, 23, <i class="bx">____</i>, <i class="bx">____</i>, 14, <i class="bx">____</i>, 8',o:['20, 17, 11','21, 18, 12','20, 17, 12','29, 32, 11'],a:0,
+      why:'The rule is subtract 3: 23 − 3 = <b>20</b>, <b>17</b>, 14, <b>11</b>, 8.',whyNot:{1:'the jump is 3; 23 − 3 is 20.',2:'14 − 3 is 11, not 12.',3:'the terms go down, so take away.'}},
+    {src:'Worksheet · Ex 9.1 · Q4 d)',q:'Copy these finite sequences and fill in the missing terms.<br>d) 90, 82, <i class="bx">____</i>, 66, <i class="bx">____</i>, 50, <i class="bx">____</i>',o:['74, 58, 42','72, 56, 40','74, 58, 48','98, 106, 42'],a:0,
+      why:'The rule is subtract 8: <b>74</b>, 66, <b>58</b>, 50, <b>42</b>.',whyNot:{1:'90 to 82 is 8, so 82 − 8 is 74.',2:'50 − 8 is 42, not 48.',3:'the terms go down, so take away.'}},
+    {src:'Worksheet · Ex 9.1 · Q5 c)',q:'Write down whether each of these sequences is finite or infinite.<br>c) 85, 75, 65, 55, 45, 35',o:['finite','infinite'],a:0,
+      why:'It stops at 35. There are no dots, so it is <b>finite</b>.',whyNot:{1:'there are no dots at the end; it stops at 35.'}},
+    {src:'Worksheet · Ex 9.1 · Q5 d)',q:'Write down whether each of these sequences is finite or infinite.<br>d) 100, 97, 94, 91, 88, . . .',o:['finite','infinite'],a:1,
+      why:'The dots mean it goes on forever, so it is <b>infinite</b>.',whyNot:{0:'the dots at the end mean it keeps going.'}},
+    {src:'Worksheet · Ex 9.2 · Q1 c)',q:'This sequence of patterns is made from dots.<br>c) Write down the term-to-term rule.',o:['Add 4','Add 3','Multiply by 3','Add 1'],a:1,
+      why:'The dots go 4, 7, 10, 13: <b>add 3</b> each time.',whyNot:{0:'4 is the first term, not the jump.',2:'4 × 3 is 12, not 7.',3:'each pattern adds 3 dots, not 1.'}},
+    {src:'Worksheet · Ex 9.2 · Q1 d)',q:'This sequence of patterns is made from dots.<br>d) Explain how the sequence is formed.',
+      model:'Each pattern is the one before with <b>3 extra dots</b> added on the end (one more diamond).<br>So the number of dots goes up by 3 each time: 4, 7, 10, 13, 16.'},
+    {src:'Worksheet · Ex 9.2 · Q2 a)',q:'This sequence of patterns is made from squares.<br>a) Draw the next two patterns in the sequence.',
+      model:'Add 3 more squares to the end of Pattern 3 each time.<br><b>Pattern 4 has 14 squares</b> and <b>Pattern 5 has 17 squares</b>.'},
+    {src:'Worksheet · Ex 9.2 · Q2 c)',q:'This sequence of patterns is made from squares.<br>c) Write down the term-to-term rule.',o:['Add 5','Add 3','Multiply by 2','Subtract 3'],a:1,
+      why:'5, 8, 11, 14, 17: <b>add 3</b> each time.',whyNot:{0:'5 is the first term, not the jump.',2:'5 × 2 is 10, not 8.',3:'the numbers get bigger, so it adds.'}},
+  ]);}},
+
+/* 11 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Sequences and patterns</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🔢','A <b>sequence</b> is a list of <b>terms</b> that follow a rule.',`A sequence is a list of terms that follow a rule.`],
+    ['➡️','<b>Term-to-term rule</b>: how to get to the next term',`The term-to-term rule tells you how to get from one term to the next.`],
+    ['⬇️','Terms go down? The rule <b>takes away</b>.',`If the terms get smaller, the rule takes away.`],
+    ['✖️','6, 12, 24: rules can <b>multiply</b> too!',`Rules can multiply or divide too, like 6, 12, 24.`],
+    ['🕳️','Gaps? Find two terms <b>side by side</b> first.',`For missing terms, find two terms side by side to get the rule.`],
+    ['⏪','Going backwards? <b>Undo</b> the rule.',`To go backwards, undo the rule.`],
+    ['∞','". . ." = <b>infinite</b><br>Stops = <b>finite</b>',`Dots at the end mean infinite. A sequence that stops is finite.`],
+    ['🔷','Patterns: count what is <b>added</b> each time.',`For patterns, count how many dots or squares are added each time.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now spot and continue sequences. Next up: <b>the nth term and function machines</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

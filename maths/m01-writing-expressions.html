@@ -16,199 +16,321 @@
 <script src="../lessons/engine.js"></script>
 <script src="maths.js"></script>
 <script>
-/* Maths Lesson 1 · Chapter 2 · Exercise 2.1 (Q3, Q6, Q10) */
+/* Maths Lesson 1 · Chapter 2 · Exercise 2.1 (Q3, Q6, Q10)
+   Every worksheet question is taught with teachQ (maths.js): question first and read aloud, key words lit up,
+   a real number tried first, the student taps "Show me", then the working step by step, the answer and why. */
 const WS='Worksheet · Ex 2.1 · ';
 const STEM3='The temperature on Tuesday was t°C. Write an expression for the temperature when it is:';
 const STEM6=`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she:`;
 const STEM10='Write an expression for each of these.';
 /* a coloured number "ball" and a number machine */
-function ball(x,y,txt,col='#2c66cf',fs=34){return mk('mx-ball',`left:${x}px;top:${y}px;min-width:110px;height:84px;padding:0 16px;border-radius:42px;background:${col};color:#fff;font-size:${fs}px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.18);white-space:nowrap`,`<span>${txt}</span>`);}
-function machine(x,y,wd,label){const m=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:128px;border-radius:22px;background:linear-gradient(#5a6378,#3b4152);color:#ffd84d;font-size:34px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 0 #262b38`,label);
-  const g=mk('',`left:${wd-44}px;top:-20px;font-size:34px`,'⚙️',m);loop(g,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],2500,{easing:'linear'});pop(m);return m;}
+function ball(x,y,txt,col='#2c66cf',fs=34){return mk('mx-ball',`left:${x}px;top:${y}px;min-width:96px;height:80px;padding:0 16px;border-radius:40px;background:${col};color:#fff;font-size:${fs}px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.18);white-space:nowrap`,`<span>${txt}</span>`);}
+function machine(x,y,wd,label){const m=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:112px;border-radius:22px;background:linear-gradient(#5a6378,#3b4152);color:#ffd84d;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 0 #262b38`,label);
+  const g=mk('',`left:${wd-44}px;top:-20px;font-size:32px`,'⚙️',m);loop(g,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],2500,{easing:'linear'});pop(m);return m;}
 /* send a ball into a machine (it shrinks and vanishes inside) */
 async function feed(b,m){const bx=b.offsetLeft+b.offsetWidth/2,mx=m.offsetLeft+m.offsetWidth/2;
-  await an(b,[{transform:'none',opacity:1},{transform:`translateX(${mx-bx}px) scale(.4)`,opacity:0}],{duration:900});shake(m);beep(260,.12,'square',.05);}
+  await an(b,[{transform:'none',opacity:1},{transform:`translateX(${mx-bx}px) scale(.4)`,opacity:0}],{duration:1100});shake(m);beep(260,.12,'square',.05);}
+/* a thermometer whose red level and label can move */
+function thermo(){mk('','left:70px;top:150px;width:44px;height:290px;border-radius:22px;background:#fff;border:4px solid #9aa3b5');
+  mk('','left:56px;top:420px;width:72px;height:72px;border-radius:50%;background:#e04848;border:4px solid #9aa3b5');
+  const merc=mk('','left:82px;top:175px;width:20px;height:260px;border-radius:10px;background:#e04848;transform-origin:50% 100%;transform:scaleY(.33)');
+  const lvl=mk('tag','left:124px;top:335px;background:#ffe6cf;color:#7a2e00;font-size:21px;white-space:nowrap','t°C');pop(lvl);
+  return async(s,label)=>{const top=175+260*(1-s)-16;an(merc,[{transform:`scaleY(${s})`}],{duration:1100});
+    await an(lvl,[{top:top+'px'}],{duration:1100});lvl.style.top=top+'px';lvl.innerHTML=label;pop(lvl);beep(620,.08);};}
+/* a number line 0 to 14 with a dot that hops */
+function numLine(y){mk('',`left:60px;top:${y}px;width:840px;height:5px;border-radius:3px;background:#1f2433`);
+  for(let i=0;i<=14;i++){mk('',`left:${60+i*60}px;top:${y-9}px;width:3px;height:22px;background:#1f2433`);
+    mk('',`left:${40+i*60}px;top:${y+16}px;width:44px;text-align:center;font-size:17px;font-weight:800;color:#5a5f70`,i);}
+  const dot=(n,col)=>{const d=mk('',`left:${50+n*60}px;top:${y-11}px;width:24px;height:24px;border-radius:50%;background:${col};border:3px solid #fff;box-shadow:0 0 0 3px ${col}`);pop(d);return d;};
+  return{dot,hop:async(a,b,txt,col)=>{dot(a,'#2c66cf');await w0(600);
+    const j=mk('mx',`left:${42+a*60}px;top:${y-46}px;width:44px;text-align:center;font-size:24px;color:${col}`,txt);
+    const dx=(b-a)*60;await an(j,[{transform:'translate(0,0)'},{transform:`translate(${dx/2}px,-14px)`},{transform:`translate(${dx}px,0)`}],{duration:1300});
+    dot(b,col);beep(700,.1);}};}
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+/* Next question: clear the stage but keep a scene's fixed drawing (e.g. the thermometer) */
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
 
 Lesson.start(Object.assign({}, MATHS, {
   id:'m01', num:1, part:'Chapter 2', emoji:'✏️', title:'Writing expressions',
   intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's turn words into algebra. Press <b>Start</b>!`,
   scenes:[
 /* 0 */ {t:'Letters are mystery numbers',run:async w=>{
-  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to <b>write expressions</b>: maths made of numbers and letters.`);
-  const box=mk('','left:330px;top:40px;width:300px;height:210px;border-radius:26px;background:linear-gradient(135deg,#e06a1b,#f5a54a);box-shadow:0 10px 0 #c4520e;display:flex;align-items:center;justify-content:center;font-size:120px;font-weight:800;color:#fff;font-family:Georgia,serif;font-style:italic','y');pop(box);
-  const q=mk('','left:610px;top:14px;font-size:58px','❓');pop(q,300);loop(q,[{transform:'rotate(-12deg)'},{transform:'rotate(12deg)'}],600,{direction:'alternate'});
-  await w(2800);
-  say(`A <b>letter</b> stands for a number we don't know yet. This box is called <b>y</b>. It could hold 3, or 7, or even 100!`);
-  ['3','7','12','100','2.5'].forEach((n,i)=>{const e=mk('mx',`left:${110+i*165}px;top:290px;width:80px;text-align:center;font-size:44px`,n);
-    an(e,[{opacity:0,transform:'translateY(-150px) scale(.3)'},{opacity:1,transform:'none'}],{duration:700,delay:i*300});});
-  await w(4200);
-  const ex=mk('mx','left:0;top:390px;width:960px;text-align:center;font-size:58px','y + 3');pop(ex);
-  const lab=mk('tag','left:610px;top:410px;background:#ffe6cf;color:#7a2e00;font-size:18px','← an expression');pop(lab,400);
-  say(`Letters and numbers together make an <b>expression</b>, like <b>y + 3</b>. It means: whatever y is, add 3.`);
-  await w(3500);}},
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to turn words into <b>algebra</b>. Let's start with a secret.`);
+  const girl=mk('','left:40px;top:30px;font-size:96px','👧');pop(girl);
+  const bub=mk('','left:150px;top:20px;padding:10px 18px;border-radius:20px;background:#fff;border:3px solid #e3dcff;font-size:22px;font-weight:800;color:#4a2ea6','I\'m thinking of a number… 🤫');pop(bub,300);
+  await w(2600);
+  say(`Maliha thinks of a number, but she keeps it <b>secret</b>. We don't know it, so we give it a <b>letter</b>. Let's call it <b>y</b>.`);
+  const box=mk('','left:600px;top:24px;width:190px;height:150px;border-radius:26px;background:linear-gradient(135deg,#e06a1b,#f5a54a);box-shadow:0 10px 0 #c4520e;display:flex;align-items:center;justify-content:center;font-size:100px;font-weight:800;color:#fff;font-family:Georgia,serif;font-style:italic','y');
+  pop(box);point(box);
+  await w(3200);
+  say(`<b>y</b> is like a box with a number hidden inside. It could be 5, or 10, or even 100.`);
+  ['5','10','100'].forEach((n,i)=>{const e=mk('mx',`left:${590+i*80}px;top:190px;width:70px;text-align:center;font-size:34px`,n);
+    an(e,[{opacity:0,transform:'translateY(-60px) scale(.3)'},{opacity:1,transform:'none'}],{duration:700,delay:i*400});});
+  await w(3400);
+  say(`Now Maliha <b>adds 3</b> to her number. Let's try it with real numbers first.`);
+  await w(2400);
+  const L1=mk('mx-step try','left:96px;top:270px','If the number is <b>5</b>: &nbsp;5 + 3 = 8');pop(L1);point(L1);
+  say(`If her number is <b>5</b>, she gets 5 + 3, which is <b>8</b>.`);
+  await w(2600);
+  const L2=mk('mx-step try','left:96px;top:336px','If the number is <b>10</b>: &nbsp;10 + 3 = 13');pop(L2);point(L2);
+  say(`If her number is <b>10</b>, she gets 10 + 3, which is <b>13</b>.`);
+  await w(2600);
+  say(`But we don't know her number! So we write the <b>letter</b> instead of the number.`);
+  await w(2400);
+  const L3=mk('mx-step','left:96px;top:402px','The number is <b>y</b>: &nbsp;<span style="font-size:36px;color:#e06a1b">y + 3</span>');pop(L3);point(L3);
+  const tag=mk('tag','left:96px;top:466px;background:#ffe6cf;color:#7a2e00;font-size:20px','← this is an expression');pop(tag,600);
+  say(`<b>y + 3</b> is called an <b>expression</b>. It's a maths recipe: whatever the number y is, add 3 to it.`);
+  await w(3600);
+  say(`Today's big trick: if you're stuck, <b>try a real number first</b>, then do exactly the same with the letter.`);
+  await w(3000);}},
 
 /* 1 */ {t:'Algebra shorthand',run:async w=>{
-  say(`Mathematicians are lazy writers! 😄 They use <b>shorthand</b>. Watch the signs disappear.`);
-  const R=[['3 × y','3y','Drop the × sign. The number goes first.'],['y ÷ 2',frac('y',2),'Write ÷ as a fraction. (y ÷ 2 is fine too.)'],
-    ['p × q','pq','Letters multiplied sit side by side.'],['4 × g × h','4gh','Number first, then the letters.']];
-  const L=[`<b>3 times y</b> is written <b>3y</b>. No times sign, and the number goes first.`,`<b>y divided by 2</b> is written as a fraction: y over 2.`,
-    `<b>p times q</b> is just <b>pq</b>. The letters sit side by side.`,`<b>4 times g times h</b> is <b>4gh</b>. Number first, then the letters.`];
-  for(let i=0;i<4;i++){const p=panel(13+(i%2)*474,8+Math.floor(i/2)*256,460,244,`Rule ${i+1}`,R[i][2]);pop(p);
-    const a=mk('mx','left:0;top:50px;width:460px;text-align:center;font-size:46px',R[i][0],p);
-    say(L[i]);await w(1200);
-    an(a,[{transform:'none',color:'#7a2e00'},{transform:'translateY(-14px) scale(.75)',color:'#b39a85'}],{duration:500});
-    const b=mk('mx','left:0;top:104px;width:460px;text-align:center;font-size:50px;color:#18a058',R[i][1],p);pop(b);beep(700,.08);
-    await w(2600);}
-  stage.innerHTML='';
-  say(`Now two worksheet questions. <b>p multiplied by q</b> is <b>pq</b>. <b>Four times g multiplied by h</b> is <b>4gh</b>.`);
-  wsCard('left:40px;top:70px;width:420px',{src:WS+'Q10 e)',q:STEM10+'<br>e) p multiplied by q',a:'✔ pq'});
-  await w(900);
-  wsCard('left:500px;top:70px;width:420px',{src:WS+'Q10 f)',q:STEM10+'<br>f) four times g multiplied by h',a:'✔ 4gh'});
-  const tip=mk('clue','left:180px;top:300px;width:600px','<div class="e">💡</div>Write the <b>number first</b>, then the letters, and leave out the × sign.');pop(tip,600);
+  say(`In algebra we write multiplying and dividing in a <b>short way</b>. There are four rules. Let's take them one at a time.`);
+  await w(3000);
+  const R=[[`3 <span class="x">×</span> y`,'3y','y = 5 → 3y = 3 × 5 = 15',
+      `Look at <b>3 × y</b>. In algebra we leave out the times sign.`,`So 3 times y is written <b>3y</b>. The number always goes first.`,`Check with a number: if y is 5, then 3y means 3 times 5, which is 15.`],
+    [`y <span class="x">÷</span> 2`,frac('y',2),'y = 10 → '+frac('y',2)+' = 10 ÷ 2 = 5',
+      `Now <b>y ÷ 2</b>. We usually write dividing as a <b>fraction</b>.`,`So y divided by 2 is written ${frac('y',2)}: y on top, 2 underneath. y ÷ 2 is fine too.`,`Check: if y is 10, then ${frac('y',2)} is 10 divided by 2, which is 5.`],
+    [`p <span class="x">×</span> q`,'pq','p = 2, q = 4 → pq = 2 × 4 = 8',
+      `Two letters multiplied: <b>p × q</b>.`,`Leave out the times sign and the letters sit side by side: <b>pq</b>.`,`Check: if p is 2 and q is 4, then pq is 2 times 4, which is 8.`],
+    [`4 <span class="x">×</span> g <span class="x">×</span> h`,'4gh','g = 2, h = 3 → 4gh = 4 × 2 × 3 = 24',
+      `Last one: <b>4 × g × h</b>. A number and two letters.`,`Leave out both times signs. <b>Number first</b>, then the letters: <b>4gh</b>.`,`Check: if g is 2 and h is 3, then 4gh is 4 times 2 times 3, which is 24.`]];
+  for(let i=0;i<4;i++){const [lng,sht,chk,s1,s2,s3]=R[i];
+    const p=panel(13+(i%2)*474,8+Math.floor(i/2)*256,460,244,`Rule ${i+1}`,'');pop(p);
+    const a=mk('mx','left:0;top:44px;width:460px;text-align:center;font-size:44px',lng,p);
+    point(a);say(s1);await w(2600);
+    a.querySelectorAll('.x').forEach(x=>an(x,[{color:'#7a2e00'},{color:'#e04848',opacity:1,offset:.4},{color:'#e04848',opacity:.15}],{duration:1200}));
+    beep(300,.1);await w(1300);
+    const b=mk('mx',`left:0;top:96px;width:460px;text-align:center;font-size:${i===1?34:48}px;color:#18a058`,'→ '+sht,p);pop(b);beep(700,.08);point(b);
+    say(s2);await w(2800);
+    const c=mk('','left:0;top:190px;width:460px;text-align:center;font-size:18px;font-weight:700;color:#1d4b9e',chk,p);pop(c);
+    say(s3);await w(2800);}
+  say(`So: <b>no times signs</b>, <b>number first</b>, and <b>divide</b> is written as a fraction.`);
+  await w(3000);}},
+
+/* 2 */ {t:'Shorthand on the worksheet',run:async w=>{
+  await teachQ(w,{src:WS+'Q10 e)',q:STEM10+'<br>e) p multiplied by q',read:'Write an expression for: p multiplied by q.',
+    keys:[['multiplied by',`<b>Multiplied by</b> means <b>times</b>. So this is p times q.`]],
+    steps:[{show:'p × q <i>p times q</i>',say:`First write it with the times sign: <b>p × q</b>.`},
+      {show:'pq <i>leave out the × sign</i>',say:`Then leave out the times sign. The letters sit side by side: <b>pq</b>.`}],
+    answer:'pq',why:'In algebra, letters written side by side are multiplied. pq means p × q.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q10 f)',q:STEM10+'<br>f) four times g multiplied by h',read:'Write an expression for: four times g, multiplied by h.',
+    keys:[['four times g',`<b>Four times g</b> means 4 × g.`],['multiplied by h',`Then <b>multiplied by h</b> means times h as well.`]],
+    steps:[{show:'4 × g × h <i>write the times signs first</i>',say:`Write it out in full: <b>4 × g × h</b>.`},
+      {show:'4gh <i>no × signs, number first</i>',say:`Now leave out both times signs, with the number first: <b>4gh</b>.`}],
+    answer:'4gh',why:'Leave out the × signs and put the number first. 4gh means 4 × g × h.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Tuesday\'s temperature',run:async w=>{
+  say(`Now a worksheet question about temperature. There are three parts. We'll do them <b>one at a time</b>.`);
+  await w(2600);
+  const T=[{p:'a)',q:'a) 2°C higher than it was on Tuesday.',read:'The temperature on Tuesday was t degrees Celsius. Write an expression for the temperature when it is 2 degrees higher than it was on Tuesday.',
+      keys:[['2°C higher',`<b>Higher</b> means warmer, so we <b>add</b>. 2 degrees higher means <b>add 2</b>.`]],
+      tryS:[.33,'10°C',.4,'12°C','Try: Tuesday was <b>10°C</b> → 10 + 2 = <b>12°C</b>',`Let's try a number first. If Tuesday was 10 degrees, then 2 degrees higher is 10 + 2, which is <b>12 degrees</b>.`],
+      steps:[[.33,'t°C','t + 2 <i>start at t, then add 2</i>',`Now do the same with the letter. Start at <b>t</b>, then add 2: <b>t + 2</b>.`],
+        [.4,'(t + 2)°C','(t + 2)°C <i>brackets keep t + 2 together</i>',`Put brackets round t + 2, then the degrees sign: <b>(t + 2)°C</b>.`]],
+      answer:'(t + 2)°C',why:'Higher means add. Check: if t is 10, then t + 2 is 12. ✔'},
+    {p:'b)',q:'b) twice as warm as it was on Tuesday.',read:'The temperature on Tuesday was t degrees Celsius. Write an expression for the temperature when it is twice as warm as it was on Tuesday.',
+      keys:[['twice as warm',`<b>Twice</b> means two lots of, so we <b>multiply by 2</b>.`]],
+      tryS:[.33,'10°C',.67,'20°C','Try: Tuesday was <b>10°C</b> → 2 × 10 = <b>20°C</b>',`Try a number first. If Tuesday was 10 degrees, twice as warm is 2 × 10, which is <b>20 degrees</b>.`],
+      steps:[[.33,'t°C','2 × t <i>two lots of t</i>',`Now with the letter: twice t is <b>2 × t</b>.`],
+        [.67,'2t°C','2t°C <i>leave out the × sign, number first</i>',`Leave out the times sign, number first: <b>2t</b>, then degrees.`]],
+      answer:'2t°C',why:'Twice means times 2, and 2 × t is written 2t. Check: if t is 10, then 2t is 20. ✔'},
+    {p:'c)',q:'c) half as warm as it was on Tuesday.',read:'The temperature on Tuesday was t degrees Celsius. Write an expression for the temperature when it is half as warm as it was on Tuesday.',
+      keys:[['half as warm',`<b>Half</b> means split into 2 equal parts, so we <b>divide by 2</b>.`]],
+      tryS:[.33,'10°C',.17,'5°C','Try: Tuesday was <b>10°C</b> → 10 ÷ 2 = <b>5°C</b>',`Try a number first. If Tuesday was 10 degrees, half as warm is 10 ÷ 2, which is <b>5 degrees</b>.`],
+      steps:[[.33,'t°C','t ÷ 2 <i>half of t</i>',`Now with the letter: half of t is <b>t ÷ 2</b>.`],
+        [.17,frac('t',2)+'°C',frac('t',2)+'°C <i>÷ 2 written as a fraction</i>',`We usually write it as a fraction: ${frac('t',2)} degrees. Both answers are right.`]],
+      answer:frac('t',2)+'°C or (t ÷ 2)°C',why:'Half means divide by 2. Check: if t is 10, then t ÷ 2 is 5. ✔'}];
+  for(let i=0;i<3;i++){const P=T[i];clear();const set=thermo();
+    const [s0,l0,s1,l1,show,line]=P.tryS;
+    await teachQ(w,{src:WS+'Q3 '+P.p,q:STEM3+'<br>'+P.q,read:P.read,keys:P.keys,x:200,wd:720,
+      before:[{act:async()=>{await set(s0,l0);await w(500);await set(s1,l1);},show,say:line,try:true,wait:2400}],
+      steps:P.steps.map(([s,l,show,line])=>({act:()=>set(s,l),show,say:line,wait:2200})),
+      answer:P.answer,why:P.why});
+    await w(1200);}
+  clear();
+  const sum=mk('','left:130px;top:90px;width:700px','');
+  [['🔺','Higher → <b>add</b>','t + 2'],['✖️','Twice → <b>times 2</b>','2t'],['➗','Half → <b>divide by 2</b>',frac('t',2)]].forEach(([e,a,b],i)=>{
+    const r=mk('mx-step',`left:0;top:${i*104}px;width:640px`,`<span>${e} ${a}</span><span style="color:#18a058;float:right">${b}</span>`,sum);pop(r,i*500);});
+  say(`So: <b>higher</b> means add, <b>twice</b> means times 2, and <b>half</b> means divide by 2.`);
   await w(3500);}},
 
-/* 2 */ {t:'Tuesday\'s temperature',run:async w=>{
-  const st=mk('ex-q','top:12px;font-size:19px',`<span class="src">${WS}Q3</span>${STEM3}`);pop(st);
-  /* thermometer */
-  mk('','left:58px;top:120px;width:44px;height:300px;border-radius:22px;background:#fff;border:4px solid #9aa3b5');
-  mk('','left:44px;top:400px;width:72px;height:72px;border-radius:50%;background:#e04848;border:4px solid #9aa3b5');
-  const merc=mk('','left:70px;top:150px;width:20px;height:270px;border-radius:10px;background:#e04848;transform-origin:50% 100%;transform:scaleY(.4)');
-  const lvl=mk('tag','left:118px;top:300px;background:#ffe6cf;color:#7a2e00;font-size:22px','t°C');pop(lvl);
-  say(`On Tuesday the temperature was <b>t°C</b>. We don't know the number, so we call it <b>t</b>.`);
-  await w(3000);
-  const P=[['a) 2°C higher than it was on Tuesday.','✔ (t + 2)°C',.52,'(t + 2)°C',`<b>2 degrees higher</b> means <b>add 2</b>: <b>t + 2</b> degrees.`],
-    ['b) twice as warm as it was on Tuesday.','✔ 2t°C',.8,'2t°C',`<b>Twice as warm</b> means <b>times 2</b>: we write <b>2t</b> degrees.`],
-    ['c) half as warm as it was on Tuesday.',`✔ ${frac('t',2)}°C or (t ÷ 2)°C`,.2,frac('t',2)+'°C',`<b>Half as warm</b> means <b>divide by 2</b>: ${frac('t',2)} degrees, or t ÷ 2.`]];
-  for(let i=0;i<3;i++){const [q,a,s,l,line]=P[i];
-    an(merc,[{transform:`scaleY(${s})`}],{duration:1000});
-    const top=150+270*(1-s)-14;an(lvl,[{top:lvl.style.top},{top:top+'px'}],{duration:1000});lvl.style.top=top+'px';
-    setTimeout(()=>{lvl.innerHTML=l;},500);
-    say(line);
-    wsCard(`left:250px;top:${124+i*126}px;width:670px`,{src:WS+'Q3 '+q.slice(0,2),q,a});
-    await w(3600);}
-  say(`So: higher means <b>add</b>, twice means <b>times 2</b>, and half means <b>divide by 2</b>.`);
-  await w(3000);}},
-
-/* 3 */ {t:'Maliha\'s number machine',run:async w=>{
-  const st=mk('ex-q','top:12px;font-size:19px',`<span class="src">${WS}Q6</span>${STEM6}`);pop(st);
-  say(`Maliha thinks of a number. We call it <b>y</b>. Let's feed it into some <b>number machines</b>!`);
-  await w(2500);
-  const P=[['× 3','3y','i) multiplies the number by 3','✔ 3y',`Multiply by 3: y becomes <b>3y</b>.`],
-    ['÷ 2',frac('y',2),'ii) divides the number by 2',`✔ ${frac('y',2)} or y ÷ 2`,`Divide by 2: y becomes ${frac('y',2)}, or y ÷ 2.`],
-    ['× 4, then + 1','4y + 1','iii) multiplies the number by 4, then adds 1','✔ 4y + 1',`Multiply by 4 to get 4y, then add 1: <b>4y + 1</b>.`]];
-  let made=[];
-  for(const [lab,out,q,a,line] of P){made.forEach(e=>e.remove());
-    const b=ball(40,168,'y');pop(b);const m=machine(300,146,330,lab);
-    await w(900);await feed(b,m);
-    const o=ball(700,168,out,'#18a058',out.length>4?30:34);pop(o);yay();say(line);
-    const c=wsCard('left:40px;top:320px;width:880px',{src:WS+'Q6 '+q.split(')')[0]+')',q,a});
-    made=[b,m,o,c];await w(3400);}
-  }},
-
-/* 4 */ {t:'Two-step machines',run:async w=>{
-  const st=mk('ex-q','top:12px;font-size:19px',`<span class="src">${WS}Q6</span>${STEM6}`);pop(st);
-  say(`Now each number goes through <b>two machines</b>. Always do the steps <b>in order</b>.`);
-  await w(2500);
-  const P=[['× 2','2y','− 5','2y − 5','iv) multiplies the number by 2, then subtract 5','✔ 2y − 5',`Times 2 gives 2y. Then take away 5: <b>2y − 5</b>.`],
-    ['× 5','5y','52 − ▢','52 − 5y','v) multiplies the number by 5, then subtract the result from 52','✔ 52 − 5y',`Times 5 gives 5y. Then take 5y <b>away from 52</b>, so 52 comes first: <b>52 − 5y</b>.`],
-    ['÷ 4',frac('y',4),'+ 3',frac('y',4)+' + 3','vi) divides the number by 4, then add 3',`✔ ${frac('y',4)} + 3 or y ÷ 4 + 3`,`Divide by 4, then add 3: ${frac('y',4)} + 3.`]];
-  let made=[];
-  for(const [l1,mid,l2,out,q,a,line] of P){made.forEach(e=>e.remove());
-    const b=ball(14,162,'y');pop(b);const m1=machine(150,140,190,l1);const m2=machine(530,140,190,l2);
-    await w(800);await feed(b,m1);
-    const c=ball(375,162,mid,'#e06a1b',30);pop(c);await w(700);await feed(c,m2);
-    const o=ball(745,162,out,'#18a058',28);pop(o);yay();say(line);
-    const k=wsCard('left:40px;top:320px;width:880px',{src:WS+'Q6 '+q.split(')')[0]+')',q,a});
-    made=[b,m1,m2,c,o,k];
-    if(l2==='52 − ▢'){await w(2600);const t=mk('tag','left:690px;top:262px;background:#fde3e3;color:#b02a2a;font-size:19px','✗ not 5y − 52');pop(t);made.push(t);
-      say(`Careful! <b>Subtract from 52</b> means 52 comes first. It is <b>not</b> 5y − 52.`);shake(t);}
-    await w(3400);}
-  }},
-
-/* 5 */ {t:'More than, less than',run:async w=>{
-  say(`<b>More than</b> means add. <b>Less than</b> means take away, but watch the order!`);
-  const line=mk('','left:60px;top:150px;width:840px;height:6px;border-radius:3px;background:#1f2433');
-  for(let i=0;i<=14;i++)mk('',`left:${60+i*60}px;top:142px;width:3px;height:22px;background:#1f2433`);
-  const y0=mk('','left:508px;top:138px;width:30px;height:30px;border-radius:50%;background:#2c66cf;border:4px solid #fff;box-shadow:0 0 0 3px #2c66cf');pop(y0);
-  mk('mx','left:500px;top:178px;width:46px;text-align:center;font-size:34px;color:#2c66cf','y');
-  await w(2500);
-  const hop=async(dx,txt,col,res,rx)=>{const j=mk('mx',`left:503px;top:80px;width:40px;text-align:center;font-size:30px;color:${col}`,txt);
-    await an(j,[{transform:'translate(0,0)'},{transform:`translate(${dx/2}px,-40px)`},{transform:`translate(${dx}px,0)`}],{duration:1100});
-    const d=mk('',`left:${508+dx}px;top:138px;width:30px;height:30px;border-radius:50%;background:${col};border:4px solid #fff;box-shadow:0 0 0 3px ${col}`);pop(d);
-    const r=mk('mx',`left:${rx}px;top:186px;width:200px;text-align:center;font-size:34px;color:${col}`,res);pop(r);beep(700,.1);};
-  say(`<b>x more than y</b>: start at y and jump forward x. That's <b>y + x</b>, or <b>x + y</b>.`);
-  await hop(240,'+x','#18a058','y + x',663);
-  wsCard('left:40px;top:270px;width:420px',{src:WS+'Q10 a)',q:STEM10+'<br>a) x more than y',a:'✔ x + y or y + x'});
-  await w(3600);
-  say(`<b>x less than y</b>: start at y and step back x. That's <b>y − x</b>. The y comes first!`);
-  await hop(-240,'−x','#e06a1b','y − x',183);
-  wsCard('left:500px;top:270px;width:420px',{src:WS+'Q10 b)',q:STEM10+'<br>b) x less than y',a:'✔ y − x'});
+/* 4 */ {t:'Maliha\'s number machine',run:async w=>{
+  say(`Maliha's secret number is <b>y</b>. Let's feed it into some <b>number machines</b>. A machine does something to the number that goes in.`);
   await w(3200);
-  const t=mk('tag','left:560px;top:440px;background:#fde3e3;color:#b02a2a;font-size:19px','⚠️ x less than y is NOT x − y');pop(t);shake(t);
-  say(`This is the classic trap: <b>x less than y</b> is <b>y − x</b>, not x − y.`);
-  await w(3600);
-  stage.innerHTML='';
-  say(`Now with times. <b>Two times n</b> is <b>2n</b>. Then <b>m more than</b> that means add m: <b>m + 2n</b>.`);
-  const L=mk('mx','left:40px;top:30px;width:420px;text-align:center;font-size:30px;line-height:1.7',`two times n → <b style="color:#2c66cf">2n</b><br>m more than 2n →<br><b style="color:#18a058;font-size:40px">m + 2n</b>`);pop(L);
-  await w(2600);
-  const R=mk('mx','left:500px;top:30px;width:420px;text-align:center;font-size:30px;line-height:1.7',`3 times b → <b style="color:#2c66cf">3b</b><br>a less than 3b →<br><b style="color:#e06a1b;font-size:40px">3b − a</b>`);pop(R);
-  say(`<b>3 times b</b> is <b>3b</b>. Then <b>a less than</b> that means take a away: <b>3b − a</b>.`);
-  await w(3000);
-  wsCard('left:40px;top:270px;width:420px',{src:WS+'Q10 c)',q:STEM10+'<br>c) m more than two times n',a:'✔ m + 2n or 2n + m'});
-  await w(900);
-  wsCard('left:500px;top:270px;width:420px',{src:WS+'Q10 d)',q:STEM10+'<br>d) a less than 3 times b',a:'✔ 3b − a'});
-  await w(3000);}},
+  const Q=[{p:'i)',q:'i) multiplies the number by 3',lab:'× 3',key:'multiplies the number by 3',means:`<b>Multiplies by 3</b> means times 3.`,
+      n:'5',nout:'15',nshow:'Try <b>5</b>: &nbsp;5 × 3 = 15',nsay:`Try a number first. Put in <b>5</b>. 5 times 3 is <b>15</b>.`,
+      out:'3y',show:'y × 3 = <b>3y</b> <i>number first, no × sign</i>',say:`Now put in <b>y</b>. y times 3 is written <b>3y</b>, with the number first.`,
+      answer:'3y',why:'Multiply by 3 and write the number first: 3y. Check: if y is 5, 3y is 15. ✔'},
+    {p:'ii)',q:'ii) divides the number by 2',lab:'÷ 2',key:'divides the number by 2',means:`<b>Divides by 2</b> means share it into 2 equal parts.`,
+      n:'10',nout:'5',nshow:'Try <b>10</b>: &nbsp;10 ÷ 2 = 5',nsay:`Try a number first. Put in <b>10</b>. 10 divided by 2 is <b>5</b>.`,
+      out:frac('y',2),show:'y ÷ 2 = <b>'+frac('y',2)+'</b> <i>dividing is written as a fraction</i>',say:`Now put in <b>y</b>. y divided by 2 is written as a fraction: ${frac('y',2)}.`,
+      answer:frac('y',2)+' or y ÷ 2',why:'Dividing by 2 can be written as a fraction. Check: if y is 10, it gives 5. ✔'},
+    {p:'iii)',q:'iii) multiplies the number by 4, then adds 1',lab:'× 4, then + 1',key:'then adds 1',means:`Two jobs here: first <b>multiply by 4</b>, <b>then add 1</b>. The order matters!`,
+      n:'5',nout:'21',nshow:'Try <b>5</b>: &nbsp;5 × 4 = 20, then 20 + 1 = 21',nsay:`Try <b>5</b>. First 5 times 4 is 20. Then add 1: <b>21</b>.`,
+      out:'4y + 1',show:'y × 4 = 4y, then <b>4y + 1</b>',say:`Now <b>y</b>. y times 4 is 4y. Then add 1: <b>4y + 1</b>.`,
+      answer:'4y + 1',why:'Multiply first to get 4y, then add 1. Check: if y is 5, 4y + 1 is 21. ✔'}];
+  for(const P of Q){clear();let made=[];
+    await teachQ(w,{src:WS+'Q6 '+P.p,q:STEM6+'<br>'+P.q,read:`Maliha thinks of a number y. Write an expression for the number she gets when she ${P.q.replace(/^\w+\) /,'')}.`,
+      keys:[[P.key,P.means]],workY:322,
+      before:[{act:async()=>{const m=machine(300,196,330,P.lab);const b=ball(60,212,P.n);pop(b);made=[m,b];await w(900);await feed(b,m);
+          const o=ball(710,212,P.nout,'#2c66cf');pop(o);made.push(o);},show:P.nshow,say:P.nsay,try:true,wait:2400}],
+      steps:[{act:async()=>{made.slice(1).forEach(e=>e.remove());const b=ball(60,212,'y','#e06a1b');pop(b);await w(800);await feed(b,made[0]);
+          const o=ball(690,212,P.out,'#18a058',P.out.length>4?28:34);pop(o);yay();},show:P.show,say:P.say,wait:2400}],
+      answer:P.answer,why:P.why});
+    await w(1200);}
+  }},
 
-/* 6 */ {t:'Build it!',run:async w=>{
-  const R=[[`Maliha multiplies her number y by 5, then subtracts the result from 52.`,['5y','52','y','−','+','5'],[['52','−','5y']],'52 − 5y'],
-    ['Write an expression for: x less than y',['x','y','−','+'],[['y','−','x']],'y − x'],
-    ['Half as warm as t°C',['t','2','÷','×','+'],[['t','÷','2']],'t ÷ 2'],
-    ['Write an expression for: a less than 3 times b',['3b','a','b','3','−','+'],[['3b','−','a'],['3','b','−','a']],'3b − a']];
+/* 5 */ {t:'Two-step machines',run:async w=>{
+  say(`Now the number goes through <b>two machines</b>, one after the other. Always do the steps <b>in order</b>.`);
+  await w(3000);
+  const Q=[{p:'iv)',q:'iv) multiplies the number by 2, then subtract 5',l1:'× 2',l2:'− 5',key:'then subtract 5',means:`First <b>multiply by 2</b>, <b>then take away 5</b>.`,
+      n:'5',nmid:'10',nout:'5',nshow:'Try <b>5</b>: &nbsp;5 × 2 = 10, then 10 − 5 = 5',nsay:`Try <b>5</b>. 5 times 2 is 10. Then take away 5: <b>5</b>.`,
+      mid:'2y',out:'2y − 5',show:'y × 2 = 2y, then <b>2y − 5</b>',say:`Now <b>y</b>. y times 2 is 2y. Then take away 5: <b>2y − 5</b>.`,
+      answer:'2y − 5',why:'Multiply first (2y), then take away 5. Check: if y is 5, 2y − 5 is 5. ✔'},
+    {p:'v)',q:'v) multiplies the number by 5, then subtract the result from 52',l1:'× 5',l2:'52 − ▢',key:'subtract the result from 52',means:`Careful! <b>Subtract from 52</b> means start with <b>52</b> and take the result away.`,
+      n:'2',nmid:'10',nout:'42',nshow:'Try <b>2</b>: &nbsp;2 × 5 = 10, then 52 − 10 = 42',nsay:`Try <b>2</b>. 2 times 5 is 10. Then take 10 away from 52: <b>42</b>.`,
+      mid:'5y',out:'52 − 5y',show:'y × 5 = 5y, then <b>52 − 5y</b> <i>52 comes first</i>',say:`Now <b>y</b>. y times 5 is 5y. Take 5y away <b>from 52</b>, so 52 comes first: <b>52 − 5y</b>.`,
+      answer:'52 − 5y',why:'It is NOT 5y − 52. Taking 10 from 52 gives 42; 10 − 52 is the wrong way round. The number you start from comes first.'},
+    {p:'vi)',q:'vi) divides the number by 4, then add 3',l1:'÷ 4',l2:'+ 3',key:'then add 3',means:`First <b>divide by 4</b>, <b>then add 3</b>.`,
+      n:'8',nmid:'2',nout:'5',nshow:'Try <b>8</b>: &nbsp;8 ÷ 4 = 2, then 2 + 3 = 5',nsay:`Try <b>8</b>. 8 divided by 4 is 2. Then add 3: <b>5</b>.`,
+      mid:frac('y',4),out:frac('y',4)+' + 3',show:'y ÷ 4 = '+frac('y',4)+', then <b>'+frac('y',4)+' + 3</b>',say:`Now <b>y</b>. y divided by 4 is ${frac('y',4)}. Then add 3: ${frac('y',4)} + 3.`,
+      answer:frac('y',4)+' + 3 or y ÷ 4 + 3',why:'Divide first, then add 3. Check: if y is 8, it gives 2 + 3 = 5. ✔'}];
+  for(const P of Q){clear();let M=[];
+    const run=async(inp,col,mid,out,ocol)=>{const b=ball(14,212,inp,col);pop(b);await w(800);await feed(b,M[0]);
+      const c=ball(372,212,mid,'#e06a1b',30);pop(c);point(c);await w(1200);await feed(c,M[1]);
+      const o=ball(752,212,out,ocol,out.length>6?24:30);pop(o);return[c,o];};
+    let tmp=[];
+    await teachQ(w,{src:WS+'Q6 '+P.p,q:STEM6+'<br>'+P.q,read:`Maliha thinks of a number y. Write an expression for the number she gets when she ${P.q.replace(/^\w+\) /,'')}.`,
+      keys:[[P.key,P.means]],workY:322,
+      before:[{act:async()=>{M=[machine(150,196,190,P.l1),machine(540,196,190,P.l2)];await w(600);tmp=await run(P.n,'#2c66cf',P.nmid,P.nout,'#2c66cf');},show:P.nshow,say:P.nsay,try:true,wait:2600}],
+      steps:[{act:async()=>{tmp.forEach(e=>e.remove());await run('y','#e06a1b',P.mid,P.out,'#18a058');yay();},show:P.show,say:P.say,wait:2600}],
+      answer:P.answer,why:P.why});
+    await w(1200);}
+  }},
+
+/* 6 */ {t:'More than, less than',run:async w=>{
+  say(`<b>More than</b> means add. <b>Less than</b> means take away, but the order is a trap! A number line shows why.`);
+  await w(3200);
+  clear();let NL;
+  await teachQ(w,{src:WS+'Q10 a)',q:STEM10+'<br>a) x more than y',read:'Write an expression for: x more than y.',
+    keys:[['more than',`<b>More than</b> means <b>add</b>.`]],workY:262,
+    before:[{act:async()=>{NL=numLine(214);await NL.hop(10,13,'+3','#18a058');},show:'Try: 3 more than <b>10</b> → 10 + 3 = 13',
+      say:`Try numbers first. <b>3 more than 10</b>: start at 10 and jump forward 3. You land on <b>13</b>, which is 10 + 3.`,try:true,wait:2600}],
+    steps:[{show:'x more than y → <b>y + x</b> <i>start at y, add x</i>',say:`Now the letters. Start at <b>y</b> and add <b>x</b>: <b>y + x</b>.`},
+      {show:'y + x = <b>x + y</b> <i>adding works in any order</i>',say:`Adding works in any order, so <b>x + y</b> is right too.`}],
+    answer:'x + y or y + x',why:'More than means add, and you can add in any order.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q10 b)',q:STEM10+'<br>b) x less than y',read:'Write an expression for: x less than y.',
+    keys:[['less than',`<b>Less than</b> means <b>take away</b>.`]],workY:262,
+    before:[{act:async()=>{NL=numLine(214);await NL.hop(10,7,'−3','#e06a1b');},show:'Try: 3 less than <b>10</b> → 10 − 3 = 7',
+      say:`Try numbers first. <b>3 less than 10</b>: start at 10 and step back 3. You land on <b>7</b>, which is 10 − 3. Notice the 10 comes first!`,try:true,wait:2800}],
+    steps:[{show:'x less than y → <b>y − x</b> <i>start at y, take x away</i>',say:`Now the letters. Start at <b>y</b> and take <b>x</b> away: <b>y − x</b>.`},
+      {show:'⚠️ not x − y <i>3 − 10 would be the wrong way round</i>',say:`It is <b>not</b> x − y. With numbers, that would be 3 − 10, the wrong way round.`}],
+    answer:'y − x',why:'Start with y, then take x away. The words come in the opposite order.'});
+  await w(1500);}},
+
+/* 7 */ {t:'Times, then more or less',run:async w=>{
+  say(`Now some with <b>two jobs</b>: a times, and then more or less. Find the times part first.`);
+  await w(2800);
+  clear();
+  await teachQ(w,{src:WS+'Q10 c)',q:STEM10+'<br>c) m more than two times n',read:'Write an expression for: m more than two times n.',
+    keys:[['two times n',`<b>Two times n</b> is <b>2n</b>.`],['m more than',`<b>m more than</b> means <b>add m</b> to it.`]],
+    before:[{show:'Try n = <b>5</b>, m = <b>1</b>: &nbsp;2 × 5 = 10, then 10 + 1 = 11',say:`Try numbers first. If n is 5, two times n is 10. If m is 1, one more than 10 is <b>11</b>.`,try:true,wait:2600}],
+    steps:[{show:'two times n → <b>2n</b>',say:`Now the letters. Two times n is <b>2n</b>.`},
+      {show:'m more than 2n → <b>2n + m</b> <i>add m</i>',say:`m more than 2n means add m: <b>2n + m</b>. Adding works in any order, so <b>m + 2n</b> is right too.`,wait:2600}],
+    answer:'m + 2n or 2n + m',why:'Find the times part first (2n), then add m.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q10 d)',q:STEM10+'<br>d) a less than 3 times b',read:'Write an expression for: a less than 3 times b.',
+    keys:[['3 times b',`<b>3 times b</b> is <b>3b</b>.`],['a less than',`<b>a less than</b> it means start with 3b and <b>take a away</b>.`]],
+    before:[{show:'Try b = <b>4</b>, a = <b>2</b>: &nbsp;3 × 4 = 12, then 12 − 2 = 10',say:`Try numbers first. If b is 4, 3 times b is 12. If a is 2, two less than 12 is <b>10</b>: 12 − 2.`,try:true,wait:2600}],
+    steps:[{show:'3 times b → <b>3b</b>',say:`Now the letters. 3 times b is <b>3b</b>.`},
+      {show:'a less than 3b → <b>3b − a</b> <i>3b comes first</i>',say:`a less than 3b: start with 3b and take a away: <b>3b − a</b>.`}],
+    answer:'3b − a',why:'It is not a − 3b. Like 12 − 2, you start with the bigger amount, 3b, and take a away.'});
+  await w(1500);}},
+
+/* 8 */ {t:'Build it!',run:async w=>{
+  const R=[[`Maliha multiplies her number y by 5, then subtracts the result from 52.`,['5y','52','y','−','+','5'],[['52','−','5y']],'52 − 5y',
+      `Start with 52 and take away 5y, so 52 comes first: 52 − 5y.`],
+    ['Write an expression for: x less than y',['x','y','−','+'],[['y','−','x']],'y − x',`Start with y, then take x away: y − x.`],
+    ['Half as warm as t°C',['t','2','÷','×','+'],[['t','÷','2']],'t ÷ 2',`Half means divide by 2: t ÷ 2.`],
+    ['Write an expression for: a less than 3 times b',['3b','a','b','3','−','+'],[['3b','−','a'],['3','b','−','a']],'3b − a',`3 times b is 3b. Then take a away: 3b − a.`]];
+  say(`Your turn to build! Read each question, then tap the tiles <b>in order</b> to make the expression. Press <b>Check</b> when you're done.`);
+  await w(3400);
   let right=0;
-  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model]=R[i];
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,why]=R[i];
     mk('ex-head','',`🧩 Build it · ${i+1} of ${R.length}`);
-    say(i?`Next one. ${q}`:`Your turn! Tap the tiles <b>in order</b> to build each expression, then press <b>Check</b>. ${q}`);
+    say(q);
     const r=await buildExpr(w,{q,tiles,answer,top:44});
-    if(r.ok){right++;say(`Yes! <b>${model}</b> is right. 🎉`);}
-    else{const s=mk('stamp',`left:330px;top:${r.y+10}px`,'✔ '+model);pop(s);say(`Not quite. The answer is <b>${model}</b>.`);}
-    await w(2800);}
+    if(r.ok){right++;say(`Yes! <b>${model}</b> is right. ${why}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+model);pop(s);point(s);say(`Not quite. ${why}`);}
+    await w(3000);}
   stage.innerHTML='';
   const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🧩</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
   if(right===R.length){yay();confetti(100);}
   say(right===R.length?`All ${R.length} right! You're an expression builder.`:`Good effort! Press Replay to build them again.`);
   await w(2500);}},
 
-/* 7 */ {t:'Sort the phrases',run:async w=>{
+/* 9 */ {t:'Sort the phrases',run:async w=>{
   const r=await sortGame(w,{bins:['y + 3','3y','y − 3'],colors:['#45c288','#5d9cf5','#f5a54a'],top:170,
     items:[['y plus 3',0],['3 more than y',0],['y increased by 3',0],['3 times y',1],['triple y',1],['y multiplied by 3',1],['3 less than y',2],['y take away 3',2],['y decreased by 3',2]],
     intro:`Different words can mean the same expression. Tap a card, then tap the box it belongs in. Press <b>Check</b> when done.`});
-  say(r.ok===r.total?`Perfect! <b>More, plus, increased</b> mean add. <b>Times, triple</b> mean multiply. <b>Less, take away, decreased</b> mean subtract.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box. Remember: <b>less than</b> means subtract.`);
-  await w(3500);}},
+  say(r.ok===r.total?`Perfect! Every card is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's go through the three boxes.`);
+  await w(2600);
+  say(`<b>Plus</b>, <b>more than</b> and <b>increased by</b> all mean add: <b>y + 3</b>.`);await w(2800);
+  say(`<b>Times</b>, <b>triple</b> and <b>multiplied by</b> all mean multiply: <b>3y</b>.`);await w(2800);
+  say(`<b>Less than</b>, <b>take away</b> and <b>decreased by</b> all mean subtract: <b>y − 3</b>. Three less than y starts with y!`);
+  await w(3200);}},
 
-/* 8 */ {t:'Exam check',run:async w=>{
+/* 10 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
   /* literal strings so the parent page can show the wording of a missed question */
   await examCheck(w,[
-    {src:'Worksheet · Ex 2.1 · Q3 a)',q:'The temperature on Tuesday was t°C. Write an expression for the temperature when it is:<br>a) 2°C higher than it was on Tuesday.',o:['(t − 2)°C','2t°C','(t + 2)°C','(2 − t)°C'],a:2,why:'Higher means <b>add</b> 2, so the answer is <b>(t + 2)°C</b>.'},
-    {src:'Worksheet · Ex 2.1 · Q3 c)',q:'The temperature on Tuesday was t°C. Write an expression for the temperature when it is:<br>c) half as warm as it was on Tuesday.',o:['2t°C',frac('t',2)+'°C','(t − 2)°C',frac(2,'t')+'°C'],a:1,why:`Half means <b>divide by 2</b>: ${frac('t',2)}°C, which is the same as (t ÷ 2)°C.`},
-    {src:'Worksheet · Ex 2.1 · Q6 ii)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: divides the number by 2`,o:['2y',frac('y',2),frac(2,'y'),'y − 2'],a:1,why:`Divide y by 2: ${frac('y',2)}, or y ÷ 2.`},
-    {src:'Worksheet · Ex 2.1 · Q6 iii)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: multiplies the number by 4, then adds 1`,o:['4(y + 1)','y + 5','4y + 1','4 + y + 1'],a:2,why:'Multiply first to get 4y, then add 1: <b>4y + 1</b>.'},
-    {src:'Worksheet · Ex 2.1 · Q6 iv)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: multiplies the number by 2, then subtract 5`,o:['5 − 2y','2y − 5','2(y − 5)','y − 10'],a:1,why:'Times 2 gives 2y, then take away 5: <b>2y − 5</b>.'},
-    {src:'Worksheet · Ex 2.1 · Q6 v)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: multiplies the number by 5, then subtract the result from 52`,o:['5y − 52','52 − y','52 − 5y','5(52 − y)'],a:2,why:'Take 5y away <b>from 52</b>, so 52 comes first: <b>52 − 5y</b>.'},
-    {src:'Worksheet · Ex 2.1 · Q6 vi)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: divides the number by 4, then add 3`,o:[frac('y',4)+' + 3',frac('y + 3',4),'4y + 3',frac(4,'y')+' + 3'],a:0,why:`Divide by 4 first, then add 3: ${frac('y',4)} + 3, or y ÷ 4 + 3.`},
-    {src:'Worksheet · Ex 2.1 · Q10 b)',q:'Write an expression for each of these.<br>b) x less than y',o:['x − y','y − x','x + y','xy'],a:1,why:'Start with y and take x away: <b>y − x</b>.'},
-    {src:'Worksheet · Ex 2.1 · Q10 c)',q:'Write an expression for each of these.<br>c) m more than two times n',o:['2m + n','2(m + n)','m + 2n','2mn'],a:2,why:'Two times n is 2n. m more means add m: <b>m + 2n</b> (or 2n + m).'},
-    {src:'Worksheet · Ex 2.1 · Q10 d)',q:'Write an expression for each of these.<br>d) a less than 3 times b',o:['a − 3b','3b − a','3a − b','3(b − a)'],a:1,why:'3 times b is 3b. a less means take a away: <b>3b − a</b>.'},
-    {src:'Worksheet · Ex 2.1 · Q10 f)',q:'Write an expression for each of these.<br>f) four times g multiplied by h',o:['4g + h','4 + gh','g4h','4gh'],a:3,why:'Multiplying: no × signs, number first: <b>4gh</b>.'},
+    {src:'Worksheet · Ex 2.1 · Q3 a)',q:'The temperature on Tuesday was t°C. Write an expression for the temperature when it is:<br>a) 2°C higher than it was on Tuesday.',o:['(t − 2)°C','2t°C','(t + 2)°C','(2 − t)°C'],a:2,
+      why:'Higher means <b>add</b> 2, so it is <b>(t + 2)°C</b>. Check: if t is 10, that gives 12.',whyNot:{0:'minus makes it colder, not higher.',1:'2t means twice as warm, not 2 degrees higher.',3:'that starts at 2 and takes t away.'}},
+    {src:'Worksheet · Ex 2.1 · Q3 c)',q:'The temperature on Tuesday was t°C. Write an expression for the temperature when it is:<br>c) half as warm as it was on Tuesday.',o:['2t°C',frac('t',2)+'°C','(t − 2)°C',frac(2,'t')+'°C'],a:1,
+      why:`Half means <b>divide by 2</b>: ${frac('t',2)}°C, the same as (t ÷ 2)°C. Check: if t is 10, that gives 5.`,whyNot:{0:'2t is twice as warm, not half.',2:'that takes away 2 degrees; it does not halve.',3:`that is 2 divided by t, upside down.`}},
+    {src:'Worksheet · Ex 2.1 · Q6 ii)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: divides the number by 2`,o:['2y',frac('y',2),frac(2,'y'),'y − 2'],a:1,
+      why:`y divided by 2 is ${frac('y',2)}, or y ÷ 2. y goes on top.`,whyNot:{0:'2y means y times 2.',2:'that is 2 divided by y, upside down.',3:'that takes 2 away instead of dividing.'}},
+    {src:'Worksheet · Ex 2.1 · Q6 iii)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: multiplies the number by 4, then adds 1`,o:['4(y + 1)','y + 5','4y + 1','4 + y + 1'],a:2,
+      why:'Multiply first to get 4y, <b>then</b> add 1: <b>4y + 1</b>. Check: y = 5 gives 21.',whyNot:{0:'that adds 1 first, then multiplies. Wrong order.',1:'that adds 4 instead of multiplying by 4.',3:'that adds 4 instead of multiplying by 4.'}},
+    {src:'Worksheet · Ex 2.1 · Q6 iv)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: multiplies the number by 2, then subtract 5`,o:['5 − 2y','2y − 5','2(y − 5)','y − 10'],a:1,
+      why:'Times 2 gives 2y, then take away 5: <b>2y − 5</b>. Check: y = 5 gives 10 − 5 = 5.',whyNot:{0:'that takes 2y away from 5, the wrong way round.',2:'that subtracts 5 first, then multiplies. Wrong order.',3:'there is no multiplying in y − 10.'}},
+    {src:'Worksheet · Ex 2.1 · Q6 v)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: multiplies the number by 5, then subtract the result from 52`,o:['5y − 52','52 − y','52 − 5y','5(52 − y)'],a:2,
+      why:'Take 5y away <b>from 52</b>, so 52 comes first: <b>52 − 5y</b>. Check: y = 2 gives 52 − 10 = 42.',whyNot:{0:'that takes 52 away from 5y, the wrong way round.',1:'y was not multiplied by 5 first.',3:'that subtracts first, then multiplies. Wrong order.'}},
+    {src:'Worksheet · Ex 2.1 · Q6 vi)',q:`Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she: divides the number by 4, then add 3`,o:[frac('y',4)+' + 3',frac('y + 3',4),'4y + 3',frac(4,'y')+' + 3'],a:0,
+      why:`Divide by 4 first, then add 3: ${frac('y',4)} + 3. Check: y = 8 gives 2 + 3 = 5.`,whyNot:{1:'that adds 3 first, then divides. Wrong order.',2:'4y means multiply by 4, not divide.',3:'that is 4 divided by y, upside down.'}},
+    {src:'Worksheet · Ex 2.1 · Q10 b)',q:'Write an expression for each of these.<br>b) x less than y',o:['x − y','y − x','x + y','xy'],a:1,
+      why:'Start with y and take x away: <b>y − x</b>. Like 3 less than 10 is 10 − 3.',whyNot:{0:'that is the trap! It starts with x, the wrong way round.',2:'less than means take away, not add.',3:'xy means x times y.'}},
+    {src:'Worksheet · Ex 2.1 · Q10 c)',q:'Write an expression for each of these.<br>c) m more than two times n',o:['2m + n','2(m + n)','m + 2n','2mn'],a:2,
+      why:'Two times n is 2n. m more means add m: <b>m + 2n</b> (or 2n + m).',whyNot:{0:'the 2 belongs with n, not m.',1:'that doubles m as well as n.',3:'2mn multiplies everything; more than means add.'}},
+    {src:'Worksheet · Ex 2.1 · Q10 d)',q:'Write an expression for each of these.<br>d) a less than 3 times b',o:['a − 3b','3b − a','3a − b','3(b − a)'],a:1,
+      why:'3 times b is 3b. a less means take a away from it: <b>3b − a</b>.',whyNot:{0:'that starts with a, the wrong way round.',2:'the 3 belongs with b, not a.',3:'that takes away first, then multiplies by 3.'}},
+    {src:'Worksheet · Ex 2.1 · Q10 f)',q:'Write an expression for each of these.<br>f) four times g multiplied by h',o:['4g + h','4 + gh','g4h','4gh'],a:3,
+      why:'Everything is multiplied: no × signs, number first: <b>4gh</b>.',whyNot:{0:'multiplied by h means times h, not plus h.',1:'four times means times 4, not plus 4.',2:'the number must go first.'}},
   ]);}},
 
-/* 9 */ {t:'You did it!',run:async w=>{
-  say(`🎉 You finished <b>Writing expressions</b>! Here's everything you learned…`);
-  const B=[['🔤','A <b>letter</b> stands for a number we don\'t know yet.'],['✖️','3 × y = <b>3y</b><br>No × sign, number first.'],['➗',`y ÷ 2 = <b>${frac('y',2)}</b>`],['🌡️','2°C higher: <b>t + 2</b><br>Twice: <b>2t</b>'],
-    ['⚙️','Steps in order:<br>× 4, then + 1<br><b>4y + 1</b>'],['⚠️','5y subtracted <b>from 52</b>:<br><b>52 − 5y</b>'],['↔️','x <b>less than</b> y:<br><b>y − x</b>'],['🤝','p × q = <b>pq</b><br>4 × g × h = <b>4gh</b>']];
-  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);await w(450);}
+/* 11 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Writing expressions</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🔤','A <b>letter</b> stands for a number we don\'t know yet.',`A letter stands for a number we don't know yet.`],
+    ['✖️','3 × y = <b>3y</b><br>No × sign, number first.',`3 times y is written 3y. No times sign, number first.`],
+    ['➗',`y ÷ 2 = <b>${frac('y',2)}</b>`,`y divided by 2 is written as a fraction: ${frac('y',2)}.`],
+    ['🌡️','2°C higher: <b>t + 2</b><br>Twice: <b>2t</b>',`Higher means add, and twice means times 2.`],
+    ['⚙️','Steps in order:<br>× 4, then + 1<br><b>4y + 1</b>',`Do the steps in order: times 4, then add 1, gives 4y + 1.`],
+    ['⚠️','5y subtracted <b>from 52</b>:<br><b>52 − 5y</b>',`Subtract from 52 means 52 comes first: 52 − 5y.`],
+    ['↔️','x <b>less than</b> y:<br><b>y − x</b>',`x less than y is y − x. Start with y.`],
+    ['🔢','Stuck? <b>Try a number</b> first!',`And if you're stuck, try a real number first.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
   confetti(200);yay();await w(1200);
   const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
-  say(`Brilliant work! 🧠 You can now turn words into algebra. Next up: <b>substituting</b> numbers into expressions.`);}},
+  say(`Brilliant work! 🧠 You can now turn words into algebra. Next up: <b>substituting</b> numbers into expressions.`);
+  await w(2000);}},
   ]
 }));
 </script>

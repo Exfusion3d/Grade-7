@@ -289,12 +289,12 @@ Lesson.start({
 
 /* 8 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
-    {src:'Worksheet · Unit 9 · MCQ 4',q:'What unit is used to measure electric current?',o:['Volts (V)','Amperes or Amps (A)','Joules (J)','Grams (g)'],a:1,why:'Current is measured in <b>amperes</b> (amps), symbol <b>A</b>.'},
-    {src:'Worksheet · Unit 9 · MCQ 5',q:'Which measuring instrument is used to measure electric current in a circuit?',o:['Thermometer','Voltmeter','Ammeter','Ruler'],a:2,why:'The <b>am</b>meter measures <b>am</b>ps!'},
-    {src:'Worksheet · Unit 9 · MCQ 6',q:'How must an ammeter be connected in a circuit to measure current?',o:['In series (in the same loop)','In parallel (on a separate branch)','Outside the circuit completely','Across the switch only'],a:0,why:'<b>In series</b>: in the same loop, so every electron passes through it.'},
+    {src:'Worksheet · Unit 9 · MCQ 4',q:'What unit is used to measure electric current?',o:['Volts (V)','Amperes or Amps (A)','Joules (J)','Grams (g)'],a:1,whyNot:{0:"volts measure voltage, the push from the cell.",2:"joules measure energy.",3:"grams measure mass."},why:'Current is measured in <b>amperes</b> (amps), symbol <b>A</b>.'},
+    {src:'Worksheet · Unit 9 · MCQ 5',q:'Which measuring instrument is used to measure electric current in a circuit?',o:['Thermometer','Voltmeter','Ammeter','Ruler'],a:2,whyNot:{0:"a thermometer measures temperature.",1:"a voltmeter measures voltage.",3:"a ruler measures length."},why:'The <b>am</b>meter measures <b>am</b>ps!'},
+    {src:'Worksheet · Unit 9 · MCQ 6',q:'How must an ammeter be connected in a circuit to measure current?',o:['In series (in the same loop)','In parallel (on a separate branch)','Outside the circuit completely','Across the switch only'],a:0,whyNot:{1:"that is how a voltmeter is connected.",2:"outside the circuit, no current goes through it.",3:"it must be in the main loop, not across one part."},why:'<b>In series</b>: in the same loop, so every electron passes through it.'},
     {src:'Worksheet · Unit 9 · Short answer 3',q:'Name the component used in a circuit to measure current and its unit.',model:'<b>Ammeter</b>. Its unit is <b>amperes (A)</b>.'},
     {src:'Worksheet · Unit 9 · Q14 (b)',q:'Lily investigates how the number of lamps in an electrical circuit affects the current. The meter is used to measure current. Write down the name of the meter used to measure current.',model:'An <b>ammeter</b>.'},
-    {src:`Worksheet · Unit 9 · Q18<div style="margin:8px 0 4px">${meterImg(2.2,230)}</div>`,q:"Sofia switches her multimeter to measure current. Which of these is the current in Sofia's circuit?",o:['60 A','2.2 A','12 A','75 A'],a:1,cols:4,why:'The needle is one small space (0.2 A) past 2, so the current is <b>2.2 A</b>.'},
+    {src:`Worksheet · Unit 9 · Q18<div style="margin:8px 0 4px">${meterImg(2.2,230)}</div>`,q:"Sofia switches her multimeter to measure current. Which of these is the current in Sofia's circuit?",o:['60 A','2.2 A','12 A','75 A'],a:1,whyNot:{0:"the needle does not point at 60. It is one small space past 2.",2:"the needle does not point at 12. It is one small space past 2.",3:"the needle does not point at 75. It is one small space past 2."},cols:4,why:'The needle is one small space (0.2 A) past 2, so the current is <b>2.2 A</b>.'},
   ]);}},
 
 /* 9 */ {t:'You did it!',run:async w=>{

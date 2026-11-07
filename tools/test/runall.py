@@ -24,7 +24,7 @@ def run(f, n, wait=22):
         return f, n, {'crash': (r.stderr or r.stdout)[-200:]}
 
 res = {}
-with cf.ThreadPoolExecutor(6) as ex:
+with cf.ThreadPoolExecutor(int(os.environ.get("WORKERS", 6))) as ex:  # WORKERS=2 when several testers run at once
     counts = {}
     for f, fu in {f: ex.submit(run, f, 1) for f in files}.items():
         _, _, j = fu.result(); res[(f, 1)] = j; counts[f] = j.get('n') or 9

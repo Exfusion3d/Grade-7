@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Order of operations and negative numbers</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 12 · Chapter 9 · Getting started Q1-Q3 (Q4 is substitution and is taught in Lesson 2).
+   Every worksheet question type is taught with teachQ (maths.js); the rest are in the Exam check.
+   Spoken text says "negative 2" where the voice would otherwise read "−2" as "minus 2". */
+const WS='Worksheet · Ch 9 Getting started · ';
+const Q1='Work out.',Q2='Complete these calculations.',Q3='Do it. Use the correct order of operations.';
+const BOX='<i class="bx">____</i>'; /* a box to fill in; the voice reads it as "blank" */
+const fill=v=>`<b class="fl">${v}</b>`;
+document.head.insertAdjacentHTML('beforeend',`<style>
+.bx{display:inline-block;min-width:46px;height:1.1em;vertical-align:-.18em;border:2.5px solid #e06a1b;border-radius:6px;background:#fff7ee;color:transparent;font-style:normal;line-height:1;overflow:hidden}
+.fl{display:inline-block;min-width:40px;padding:0 6px;border:2.5px solid #18a058;border-radius:8px;background:#e6f7ee;color:#0f7a40;text-align:center}
+.xrow{display:flex;justify-content:center;align-items:center;gap:10px;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-weight:800;color:#1f2433}
+.xrow>span{display:inline-block;padding:0 8px;border-radius:12px;white-space:nowrap}
+.xrow>span.hl{background:#ffe680;box-shadow:0 0 0 3px #ffd84d}
+.xrow>span.nw{color:#18a058}
+.xrow>span.optap{border:3px dashed #e06a1b;background:#fff;cursor:pointer;min-width:58px;text-align:center;color:#c4520e}
+.rung{position:absolute;left:10px;width:174px;height:100px;border-radius:14px;border:3px solid #ddd;background:#faf9ff;text-align:center;font-weight:800;transition:opacity .3s}
+.rung .big{font-size:30px;line-height:1.2;margin-top:6px}
+.rung .lab{font-size:15px;color:#1f2433}
+.rung .sub{font-size:12.5px;color:#5a5f70;font-weight:700}
+.rung.dim{opacity:.35}
+.rung.on{box-shadow:0 0 0 4px #ffd84d,0 0 18px #ffd84d}
+.rule{background:#fff;border:3px solid #e3dcff;border-radius:16px;padding:8px 14px;font-size:20px;font-weight:800;color:#1f2433;text-align:center}
+</style>`);
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+/* Next question: clear the stage but keep a scene's fixed drawing (e.g. the BIDMAS ladder) */
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* a number line from lo to hi with dots and hops; hops leave a coloured arrow bar showing the direction */
+function nline(lo,hi,y,x0=60,wd=840){const sp=wd/(hi-lo),X=n=>x0+(n-lo)*sp,made=[];
+  mk('',`left:${x0-10}px;top:${y}px;width:${wd+20}px;height:5px;border-radius:3px;background:#1f2433`);
+  for(let n=lo;n<=hi;n++){mk('',`left:${X(n)-1.5}px;top:${y-9}px;width:3px;height:22px;background:${n===0?'#e04848':'#1f2433'}`);
+    mk('',`left:${X(n)-22}px;top:${y+16}px;width:44px;text-align:center;font-size:${sp<36?13:17}px;font-weight:800;color:${n<0?'#2c66cf':n===0?'#e04848':'#5a5f70'}`,n<0?'−'+(-n):n);}
+  const dot=(n,col)=>{const d=mk('',`left:${X(n)-12}px;top:${y-10}px;width:24px;height:24px;border-radius:50%;background:${col};border:3px solid #fff;box-shadow:0 0 0 3px ${col};z-index:3`);pop(d);made.push(d);return d;};
+  const hop=async(a,b,txt,col,lane=0)=>{const dx=X(b)-X(a),L=Math.min(X(a),X(b));
+    const bar=mk('',`left:${L}px;top:${y-18-lane*12}px;width:${Math.abs(dx)}px;height:7px;border-radius:4px;background:${col};transform-origin:${dx>0?'0':'100%'} 50%`);made.push(bar);
+    const j=mk('mx',`left:${X(a)-40}px;top:${y-50-lane*12}px;width:80px;text-align:center;font-size:22px;color:${col}`,txt);made.push(j);
+    an(bar,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:1200});
+    await an(j,[{transform:'translate(0,0)'},{transform:`translate(${dx/2}px,-12px)`},{transform:`translate(${dx}px,0)`}],{duration:1200});
+    dot(b,col);beep(700,.1);};
+  return{X,dot,hop,reset:()=>{made.forEach(e=>e.remove());made.length=0;}};}
+
+/* a big expression whose parts light up and collapse to their value */
+function xrow(x,y,wd,toks,fs=50){const r=mk('xrow',`left:${x}px;top:${y}px;width:${wd}px;height:${fs+24}px;font-size:${fs}px`,toks.map(t=>`<span>${t}</span>`).join(''));pop(r);return r;}
+async function squash(r,i,j,v){const S=[...r.children];S.forEach((s,k)=>s.classList.toggle('hl',k>=i&&k<=j));beep(500,.06);await w0(1000);
+  await Promise.all(S.slice(i,j+1).map(s=>an(s,[{transform:'scale(1)',opacity:1},{transform:'scale(.2)',opacity:0}],{duration:450})));
+  const n=document.createElement('span');n.className='nw';n.innerHTML=v;r.insertBefore(n,S[j+1]||null);S.slice(i,j+1).forEach(s=>s.remove());pop(n);beep(720,.08);}
+
+/* the BIDMAS ladder on the left of the stage; on(i) lights one step (-1 = all) */
+function ladder(x=12,y=12){const L=mk('',`left:${x}px;top:${y}px;width:200px;height:496px;border-radius:18px;background:#fff;border:3px solid #ece8f8`,
+    '<div style="position:absolute;left:0;top:8px;width:194px;text-align:center;font-size:20px;font-weight:800;color:#6a45d8;letter-spacing:.08em">BIDMAS</div>');pop(L);
+  const R=[['( )','Brackets','first of all','#6a45d8'],['3²','Indices','powers next','#2c66cf'],['÷ &nbsp;×','Divide, Multiply','equal: left to right','#18a058'],['+ &nbsp;−','Add, Subtract','equal: left to right','#e06a1b']];
+  const el=R.map(([b,l,s,c],i)=>mk('rung',`top:${44+i*112}px;border-color:${c}`,`<div class="big" style="color:${c}">${b}</div><div class="lab">${l}</div><div class="sub">${s}</div>`,L));
+  const on=i=>el.forEach((e,k)=>{e.classList.toggle('on',k===i);e.classList.toggle('dim',i>=0&&k!==i);});
+  on(-1);return{L,on,el};}
+
+/* bar model: the whole on top, the parts underneath (used for missing numbers) */
+function bars(x,y,wd,total,parts){const T=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:50px;border-radius:10px;background:#5d9cf5;color:#fff;font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center`,total);pop(T);
+  let px=x;const P=parts.map(([lab,frac,col],i)=>{const pw=wd*frac;const e=mk('',`left:${px}px;top:${y+58}px;width:${pw-6}px;height:50px;border-radius:10px;background:${col};color:#fff;font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center`,lab);pop(e,200+i*200);px+=pw;return e;});
+  return{T,P};}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m12', num:12, part:'Chapter 9', emoji:'🧮', title:'Order of operations and negative numbers',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Today: <b>negative numbers</b> and the <b>order of operations</b>. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Two robots, two answers',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn <b>negative numbers</b> and the <b>order of operations</b>. First, a puzzle.`);
+  const q=mk('mx','left:0;top:24px;width:960px;text-align:center;font-size:66px','5 + 4 × 3');pop(q);point(q);
+  await w(2800);
+  say(`Two robots worked out <b>5 + 4 × 3</b>, and they got <b>different answers</b>!`);
+  const r1=mk('','left:60px;top:170px;font-size:90px','🤖');pop(r1);
+  const r2=mk('','left:520px;top:170px;font-size:90px','🤖');pop(r2,300);
+  await w(2600);
+  const b1=mk('mx-step','left:40px;top:300px;width:400px;text-align:center','5 + 4 = 9<br>9 × 3 = <b style="color:#2c66cf">27</b>');pop(b1);point(b1);
+  say(`Robot one went <b>left to right</b>. 5 plus 4 is 9, then 9 times 3 is <b>27</b>.`);
+  await w(3000);
+  const b2=mk('mx-step','left:500px;top:300px;width:400px;text-align:center','4 × 3 = 12<br>5 + 12 = <b style="color:#e06a1b">17</b>');pop(b2);point(b2);
+  say(`Robot two did the <b>times first</b>. 4 times 3 is 12, then 5 plus 12 is <b>17</b>.`);
+  await w(3000);
+  const qq=mk('mx','left:0;top:430px;width:960px;text-align:center;font-size:40px','27 or 17? 🤔');pop(qq);point(qq);
+  say(`They can't both be right! Maths needs <b>one answer</b> for everybody, so there are <b>rules</b> about which part to do first.`);
+  await w(3200);
+  say(`By the end of this lesson you'll know which robot is right, and why. But first: <b>negative numbers</b>.`);
+  await w(2800);}},
+
+/* 1 */ {t:'The number line',run:async w=>{
+  say(`<b>Negative numbers</b> are numbers below zero, like a temperature of 3 degrees below freezing. They live on the <b>left</b> of zero.`);
+  const NL=nline(-10,10,300);
+  await w(3000);
+  const z=mk('tag','left:438px;top:350px;background:#fdecec;color:#b02a2a;font-size:18px','zero');pop(z);
+  const l=mk('tag','left:150px;top:350px;background:#e8f0ff;color:#1d4b9e;font-size:18px','⬅ negative numbers');pop(l);
+  const r=mk('tag','left:640px;top:350px;background:#eef0f4;color:#5a5f70;font-size:18px','positive numbers ➡');pop(r);
+  point(l);await w(2600);
+  [z,l,r].forEach(e=>e.remove());
+  const eq=mk('mx','left:0;top:36px;width:960px;text-align:center;font-size:48px','');
+  const tag=mk('rule','left:180px;top:120px;width:600px','');tag.style.visibility='hidden';
+  const demo=async(eqHtml,s1,a,b,lab,col,rule,s2)=>{NL.reset();eq.innerHTML=eqHtml;pop(eq);point(eq);tag.style.visibility='hidden';
+    say(s1);await w(2600);NL.dot(a,'#2c66cf');await w(700);await NL.hop(a,b,lab,col);
+    tag.innerHTML=rule;tag.style.visibility='visible';pop(tag);point(tag);say(s2);await w(3000);};
+  await demo('2 + 3 = <b style="color:#18a058">5</b>',`<b>2 + 3</b>. Start at 2. <b>Adding</b> moves you to the <b>right</b>.`,2,5,'+3','#18a058',
+    '➕ Add: move <b>right</b> ➡',`3 steps right, and you land on <b>5</b>.`);
+  await demo('2 − 5 = <b style="color:#e06a1b">−3</b>',`<b>2 − 5</b>. Start at 2. <b>Taking away</b> moves you to the <b>left</b>.`,2,-3,'−5','#e06a1b',
+    '➖ Subtract: move <b>left</b> ⬅',`5 steps left takes you <b>past zero</b>, to <b>negative 3</b>.`);
+  await demo('3 + (−5) = <b style="color:#e06a1b">−2</b>',`Now <b>3 plus negative 5</b>. Adding a negative is like adding a <b>debt</b>: you end up with less.`,3,-2,'+(−5)','#e06a1b',
+    '➕ a negative: move <b>left</b> ⬅',`So <b>adding a negative</b> moves <b>left</b>. 3 plus negative 5 is <b>negative 2</b>.`);
+  await demo('1 − (−4) = <b style="color:#18a058">5</b>',`Last one: <b>1 minus negative 4</b>. Taking away a debt makes you <b>richer</b>!`,1,5,'−(−4)','#18a058',
+    '➖ a negative: move <b>right</b> ➡',`So <b>subtracting a negative</b> moves <b>right</b>. 1 minus negative 4 is <b>5</b>.`);
+  NL.reset();eq.remove();tag.remove();
+  const A=mk('rule','left:40px;top:40px;width:420px;border-color:#18a058;line-height:1.5','Move <b style="color:#18a058">RIGHT ➡</b><br>+ a positive &nbsp;or&nbsp; − a negative');pop(A);
+  const B=mk('rule','left:500px;top:40px;width:420px;border-color:#e06a1b;line-height:1.5','Move <b style="color:#e06a1b">LEFT ⬅</b><br>− a positive &nbsp;or&nbsp; + a negative');pop(B,300);
+  point(A);say(`So: <b>add a positive</b> or <b>subtract a negative</b>, move <b>right</b>.`);await w(2800);
+  point(B);say(`<b>Subtract a positive</b> or <b>add a negative</b>, move <b>left</b>.`);await w(2800);}},
+
+/* 2 */ {t:'Adding and subtracting',run:async w=>{
+  let NL;
+  await teachQ(w,{src:WS+'Q1 c)',q:Q1+'<br>c) −2 + 6',read:'Work out negative 2 plus 6.',workY:276,
+    keys:[['−2',`<b>Negative 2</b> means 2 below zero. It's on the left of zero.`],['+ 6',`<b>Plus 6</b> means move <b>6 steps right</b>.`]],
+    before:[{act:async()=>{NL=nline(-10,10,226);await w(300);NL.dot(1,'#2c66cf');await w(500);await NL.hop(1,4,'+3','#18a058');},
+      show:'Try: 1 + 3 → start at 1, 3 steps right → 4',say:`Try an easy one first. <b>1 plus 3</b>: start at 1, move 3 steps right. You land on <b>4</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{NL.reset();NL.dot(-2,'#2c66cf');await w(600);},show:'Start at −2 <i>2 below zero</i>',say:`Now the real one. Start at <b>negative 2</b>, two steps below zero.`},
+      {act:()=>NL.hop(-2,4,'+6','#18a058'),show:'−2 + 6 = 4 <i>6 steps right</i>',say:`Move 6 steps right: negative 1, zero, 1, 2, 3, <b>4</b>.`,wait:2600}],
+    answer:'4',why:'Adding moves right. Check: −2 + 6 is the same as 6 − 2, which is 4. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q1 d)',q:Q1+'<br>d) 9 − 12',read:'Work out 9 minus 12.',workY:276,
+    keys:[['− 12',`<b>Minus 12</b> means move <b>12 steps left</b>. That's more than 9, so we'll go <b>past zero</b>.`]],
+    before:[{act:async()=>{NL=nline(-10,10,226);await w(300);NL.dot(5,'#2c66cf');await w(500);await NL.hop(5,-2,'−7','#e06a1b');},
+      show:'Try: 5 − 7 → 5 steps to zero, 2 more → −2',say:`Try an easy one first. <b>5 minus 7</b>: 5 steps gets you to zero, then 2 more steps: <b>negative 2</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{NL.reset();NL.dot(9,'#2c66cf');await w(600);},say:`Now start at <b>9</b>.`,wait:1400},
+      {act:()=>NL.hop(9,0,'−9','#e06a1b'),show:'9 steps left → 0 <i>3 more to go</i>',say:`9 steps left takes you to <b>zero</b>. We still need 3 more steps, because 12 is 9 plus 3.`,wait:2600},
+      {act:()=>NL.hop(0,-3,'−3','#e06a1b',1),show:'9 − 12 = −3',say:`3 more steps left: <b>negative 3</b>.`}],
+    answer:'−3',why:'Taking away more than you have goes below zero. Check: −3 + 12 = 9. ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Signs when you multiply and divide',run:async w=>{
+  say(`When you <b>multiply</b> or <b>divide</b> with negative numbers, there are just <b>two rules</b> about the sign.`);
+  await w(2800);
+  const A=mk('rule','left:40px;top:30px;width:420px;border-color:#18a058;font-size:24px','<b style="color:#18a058">Same signs</b> → positive ➕');pop(A);point(A);
+  say(`Rule one: if the two signs are the <b>same</b>, the answer is <b>positive</b>.`);await w(2600);
+  const a1=mk('mx-step','left:70px;top:110px','3 × 4 = 12');pop(a1);
+  const a2=mk('mx-step','left:70px;top:176px','−3 × −4 = 12');pop(a2,300);point(a2);
+  say(`3 times 4 is 12. And <b>negative 3 times negative 4</b> is also <b>positive 12</b>.`);await w(3000);
+  const B=mk('rule','left:500px;top:30px;width:420px;border-color:#e06a1b;font-size:24px','<b style="color:#e06a1b">Different signs</b> → negative ➖');pop(B);point(B);
+  say(`Rule two: if the signs are <b>different</b>, the answer is <b>negative</b>.`);await w(2600);
+  const b1=mk('mx-step','left:530px;top:110px','−3 × 4 = −12');pop(b1);
+  const b2=mk('mx-step','left:530px;top:176px','12 ÷ −3 = −4');pop(b2,300);point(b2);
+  say(`Negative 3 times 4 is <b>negative 12</b>. 12 divided by negative 3 is <b>negative 4</b>.`);await w(3000);
+  const t=mk('rule','left:180px;top:290px;width:600px;font-size:22px;line-height:1.5','1️⃣ Work out the numbers &nbsp; 2️⃣ Then sort out the sign');pop(t);point(t);
+  say(`So: first work out the <b>numbers</b>, then use the rule to get the <b>sign</b>.`);await w(3000);
+  clear();let NL;
+  await teachQ(w,{src:WS+'Q1 g)',q:Q1+'<br>g) −3 × 6',read:'Work out negative 3 times 6.',workY:280,
+    keys:[['−3 × 6',`<b>Negative 3 times 6</b> means <b>6 lots</b> of negative 3.`]],
+    before:[{show:'Numbers first: 3 × 6 = 18',say:`Numbers first: <b>3 times 6 is 18</b>.`,try:true,wait:2200}],
+    steps:[{act:async()=>{NL=nline(-20,2,226,60,840);NL.dot(0,'#2c66cf');await w(400);
+        for(let i=0;i<6;i++)await NL.hop(-3*i,-3*(i+1),'−3','#e06a1b',i%2);},
+        show:'6 jumps of −3 → −18 <i>6 lots of −3</i>',say:`Watch 6 jumps of <b>negative 3</b> from zero. We end on <b>negative 18</b>.`,wait:2400},
+      {show:'− and + are different → −18',say:`The rule agrees: negative times positive, <b>different</b> signs, so the answer is <b>negative</b>.`}],
+    answer:'−18',why:'Different signs give a negative. 3 × 6 = 18, so −3 × 6 = −18.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q1 h)',q:Q1+'<br>h) 35 ÷ −7',read:'Work out 35 divided by negative 7.',
+    keys:[['÷ −7',`<b>Divided by negative 7</b>. Dividing follows the same sign rules as multiplying.`]],
+    before:[{show:'Numbers first: 35 ÷ 7 = 5',say:`Numbers first: <b>35 divided by 7 is 5</b>.`,try:true,wait:2200}],
+    steps:[{show:'35 is +, −7 is − <i>different signs</i>',say:`Now the signs. 35 is <b>positive</b>, negative 7 is <b>negative</b>. They're <b>different</b>.`,wait:2400},
+      {show:'Different signs → negative: 35 ÷ −7 = −5',say:`Different signs give a <b>negative</b>. So the answer is <b>negative 5</b>.`}],
+    answer:'−5',why:'Check by multiplying back: −5 × −7 = 35 (same signs, positive). ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'Missing numbers',run:async w=>{
+  say(`Next, <b>missing numbers</b>. The trick: <b>undo</b> the calculation. Adding is undone by subtracting, and multiplying is undone by dividing.`);
+  await w(3200);
+  let BM;
+  await teachQ(w,{src:WS+'Q2 a)',q:Q2+'<br>a) 4 + '+BOX+' = 11',read:'Complete this calculation. 4 plus blank equals 11.',workY:270,
+    keys:[['____',`The <b>box</b> is the <b>missing number</b>. We need to find it.`]],
+    before:[{act:async()=>{BM=bars(150,150,660,'11',[['4',.36,'#f5a54a'],['?',.64,'#9aa3b5']]);await w(900);},
+      show:'4 and the missing part make 11',say:`Here's a bar model. The whole bar is <b>11</b>. One part is <b>4</b>; the grey part is the missing number.`,try:true,wait:2800}],
+    steps:[{show:'Undo + 4: 11 − 4 = 7 <i>take the 4 away</i>',say:`To find the missing part, take the 4 away from the whole: <b>11 minus 4 is 7</b>.`},
+      {act:async()=>{BM.P[1].innerHTML='7';BM.P[1].style.background='#18a058';pop(BM.P[1]);beep(720,.1);},show:'4 + '+fill(7)+' = 11 ✔',say:`Put 7 in the box. 4 plus 7 is 11. It works!`}],
+    answer:'7',why:'Subtracting undoes adding: 11 − 4 = 7. Check: 4 + 7 = 11. ✔'});
+  await w(1200);clear();
+  let made=[];
+  await teachQ(w,{src:WS+'Q2 h)',q:Q2+'<br>h) '+BOX+' × 12 = 96',read:'Complete this calculation. Blank times 12 equals 96.',workY:290,
+    keys:[['× 12',`<b>Times 12</b>. A number was multiplied by 12 to make 96.`]],
+    before:[{act:async()=>{const a=mk('xrow','left:60px;top:150px;width:840px;height:70px;font-size:40px','<span>?</span><span style="color:#18a058">— × 12 ➜</span><span>96</span>');pop(a);made.push(a);await w(900);},
+      say:`Think of it as a machine. A <b>mystery number</b> goes in, gets multiplied by 12, and <b>96</b> comes out.`,try:true,wait:2800}],
+    steps:[{act:async()=>{const b=mk('xrow','left:60px;top:218px;width:840px;height:60px;font-size:34px','<span style="color:#18a058">8</span><span style="color:#e06a1b">⬅ ÷ 12 —</span><span>96</span>');pop(b);made.push(b);await w(600);},
+        show:'Undo × 12: 96 ÷ 12 = 8',say:`To go backwards, <b>undo</b> times 12 by <b>dividing by 12</b>. 96 divided by 12 is <b>8</b>.`,wait:2600},
+      {show:fill(8)+' × 12 = 96 ✔',say:`Check: 8 times 12 is 96. It works!`}],
+    answer:'8',why:'Dividing undoes multiplying: 96 ÷ 12 = 8. Check: 8 × 12 = 96. ✔'});
+  await w(1500);}},
+
+/* 5 */ {t:'Missing numbers below zero',run:async w=>{
+  say(`Now some missing numbers with <b>negatives</b>. The number line will help.`);
+  await w(2400);
+  let NL;
+  await teachQ(w,{src:WS+'Q2 e)',q:Q2+'<br>e) '+BOX+' − 8 = −5',read:'Complete this calculation. Blank minus 8 equals negative 5.',workY:276,
+    keys:[['− 8',`<b>Minus 8</b>: the mystery number went <b>8 steps left</b>.`],['= −5',`And it landed on <b>negative 5</b>.`]],
+    before:[{act:async()=>{NL=nline(-10,10,226);await w(300);NL.dot(-5,'#e06a1b');await w(600);},
+      show:'It went 8 steps left and landed on −5',say:`So the number started somewhere, went 8 steps left, and landed on <b>negative 5</b>. Where did it start?`,try:true,wait:2800}],
+    steps:[{act:()=>NL.hop(-5,3,'+8','#18a058'),show:'Undo − 8: −5 + 8 = 3 <i>go back 8 steps right</i>',say:`Undo it! Go <b>back 8 steps right</b> from negative 5. We land on <b>3</b>.`,wait:2600},
+      {show:fill(3)+' − 8 = −5 ✔',say:`Check: 3 minus 8. 3 steps to zero, 5 more, gives <b>negative 5</b>. It works!`,wait:2400}],
+    answer:'3',why:'Adding undoes subtracting: −5 + 8 = 3. Check: 3 − 8 = −5. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q2 f)',q:Q2+'<br>f) 10 − '+BOX+' = −4',read:'Complete this calculation. 10 minus blank equals negative 4.',workY:276,
+    keys:[['10 −',`We <b>start at 10</b> and take something away.`],['= −4',`We end on <b>negative 4</b>. So: how many steps from 10 down to negative 4?`]],
+    before:[{act:async()=>{NL=nline(-10,10,226);await w(300);NL.dot(10,'#2c66cf');NL.dot(-4,'#e06a1b');await w(600);},
+      say:`Here's 10, and here's <b>negative 4</b>. Count the steps between them.`,try:true,wait:2600}],
+    steps:[{act:()=>NL.hop(10,0,'10','#e06a1b'),show:'10 down to 0 → 10 steps',say:`From 10 down to zero is <b>10 steps</b>.`},
+      {act:()=>NL.hop(0,-4,'4','#e06a1b',1),show:'0 down to −4 → 4 more steps',say:`From zero down to negative 4 is <b>4 more</b>.`},
+      {show:'10 + 4 = 14, so 10 − '+fill(14)+' = −4',say:`10 plus 4 is <b>14 steps</b> altogether. So the missing number is <b>14</b>.`,wait:2400}],
+    answer:'14',why:'Check: start at 10 and go 14 steps left. You land on −4. ✔'});
+  await w(1500);}},
+
+/* 6 */ {t:'The BIDMAS ladder',run:async w=>{
+  const Lad=ladder();
+  say(`Back to the robots! When a calculation has <b>more than one operation</b>, we follow the order on the <b>BIDMAS ladder</b>.`);
+  point(Lad.L);await w(3000);
+  const S=[`First, <b>B: Brackets</b>. Anything in brackets is done first.`,`Then <b>I: Indices</b>, which means powers, like 3 squared.`,
+    `Then <b>D and M: Divide and Multiply</b>. They are on the <b>same step</b>: equal partners.`,`Last, <b>A and S: Add and Subtract</b>. Also on the <b>same step</b>.`];
+  for(let i=0;i<4;i++){Lad.on(i);point(Lad.el[i]);say(S[i]);await w(2800);}
+  Lad.on(-1);
+  const T=mk('rule','left:240px;top:24px;width:700px;font-size:21px','⚠️ Same step? Work <b>left to right</b>, like reading.');pop(T);point(T);
+  say(`Here's the important bit: when two operations are on the <b>same step</b>, you work <b>left to right</b>, like reading a book.`);await w(3200);
+  Lad.on(2);
+  let r=xrow(230,110,720,['12','÷','2','×','3']);point(r);
+  say(`Look: <b>12 ÷ 2 × 3</b>. Divide and multiply are equal, so go left to right. Divide first, because it comes first.`);await w(3200);
+  await squash(r,0,2,'6');say(`12 divided by 2 is 6.`);await w(1800);
+  await squash(r,0,2,'18');say(`Then 6 times 3 is <b>18</b>.`);await w(2000);
+  const x1=mk('tag','left:330px;top:196px;background:#fdecec;color:#b02a2a;font-size:19px','✘ not 12 ÷ 6 = 2: that skipped left to right');pop(x1);
+  say(`Doing the times first would give 2, which is <b>wrong</b>. Times does <b>not</b> beat divide.`);await w(2800);
+  Lad.on(3);
+  r=xrow(230,270,720,['20','−','6','+','2']);point(r);
+  say(`Now <b>20 − 6 + 2</b>. Subtract and add are equal partners, so again go <b>left to right</b>.`);await w(3000);
+  await squash(r,0,2,'14');say(`20 minus 6 is 14.`);await w(1800);
+  await squash(r,0,2,'16');say(`Then 14 plus 2 is <b>16</b>.`);await w(2000);
+  const x2=mk('tag','left:330px;top:356px;background:#fdecec;color:#b02a2a;font-size:19px','✘ not 20 − 8 = 12: that skipped left to right');pop(x2);
+  say(`Adding first would give 12, which is wrong. Add does <b>not</b> beat subtract.`);await w(2800);
+  Lad.on(-1);
+  const R=mk('rule','left:240px;top:420px;width:700px;font-size:20px','Brackets ➜ Indices ➜ × ÷ (left to right) ➜ + − (left to right)');pop(R);point(R);
+  say(`So the order is: brackets, indices, then times and divide left to right, then add and subtract left to right.`);await w(3400);}},
+
+/* 7 */ {t:'Brackets first',run:async w=>{
+  let Lad=ladder(),r;
+  await teachQ(w,{src:WS+'Q3 a)',q:Q3+'<br>a) 5 + 4 × 3',read:'Use the correct order of operations. Work out 5 plus 4 times 3.',x:228,wd:720,workY:248,
+    keys:[['order of operations',`The <b>order of operations</b> is the BIDMAS ladder.`]],
+    before:[{act:async()=>{r=xrow(228,148,720,['5','+','4','×','3']);await w(600);},say:`Here it is, big. This is the robots' puzzle!`,wait:2000}],
+    steps:[{act:async()=>{Lad.on(0);point(Lad.el[0]);await w(800);Lad.on(2);point(Lad.el[2]);await w(800);},show:'No brackets. × comes before + <i>climb the ladder</i>',say:`Climb the ladder. No brackets, no powers. The next step is <b>times</b>, so do 4 times 3 first.`,wait:2600},
+      {act:()=>squash(r,2,4,'12'),show:'5 + 4 × 3 = 5 + 12',say:`4 times 3 is <b>12</b>. Now we have 5 plus 12.`},
+      {act:async()=>{Lad.on(3);await squash(r,0,2,'17');},show:'5 + 12 = 17',say:`Then add: 5 plus 12 is <b>17</b>.`}],
+    answer:'17',why:'Times comes before add. So Robot two was right! 4 × 3 first, then + 5.'});
+  await w(1200);clear([Lad.L]);Lad.on(-1);
+  await teachQ(w,{src:WS+'Q3 b)',q:Q3+'<br>b) (5 + 4) × 3',read:'Use the correct order of operations. Work out: bracket, 5 plus 4, close bracket, times 3.',x:228,wd:720,workY:248,
+    keys:[['(5 + 4)',`This time there are <b>brackets</b>. Brackets are the <b>top step</b> of the ladder.`]],
+    before:[{act:async()=>{r=xrow(228,148,720,['(','5','+','4',')','×','3']);await w(600);},say:`Same numbers, but now with brackets. Watch how the answer changes.`,wait:2200}],
+    steps:[{act:async()=>{Lad.on(0);point(Lad.el[0]);await squash(r,0,4,'9');},show:'(5 + 4) × 3 = 9 × 3 <i>brackets first</i>',say:`<b>Brackets first</b>: 5 plus 4 is <b>9</b>.`},
+      {act:async()=>{Lad.on(2);await squash(r,0,2,'27');},show:'9 × 3 = 27',say:`Then times: 9 times 3 is <b>27</b>.`}],
+    answer:'27',why:'Brackets change the order. Without them it is 17; with them it is 27.'});
+  await w(1500);}},
+
+/* 8 */ {t:'Fraction lines divide',run:async w=>{
+  let Lad=ladder(),r;
+  say(`Some calculations are written as a <b>fraction</b>. A fraction line means <b>divide</b>. ${frac(12,3)} means 12 divided by 3.`);
+  await w(3000);
+  await teachQ(w,{src:WS+'Q3 e)',q:Q3+'<br>e) '+frac(12,3)+' + 9',read:'Use the correct order of operations. Work out 12 over 3, plus 9.',x:228,wd:720,workY:276,
+    keys:[[frac(12,3),`${frac(12,3)} means <b>12 divided by 3</b>.`]],
+    before:[{act:async()=>{r=xrow(228,170,720,[frac(12,3),'+','9'],44);await w(600);},say:`Here it is, big. Let's write the fraction as a divide.`,wait:2000}],
+    steps:[{act:async()=>{r.remove();r=xrow(228,170,720,['12','÷','3','+','9'],44);await w(600);},show:'12 ÷ 3 + 9 <i>the fraction line is ÷</i>',say:`${frac(12,3)} plus 9 is the same as <b>12 ÷ 3 + 9</b>.`},
+      {act:async()=>{Lad.on(2);point(Lad.el[2]);await squash(r,0,2,'4');},show:'12 ÷ 3 + 9 = 4 + 9 <i>÷ before +</i>',say:`Divide comes before add. 12 divided by 3 is <b>4</b>.`},
+      {act:async()=>{Lad.on(3);await squash(r,0,2,'13');},show:'4 + 9 = 13',say:`Then add: 4 plus 9 is <b>13</b>.`}],
+    answer:'13',why:'Only the 12 is over the 3, so divide 12 by 3 first, then add 9.'});
+  await w(1200);clear([Lad.L]);Lad.on(-1);
+  await teachQ(w,{src:WS+'Q3 f)',q:Q3+'<br>f) '+frac('12 + 9',3),read:'Use the correct order of operations. Work out 12 plus 9, all over 3.',x:228,wd:720,workY:270,
+    keys:[['12 + 9',`Now the <b>whole of 12 + 9</b> is on top of the fraction line.`]],
+    before:[{act:async()=>{r=xrow(228,164,720,[frac('12 + 9',3)],44);await w(600);},say:`The top of a fraction is worked out <b>first</b>, as if it were in <b>brackets</b>.`,wait:2600}],
+    steps:[{act:async()=>{r.remove();r=xrow(228,170,720,['(','12','+','9',')','÷','3'],44);await w(600);},show:'(12 + 9) ÷ 3 <i>the top acts like brackets</i>',say:`So it means <b>bracket, 12 plus 9, close bracket, divided by 3</b>.`},
+      {act:async()=>{Lad.on(0);point(Lad.el[0]);await squash(r,0,4,'21');},show:'= 21 ÷ 3 <i>brackets first</i>',say:`Brackets first: 12 plus 9 is <b>21</b>.`},
+      {act:async()=>{Lad.on(2);await squash(r,0,2,'7');},show:'21 ÷ 3 = 7',say:`Then divide: 21 divided by 3 is <b>7</b>. Always finish the division.`}],
+    answer:'7',why:'The whole top is added first, then divided: 21 ÷ 3 = 7.'});
+  await w(1500);}},
+
+/* 9 */ {t:'Negatives and BIDMAS',run:async w=>{
+  let Lad=ladder(),r;
+  say(`Now let's mix <b>negative numbers</b> with BIDMAS. Same ladder, same sign rules.`);
+  await w(2600);
+  await teachQ(w,{src:WS+'Q3 g)',q:Q3+'<br>g) −2 × 3 + 10',read:'Use the correct order of operations. Work out negative 2 times 3, plus 10.',x:228,wd:720,workY:248,
+    keys:[['−2 × 3',`There's a <b>times</b>: negative 2 times 3. That's done before the add.`]],
+    before:[{act:async()=>{r=xrow(228,148,720,['−2','×','3','+','10'],48);await w(600);},say:`Here it is, big.`,wait:1600}],
+    steps:[{act:async()=>{Lad.on(2);point(Lad.el[2]);await squash(r,0,2,'−6');},show:'−2 × 3 + 10 = −6 + 10 <i>× first; different signs → −</i>',say:`Times first. 2 times 3 is 6, and the signs are different, so <b>negative 6</b>.`,wait:2600},
+      {act:async()=>{Lad.on(3);await squash(r,0,2,'4');},show:'−6 + 10 = 4 <i>10 steps right from −6</i>',say:`Then add. From <b>negative 6</b>, go 10 steps right: 6 steps to zero, then 4 more. That's <b>4</b>.`,wait:2800}],
+    answer:'4',why:'−6 + 10 is the same as 10 − 6, which is 4. A positive answer!'});
+  await w(1200);clear([Lad.L]);Lad.on(-1);
+  await teachQ(w,{src:WS+'Q3 h)',q:Q3+'<br>h) −5 − '+frac(10,5),read:'Use the correct order of operations. Work out negative 5, minus 10 over 5.',x:228,wd:720,workY:262,
+    keys:[[frac(10,5),`${frac(10,5)} is a fraction, so it means <b>10 divided by 5</b>.`]],
+    before:[{act:async()=>{r=xrow(228,172,720,['−5','−',frac(10,5)],44);await w(600);},say:`Here it is, big. Write the fraction as a divide first.`,wait:2000}],
+    steps:[{act:async()=>{r.remove();r=xrow(228,172,720,['−5','−','10','÷','5'],44);await w(600);},show:'−5 − 10 ÷ 5 <i>fraction line is ÷</i>',say:`It's <b>negative 5, minus 10 divided by 5</b>.`},
+      {act:async()=>{Lad.on(2);point(Lad.el[2]);await squash(r,2,4,'2');},show:'= −5 − 2 <i>÷ before −</i>',say:`Divide comes before subtract. 10 divided by 5 is <b>2</b>.`},
+      {act:async()=>{Lad.on(3);await squash(r,0,2,'−7');},show:'−5 − 2 = −7 <i>2 more steps left</i>',say:`Then, from negative 5, take away 2: two more steps left. That's <b>negative 7</b>.`,wait:2600}],
+    answer:'−7',why:'Divide first (10 ÷ 5 = 2), then −5 − 2 = −7.'});
+  await w(1500);}},
+
+/* 10 */ {t:'What goes first?',run:async w=>{
+  const Lad=ladder();
+  /* each round: tokens, then steps [operator index to tap, span start, span end, value, ladder step, hint if a wrong operator is tapped] */
+  const R=[{t:['8','−','2','×','3'],s:[[3,2,4,'6',2,'Times comes before minus. Find the ×.'],[1,0,2,'2',3,'']]},
+    {t:['20','÷','4','+','1'],s:[[1,0,2,'5',2,'Divide comes before add. Find the ÷.'],[1,0,2,'6',3,'']]},
+    {t:['(','7','−','3',')','×','2'],s:[[2,0,4,'4',0,'Brackets come first! Look inside the brackets.'],[1,0,2,'8',2,'']]},
+    {t:['18','−','6','+','2'],s:[[1,0,2,'12',3,'+ and − are equal, so go left to right. Which comes first?'],[1,0,2,'14',3,'']]},
+    {t:['12','÷','3','×','2'],s:[[1,0,2,'4',2,'÷ and × are equal, so go left to right. Which comes first?'],[1,0,2,'8',2,'']]}];
+  say(`Your turn! In each calculation, tap the <b>operation to do first</b>. Use the BIDMAS ladder to help you.`);
+  await w(3000);
+  let right=0;
+  for(let i=0;i<R.length;i++){clear([Lad.L]);Lad.on(-1);
+    mk('ex-head','',`🎯 What goes first? · ${i+1} of ${R.length}`);
+    let toks=R[i].t.slice(),si=0,busy=false,first=true;
+    const row=mk('xrow','left:228px;top:150px;width:720px;height:100px;font-size:54px','');pop(row);
+    const msg=mk('rule','left:270px;top:300px;width:640px;font-size:20px','Tap the operation to do <b>first</b> 👆');pop(msg);
+    const draw=()=>{row.innerHTML='';toks.forEach((t,k)=>{const s=document.createElement('span');s.innerHTML=t;
+      if('+−×÷'.includes(t)){s.className='optap';s.onclick=()=>tap(k,s);}row.appendChild(s);});};
+    const tap=async(k,s)=>{if(busy||si>=R[i].s.length)return;const [op,a,b,v,rung,hint]=R[i].s[si];
+      if(k!==op){first=false;shake(s);boo();msg.innerHTML='❌ '+hint;say(`Not that one. ${hint}`);return;}
+      busy=true;Lad.on(rung);const part=toks.slice(a,b+1).join(' ');
+      msg.innerHTML=`✔ ${part} = <b>${v}</b>`;say(`Yes! ${part} is ${v}.`);
+      await squash(row,a,b,v);toks=toks.slice(0,a).concat([v],toks.slice(b+1));draw();row.children[a].classList.add('nw');si++;busy=false;};
+    draw();say(`Calculation ${i+1}: <b>${toks.join(' ')}</b>. Tap the operation to do first.`);
+    window.AUTOPLAY=()=>{if(!busy&&si<R[i].s.length)row.children[R[i].s[si][0]].click();};
+    await w.until(()=>si>=R[i].s.length&&!busy);window.AUTOPLAY=null;
+    if(first){right++;yay();}
+    msg.innerHTML=`🎉 The answer is <b>${toks[0]}</b>`;pop(msg);point(msg);
+    say(first?`Perfect! The answer is <b>${toks[0]}</b>.`:`Well done. The answer is <b>${toks[0]}</b>.`);
+    await w(2400);}
+  clear([Lad.L]);Lad.on(-1);
+  const s=mk('','left:230px;top:150px;width:700px;text-align:center',`<div style="font-size:70px">🎯</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">${right} of ${R.length} right first time!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right first time! You know the ladder.`:`Good effort! Press Replay to try them again.`);
+  await w(2500);}},
+
+/* 11 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ch 9 Getting started · Q1 a)',q:'Work out.<br>a) 8 + 6',o:['12','14','2','48'],a:1,
+      why:'8 + 6 = <b>14</b>. Count on 6 from 8: 9, 10, 11, 12, 13, 14.',whyNot:{0:'that is 6 + 6; count on from 8.',2:'that is 8 − 6, a take away.',3:'that is 8 × 6, a times.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 b)',q:'Work out.<br>b) 17 − 5',o:['22','13','12','−12'],a:2,
+      why:'17 − 5 = <b>12</b>. Count back 5 from 17.',whyNot:{0:'that is 17 + 5; minus means take away.',1:'that is 17 − 4; one step short.',3:'that is 5 − 17, the wrong way round.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 c)',q:'Work out.<br>c) −2 + 6',o:['−8','−4','4','8'],a:2,
+      why:'Start at −2 and move 6 steps right: <b>4</b>. It is the same as 6 − 2.',whyNot:{0:'adding 6 moves right, not left.',1:'that keeps the minus sign; 6 is bigger, so the answer is positive.',3:'that is 2 + 6; the 2 is negative.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 d)',q:'Work out.<br>d) 9 − 12',o:['3','−3','21','−21'],a:1,
+      why:'9 steps left reaches 0, then 3 more: <b>−3</b>.',whyNot:{0:'that is 12 − 9; the answer goes below zero.',2:'that adds instead of subtracting.',3:'only 12 is taken away, so it stops at −3.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 e)',q:'Work out.<br>e) 5 × 7',o:['12','30','35','57'],a:2,
+      why:'5 × 7 = <b>35</b>. Count in fives seven times.',whyNot:{0:'that is 5 + 7, an add.',1:'that is 5 × 6.',3:'that just puts the digits side by side.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 f)',q:'Work out.<br>f) 24 ÷ 6',o:['18','4','6','144'],a:1,
+      why:'24 ÷ 6 = <b>4</b>, because 4 × 6 = 24.',whyNot:{0:'that is 24 − 6, a take away.',2:'that is 24 ÷ 4.',3:'that is 24 × 6.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 g)',q:'Work out.<br>g) −3 × 6',o:['18','−18','3','−9'],a:1,
+      why:'3 × 6 = 18, and different signs give a negative: <b>−18</b>.',whyNot:{0:'forgot the sign: different signs give a negative.',2:'that adds −3 and 6.',3:'that is −3 − 6, a take away.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q1 h)',q:'Work out.<br>h) 35 ÷ −7',o:['5','−5','−28','42'],a:1,
+      why:'35 ÷ 7 = 5, and different signs give a negative: <b>−5</b>.',whyNot:{0:'forgot the sign: different signs give a negative.',2:'that subtracts 7 instead of dividing.',3:'that adds 7 instead of dividing.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q2 b)',q:'Complete these calculations.<br>b) 23 − <i class="bx">____</i> = 18',o:['41','5','−5','6'],a:1,
+      why:'From 23 down to 18 is 5 steps: 23 − <b>5</b> = 18.',whyNot:{0:'that adds 23 and 18.',2:'taking away −5 moves right, to 28.',3:'23 − 6 = 17, one too many.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q2 c)',q:'Complete these calculations.<br>c) <i class="bx">____</i> + 3 = 12',o:['15','4','9','36'],a:2,
+      why:'Undo + 3: 12 − 3 = <b>9</b>. Check: 9 + 3 = 12.',whyNot:{0:'that adds 3 again instead of undoing it.',1:'that divides 12 by 3; the sum is an add.',3:'that multiplies 12 by 3.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q2 d)',q:'Complete these calculations.<br>d) −3 + <i class="bx">____</i> = 3',o:['0','6','−6','3'],a:1,
+      why:'From −3 to 3 is 3 steps to zero and 3 more: <b>6</b>. Check: −3 + 6 = 3.',whyNot:{0:'−3 + 0 stays at −3.',2:'adding −6 moves left to −9.',3:'−3 + 3 only gets to zero.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q2 g)',q:'Complete these calculations.<br>g) 3 × <i class="bx">____</i> = 12',o:['9','36','4','15'],a:2,
+      why:'Undo × 3: 12 ÷ 3 = <b>4</b>. Check: 3 × 4 = 12.',whyNot:{0:'that is 12 − 3; the sum is a times.',1:'that multiplies 12 by 3 instead of dividing.',3:'that adds 3 to 12.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q2 i)',q:'Complete these calculations.<br>i) <i class="bx">____</i> ÷ −2 = <i class="bx">____</i>',
+      model:'Many answers work! Choose any number for the first box, then divide it by −2.<br>For example <b>10 ÷ −2 = −5</b> (different signs give a negative).<br>Others: 8 ÷ −2 = −4, or −6 ÷ −2 = 3 (same signs give a positive).'},
+    {src:'Worksheet · Ch 9 Getting started · Q3 a)',q:'Do it. Use the correct order of operations.<br>a) 5 + 4 × 3',o:['27','17','12','60'],a:1,
+      why:'× before +: 4 × 3 = 12, then 5 + 12 = <b>17</b>.',whyNot:{0:'that adds first; × comes before +.',2:'that forgets to add the 5.',3:'that multiplies everything.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q3 c)',q:'Do it. Use the correct order of operations.<br>c) 6 + 4 ÷ 2',o:['5','8','12'],a:1,
+      why:'÷ before +: 4 ÷ 2 = 2, then 6 + 2 = <b>8</b>.',whyNot:{0:'that adds first; ÷ comes before +.',2:'that adds all three numbers.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q3 d)',q:'Do it. Use the correct order of operations.<br>d) (6 + 4) ÷ 2',o:['8','5','20','12'],a:1,
+      why:'Brackets first: 6 + 4 = 10, then 10 ÷ 2 = <b>5</b>.',whyNot:{0:'that ignores the brackets.',2:'that multiplies by 2 instead of dividing.',3:'that adds all three numbers.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q3 e)',q:'Do it. Use the correct order of operations.<br>e) <span class="fr"><span>12</span><span>3</span></span> + 9',o:['7','39','13','4'],a:2,
+      why:'Only 12 is over 3: 12 ÷ 3 = 4, then 4 + 9 = <b>13</b>.',whyNot:{0:'that divides 12 + 9 by 3, but only the 12 is on top.',1:'that multiplies the 9 by 3; just add 9.',3:'that forgets to add the 9.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q3 f)',q:'Do it. Use the correct order of operations.<br>f) <span class="fr"><span>12 + 9</span><span>3</span></span>',o:['15','7','21','13'],a:1,
+      why:'The top first: 12 + 9 = 21, then 21 ÷ 3 = <b>7</b>.',whyNot:{0:'that divides only the 9 by 3.',2:'that forgets to divide by 3.',3:'that divides only the 12 by 3.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q3 g)',q:'Do it. Use the correct order of operations.<br>g) −2 × 3 + 10',o:['−4','4','16','−36'],a:1,
+      why:'× first: −2 × 3 = −6. Then −6 + 10 = <b>4</b>.',whyNot:{0:'−6 + 10 moves right past zero, so it is positive.',2:'that forgets the 2 is negative.',3:'that adds 3 + 10 first; × comes before +.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q3 h)',q:'Do it. Use the correct order of operations.<br>h) −5 − <span class="fr"><span>10</span><span>5</span></span>',o:['−3','−7','3','−35'],a:1,
+      why:'÷ first: 10 ÷ 5 = 2. Then −5 − 2 = <b>−7</b>.',whyNot:{0:'that is −5 + 2; minus moves left.',2:'that subtracts first, but ÷ comes before −.',3:'that forgets to divide by 5 at the end.'}},
+  ]);}},
+
+/* 12 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Order of operations and negative numbers</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['➡️','+ a positive or − a negative: move <b>right</b>',`Adding a positive, or subtracting a negative, moves right.`],
+    ['⬅️','− a positive or + a negative: move <b>left</b>',`Subtracting a positive, or adding a negative, moves left.`],
+    ['✖️','Same signs → <b>+</b><br>Different signs → <b>−</b>',`When you multiply or divide: same signs give a positive, different signs give a negative.`],
+    ['🔄','Missing number? <b>Undo</b> it!<br>+ ↔ − &nbsp; × ↔ ÷',`For a missing number, undo the calculation.`],
+    ['🪜','<b>BIDMAS</b><br>Brackets, Indices, ÷ ×, + −',`Climb the BIDMAS ladder: brackets, indices, divide and multiply, then add and subtract.`],
+    ['📖','Same step? Go <b>left to right</b>',`Times and divide are equal. Add and subtract are equal. On the same step, go left to right.`],
+    ['➗',`${frac(12,3)} + 9 = <b>13</b><br>A fraction line means ÷`,`A fraction line means divide.`],
+    ['🤖','5 + 4 × 3 = <b>17</b><br>Robot two was right!',`And 5 plus 4 times 3 is 17. Robot two was right!`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now use negative numbers and BIDMAS. Next up: <b>sequences and patterns</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

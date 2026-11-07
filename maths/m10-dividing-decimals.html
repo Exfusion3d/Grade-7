@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Dividing decimals and money problems</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.coin{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.coin.d1{width:58px;height:58px;background:radial-gradient(circle at 35% 30%,#ffe98a,#e0a800);border:3px solid #b98900;color:#7a5600;font-size:18px}
+.coin.c10{width:44px;height:44px;background:radial-gradient(circle at 35% 30%,#ffffff,#b9c0cc);border:3px solid #8a93a3;color:#4a5160;font-size:13px}
+.ptag{position:absolute;padding:3px 8px;border-radius:8px;background:#fff8e6;border:2px solid #f2c200;font-size:16px;font-weight:800;color:#7a2e00;white-space:nowrap}
+.tt{position:absolute;width:62px;height:40px;border-radius:10px;background:#eef4ff;border:2px solid #bcd2f7;color:#1d4b9e;font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 10 · Chapter 4 · Dividing decimals and money problems: Exercise 4.3 Q4–5 and Exercise 4.4 (Q2, Q3, Q6).
+   Taught with teachQ (maths.js): question first, read aloud, key words, an estimate first, "Show me",
+   then the bus stop fills in digit by digit (each step spoken), the answer and a multiply-back check. */
+const WS43='Worksheet · Ex 4.3 · ',WS44='Worksheet · Ex 4.4 · ';
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* Short division ("the bus stop"). Draws dv ) num and works out every step by itself:
+   each step lights up the digit, writes the answer digit on top and carries the remainder (small red number).
+   The decimal point goes straight up. Returns {root, steps:[{say, act}]}. */
+function bus(x,y,dv,num){
+  const cw=44,pw=22,fs=38,H=64,ds=String(dv),dw=ds.length*24+26,ch=[...num];
+  const xs=[];let cx=dw+14;ch.forEach(c=>{xs.push(cx);cx+=c==='.'?pw:cw;});const W=cx+12;
+  const root=mk('',`left:${x}px;top:${y}px;width:${W}px;height:${2*H+20}px`);pop(root);
+  mk('mx',`left:0;top:${H+10}px;width:${dw}px;text-align:right;font-size:${fs}px;color:#2c66cf`,ds,root);
+  mk('',`left:${dw+6}px;top:${H}px;width:${W-dw-6}px;height:4px;background:#1f2433;border-radius:2px`,'',root);
+  mk('',`left:${dw+6}px;top:${H}px;width:4px;height:${H+10}px;background:#1f2433;border-radius:2px`,'',root);
+  const D=ch.map((c,i)=>mk('mx',`left:${xs[i]}px;top:${H+10}px;width:${c==='.'?pw:cw}px;text-align:center;font-size:${fs}px;border-radius:8px;${c==='.'?'color:#e04848':''}`,c,root));
+  const Q=ch.map((c,i)=>mk('mx',`left:${xs[i]}px;top:4px;width:${c==='.'?pw:cw}px;text-align:center;font-size:${fs}px;color:#18a058;opacity:0`,'',root));
+  const C=ch.map((c,i)=>mk('',`left:${xs[i]-4}px;top:${H+8}px;font-size:18px;font-weight:800;color:#e04848;opacity:0`,'',root));
+  let lit=null;const light=i=>{if(lit!==null)an(D[lit],[{background:'rgba(255,216,77,0)'}],{duration:200});lit=i;an(D[i],[{background:'rgba(255,216,77,0)'},{background:'rgba(255,216,77,1)'}],{duration:400});};
+  const showQ=async(i,t,col)=>{Q[i].innerHTML=t;if(col)Q[i].style.color=col;await an(Q[i],[{opacity:0,transform:'translateY(30px) scale(.5)'},{opacity:1,transform:'none'}],{duration:600});beep(760,.08);};
+  const showC=(i,t)=>{if(i<0)return;C[i].innerHTML=t;an(C[i],[{opacity:0,transform:'scale(2)'},{opacity:1,transform:'none'}],{duration:500});};
+  const nextDigit=i=>{for(let j=i+1;j<ch.length;j++)if(ch[j]!=='.')return j;return -1;};
+  const steps=[];let rem=0,started=false;
+  ch.forEach((c,i)=>{
+    if(c==='.'){steps.push({say:`Now the <b>decimal point</b>. It goes <b>straight up</b> into the answer.`,
+      act:async()=>{point(D[i]);await w0(500);await showQ(i,'.','#e04848');point(Q[i]);}});return;}
+    const d=+c,cur=rem*10+d,q=Math.floor(cur/dv),r=cur%dv,carried=rem>0,nx=nextDigit(i);
+    if(!started&&q===0){rem=cur;
+      steps.push({say:`${dv} won't go into ${d}. So we carry the ${d}, and look at <b>${d}${ch[nx]}</b> instead.`,
+        act:async()=>{light(i);point(D[i]);await w0(500);showC(nx,d);}});return;}
+    started=true;rem=r;
+    const s=(carried?`The carry makes <b>${cur}</b>. `:'')+`How many lots of ${dv} go into ${cur}? ${dv} × ${q} = ${dv*q}, so <b>${q}</b>`+
+      (r?`, with <b>${r}</b> left over. Carry the ${r}.`:(nx<0?'. Nothing left over, so we have finished!':'. Nothing left over.'));
+    steps.push({say:s,act:async()=>{light(i);point(D[i]);await w0(500);await showQ(i,String(q));if(r)showC(nx,r);}});});
+  return{root,steps};}
+/* bus-stop steps for teachQ, made before the bus is drawn: get() returns the bus once it exists.
+   Every character of num gives exactly one step. */
+const busSteps=(get,num)=>[...num].map((_,k)=>({act:()=>get().steps[k].act(),get say(){return get().steps[k].say;},wait:2800}));
+/* a times-table strip, so dividing by 12, 15 or 25 is easy */
+function table(n,k,y=448){const lab=mk('tag',`left:40px;top:${y+6}px;background:#eef4ff;color:#1d4b9e;font-size:16px`,`${n} times table:`);pop(lab);
+  for(let i=1;i<=k;i++){const t=mk('tt',`left:${200+(i-1)*72}px;top:${y}px`,n*i);pop(t,i*80);}return lab;}
+/* people (or chickens) in a row, each with a price tag that appears later */
+function row(y,e,n,gap=80){return [...Array(n)].map((_,i)=>{const p=mk('',`left:${50+i*gap}px;top:${y}px;font-size:46px`,e);pop(p,i*100);return p;});}
+function tags(y,t,n,gap=80){return [...Array(n)].map((_,i)=>{const p=mk('ptag',`left:${44+i*gap}px;top:${y}px`,t);pop(p,i*150);return p;});}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m10', num:10, part:'Chapter 4', emoji:'💰', title:'Dividing decimals and money problems',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's share money fairly and divide decimals. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Sharing money fairly',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to <b>divide decimals</b>, and solve <b>money problems</b>.`);
+  await w(2600);
+  const kids=['🧒','👧','👦'].map((e,i)=>{const k=mk('',`left:${130+i*290}px;top:400px;font-size:62px`,e);pop(k,i*150);return k;});
+  const coins=[];
+  for(let i=0;i<6;i++){const c=mk('coin d1',`left:${250+i*70}px;top:30px`,'$1');pop(c,i*60);coins.push(c);}
+  for(let i=0;i<9;i++){const c=mk('coin c10',`left:${200+i*62}px;top:110px`,'10¢');pop(c,400+i*50);coins.push(c);}
+  const tot=mk('tag','left:690px;top:40px;background:#ffe680;color:#7a2e00;font-size:22px','$6.90');pop(tot,900);
+  await w(1200);point(tot);
+  say(`Three friends share <b>6 dollars 90 cents</b> equally. That's six 1 dollar coins and nine 10 cent coins.`);
+  await w(3000);
+  say(`Let's deal them out, one coin each, round and round.`);
+  const pile=[0,0,0],pileC=[0,0,0];
+  for(let i=0;i<coins.length;i++){const c=coins[i],big=i<6,k=big?i%3:(i-6)%3;
+    const tx=big?96+k*290+pile[k]++*62:96+k*290+pileC[k]++*48,ty=big?222:290;
+    await an(c,[{transform:'none'},{transform:`translate(${tx-c.offsetLeft}px,${ty-c.offsetTop}px)`}],{duration:380});beep(500+k*120,.05);}
+  await w(1600);
+  const T=[0,1,2].map(k=>{const t=mk('tag',`left:${120+k*290}px;top:350px;background:#e6f7ee;color:#0f7a40;font-size:22px;border:3px solid #18a058`,'$2.30');pop(t,k*250);return t;});
+  point(T[1]);
+  say(`Each friend gets 2 dollars and 3 ten-cent coins: <b>2 dollars 30 cents</b>. So 6.90 ÷ 3 = <b>2.30</b>.`);
+  await w(3400);
+  say(`Notice: the 6 dollars split into 2 each, and the 90 cents into 30 each. The <b>decimal point</b> stays in the same place.`);
+  await w(3600);
+  say(`Today's tools: the <b>bus stop</b> for dividing, an <b>estimate</b> first, and <b>multiply back</b> to check.`);
+  await w(3000);}},
+
+/* 1 */ {t:'The bus stop',run:async w=>{
+  say(`To divide, we use <b>short division</b>. People call it the <b>bus stop</b>, because it looks like one!`);
+  await w(3000);
+  const b=bus(300,120,3,'6.9');
+  b.root.style.transform='scale(1.4)';b.root.style.transformOrigin='0 0';
+  await w(800);
+  const t1=mk('tag','left:600px;top:236px;background:#ffe6cf;color:#7a2e00;font-size:18px','← the number we share: 6.9');pop(t1);point(t1);
+  say(`The number we share goes <b>inside</b> the bus stop: 6.9.`);await w(2600);
+  const t2=mk('tag','left:110px;top:236px;background:#eef4ff;color:#1d4b9e;font-size:18px','share by 3 →');pop(t2);point(t2);
+  say(`The number we divide by waits <b>outside</b>: 3.`);await w(2400);
+  const t3=mk('tag','left:600px;top:140px;background:#e6f7ee;color:#0f7a40;font-size:18px','← the answer grows up here');pop(t3);point(t3);
+  say(`The answer is written <b>on top</b>, one digit at a time, from left to right.`);await w(2600);
+  for(const s of b.steps){await s.act();say(s.say);await w(2800);}
+  const r=mk('mx-step','left:300px;top:340px','6.9 ÷ 3 = 2.3');pop(r);point(r);
+  say(`So 6.9 divided by 3 is <b>2.3</b>. Just like the coins: 6 dollars 90 cents shared by 3 is 2 dollars 30 cents.`);
+  await w(3400);
+  const c=mk('mx-step try','left:300px;top:402px','Check: 2.3 × 3 = 6.9 ✔');pop(c);point(c);
+  say(`And we can <b>check</b> by multiplying back: 2.3 times 3 is 6.9. ✔`);
+  await w(3000);}},
+
+/* 2 */ {t:'Point straight up',run:async w=>{
+  say(`Now a worksheet question. Watch the <b>decimal point</b> go straight up.`);
+  await w(2200);
+  let B;
+  await teachQ(w,{src:WS44+'Q2 a)',q:'Work out<br>a) 8.654 ÷ 2',read:'Work out 8.654 divided by 2.',workX:470,workY:156,
+    keys:[['÷ 2',`<b>Divided by 2</b> means share into <b>2 equal parts</b>: find half of it.`]],
+    before:[{act:async()=>{B=bus(40,156,2,'8.654');await w(400);},show:'Estimate: 8 ÷ 2 = 4',say:`Estimate first. 8.654 is about 8, and 8 divided by 2 is 4. So the answer is about <b>4</b>.`,try:true,wait:2600}],
+    steps:[...busSteps(()=>B,'8.654'),{show:'8.654 ÷ 2 = 4.327',say:`Read the answer off the top: <b>4.327</b>.`}],
+    answer:'4.327',why:'Check by multiplying back: 4.327 × 2 = 8.654 ✔. It is close to the estimate 4 as well.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Carry the remainder',run:async w=>{
+  say(`Sometimes a digit doesn't share exactly. Then we <b>carry the remainder</b> to the next digit.`);
+  await w(2600);
+  let B;
+  await teachQ(w,{src:WS44+'Q2 b)',q:'Work out<br>b) 8.922 ÷ 6',read:'Work out 8.922 divided by 6.',workX:470,workY:156,
+    keys:[['÷ 6',`<b>Divided by 6</b> means share into <b>6 equal parts</b>.`]],
+    before:[{act:async()=>{B=bus(40,156,6,'8.922');await w(400);},show:'Estimate: 9 ÷ 6 = 1.5',say:`Estimate first. 8.922 is about 9, and 9 divided by 6 is one and a half. So the answer is about <b>1.5</b>.`,try:true,wait:2800}],
+    steps:[...busSteps(()=>B,'8.922'),{show:'8.922 ÷ 6 = 1.487',say:`Read the answer off the top: <b>1.487</b>.`}],
+    answer:'1.487',why:'Check by multiplying back: 1.487 × 6 = 8.922 ✔. And it is close to the estimate 1.5.'});
+  await w(1500);}},
+
+/* 4 */ {t:'When the first digit is too small',run:async w=>{
+  say(`What if the divisor won't go into the first digit? Then we use the <b>first two digits</b> together.`);
+  await w(2800);
+  let B;
+  await teachQ(w,{src:WS44+'Q2 d)',q:'Work out<br>d) 58.912 ÷ 8',read:'Work out 58.912 divided by 8.',workX:470,workY:156,
+    keys:[['÷ 8',`<b>Divided by 8</b> means share into <b>8 equal parts</b>.`]],
+    before:[{act:async()=>{B=bus(40,156,8,'58.912');await w(400);},show:'Estimate: 56 ÷ 8 = 7',say:`Estimate first. 58.912 is close to 56, and 56 divided by 8 is 7. So the answer is about <b>7</b>.`,try:true,wait:2800}],
+    steps:[...busSteps(()=>B,'58.912'),{show:'58.912 ÷ 8 = 7.364',say:`Read the answer off the top: <b>7.364</b>.`}],
+    answer:'7.364',why:'Check by multiplying back: 7.364 × 8 = 58.912 ✔. Close to the estimate 7.'});
+  await w(1500);}},
+
+/* 5 */ {t:'Money: the cost of one',run:async w=>{
+  say(`Now <b>money problems</b>. The key is to spot whether to <b>divide</b> or <b>multiply</b>.`);
+  await w(2600);
+  let B;
+  await teachQ(w,{src:WS43+'Q4',q:'In a supermarket, five chickens cost $18.25. What is the cost of one chicken?',
+    read:'In a supermarket, five chickens cost 18 dollars 25 cents. What is the cost of one chicken?',workX:470,workY:156,
+    keys:[['five chickens cost $18.25',`Five chickens cost 18 dollars 25 cents <b>altogether</b>.`],['one chicken',`We want the cost of <b>one</b>. Going from <b>many to one</b> means <b>divide</b>.`]],
+    before:[{act:async()=>{row(320,'🐔',5);const t=mk('tag','left:50px;top:440px;background:#ffe680;color:#7a2e00;font-size:20px','5 chickens = $18.25');pop(t);point(t);await w(800);},
+        show:'$18.25 ÷ 5',say:`Share the total cost between the 5 chickens: 18.25 divided by 5.`,try:true,wait:2400},
+      {act:async()=>{B=bus(40,156,5,'18.25');await w(400);},show:'Estimate: $20 ÷ 5 = $4',say:`Estimate first. 18.25 is about 20, and 20 divided by 5 is 4. So about <b>4 dollars</b> each.`,try:true,wait:2600}],
+    steps:[...busSteps(()=>B,'18.25'),{act:async()=>{tags(384,'$3.65',5);await w(800);},show:'One chicken: $3.65',say:`Read the answer off the top: <b>3 dollars 65 cents</b> for one chicken.`}],
+    answer:'$3.65',why:'Check: $3.65 × 5 = $18.25 ✔. From many to one, so we divide.'});
+  await w(1500);}},
+
+/* 6 */ {t:'Sharing a bill',run:async w=>{
+  say(`Here's another money problem: six friends <b>share</b> a restaurant bill.`);
+  await w(2400);
+  let B;
+  await teachQ(w,{src:WS43+'Q5',q:'Six friends have a meal in a restaurant. The total bill is $145.50. They share the bill equally. How much do they each pay?',
+    read:'Six friends have a meal in a restaurant. The total bill is 145 dollars 50 cents. They share the bill equally. How much do they each pay?',workX:470,workY:156,
+    keys:[['share the bill equally',`<b>Share equally</b> means everyone pays the <b>same</b>. So we <b>divide</b> the bill by 6.`]],
+    before:[{act:async()=>{row(320,'🧑',6,70);const t=mk('tag','left:50px;top:440px;background:#ffe680;color:#7a2e00;font-size:20px','🧾 Bill: $145.50');pop(t);point(t);await w(800);},
+        show:'$145.50 ÷ 6',say:`Share the bill between the 6 friends: 145.50 divided by 6.`,try:true,wait:2400},
+      {act:async()=>{B=bus(40,156,6,'145.50');await w(400);},show:'Estimate: $150 ÷ 6 = $25',say:`Estimate first. 145.50 is about 150, and 150 divided by 6 is 25. So about <b>25 dollars</b> each.`,try:true,wait:2800}],
+    steps:[...busSteps(()=>B,'145.50'),{act:async()=>{tags(384,'$24.25',6,70).forEach(t=>t.style.fontSize='14px');await w(900);},show:'Each pays $24.25',say:`Read the answer off the top: each friend pays <b>24 dollars 25 cents</b>.`}],
+    answer:'$24.25',why:'Check: $24.25 × 6 = $145.50 ✔. Everyone pays the same, so we divide.'});
+  await w(1500);}},
+
+/* 7 */ {t:'Dividing by 12',run:async w=>{
+  say(`Now we divide by a <b>two-digit</b> number. Same bus stop! A <b>times table</b> helps.`);
+  await w(2600);
+  let B;
+  await teachQ(w,{src:WS44+'Q6 a)',q:'Complete these divisions.<br>a) 27.852 ÷ 12',read:'Complete this division: 27.852 divided by 12.',workX:470,workY:156,
+    keys:[['÷ 12',`<b>Divided by 12</b> means share into <b>12 equal parts</b>.`]],
+    before:[{act:async()=>{const l=table(12,9);point(l);await w(1200);},show:'Write the 12 times table',say:`Dividing by 12 is easier if you write out the <b>12 times table</b> first: 12, 24, 36, and so on.`,try:true,wait:2800},
+      {act:async()=>{B=bus(40,156,12,'27.852');await w(400);},show:'Estimate: 24 ÷ 12 = 2',say:`Estimate. 27.852 is a bit more than 24, and 24 divided by 12 is 2. So the answer is <b>a bit more than 2</b>.`,try:true,wait:2800}],
+    steps:[...busSteps(()=>B,'27.852'),{show:'27.852 ÷ 12 = 2.321',say:`Read the answer off the top: <b>2.321</b>.`}],
+    answer:'2.321',why:'Check by multiplying back: 2.321 × 12 = 27.852 ✔. A bit more than 2, as we estimated.'});
+  await w(1500);}},
+
+/* 8 */ {t:'Dividing by 25',run:async w=>{
+  say(`One more two-digit divisor: <b>25</b>. Think of money: four 25 cent coins make 1 dollar.`);
+  await w(2800);
+  let B;
+  await teachQ(w,{src:WS44+'Q6 c)',q:'Complete these divisions.<br>c) 782.825 ÷ 25',read:'Complete this division: 782.825 divided by 25.',workX:470,workY:156,
+    keys:[['÷ 25',`<b>Divided by 25</b> means share into <b>25 equal parts</b>.`]],
+    before:[{act:async()=>{const l=table(25,4);point(l);await w(1000);},show:'25, 50, 75, 100',say:`The <b>25 times table</b> is short: 25, 50, 75, 100.`,try:true,wait:2600},
+      {act:async()=>{B=bus(40,156,25,'782.825');await w(400);},show:'Estimate: 750 ÷ 25 = 30',say:`Estimate. 782 is close to 750. There are 4 lots of 25 in 100, so 30 lots in 750. The answer is <b>about 30</b>.`,try:true,wait:3000}],
+    steps:[...busSteps(()=>B,'782.825'),{show:'782.825 ÷ 25 = 31.313',say:`Read the answer off the top: <b>31.313</b>.`}],
+    answer:'31.313',why:'Check by multiplying back: 31.313 × 25 = 782.825 ✔. About 30, as we estimated.'});
+  await w(1500);}},
+
+/* 9 */ {t:'Divide or multiply?',run:async w=>{
+  const t=mk('mx','left:0;top:26px;width:960px;text-align:center;font-size:30px','➗ Divide or ✖️ multiply?');pop(t);
+  const r=await sortGame(w,{bins:['➗ Divide','✖️ Multiply'],colors:['#5d9cf5','#f5a54a'],top:240,
+    items:[['Cost of 1 if 5 cost $18.25',0],['Share $145.50 between 6',0],['$9.28 for 8 m: cost per m?',0],
+      ['Cost of 4 pens at $1.20',1],['8 m of ribbon at $1.16/m',1],['Total if 6 pay $24.25 each',1]],
+    intro:`Some money problems need <b>divide</b>, some need <b>multiply</b>. Tap a card, then tap its box. Press <b>Check</b> when you're done.`});
+  say(r.ok===r.total?`Perfect! Every card is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Here's the rule.`);
+  await w(2600);
+  say(`From <b>many to one</b>: the cost of one, the cost per metre, or sharing. That's <b>divide</b>.`);await w(3000);
+  say(`From <b>one to many</b>: the cost of 4, or a total bill. That's <b>multiply</b>.`);await w(3000);}},
+
+/* 10 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. <b>Estimate first</b>, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 4.4 · Q2 c)',q:'Work out<br>c) 32.925 ÷ 5',o:['6.585','65.85','6.5','7.585'],a:0,
+      why:'5 into 32 is 6 r 2, 29 is 5 r 4, 42 is 8 r 2, 25 is 5. Answer <b>6.585</b>. Check: 30 ÷ 5 = 6 ✔',whyNot:{1:'the point must go straight up; this is ten times too big.',2:'the division stopped too early; there are more digits to share.',3:'5 goes into 32 six times (5 × 7 = 35 is too big).'}},
+    {src:'Worksheet · Ex 4.4 · Q2 d)',q:'Work out<br>d) 58.912 ÷ 8',o:['6.364','73.64','7.364','7.36'],a:2,
+      why:'8 into 58 is 7 r 2, 29 is 3 r 5, 51 is 6 r 3, 32 is 4. Answer <b>7.364</b>. Check: 56 ÷ 8 = 7 ✔',whyNot:{0:'8 goes into 58 seven times (8 × 7 = 56), not six.',1:'the point must go straight up; this is ten times too big.',3:'the division stopped too early: the last step, 32 ÷ 8 = 4, is missing.'}},
+    {src:'Worksheet · Ex 4.4 · Q3',q:'Maggie pays $9.28 for 8 m of ribbon. What is the cost of the ribbon, per metre?',o:['$74.24','$1.16','$0.86','$1.06'],a:1,
+      why:'Per metre means the cost of 1 metre: many to one, so divide. 9.28 ÷ 8 = <b>$1.16</b>. Check: 1.16 × 8 = 9.28 ✔',whyNot:{0:'that multiplies; per metre means share the cost between the 8 metres.',2:'that divides the wrong way round: 8 ÷ 9.28.',3:'a step was missed: 12 ÷ 8 is 1, with 4 left over, so the next step is 48 ÷ 8 = 6.'}},
+    {src:'Worksheet · Ex 4.3 · Q4',q:'In a supermarket, five chickens cost $18.25. What is the cost of one chicken?',o:['$91.25','$3.56','$3.65','$36.50'],a:2,
+      why:'From many to one, so divide: 18.25 ÷ 5 = <b>$3.65</b>. Check: 3.65 × 5 = 18.25 ✔',whyNot:{0:'that multiplies; the cost of one must be less than the cost of five.',1:'the digits are muddled: 3.56 × 5 is 17.80, not 18.25.',3:'the point must go straight up; that is ten times too big.'}},
+    {src:'Worksheet · Ex 4.3 · Q5',q:'Six friends have a meal in a restaurant. The total bill is $145.50. They share the bill equally. How much do they each pay?',o:['$873','$24.25','$24.52','$2.425'],a:1,
+      why:'Share equally, so divide: 145.50 ÷ 6 = <b>$24.25</b>. Check: 24.25 × 6 = 145.50 ✔',whyNot:{0:'that multiplies; each share must be less than the whole bill.',2:'the last two digits are swapped: 24.52 × 6 is 147.12.',3:'the point must go straight up; that is ten times too small.'}},
+    {src:'Worksheet · Ex 4.4 · Q6 a)',q:'Complete these divisions.<br>a) 27.852 ÷ 12',o:['23.21','2.231','2.32','2.321'],a:3,
+      why:'12 into 27 is 2 r 3, 38 is 3 r 2, 25 is 2 r 1, 12 is 1. Answer <b>2.321</b>. Check: 2.321 × 12 = 27.852 ✔',whyNot:{0:'the point must go straight up; this is ten times too big.',1:'the digits are muddled: 12 goes into 38 three times, so 3 comes next.',2:'the division stopped too early: the last step, 12 ÷ 12 = 1, is missing.'}},
+    {src:'Worksheet · Ex 4.4 · Q6 b)',q:'Complete these divisions.<br>b) 46.875 ÷ 15',o:['3.125','31.25','3.0125','3.25'],a:0,
+      why:'15 into 46 is 3 r 1, 18 is 1 r 3, 37 is 2 r 7, 75 is 5. Answer <b>3.125</b>. Check: 45 ÷ 15 = 3 ✔',whyNot:{1:'the point must go straight up; this is ten times too big.',2:'there is no 0: 15 goes into 18 once, with 3 left over.',3:'a digit is missing: 15 goes into 18 once, so a 1 comes before the 2.'}},
+    {src:'Worksheet · Ex 4.4 · Q6 c)',q:'Complete these divisions.<br>c) 782.825 ÷ 25',
+      model:'25 into 78 is 3 r 3. 32 is 1 r 7. The point goes straight up. 78 is 3 r 3. 32 is 1 r 7. 75 is 3.<br>Answer: <b>31.313</b>. Check: 31.313 × 25 = 782.825 ✔'},
+  ]);}},
+
+/* 11 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Dividing decimals and money problems</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🚏','The <b>bus stop</b>: the answer goes on top, one digit at a time',`The bus stop: the answer goes on top, one digit at a time.`],
+    ['⬆️','The <b>decimal point</b> goes straight up',`The decimal point goes straight up into the answer.`],
+    ['🔴','<b>Carry</b> the remainder to the next digit',`Carry any remainder to the next digit.`],
+    ['🎯','<b>Estimate</b> first:<br>18.25 ÷ 5 ≈ 20 ÷ 5 = 4',`Estimate first: 18.25 divided by 5 is about 20 divided by 5, which is 4.`],
+    ['✅','<b>Check</b> by multiplying back:<br>3.65 × 5 = 18.25',`Check by multiplying back: 3.65 times 5 is 18.25.`],
+    ['🐔','Many → one: <b>divide</b><br>cost of one, per metre, share',`From many to one, like the cost of one, divide.`],
+    ['🛒','One → many: <b>multiply</b><br>cost of 4, total bill',`From one to many, like a total bill, multiply.`],
+    ['📋','Dividing by 12 or 25? Write the <b>times table</b> first',`Dividing by 12 or 25? Write the times table first.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now divide decimals and solve money problems. Next up: <b>data</b>, with mode, median and mean.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

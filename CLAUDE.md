@@ -31,6 +31,8 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `maths/` | **Maths lessons** (`m01-writing-expressions.html` …) and `maths.js` (Pi the Robot, the Maths tutor; `frac()` fractions; `buildExpr()` "tap the tiles to build the expression" activity). Maths lessons load `../lessons/engine.js` then `maths.js` and start with `Object.assign({}, MATHS, {...})` |
 | `source/maths/worksheet-transcript.md` | The Maths 2nd Term worksheet (34 handwritten pages, Chapters 2, 4, 6, 9, 10) transcribed word for word. `[CHECK]` marks the sheet's wrong worked answers, `[?]` hard-to-read spots |
 | `quiz.html` | **Science Quest**: 111 interactive questions in 4 levels (Unit 4, Unit 5, Unit 9, and a 25-question mixed "Final Boss"), 10 question types, points, streaks, stars and "practise my mistakes". Each question has `l:` (the lesson that teaches it); the results screen lists "Lessons to revise" from the mistakes |
+| `maths-quiz.html` | **Maths Quest** (Pi, orange; silent like Science Quest): a level per chapter (`c2`, `c4`, `c6`, `c9`, `c10`) plus a 25-question Final Boss (`mboss`, mixed; opens when every level has questions) and `mretry` (practise mistakes). **All built: 112 questions (Ch 2: 30, Ch 4: 25, Ch 6: 12, Ch 9: 25, Ch 10: 20).** About half worksheet questions, half the same kinds with new numbers. Types: typed answers on an on-screen keypad (checked by value, so `2n + m` = `m + 2n`; `simplest:true` nudges unsimplified answers; `mist` gives a message for a known wrong answer), pick one / quick fire (with `whyNot`), match, build it (tiles), number line (inequalities), put in order. Question ids `c2-01`… are permanent; keep `q:` on the same line as `id:` (the parent page reads the wording). Each quiz lists only its own unfinished levels. Test: `node tools/test/quizcheck.js` (offline answer check) and `tools/test/quizplay.py <level> <dir>` (headless play-through with screenshots) |
+| `maths-study-guide.pdf` | 30-page Maths study guide: a section per lesson (big idea, method, every worksheet question worked out with the correct answers, Watch out / memory-trick boxes, 3 "Try these" questions), a one-page cheat sheet and an answer key. Printed from `source/maths/study-guide-source.html` (command in `README.md`) |
 | `study-guide.pdf` | 16-page printable study guide with a one-page cheat sheet. Printed from `source/study-guide-source.html` |
 | `source/worksheet-by-lesson.md` | Every worksheet question grouped by the lesson that teaches it (the coverage map) |
 | `convex/` | **Student accounts (all 6 stages built; not live yet, see "Going live" below):** Convex back end with parent-created username/password logins, hashed passwords and session tokens. See `convex/README.md`. Tests: `bun run test`. Preview pushes it to the Development database; releases deploy it to Production |
@@ -49,15 +51,15 @@ Unit 9: 11 Current & components (symbols) · 12 Measuring current (ammeter, read
 14 Conductors & insulators.
 Every worksheet question is taught in at least one lesson and asked in that lesson's "Exam check" scene.
 
-### Maths: 15 lessons (approved plan; Lesson 1 built as the pilot)
-Tutor: **Pi the Robot** 🤖 (orange). Ch 2 Expressions, formulae & equations: 1 Writing expressions (Ex 2.1) ✅ built ·
+### Maths: 15 lessons (all built: `maths/m01`–`m15`)
+Tutor: **Pi the Robot** 🤖 (orange). Ch 2 Expressions, formulae & equations: 1 Writing expressions (Ex 2.1) (rebuilt with the step-by-step `teachQ` pattern after the parent found the first version too fast; every Maths lesson uses it, see LESSON-GUIDE) ·
 2 Substituting into expressions and formulae (Ex 2.2, Ch 9 Getting started Q4) · 3 Simplifying & like terms, algebra
 pyramids (Ex 2.3) · 4 Expanding brackets (Ex 2.4) · 5 Solving equations (Ex 2.5) · 6 Inequalities (Ex 2.6).
 Ch 4 Decimals: 7 Ordering & comparing (Ex 4.1) · 8 Mental methods (Ex 4.2, 4.3) · 9 Multiplying decimals (Ex 4.3 Q8, 4.5) ·
 10 Dividing decimals & money problems (Ex 4.3 Q4–5, 4.4). Ch 6: 11 Types of data, questionnaires, mode, median & mean.
 Ch 9: 12 Order of operations & negative numbers (Getting started Q1–3) · 13 Sequences & patterns (Ex 9.1, 9.2) ·
 14 The nth term & function machines (Ex 9.3, 9.4). Ch 10: 15 Percentages, fractions & decimals (Ex 10.1, 10.2).
-Then a Maths Quest quiz (a level per chapter + Final Boss, with typed-answer questions) and a study guide.
+Lesson 10 teaches Ex 4.4 Q6 a) as 27.852 ÷ 12 = 2.321 (the sheet's 27.853 does not give its own answer). Maths Quest (`maths-quiz.html`) and the study guide (`maths-study-guide.pdf`) are built.
 Worksheet cards cite the exercise: `Worksheet · Ex 2.1 · Q6 v)`. Exam check `src`/`q` must be literal strings (the
 parent page reads them from the lesson file to show a missed question's wording).
 
@@ -108,11 +110,12 @@ parent page reads them from the lesson file to show a missed question's wording)
 - **Test before publishing:** run `.venv/bin/python tools/test/runall.py` (on Linux, set `CHROME` to a Chromium that
   runs with `--no-sandbox`). One-time setup:
   `python3 -m venv .venv && .venv/bin/pip install websocket-client`. All scenes must pass. Look at the screenshots
-  in `tools/test/shots/`. The tester mutes all sound.
+  in `tools/test/shots/`. The tester mutes all sound. A run of every lesson takes over 10 minutes, so test Science and Maths
+  in separate batches; memory is limited, so set `WORKERS=2` (default 6 browsers) if anything else is running.
 - **Publish:** commit (and push to `main`), then create a Cortex release with Deploy App on. Cortex builds `dist/` and
   deploys it to https://tutor.gocortex.app after the user confirms. Note that unknown paths there return the home page,
   not a 404, so check a new page's title (not just the status code) when confirming a deploy.
-- **Rebuild the study guide PDF** after editing `source/study-guide-source.html` (command in `README.md`).
+- **Rebuild the study guide PDFs** after editing `source/study-guide-source.html` or `source/maths/study-guide-source.html` (commands in `README.md`).
 
 ## Going live with student accounts (not done yet)
 `main` needs logins on the **Production** Convex database before it is released, or every page asks for a login nobody has:

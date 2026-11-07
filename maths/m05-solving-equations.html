@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Solving equations</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.m5-blk{width:26px;height:26px;border-radius:6px;background:#2c66cf;border:2px solid #9dbcf3;box-sizing:border-box}
+.m5-bag{width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,#e06a1b,#f5a54a);box-shadow:0 4px 0 #c4520e;color:#fff;
+  font:italic 800 30px Georgia,serif;display:flex;align-items:center;justify-content:center}
+.m5-eq{font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-weight:800;color:#7a2e00;text-align:center}
+.m5-r{color:#e04848}.m5-g{color:#18a058}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 5 · Chapter 2 · Exercise 2.5 (Q1 a–c, Q2 a–l)
+   Taught with teachQ: Q1 a), Q2 c), Q1 b), Q2 h), Q1 c), Q2 l). The rest of Q2 is in the Exam check. */
+const WS='Worksheet · Ex 2.5 · ';
+const STEM1='Copy and complete to solve these equations. Check your answers are correct.';
+const STEM2='Solve each of these equations and check your answers.';
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* A balance scale (350 × 300). Blocks weigh 1 each; the orange bag holds the mystery number x.
+   add(side,'b'|'x',n) puts things on a pan (0 = left, 1 = right); take(side,kind,n) lifts them off. */
+function scale(x,y){
+  const root=mk('',`left:${x}px;top:${y}px;width:350px;height:300px`);
+  mk('',`left:165px;top:160px;width:20px;height:84px;background:linear-gradient(90deg,#5a6378,#3b4152);border-radius:8px`,'',root);
+  mk('',`left:100px;top:238px;width:150px;height:22px;background:#3b4152;border-radius:11px;box-shadow:0 5px 0 #262b38`,'',root);
+  const tilt=mk('',`left:0;top:0;width:350px;height:240px;transform-origin:175px 160px`,'',root);
+  mk('',`left:5px;top:154px;width:340px;height:13px;background:#c4520e;border-radius:7px`,'',tilt);
+  mk('',`left:161px;top:146px;width:28px;height:28px;border-radius:50%;background:#ffd84d;border:3px solid #7a2e00;box-sizing:border-box`,'',tilt);
+  const box=[82,268].map(cx=>{mk('',`left:${cx-5}px;top:138px;width:10px;height:18px;background:#7a2e00`,'',tilt);
+    mk('',`left:${cx-80}px;top:128px;width:160px;height:12px;background:#9aa3b5;border-radius:6px;box-shadow:0 3px 0 #6b7387`,'',tilt);
+    return mk('',`left:${cx-76}px;top:0;width:152px;height:126px;display:flex;flex-wrap:wrap-reverse;justify-content:center;align-content:flex-start;align-items:flex-start;gap:3px`,'',tilt);});
+  const lab=mk('m5-eq',`left:-20px;top:268px;width:390px;font-size:34px`,'',root);
+  const S={root,
+    add(side,kind,n){for(let i=0;i<n;i++){const e=document.createElement('div');e.className=kind==='x'?'m5-bag k-x':'m5-blk k-b';if(kind==='x')e.textContent='x';
+      e.style.position='relative';box[side].appendChild(e);pop(e,i*70);}beep(520,.06);},
+    async take(side,kind,n){const els=[...box[side].querySelectorAll('.k-'+kind)].slice(-n);
+      await Promise.all(els.map((e,i)=>an(e,[{transform:'none',opacity:1},{transform:'translateY(-70px) scale(.6)',opacity:0}],{duration:700,delay:i*60})));
+      els.forEach(e=>e.remove());beep(380,.08);},
+    async wobble(){await an(tilt,[{transform:'rotate(0)'},{transform:'rotate(-4deg)'},{transform:'rotate(3deg)'},{transform:'rotate(0)'}],{duration:900});},
+    label(h){lab.innerHTML=h;pop(lab);}};
+  pop(root);return S;}
+
+/* number balls and machines (like Lesson 1), smaller so the working fits underneath */
+function ball(x,y,txt,col='#2c66cf',fs=30){return mk('',`left:${x}px;top:${y}px;min-width:84px;height:66px;padding:0 14px;border-radius:33px;background:${col};color:#fff;font-size:${fs}px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.18);white-space:nowrap;box-sizing:border-box`,`<span>${txt}</span>`);}
+function machine(x,y,wd,label){const m=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:88px;border-radius:20px;background:linear-gradient(#5a6378,#3b4152);color:#ffd84d;font-size:32px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 7px 0 #262b38`,label);
+  const g=mk('',`left:${wd-40}px;top:-18px;font-size:28px`,'⚙️',m);loop(g,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],2500,{easing:'linear'});pop(m);return m;}
+async function feed(b,m){const bx=b.offsetLeft+b.offsetWidth/2,mx=m.offsetLeft+m.offsetWidth/2;
+  await an(b,[{transform:'none',opacity:1},{transform:`translateX(${mx-bx}px) scale(.4)`,opacity:0}],{duration:1100});shake(m);beep(260,.12,'square',.05);}
+/* a number line 0 to 20 */
+function numLine(y){mk('',`left:60px;top:${y}px;width:840px;height:5px;border-radius:3px;background:#1f2433`);
+  for(let i=0;i<=20;i++){mk('',`left:${59+i*42}px;top:${y-8}px;width:3px;height:20px;background:#1f2433`);
+    mk('',`left:${40+i*42}px;top:${y+15}px;width:42px;text-align:center;font-size:16px;font-weight:800;color:#5a5f70`,i);}
+  const dot=(n,col)=>{const d=mk('',`left:${49+n*42}px;top:${y-10}px;width:22px;height:22px;border-radius:50%;background:${col};border:3px solid #fff;box-shadow:0 0 0 3px ${col}`);pop(d);return d;};
+  return{dot,hop:async(a,b,txt,col)=>{const j=mk('mx',`left:${38+a*42}px;top:${y-44}px;width:44px;text-align:center;font-size:23px;color:${col}`,txt);
+    const dx=(b-a)*42;await an(j,[{transform:'translate(0,0)'},{transform:`translate(${dx/2}px,-14px)`},{transform:`translate(${dx}px,0)`}],{duration:1300});
+    dot(b,col);beep(700,.1);}};}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m05', num:5, part:'Chapter 2', emoji:'⚖️', title:'Solving equations',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's find the mystery number in an equation. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'An equation is a balance',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll <b>solve equations</b>. That means finding a mystery number. Let's start with a balance scale.`);
+  const S=scale(305,10);await w(3000);
+  S.add(0,'x',1);await w(400);S.add(0,'b',6);point(S.root);
+  say(`On the left pan: a mystery <b>bag x</b>, and 6 blocks. Each block weighs 1.`);await w(2800);
+  S.add(1,'b',10);
+  say(`On the right pan: <b>10 blocks</b>. The scale is <b>level</b>, so both sides weigh the same.`);await w(2800);
+  S.label('x + 6 = 10');point(S.root.lastChild);
+  say(`We write it as an <b>equation</b>: x + 6 = 10. The <b>equals sign</b> means both sides balance.`);await w(3000);
+  say(`What's in the bag? Let's take <b>6 blocks off both sides</b>. Then the scale stays level.`);await w(2600);
+  await Promise.all([S.take(0,'b',6),S.take(1,'b',6)]);await S.wobble();
+  S.label('x = 4');
+  say(`Now the bag is on its own, and it balances <b>4 blocks</b>. So <b>x = 4</b>. We solved the equation!`);await w(3000);
+  const g=mk('mx-why',`left:150px;top:392px;width:660px;text-align:center;font-size:22px`,'⚖️ <b>Golden rule:</b> do the <b>same</b> to <b>both sides</b>.');pop(g);point(g);
+  say(`Here's the <b>golden rule</b>: whatever you do to one side, you must do to the <b>other side</b> too. Then it stays balanced.`);
+  await w(3400);}},
+
+/* 1 */ {t:'Undo it!',run:async w=>{
+  say(`To get x on its own, we <b>undo</b> what was done to it. Every operation has an <b>opposite</b> that undoes it. Let's see all four.`);
+  await w(3200);
+  const R=[['+ 6','− 6','7 + 6 = 13, &nbsp;13 − 6 = 7 ✔',`If 6 was <b>added</b>…`,`…we undo it by <b>taking 6 away</b>.`,`Try 7. 7 + 6 is 13, and 13 − 6 takes us back to 7.`],
+    ['− 6','+ 6','13 − 6 = 7, &nbsp;7 + 6 = 13 ✔',`If 6 was <b>taken away</b>…`,`…we undo it by <b>adding 6</b> back.`,`Try 13. 13 − 6 is 7, and 7 + 6 takes us back to 13.`],
+    ['× 2','÷ 2','5 × 2 = 10, &nbsp;10 ÷ 2 = 5 ✔',`If it was <b>multiplied by 2</b>…`,`…we undo it by <b>dividing by 2</b>.`,`Try 5. 5 × 2 is 10, and 10 ÷ 2 takes us back to 5.`],
+    ['÷ 2','× 2','10 ÷ 2 = 5, &nbsp;5 × 2 = 10 ✔',`If it was <b>divided by 2</b>…`,`…we undo it by <b>multiplying by 2</b>.`,`Try 10. 10 ÷ 2 is 5, and 5 × 2 takes us back to 10.`]];
+  for(let i=0;i<4;i++){const [op,inv,chk,s1,s2,s3]=R[i];
+    const p=panel(13+(i%2)*474,8+Math.floor(i/2)*256,460,244,`Undo ${op}`,'');pop(p);
+    const a=mk('mx','left:40px;top:50px;width:150px;height:80px;border-radius:20px;background:#fff1e6;border:3px solid #f5a54a;display:flex;align-items:center;justify-content:center;font-size:40px',op,p);pop(a);
+    point(a);say(s1);await w(2200);
+    const ar=mk('mx','left:200px;top:62px;width:60px;text-align:center;font-size:40px;color:#8a6a55','➜',p);pop(ar);
+    const b=mk('mx','left:270px;top:50px;width:150px;height:80px;border-radius:20px;background:#e6f7ee;border:3px solid #18a058;display:flex;align-items:center;justify-content:center;font-size:40px;color:#18a058',inv,p);pop(b);beep(700,.08);point(b);
+    say(s2);await w(2400);
+    const c=mk('','left:0;top:170px;width:460px;text-align:center;font-size:19px;font-weight:700;color:#1d4b9e',chk,p);pop(c);point(c);
+    say(s3);await w(2800);}
+  say(`These pairs are called <b>inverse operations</b>. Add and subtract undo each other. Multiply and divide undo each other.`);
+  await w(3400);}},
+
+/* 2 */ {t:'Take away from both sides',run:async w=>{
+  let S;
+  await teachQ(w,{src:WS+'Q1 a)',q:STEM1+'<br>a) x + 6 = 10',read:'Copy and complete to solve this equation, then check your answer. x + 6 = 10.',x:24,wd:560,
+    keys:[['+ 6',`<b>Plus 6</b> means 6 was <b>added</b> to x. To undo adding 6, we <b>take 6 away</b>.`]],
+    think:`What number is x? Think first. When you're ready, tap <b>Show me</b>.`,
+    before:[{act:async()=>{S=scale(598,150);S.add(0,'x',1);await w(300);S.add(0,'b',6);await w(500);S.add(1,'b',10);S.label('x + 6 = 10');point(S.root);},
+      show:'Bag x + 6 blocks balance 10 blocks',say:`Picture it on a balance: the bag x and 6 blocks on one side, 10 blocks on the other. It's level.`,try:true,wait:2600}],
+    steps:[{act:async()=>{await Promise.all([S.take(0,'b',6),S.take(1,'b',6)]);S.wobble();},
+        show:'x + 6 <span class="m5-r">− 6</span> = 10 <span class="m5-r">− 6</span>',say:`Take 6 away from <b>both sides</b>: x + 6 − 6 = 10 − 6.`,wait:2400},
+      {act:async()=>S.label('x = 4'),show:'x = 4 <i>10 − 6 = 4</i>',say:`On the left, plus 6 and minus 6 cancel out, leaving x. On the right, 10 − 6 is 4. So <b>x = 4</b>.`,wait:2600},
+      {show:'Check: 4 + 6 = 10 ✔',say:`Now <b>check</b>: put 4 back in place of x. 4 + 6 = 10. Both sides match, so it's correct.`,wait:2600}],
+    answer:'x = 4',why:'Adding 6 is undone by taking 6 from both sides. Check: 4 + 6 = 10 ✔'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS+'Q2 c)',q:STEM2+'<br>c) 2 + x = 15',read:'Solve this equation and check your answer. 2 + x = 15.',x:24,wd:560,
+    keys:[['2 + x',`<b>2 + x</b> is the same as <b>x + 2</b>. You can add in any order.`]],
+    think:`What number is x? Think first. When you're ready, tap <b>Show me</b>.`,
+    before:[{act:async()=>{S=scale(598,150);S.add(0,'b',2);await w(300);S.add(0,'x',1);await w(500);S.add(1,'b',15);S.label('2 + x = 15');point(S.root);},
+      say:`On the balance: 2 blocks and the bag on one side, 15 blocks on the other.`,wait:2400}],
+    steps:[{show:'x + 2 = 15 <i>swap the order</i>',say:`First swap it round: <b>x + 2 = 15</b>. It means exactly the same.`,wait:2400},
+      {act:async()=>{await Promise.all([S.take(0,'b',2),S.take(1,'b',2)]);S.wobble();},
+        show:'x + 2 <span class="m5-r">− 2</span> = 15 <span class="m5-r">− 2</span>',say:`Plus 2 is undone by minus 2. Take 2 from <b>both sides</b>.`,wait:2400},
+      {act:async()=>S.label('x = 13'),show:'x = 13 <i>15 − 2 = 13</i>',say:`15 − 2 is 13. So <b>x = 13</b>.`},
+      {show:'Check: 2 + 13 = 15 ✔',say:`Check it: 2 + 13 = 15. Correct!`}],
+    answer:'x = 13',why:'Take 2 from both sides. Check: 2 + 13 = 15 ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Add to both sides',run:async w=>{
+  say(`Now the opposite: equations with a <b>minus</b>. To undo taking away, we <b>add</b> to both sides.`);
+  await w(2800);clear();let NL;
+  await teachQ(w,{src:WS+'Q1 b)',q:STEM1+'<br>b) x − 6 = 10',read:'Copy and complete to solve this equation, then check your answer. x − 6 = 10.',workY:252,
+    keys:[['− 6',`<b>Minus 6</b> means 6 was <b>taken away</b> from x. To undo it, we <b>add 6</b> back.`]],
+    think:`What number is x? Think first. When you're ready, tap <b>Show me</b>.`,
+    before:[{act:async()=>{NL=numLine(204);const d=NL.dot(10,'#2c66cf');point(d);},
+      say:`On a number line: x stepped back 6 and landed on <b>10</b>. So where did x start?`,wait:2600}],
+    steps:[{act:async()=>NL.hop(10,16,'+6','#18a058'),show:'x − 6 <span class="m5-g">+ 6</span> = 10 <span class="m5-g">+ 6</span>',say:`Undo the minus: <b>add 6 to both sides</b>. From 10, jump forward 6.`,wait:2400},
+      {show:'x = 16 <i>10 + 6 = 16</i>',say:`10 + 6 is 16. So <b>x = 16</b>.`},
+      {show:'Check: 16 − 6 = 10 ✔',say:`Check: 16 − 6 = 10. Both sides match!`}],
+    answer:'x = 16',why:'Taking 6 away is undone by adding 6 to both sides. Check: 16 − 6 = 10 ✔'});
+  await w(1400);clear();let B=[],M;
+  await teachQ(w,{src:WS+'Q2 h)',q:STEM2+'<br>h) x − 18 = 30',read:'Solve this equation and check your answer. x − 18 = 30.',workY:264,
+    keys:[['− 18',`<b>Minus 18</b>: 18 was taken away. The numbers are bigger, but the method is the same.`]],
+    think:`What number is x? Think first. When you're ready, tap <b>Show me</b>.`,
+    before:[{act:async()=>{M=machine(340,160,280,'− 18');const b=ball(90,171,'x','#e06a1b');pop(b);await w(700);await feed(b,M);
+        const o=ball(740,171,'30');pop(o);B=[o];point(o);},
+      show:'x goes in, take away 18, 30 comes out',say:`As a machine: x goes in, the machine takes away 18, and <b>30</b> comes out.`,try:true,wait:2600}],
+    steps:[{act:async()=>{M.firstChild.textContent='+ 18';M.style.color='#7dffb0';shake(M);await w(600);await feed(B[0],M);const o=ball(90,171,'48','#18a058');pop(o);yay();point(o);},
+        show:'x = 30 <span class="m5-g">+ 18</span> = 48 <i>run the machine backwards</i>',say:`Run it <b>backwards</b> to undo it: 30 goes back in, and the machine <b>adds 18</b>. 30 + 18 is 48, so <b>x = 48</b>.`,wait:2800},
+      {show:'Check: 48 − 18 = 30 ✔',say:`Check: 48 − 18 = 30. Correct!`}],
+    answer:'x = 48',why:'Add 18 to both sides: x − 18 + 18 = 30 + 18. Check: 48 − 18 = 30 ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'Divide both sides',run:async w=>{
+  say(`<b>2x</b> means 2 times x. To undo multiplying, we <b>divide both sides</b>.`);
+  await w(2600);clear();let S;
+  await teachQ(w,{src:WS+'Q1 c)',q:STEM1+'<br>c) 2x = 10',read:'Copy and complete to solve this equation, then check your answer. 2x = 10.',x:24,wd:560,
+    keys:[['2x',`<b>2x</b> means <b>2 times x</b>: two bags, each with x blocks inside.`]],
+    think:`What number is x? Think first. When you're ready, tap <b>Show me</b>.`,
+    before:[{act:async()=>{S=scale(598,150);S.add(0,'x',2);await w(500);S.add(1,'b',10);S.label('2x = 10');point(S.root);},
+      show:'2 bags balance 10 blocks',say:`On the balance: <b>two bags</b> on one side, 10 blocks on the other.`,try:true,wait:2400}],
+    steps:[{act:async()=>{await Promise.all([S.take(0,'x',1),S.take(1,'b',5)]);S.wobble();},
+        show:frac('2x','<span class="m5-r">2</span>')+' = '+frac(10,'<span class="m5-r">2</span>')+' <i>divide both sides by 2</i>',say:`Times 2 is undone by <b>divide by 2</b>. Halve both sides: one bag, and half of 10 blocks.`,wait:2600},
+      {act:async()=>S.label('x = 5'),show:'x = 5 <i>10 ÷ 2 = 5</i>',say:`10 ÷ 2 is 5. So <b>x = 5</b>.`},
+      {show:'Check: 2 × 5 = 10 ✔',say:`Check: 2 times 5 is 10. Correct!`}],
+    answer:'x = 5',why:'2x means 2 × x, so divide both sides by 2. Check: 2 × 5 = 10 ✔'});
+  await w(1400);clear();let B=[],M;
+  await teachQ(w,{src:WS+'Q2 l)',q:STEM2+'<br>l) 12x = 72',read:'Solve this equation and check your answer. 12x = 72.',workY:264,
+    keys:[['12x',`<b>12x</b> means <b>12 times x</b>. To undo it, divide by 12.`]],
+    think:`What number is x? Think first. When you're ready, tap <b>Show me</b>.`,
+    before:[{act:async()=>{M=machine(340,160,280,'× 12');const b=ball(90,171,'x','#e06a1b');pop(b);await w(700);await feed(b,M);
+        const o=ball(740,171,'72');pop(o);B=[o];point(o);},
+      say:`As a machine: x goes in, it's multiplied by 12, and <b>72</b> comes out.`,try:true,wait:2600}],
+    steps:[{act:async()=>{M.firstChild.textContent='÷ 12';M.style.color='#7dffb0';shake(M);await w(600);await feed(B[0],M);const o=ball(90,171,'6','#18a058');pop(o);yay();point(o);},
+        show:frac('12x','<span class="m5-r">12</span>')+' = '+frac(72,'<span class="m5-r">12</span>')+' <i>divide both sides by 12</i>',say:`Run it backwards: <b>divide both sides by 12</b>.`,wait:2400},
+      {show:'x = 6 <i>72 ÷ 12 = 6</i>',say:`72 divided by 12 is 6, because 6 twelves are 72. So <b>x = 6</b>.`,wait:2400},
+      {show:'Check: 12 × 6 = 72 ✔',say:`Check: 12 times 6 is 72. Correct!`}],
+    answer:'x = 6',why:'Divide both sides by 12. Check: 12 × 6 = 72 ✔'});
+  await w(1500);}},
+
+/* 5 */ {t:'Which undo?',run:async w=>{
+  say(`Your turn! For each equation, tap what you do to <b>both sides</b> to get x on its own.`);
+  await w(2800);
+  const R=[['x + 5 = 12',['+ 5','− 5','× 5','÷ 5'],1,'x = 12 − 5 = <b>7</b>','Check: 7 + 5 = 12 ✔',`Plus 5 is undone by <b>minus 5</b>. 12 − 5 is 7, so x = 7.`],
+    ['x − 7 = 3',['− 7','÷ 7','+ 7','× 7'],2,'x = 3 + 7 = <b>10</b>','Check: 10 − 7 = 3 ✔',`Minus 7 is undone by <b>plus 7</b>. 3 + 7 is 10, so x = 10.`],
+    ['4x = 20',['− 4','÷ 4','+ 4','× 4'],1,'x = 20 ÷ 4 = <b>5</b>','Check: 4 × 5 = 20 ✔',`4x means 4 times x. Times 4 is undone by <b>divide by 4</b>. So x = 5.`],
+    ['9 + x = 15',['+ 9','× 9','÷ 9','− 9'],3,'x = 15 − 9 = <b>6</b>','Check: 9 + 6 = 15 ✔',`9 + x is the same as x + 9. Take 9 from both sides: x = 6.`]];
+  let right=0;
+  for(let i=0;i<R.length;i++){const [eq,ch,a,work,chk,why]=R[i];stage.innerHTML='';
+    mk('ex-head','',`🔄 Which undo? · ${i+1} of ${R.length}`);
+    const e=mk('m5-eq','left:0;top:56px;width:960px;font-size:64px',eq);pop(e);point(e);
+    say(`<b>${eq}</b>. What do you do to both sides to get x on its own?`);await w(1500);
+    mk('','left:0;top:160px;width:960px;text-align:center;font-size:20px;font-weight:700;color:#5a5f70','Do this to both sides:');
+    let pick=-1;
+    const T=ch.map((t,j)=>{const b=btn('mx-tile',`left:${150+j*175}px;top:200px;width:150px;box-sizing:border-box`,t,()=>{if(pick<0)pick=j;});pop(b,j*80);return b;});
+    window.AUTOPLAY=()=>{if(pick<0)pick=a;};
+    await w.until(()=>pick>=0);window.AUTOPLAY=null;
+    T[a].style.background='#e6f7ee';T[a].style.borderColor='#18a058';
+    if(pick===a){right++;yay();}else{T[pick].style.background='#fdecec';T[pick].style.borderColor='#e04848';shake(T[pick]);boo();}
+    const l1=mk('mx-step','left:300px;top:300px',work);pop(l1);point(l1);
+    say((pick===a?'Yes! ':`Not quite. The answer is <b>${ch[a]}</b>. `)+why);await w(2400);
+    const l2=mk('mx-step','left:300px;top:364px',chk);pop(l2);point(l2);
+    await w(2200);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🔄</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You got ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You know your inverse operations.`:`Good effort! Remember: do the <b>opposite</b> of what was done to x.`);
+  await w(2600);}},
+
+/* 6 */ {t:'Sort the first move',run:async w=>{
+  const r=await sortGame(w,{bins:['Subtract from both sides','Add to both sides','Divide both sides'],colors:['#f5a54a','#45c288','#5d9cf5'],top:170,
+    items:[['x + 3 = 6',0],['7 + x = 19',0],['x + 4 = 11',0],['x − 2 = 8',1],['x − 12 = 14',1],['x − 4 = 9',1],['3x = 12',2],['5x = 30',2],['7x = 70',2]],
+    intro:`These are worksheet equations. What's the <b>first move</b> for each? Tap a card, then tap its box. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! Every equation is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's go through them.`);
+  await w(2600);
+  say(`A <b>plus</b> in the equation? <b>Subtract</b> from both sides.`);await w(2400);
+  say(`A <b>minus</b>? <b>Add</b> to both sides.`);await w(2200);
+  say(`A number stuck to x, like <b>3x</b>? That's times, so <b>divide</b> both sides.`);
+  await w(3000);}},
+
+/* 7 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! Here are the other worksheet equations. Solve each one in your head, then tap your answer. Check it by putting it back in!`);
+  await w(3000);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 2.5 · Q2 a)',q:'Solve each of these equations and check your answers.<br>a) x + 4 = 11',o:['x = 15','x = 7','x = 4','x = 11'],a:1,
+      why:'Take 4 from both sides: x = 11 − 4 = <b>7</b>. Check: 7 + 4 = 11 ✔',whyNot:{0:'that adds 4 instead of taking it away. 15 + 4 is 19, not 11.',2:'4 is the number added, not x. 4 + 4 is 8.',3:'11 is the total. 11 + 4 is 15, not 11.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 b)',q:'Solve each of these equations and check your answers.<br>b) x + 3 = 6',o:['x = 9','x = 2','x = 3','x = 18'],a:2,
+      why:'Take 3 from both sides: x = 6 − 3 = <b>3</b>. Check: 3 + 3 = 6 ✔',whyNot:{0:'that adds 3 instead of taking it away. 9 + 3 is 12.',1:'that divides by 3, but the equation has a plus, not a times. 2 + 3 is 5.',3:'that multiplies. 18 + 3 is 21, not 6.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 d)',q:'Solve each of these equations and check your answers.<br>d) 7 + x = 19',o:['x = 12','x = 26','x = 11','x = 7'],a:0,
+      why:'7 + x is the same as x + 7. Take 7 from both sides: x = 19 − 7 = <b>12</b>. Check: 7 + 12 = 19 ✔',whyNot:{1:'that adds 7 instead of taking it away. 7 + 26 is 33.',2:'a subtraction slip: 19 − 7 is 12. 7 + 11 is only 18.',3:'7 is the number added, not x. 7 + 7 is 14.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 e)',q:'Solve each of these equations and check your answers.<br>e) x − 4 = 9',o:['x = 5','x = 13','x = 36','x = 9'],a:1,
+      why:'Add 4 to both sides: x = 9 + 4 = <b>13</b>. Check: 13 − 4 = 9 ✔',whyNot:{0:'that takes 4 away again instead of adding it back. 5 − 4 is 1.',2:'that multiplies 9 by 4. 36 − 4 is 32.',3:'9 is what is left after taking 4 away. 9 − 4 is 5.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 f)',q:'Solve each of these equations and check your answers.<br>f) x − 2 = 8',o:['x = 6','x = 4','x = 16','x = 10'],a:3,
+      why:'Add 2 to both sides: x = 8 + 2 = <b>10</b>. Check: 10 − 2 = 8 ✔',whyNot:{0:'that subtracts 2 instead of adding it. 6 − 2 is 4.',1:'that divides by 2, which undoes times, not minus. 4 − 2 is 2.',2:'that multiplies by 2. 16 − 2 is 14.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 g)',q:'Solve each of these equations and check your answers.<br>g) x − 12 = 14',o:['x = 2','x = 26','x = 24','x = 168'],a:1,
+      why:'Add 12 to both sides: x = 14 + 12 = <b>26</b>. Check: 26 − 12 = 14 ✔',whyNot:{0:'that subtracts 12 instead of adding it. 2 − 12 is not 14.',2:'an adding slip: 14 + 12 is 26. 24 − 12 is only 12.',3:'that multiplies 14 by 12, which is not the inverse of minus.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 i)',q:'Solve each of these equations and check your answers.<br>i) 3x = 12',o:['x = 9','x = 15','x = 4','x = 36'],a:2,
+      why:'3x means 3 times x, so divide both sides by 3: x = 12 ÷ 3 = <b>4</b>. Check: 3 × 4 = 12 ✔',whyNot:{0:'that takes 3 away, but 3x means times 3. 3 × 9 is 27.',1:'that adds 3, but 3x means times 3. 3 × 15 is 45.',3:'that multiplies instead of dividing. 3 × 36 is 108.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 j)',q:'Solve each of these equations and check your answers.<br>j) 5x = 30',o:['x = 6','x = 25','x = 150','x = 35'],a:0,
+      why:'Divide both sides by 5: x = 30 ÷ 5 = <b>6</b>. Check: 5 × 6 = 30 ✔',whyNot:{1:'that takes 5 away, but 5x means times 5. 5 × 25 is 125.',2:'that multiplies instead of dividing. 5 × 150 is 750.',3:'that adds 5, but 5x means times 5. 5 × 35 is 175.'}},
+    {src:'Worksheet · Ex 2.5 · Q2 k)',q:'Solve each of these equations and check your answers.<br>k) 7x = 70',o:['x = 63','x = 490','x = 10','x = 77'],a:2,
+      why:'Divide both sides by 7: x = 70 ÷ 7 = <b>10</b>. Check: 7 × 10 = 70 ✔',whyNot:{0:'that takes 7 away, but 7x means times 7. 7 × 63 is 441.',1:'that multiplies instead of dividing. 7 × 490 is far more than 70.',3:'that adds 7, but 7x means times 7. 7 × 77 is 539.'}},
+  ]);}},
+
+/* 8 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Solving equations</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['⚖️','An equation is a <b>balance</b>: both sides are equal.',`An equation is a balance. Both sides are equal.`],
+    ['🟰','Golden rule: do the <b>same</b> to <b>both sides</b>.',`The golden rule: do the same to both sides.`],
+    ['➖','x + 6 = 10<br>take 6 from both sides<br><b>x = 4</b>',`A plus? Subtract from both sides. x + 6 = 10 gives x = 4.`],
+    ['➕','x − 6 = 10<br>add 6 to both sides<br><b>x = 16</b>',`A minus? Add to both sides. x − 6 = 10 gives x = 16.`],
+    ['➗','2x = 10<br>divide both sides by 2<br><b>x = 5</b>',`A times? Divide both sides. 2x = 10 gives x = 5.`],
+    ['🔄','2 + x = 15 is the same as <b>x + 2 = 15</b>',`2 + x is the same as x + 2. You can add in any order.`],
+    ['🔁','<b>Inverse operations</b> undo each other.',`Inverse operations undo each other.`],
+    ['✅','Always <b>check</b>: put x back in!',`And always check, by putting your answer back into the equation.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now solve equations. Next up: <b>inequalities</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

@@ -81,7 +81,7 @@ function cleanSpeech(html){let t=html.replace(/<span class="fr"><span>(.*?)<\/sp
   t=t.replace(/Try Fe, Au and O!/,'Try iron, gold and oxygen!');
   t=t.replace(/_{2,}/g,' blank ');
   if(LCFG.subject==='Maths')t=t.replace(/&lt;/g,' is less than ').replace(/&gt;/g,' is greater than ').replace(/≠/g,' is not equal to ').replace(/×/g,' times ')
-    .replace(/[−–]/g,' minus ').replace(/ - /g,' minus ').replace(/\+/g,' plus ').replace(/(\w)\s*\/\s*(\w)/g,'$1 over $2').replace(/\^2|²/g,' squared').replace(/(\d)([a-z]+)\b/g,'$1 $2');
+    .replace(/[−–]/g,' minus ').replace(/ - /g,' minus ').replace(/\+/g,' plus ').replace(/(\w)\s*\/\s*(\w)/g,'$1 over $2').replace(/\^2|²/g,' squared').replace(/(\d)(?!(?:st|nd|rd|th)\b)([a-z]+)\b/g,'$1 $2');
   t=t.replace(/(\d)\s*A\b/g,'$1 amps').replace(/\bamps \(A\)/g,'amps');
   t=t.replace(new RegExp('([a-z0-9])\\s*'+EMO.source+'\\s+(?=[A-Z])','gu'),'$1. ').replace(EMO,' ');
   t=t.replace(/\b[A-Z]{3,}\b/g,w=>w.toLowerCase());
@@ -104,7 +104,7 @@ function an(e,kf,o){const op=Object.assign({duration:600,easing:'cubic-bezier(.2
 function loop(e,kf,dur,o){return e.animate(kf,Object.assign({duration:dur,iterations:Infinity,easing:'ease-in-out'},o||{}));}
 function pop(e,delay){return an(e,[{transform:'scale(0)',opacity:0},{transform:'scale(1.1)',opacity:1,offset:.7},{transform:'scale(1)',opacity:1}],{duration:500,delay:delay||0});}
 function shake(e){e.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(-5px)'},{transform:'translateX(0)'}],{duration:400});}
-function say(html){lastSay=html;speak(html);const t=$('#text');t.innerHTML=html;t.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:350});
+function say(html){lastSay=html;speak(html);const t=$('#text');t.innerHTML=html;const n=t.textContent.length;t.classList.toggle('long',n>140&&n<=230);t.classList.toggle('xlong',n>230);t.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:350});
   $('#mascot').animate([{transform:'translateY(0)'},{transform:'translateY(-9px) rotate(-6deg)'},{transform:'translateY(0)'}],{duration:450});beep(880,.04,'sine',.05);}
 
 /* ====================== confetti ====================== */
@@ -204,31 +204,38 @@ function makeWait(my){const w=ms=>sleep(ms,my);
   w.my=my;return w;}
 function btn(cls,css,html,onclick){const b=mk(cls,css,html);b.onclick=onclick;return b;}
 
-/* Multiple-choice question inside the stage. Resolves to true/false (right first time). */
-async function ask(w,{q,o,a,why,src,top=40,cols=2,optH=58}){
+/* Multiple-choice question inside the stage. Resolves to true/false (right first time).
+   The question is read aloud first; then the choices appear and each is read out (lit up while it is read).
+   why explains the right answer; whyNot (optional, {index: text}) explains why a wrong choice is wrong. */
+async function ask(w,{q,o,a,why,whyNot,src,top=40,cols=2,optH=58}){
   const box=mk('ex-q',`top:${top}px`,(src?`<span class="src">${src}</span>`:'')+q);pop(box);
+  say(`<b>Exam check:</b> ${q.replace(/<br>/g,' ')}`);
   await w(60);const qh=box.offsetHeight;const y0=top+qh+16;const colW=(880-(cols-1)*14)/cols;let picked=-1;
+  await w(1200);
   const opts=o.map((t,i)=>{const r=Math.floor(i/cols),c=i%cols;
     const e=mk('ex-opt',`left:${40+c*(colW+14)}px;top:${y0+r*(optH+12)}px;width:${colW}px;min-height:${optH}px`,`<span class="k">${'ABCDEF'[i]}</span><span>${t}</span>`);pop(e,i*60);
-    e.onclick=()=>{if(picked>=0)return;picked=i;};return e;});
+    e.onclick=()=>{if(picked>=0)return;picked=i;stopVoice();};return e;});
   /* size each row to its tallest option so long answers never overlap */
   await w(40);let yy=y0;const rows=Math.ceil(o.length/cols);
   for(let r=0;r<rows;r++){const rowEls=opts.slice(r*cols,r*cols+cols);const hgt=Math.max(optH,...rowEls.map(e=>e.offsetHeight));rowEls.forEach(e=>{e.style.top=yy+'px';e.style.minHeight=hgt+'px';});yy+=hgt+12;}
-  say(`<b>Exam check:</b> ${q.replace(/<br>/g,' ')} Tap your answer!`);
+  for(let i=0;i<o.length&&picked<0;i++){opts[i].classList.add('reading');say(`<b>${'ABCDEF'[i]}:</b> ${o[i]}`);
+    try{await w(700);}finally{opts[i].classList.remove('reading');}}
+  if(picked<0)say('Which one is right? Tap your answer!');
   await w.until(()=>picked>=0);
-  const ok=picked===a;opts.forEach(e=>e.classList.add('locked'));opts[a].classList.add('ok');
+  const ok=picked===a,K='ABCDEF';opts.forEach(e=>e.classList.add('locked'));opts[a].classList.add('ok');
   track('answer',{questionId:LCFG.id+':'+(src?src.replace(/<[^>]*>/g,'').trim():q.replace(/<[^>]*>/g,'').slice(0,60)),lessonId:LCFG.id,source:'lesson',correct:ok});
   if(!ok){opts[picked].classList.add('bad');shake(opts[picked]);boo();}else{yay();confetti(40);}
+  const not=!ok&&whyNot&&whyNot[picked]?`<b>${K[picked]} is not right:</b> ${whyNot[picked]} `:'';
   const yb=yy+4;
-  if(why){const wb=mk('ex-why',`top:${yb}px`,(ok?'✅ <b>Correct!</b> ':'💡 <b>The answer is '+'ABCDEF'[a]+'.</b> ')+why);pop(wb);}
-  say((ok?'Correct! ':'Not quite. The answer is '+'ABCDEF'[a]+'. ')+(why||''));
+  if(why||not){const wb=mk('ex-why',`top:${yb}px`,ok?'✅ <b>Correct!</b> '+why:`❌ ${not}<br>💡 <b>The answer is ${K[a]}.</b> `+(why||''));pop(wb);}
+  say(ok?'Correct! '+(why||''):`Not quite. You chose ${K[picked]}. `+not+`The answer is ${K[a]}. `+(why||''));
   return ok;}
 
-/* Written question: think, then reveal the model answer. */
+/* Written question: the question is read aloud, then the student reveals the model answer. */
 async function reveal(w,{q,model,src,top=40,think='Think of your answer first…'}){
   const box=mk('ex-q',`top:${top}px`,(src?`<span class="src">${src}</span>`:'')+q);pop(box);
   say(`<b>Exam check:</b> ${q.replace(/<br>/g,' ')} ${think}`);
-  await w(60);const y=top+box.offsetHeight+18;let open=false;
+  await w(1500);const y=top+box.offsetHeight+18;let open=false;
   const b=btn('ex-btn green',`left:360px;top:${y}px;width:240px`,'👀 Reveal answer',()=>{open=true;});pop(b);
   await w.until(()=>open);b.remove();
   const m=mk('ex-model',`top:${y}px`,`<b class="t">Model answer</b>${model}`);pop(m);beep(700,.1);
@@ -250,7 +257,8 @@ async function examCheck(w,list,{title='Exam check'}={}){
     const it=list[i];
     if(it.o){mcq++;if(await ask(w,it))right++;}else await reveal(w,it);
     await w(400);let nx=false;
-    const b=btn('ex-btn',`left:${i<list.length-1?700:680}px;top:452px`,i<list.length-1?'Next question ▶':'Finish ✔',()=>{nx=true;});pop(b);
+    const wb=stage.querySelector('.ex-why'),by=wb?Math.max(452,Math.min(472,wb.offsetTop+wb.offsetHeight+10)):452; /* below a tall explanation */
+    const b=btn('ex-btn',`left:${i<list.length-1?700:680}px;top:${by}px`,i<list.length-1?'Next question ▶':'Finish ✔',()=>{nx=true;});pop(b);
     await w.until(()=>nx);}
   stage.innerHTML='';
   const s=mk('','left:180px;top:120px;width:600px;text-align:center',`<div style="font-size:70px">🏆</div><div style="font-size:30px;font-weight:800;color:#4a2ea6;margin-top:6px">Exam check complete!</div>`+

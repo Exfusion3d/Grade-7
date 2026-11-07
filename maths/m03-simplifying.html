@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Simplifying and like terms</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.al-t{width:30px;height:30px;border-radius:8px;color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;
+  font-family:Georgia,serif;font-style:italic;box-shadow:0 3px 0 rgba(0,0,0,.2);white-space:nowrap}
+.al-t.neg{background:#fff !important;border:3px dashed #e04848;color:#e04848;box-shadow:none}
+.al-big{width:54px;height:54px;border-radius:12px;font-size:28px}
+.brk{width:110px;height:60px;border-radius:10px;background:#fde6cf;border:3px solid #c4520e;display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:800;color:#7a2e00;box-shadow:0 4px 0 #e0a070}
+.brk.empty{background:#fff;border-style:dashed;color:#c9b6a8;box-shadow:none}
+.brk.new{background:#e3f7ec;border-color:#18a058;color:#0f7a40;box-shadow:0 4px 0 #9fdcbb}
+.tm-c{width:96px;height:52px;border-radius:14px;background:#fff;border:3px solid;display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:800;box-shadow:0 4px 0 #ece8f8;white-space:nowrap}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 3 · Chapter 2 · Exercise 2.3 (Q2, Q3, Q4, Q5)
+   Every worksheet question type is taught with teachQ (maths.js): question first and read aloud, key words lit up,
+   the student taps "Show me", then the working one line at a time, the answer and why. The rest are in the Exam check. */
+const WS='Worksheet · Ex 2.3 · ';
+const STEM3='Simplify each of these expressions.';
+const STEM4='In an algebraic pyramid, you find the expression in each block by adding the expressions in the two blocks below it. Copy and complete these pyramids.';
+const STEM5='Copy and complete the workings to simplify these expressions.';
+/* the voice reads ³ as "cubed" (the engine already reads ² as "squared") */
+{const cs=cleanSpeech;cleanSpeech=h=>cs(String(h).replace(/³/g,' cubed'));}
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+/* bottom edge of the question card, to put a picture under it */
+const cardBottom=()=>{const c=[...stage.querySelectorAll('.ws-card')].pop();return c?c.offsetTop+c.offsetHeight:0;};
+
+/* Algebra tiles: one small tile per letter. terms: [5] or [7,-4] (negative = take away).
+   step() joins the next group: + slides the tiles up to the others, − cancels tiles one for one. */
+function tray(y,lab,terms,col='#e06a1b',x0=96){
+  let x=x0;const G=[],fs=lab.length>1?14:16;
+  terms.forEach((n,gi)=>{const neg=n<0;n=Math.abs(n);let op=null;
+    if(gi>0){op=mk('mx',`left:${x}px;top:${y-4}px;width:30px;text-align:center;font-size:30px`,neg?'−':'+');pop(op,gi*150);x+=36;}
+    const tl=[];for(let i=0;i<n;i++){const t=mk('al-t'+(neg?' neg':''),`left:${x}px;top:${y}px;background:${col};font-size:${fs}px`,lab);t._x=x;pop(t,gi*150+i*35);tl.push(t);x+=34;}
+    G.push({neg,tl,op});x+=4;});
+  let pool=G[0].tl,k=1,lbl=null;
+  const move=(t,nx)=>{const a=an(t,[{left:t._x+'px'},{left:nx+'px'}],{duration:700});t._x=nx;return a;};
+  return{step:async()=>{const g=G[k++];if(!g)return;if(lbl){lbl.remove();lbl=null;}an(g.op,[{opacity:1},{opacity:0}],{duration:300});
+      if(!g.neg){await Promise.all(g.tl.map((t,i)=>move(t,x0+(pool.length+i)*34)));pool=pool.concat(g.tl);beep(650,.08);}
+      else{const n=g.tl.length,vict=pool.slice(pool.length-n);
+        await Promise.all(g.tl.map((t,i)=>move(t,vict[n-1-i]._x)));beep(300,.1);
+        await Promise.all([...vict,...g.tl].map(t=>an(t,[{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.2)'}],{duration:500})));
+        pool=pool.slice(0,pool.length-n);}
+      if(pool.length){point(pool[pool.length-1]);}},
+    all:async function(){while(k<G.length)await this.step();},
+    label:txt=>{lbl=mk('mx',`left:${x0+pool.length*34+14}px;top:${y-6}px;font-size:30px;color:#18a058;white-space:nowrap`,txt);pop(lbl);point(lbl);return lbl;}};}
+
+/* A brick pyramid: bottom row given, the middle and top bricks start empty. */
+function pyramid(bot,x0=590,y0=400){
+  const b=(x,y,t)=>{const e=mk('brk'+(t?'':' empty'),`left:${x}px;top:${y}px`,t||'?');pop(e);return e;};
+  const B=bot.map((t,i)=>b(x0+i*114,y0,t)),M=[0,1].map(i=>b(x0+57+i*114,y0-64)),T=b(x0+114,y0-128);
+  const fill=async(e,a,c,txt)=>{[a,c].forEach(z=>z.animate([{background:'#fde6cf'},{background:'#ffd84d'},{background:'#fde6cf'}],{duration:900}));beep(500,.08);await w0(700);
+    e.className='brk new';e.innerHTML=txt;pop(e);beep(800,.1);point(e);};
+  return{B,M,T,fill};}
+
+/* Term cards for mixed expressions. The sign in front travels with its term. */
+function termCards(y,list,x0=96){return list.map(([t,col],i)=>{const e=mk('tm-c',`left:${x0+i*106}px;top:${y}px;border-color:${col};color:${col}`,t);e._x=x0+i*106;pop(e,i*120);return e;});}
+async function arrange(cards,order,x0=96){beep(520,.06);await Promise.all(order.map((ci,p)=>{const c=cards[ci],nx=x0+p*106;const a=an(c,[{left:c._x+'px'},{left:nx+'px'}],{duration:800});c._x=nx;return a;}));}
+async function join(cs,txt){const [f,...rest]=cs;
+  await Promise.all(rest.map(c=>an(c,[{left:c._x+'px',opacity:1},{left:f._x+'px',opacity:0}],{duration:700})));rest.forEach(c=>c.remove());
+  f.innerHTML=txt;f.style.background='#e3f7ec';pop(f);beep(760,.08);point(f);}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m03', num:3, part:'Chapter 2', emoji:'🧱', title:'Simplifying and like terms',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's make expressions shorter. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Like terms',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to <b>simplify</b>: make an expression shorter by collecting things that are alike.`);
+  await w(3000);
+  const f1=mk('','left:60px;top:28px;font-size:44px;white-space:nowrap','🍎🍎🍎 <b style="color:#7a2e00">+</b> 🍎🍎');pop(f1);point(f1);
+  say(`3 apples plus 2 apples. Easy: that's <b>5 apples</b>.`);
+  await w(2000);
+  const r1=mk('mx','left:440px;top:34px;font-size:34px;color:#18a058;white-space:nowrap','= 5 apples ✔');pop(r1);yay();
+  await w(1600);
+  const f2=mk('','left:60px;top:118px;font-size:44px;white-space:nowrap','🍎🍎🍎 <b style="color:#7a2e00">+</b> 🍌🍌');pop(f2);point(f2);
+  say(`But 3 apples plus 2 bananas? They are different things, so we <b>can't</b> join them into one.`);
+  await w(2600);
+  const r2=mk('mx','left:440px;top:124px;font-size:30px;color:#e04848;white-space:nowrap','stays 3 apples + 2 bananas');pop(r2);shake(f2);boo();
+  await w(2400);
+  say(`Algebra works the same way. Here are some <b>x tiles</b>. Each tile is one x.`);
+  const T=tray(250,'x',[3,2]);
+  await w(2600);
+  say(`3x plus 2x. Push them together...`);
+  await T.step();await w(1000);
+  T.label('= 5x ✔');yay();
+  say(`...and you get <b>5x</b>. 3x and 2x are <b>like terms</b>, because they have the same letter.`);
+  await w(3200);
+  const xs=[0,1,2].map(i=>{const t=mk('al-t',`left:${96+i*34}px;top:340px;background:#e06a1b`,'x');pop(t,i*60);return t;});
+  mk('mx','left:202px;top:334px;font-size:30px','+');
+  const ys=[0,1].map(i=>{const t=mk('al-t',`left:${238+i*34}px;top:340px;background:#2c66cf`,'y');pop(t,i*60);return t;});
+  point(ys[1]);
+  say(`Now 3x plus 2y. x and y are different letters. They are <b>unlike terms</b>, like apples and bananas.`);
+  await w(3000);
+  [...xs,...ys].forEach(shake);boo();
+  const l2=mk('mx','left:330px;top:334px;font-size:30px;color:#e04848;white-space:nowrap','stays 3x + 2y');pop(l2);point(l2);
+  say(`So <b>3x + 2y</b> can't be made any shorter. It is already as simple as it gets.`);
+  await w(3000);
+  const rule=mk('mx-step','left:96px;top:420px','Like terms: <b>same letter</b> → you can join them <i>3x + 2x = 5x</i>');pop(rule);point(rule);
+  say(`Today's big rule: only <b>like terms</b> can be joined. Like terms have exactly the same letter.`);
+  await w(3200);}},
+
+/* 1 */ {t:'Adding like terms',run:async w=>{
+  say(`Let's do the worksheet questions, <b>one at a time</b>. Watch the tiles.`);
+  await w(2400);
+  let T;
+  await teachQ(w,{src:WS+'Q3 a)',q:STEM3+'<br>a) x + x + x + x + x',read:'Simplify: x + x + x + x + x.',workY:204,
+    keys:[['x + x + x + x + x',`Five <b>x</b>s are added together. They all have the same letter, so they are <b>like terms</b>.`]],
+    before:[{show:'Try x = 2: &nbsp;2 + 2 + 2 + 2 + 2 = 10 = 5 × 2',say:`Try a number first. If x is 2, adding five 2s gives 10. That's <b>5 lots of 2</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'x',[1,1,1,1,1]);await w0(800);},show:'x + x + x + x + x <i>five x tiles</i>',say:`Here are the five x tiles.`},
+      {act:async()=>{await T.all();T.label('= 5x');},show:'= 5x <i>5 lots of x</i>',say:`Push them together: five lots of x is <b>5x</b>.`}],
+    answer:'5x',why:'Adding the same letter again and again is multiplying. Check: if x is 2, 5x is 10. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q3 b)',q:STEM3+'<br>b) 2y + 4y',read:'Simplify: 2y + 4y.',workY:204,
+    keys:[['2y + 4y',`<b>2y</b> is two y's and <b>4y</b> is four y's. Same letter, so they are like terms.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'y',[2,4],'#2c66cf');await w0(800);},show:'2y + 4y',say:`Here are 2 y tiles and 4 y tiles.`},
+      {act:async()=>{await T.all();T.label('= 6y');},show:'= 6y <i>2 + 4 = 6</i>',say:`Push them together. Add the numbers in front: 2 + 4 is 6. So <b>6y</b>.`,wait:2400}],
+    answer:'6y',why:'Add the numbers in front; the letter stays the same. It is not 8y (that multiplies) and not 6y².'});
+  await w(1500);}},
+
+/* 2 */ {t:'Taking away',run:async w=>{
+  say(`Taking away works the same way. The dashed red tiles are the ones we <b>take away</b>.`);
+  await w(2600);
+  let T;
+  await teachQ(w,{src:WS+'Q3 g)',q:STEM3+'<br>g) 7w − 4w',read:'Simplify: 7w − 4w.',workY:204,
+    keys:[['7w − 4w',`Start with <b>7w</b>, then take away <b>4w</b>.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'w',[7,-4],'#18a058');await w0(800);},show:'7w − 4w',say:`Here are 7 w tiles, and 4 to take away.`},
+      {act:async()=>{await T.all();T.label('= 3w');},show:'= 3w <i>7 − 4 = 3</i>',say:`Each red tile cancels one green tile. 7 − 4 is 3, so <b>3w</b> are left.`,wait:2400}],
+    answer:'3w',why:'Take away the numbers in front: 7 − 4 = 3. The letter stays. Check: if w is 2, 14 − 8 = 6 = 3 × 2. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q3 h)',q:STEM3+'<br>h) 8n − n',read:'Simplify: 8n − n.',workY:204,
+    keys:[['8n − n',`Careful! A letter on its own means <b>one</b> of it. So <b>n</b> is <b>1n</b>.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'n',[8,-1],'#6a45d8');await w0(800);},show:'8n − n = 8n − 1n <i>n is 1n</i>',say:`Write the hidden 1: 8n − 1n. Here are 8 tiles, and just 1 to take away.`,wait:2400},
+      {act:async()=>{await T.all();T.label('= 7n');},show:'= 7n <i>8 − 1 = 7</i>',say:`8 − 1 is 7, so the answer is <b>7n</b>.`}],
+    answer:'7n',why:'n on its own means 1n. So 8n − 1n = 7n.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Three terms',run:async w=>{
+  say(`Now three terms. Work from <b>left to right</b>, one term at a time.`);
+  await w(2400);
+  let T;
+  await teachQ(w,{src:WS+'Q3 e)',q:STEM3+'<br>e) 8g + 5g + g',read:'Simplify: 8g + 5g + g.',workY:204,
+    keys:[['+ g',`Spot the <b>g</b> on its own. It means <b>1g</b>.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'g',[8,5,1]);await w0(800);},show:'8g + 5g + 1g <i>g is 1g</i>',say:`Write the hidden 1: 8g + 5g + 1g.`},
+      {act:async()=>{await T.all();T.label('= 14g');},show:'= 14g <i>8 + 5 + 1 = 14</i>',say:`Push all the tiles together. 8 + 5 + 1 is 14, so <b>14g</b>.`,wait:2400}],
+    answer:'14g',why:'Remember the hidden 1: g is 1g. So 8 + 5 + 1 = 14, not 13.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q3 j)',q:STEM3+'<br>j) 6f + 2f − 3f',read:'Simplify: 6f + 2f − 3f.',workY:204,
+    keys:[['6f + 2f − 3f',`Add <b>2f</b>, then take away <b>3f</b>. Go from left to right.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'f',[6,2,-3],'#2c66cf');await w0(800);},show:'6f + 2f − 3f',say:`Here are the tiles: 6, add 2, then take away 3.`},
+      {act:async()=>{await T.step();T.label('8f');},show:'= 8f − 3f <i>6 + 2 = 8 first</i>',say:`Left to right. First, 6f + 2f is <b>8f</b>.`},
+      {act:async()=>{await T.step();T.label('= 5f');},show:'= 5f <i>8 − 3 = 5</i>',say:`Then 8f − 3f is <b>5f</b>.`}],
+    answer:'5f',why:'Work from left to right: 6 + 2 = 8, then 8 − 3 = 5.'});
+  await w(1500);}},
+
+/* 4 */ {t:'Squares and cubes',run:async w=>{
+  say(`Terms can have <b>powers</b>, like b squared or k cubed. The power is part of the term's name.`);
+  await w(2800);
+  let T;
+  await teachQ(w,{src:WS+'Q3 i)',q:STEM3+'<br>i) 9b² − 5b²',read:'Simplify: 9b² − 5b².',workY:204,
+    keys:[['9b² − 5b²',`<b>b squared</b> means b × b. b² terms are like terms with other b² terms, but <b>not</b> with b.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'b²',[9,-5],'#6a45d8');await w0(800);},show:'9b² − 5b²',say:`Each tile is one b squared. 9 of them, and 5 to take away.`},
+      {act:async()=>{await T.all();T.label('= 4b²');},show:'= 4b² <i>9 − 5 = 4</i>',say:`9 − 5 is 4. The b squared stays the same: <b>4b²</b>.`,wait:2400}],
+    answer:'4b²',why:'Only the numbers in front change. The b² stays, just like a letter does.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q3 l)',q:STEM3+'<br>l) 8k³ − 5k³ − 2k³',read:'Simplify: 8k³ − 5k³ − 2k³.',workY:204,
+    keys:[['8k³ − 5k³ − 2k³',`<b>k cubed</b> means k × k × k. All three terms have k cubed, so they are like terms.`]],
+    steps:[{act:async()=>{T=tray(cardBottom()+16,'k³',[8,-5,-2],'#e06a1b');await w0(800);},show:'8k³ − 5k³ − 2k³',say:`8 tiles, take away 5, then take away 2.`},
+      {act:async()=>{await T.step();T.label('3k³');},show:'= 3k³ − 2k³ <i>8 − 5 = 3 first</i>',say:`Left to right. 8k³ − 5k³ is <b>3k³</b>.`},
+      {act:async()=>{await T.step();T.label('= k³');},show:'= 1k³ = k³ <i>we don\'t write the 1</i>',say:`Then 3k³ − 2k³ is 1k³. We don't write the 1, so it's just <b>k³</b>.`,wait:2400}],
+    answer:'k³',why:'One k³ is written k³, the same way 1n is written n.'});
+  await w(1500);}},
+
+/* 5 */ {t:'Match them up',run:async w=>{
+  mk('ex-head','','🧩 Worksheet · Ex 2.3 · Q2');
+  const r=await sortGame(w,{bins:['i) 7x','ii) x','iii) 4x','iv) 9x','v) 2x','vi) 3x'],colors:['#f7ad5f','#5d9cf5','#45c288','#c9b6f4','#f59ab5','#ffd84d'],top:180,
+    items:[['a) x + x',4],['b) 5x + 4x',3],['c) x + 6x',0],['d) 5x − 2x',5],['e) 2x − x',1],['f) 8x − 4x',2]],
+    intro:`Match each expression, a to f, to its correctly simplified expression, i to vi. Tap a card, then tap its box. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! Every one matches.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's go through them.`);
+  await w(2600);
+  say(`<b>x + x</b> is 2x, because x is 1x. <b>5x + 4x</b> is 9x. <b>x + 6x</b> is 7x.`);await w(3400);
+  say(`<b>5x − 2x</b> is 3x. <b>2x − x</b> is just x. And <b>8x − 4x</b> is 4x.`);await w(3400);}},
+
+/* 6 */ {t:'Algebra pyramids',run:async w=>{
+  say(`An <b>algebra pyramid</b> is a wall of bricks. Each brick is the two bricks below it <b>added together</b>.`);
+  await w(3000);
+  let P=pyramid(['3x','5x','x']);
+  await teachQ(w,{src:WS+'Q4 a)',q:STEM4+'<br>a) Bottom row: 3x, 5x, x',read:'In an algebraic pyramid, you find the expression in each block by adding the expressions in the two blocks below it. Complete the pyramid. The bottom row is 3x, 5x and x.',wd:520,
+    keys:[['adding the expressions in the two blocks below it',`Each block is the two blocks below it <b>added</b>.`]],
+    before:[{show:'With numbers: 3 + 5 = 8',say:`With numbers, a 3 brick and a 5 brick make an 8 brick above them. Like terms work the same way.`,try:true,wait:2600}],
+    steps:[{act:()=>P.fill(P.M[0],P.B[0],P.B[1],'8x'),show:'3x + 5x = 8x',say:`Middle row, left brick: 3x + 5x is <b>8x</b>.`},
+      {act:()=>P.fill(P.M[1],P.B[1],P.B[2],'6x'),show:'5x + x = 6x <i>x is 1x</i>',say:`Middle row, right brick: 5x + x. Remember x is 1x, so it's <b>6x</b>.`,wait:2400},
+      {act:()=>P.fill(P.T,P.M[0],P.M[1],'14x'),show:'8x + 6x = 14x',say:`Top brick: 8x + 6x is <b>14x</b>.`}],
+    answer:'8x, 6x, top 14x',why:'Check with x = 1: bricks 3, 5, 1 make 8 and 6, and the top is 14. ✔'});
+  await w(1200);clear();
+  P=pyramid(['7p','p','3p']);
+  await teachQ(w,{src:WS+'Q4 b)',q:STEM4+'<br>b) Bottom row: 7p, p, 3p',read:'Complete the pyramid. The bottom row is 7p, p and 3p.',wd:520,
+    keys:[['7p, p, 3p',`Watch out for the <b>p</b> on its own. It means <b>1p</b>.`]],
+    steps:[{act:()=>P.fill(P.M[0],P.B[0],P.B[1],'8p'),show:'7p + p = 8p <i>p is 1p</i>',say:`Middle left: 7p + p. p is 1p, so it's <b>8p</b>.`,wait:2400},
+      {act:()=>P.fill(P.M[1],P.B[1],P.B[2],'4p'),show:'p + 3p = 4p',say:`Middle right: p + 3p is <b>4p</b>.`},
+      {act:()=>P.fill(P.T,P.M[0],P.M[1],'12p'),show:'8p + 4p = 12p',say:`Top: 8p + 4p is <b>12p</b>.`}],
+    answer:'8p, 4p, top 12p',why:'Add the two bricks below each time. Check with p = 1: 7, 1, 3 make 8 and 4, and the top is 12. ✔'});
+  await w(1500);}},
+
+/* 7 */ {t:'Different letters',run:async w=>{
+  say(`Now expressions with <b>different letters</b> and plain numbers. Sort them into like terms first. The sign in front of a term <b>travels with it</b>.`);
+  await w(3400);
+  let C;const G='#e06a1b',N='#a67c00';
+  await teachQ(w,{src:WS+'Q5 c)',q:STEM5+'<br>c) 2g + 8 + 3g − 5 = 2g + 3g + 8 − 5 = ____g + ____',read:'Copy and complete the workings to simplify 2g + 8 + 3g − 5.',workY:236,
+    keys:[['2g + 8 + 3g − 5',`There are <b>g terms</b> and plain <b>numbers</b>. Numbers are like terms with each other.`]],
+    steps:[{act:async()=>{C=termCards(cardBottom()+16,[['2g',G],['+ 8',N],['+ 3g',G],['− 5',N]]);await w0(900);},show:'2g + 8 + 3g − 5',say:`Each term keeps the sign in front of it: plus 8, plus 3g, minus 5.`,wait:2400},
+      {act:()=>arrange(C,[0,2,1,3]),show:'= 2g + 3g + 8 − 5 <i>like terms together</i>',say:`Move the like terms next to each other. The g terms first, then the numbers.`,wait:2400},
+      {act:async()=>{await join([C[0],C[2]],'5g');await join([C[1],C[3]],'+ 3');await arrange(C,[0,1]);},show:'= 5g + 3',say:`2g + 3g is <b>5g</b>. And 8 − 5 is <b>3</b>. So <b>5g + 3</b>.`,wait:2400}],
+    answer:'5g + 3',why:'5g and 3 are not like terms, so 5g + 3 is as simple as it gets.'});
+  await w(1200);clear();
+  const A='#6a45d8',B='#2c66cf',Cc='#18a058';
+  await teachQ(w,{src:WS+'Q5 e)',q:STEM5+'<br>e) 3a + 4b + 5c − 2b − 8c = 3a + 4b − 2b + 5c − 8c = ____a + ____b − ____c',read:'Copy and complete the workings to simplify 3a + 4b + 5c − 2b − 8c.',workY:236,
+    keys:[['3a + 4b + 5c − 2b − 8c',`Three letters: <b>a</b>, <b>b</b> and <b>c</b>. Each letter makes its own group.`]],
+    steps:[{act:async()=>{C=termCards(cardBottom()+16,[['3a',A],['+ 4b',B],['+ 5c',Cc],['− 2b',B],['− 8c',Cc]]);await w0(900);},show:'3a + 4b + 5c − 2b − 8c',say:`Here are the five terms, each with its own sign.`},
+      {act:()=>arrange(C,[0,1,3,2,4]),show:'= 3a + 4b − 2b + 5c − 8c',say:`Group them: a, then the b terms, then the c terms. The minus signs travel too.`,wait:2400},
+      {act:async()=>{await join([C[1],C[3]],'+ 2b');await join([C[2],C[4]],'− 3c');await arrange(C,[0,1,2]);},show:'= 3a + 2b − 3c <i>5 − 8 = −3</i>',say:`4b − 2b is 2b. 5c − 8c goes below zero: <b>minus 3c</b>. So <b>3a + 2b − 3c</b>.`,wait:2600}],
+    answer:'3a + 2b − 3c',why:'5c − 8c takes away more than you have, so it is −3c. Check with c = 1: 5 − 8 = −3. ✔'});
+  await w(1500);}},
+
+/* 8 */ {t:'Build it!',run:async w=>{
+  const R=[['Simplify: 2x + 8x + 6y + 9y',['10x','15y','25xy','+','−','3y','16x'],[['10x','+','15y'],['15y','+','10x']],'10x + 15y',`2x + 8x is 10x, and 6y + 9y is 15y. x and y can't join.`],
+    ['Simplify: 9j + j − 7j',['3j','2j','17j','j','−','+'],[['3j']],'3j',`j is 1j. 9 + 1 is 10, then 10 − 7 is 3. So 3j.`],
+    ['Simplify: 9d − 7d + 3h − h',['2d','16d','2h','4h','+','−','4dh'],[['2d','+','2h'],['2h','+','2d']],'2d + 2h',`9d − 7d is 2d. 3h − h is 2h, because h is 1h.`]];
+  say(`Your turn to build! Simplify each one, then tap the tiles <b>in order</b>. Press <b>Check</b> when you're done.`);
+  await w(3200);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,why]=R[i];
+    mk('ex-head','',`🧩 Build it · ${i+1} of ${R.length}`);
+    say(q);
+    const r=await buildExpr(w,{q,tiles,answer,top:44});
+    if(r.ok){right++;say(`Yes! <b>${model}</b> is right. ${why}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+model);pop(s);point(s);say(`Not quite. ${why}`);}
+    await w(3200);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🧱</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You're a simplifying star.`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 2.3 · Q2 d)',q:'Match each expression, a to f, to its correctly simplified expression, i to vi.<br>d) 5x − 2x',o:['7x','3x','10x','3'],a:1,
+      why:'5 − 2 = 3, and the x stays: <b>3x</b>.',whyNot:{0:'that adds, but the sign is minus.',2:'that multiplies the numbers.',3:'the x must stay in the answer.'}},
+    {src:'Worksheet · Ex 2.3 · Q2 f)',q:'Match each expression, a to f, to its correctly simplified expression, i to vi.<br>f) 8x − 4x',o:['4x','12x','4','32x'],a:0,
+      why:'8 − 4 = 4, and the x stays: <b>4x</b>.',whyNot:{1:'that adds, but the sign is minus.',2:'the x must stay in the answer.',3:'that multiplies the numbers.'}},
+    {src:'Worksheet · Ex 2.3 · Q3 c)',q:'Simplify each of these expressions.<br>c) 5d + 3d',o:['15d','8d²','8d','8'],a:2,
+      why:'5 + 3 = 8, and the d stays: <b>8d</b>.',whyNot:{0:'that multiplies the numbers, but the sign is plus.',1:'adding d terms does not make d squared.',3:'the d must stay in the answer.'}},
+    {src:'Worksheet · Ex 2.3 · Q3 d)',q:'Simplify each of these expressions.<br>d) 6t + 3t + 4t',o:['72t','13t','9t + 4t','13t³'],a:1,
+      why:'6 + 3 + 4 = 13: <b>13t</b>.',whyNot:{0:'that multiplies the numbers, but the signs are plus.',2:'not finished: 9t and 4t can still be added.',3:'adding t terms does not make t cubed.'}},
+    {src:'Worksheet · Ex 2.3 · Q3 f)',q:'Simplify each of these expressions.<br>f) 9p + p + 6p.',o:['15p','16p','54p','16'],a:1,
+      why:'p is 1p, so 9 + 1 + 6 = 16: <b>16p</b>.',whyNot:{0:'the p on its own was missed. p is 1p.',2:'that multiplies 9 and 6, but the signs are plus.',3:'the p must stay in the answer.'}},
+    {src:'Worksheet · Ex 2.3 · Q3 k)',q:'Simplify each of these expressions.<br>k) 9j + j − 7j',o:['3j','2j','17j','−3j'],a:0,
+      why:'j is 1j. 9 + 1 = 10, then 10 − 7 = 3: <b>3j</b>.',whyNot:{1:'the j on its own was missed. j is 1j.',2:'the 7j must be taken away, not added.',3:'10 − 7 is 3, not minus 3.'}},
+    {src:'Worksheet · Ex 2.3 · Q5 a)',q:'Copy and complete the workings to simplify these expressions.<br>a) 2x + 8x + 6y + 9y = 10x + ____y',o:['10x + 15y','25xy','10x + 3y','10x + 54y'],a:0,
+      why:'2x + 8x = 10x and 6y + 9y = 15y: <b>10x + 15y</b>.',whyNot:{1:'x and y are unlike terms. They cannot join.',2:'that takes away, but the sign is plus.',3:'that multiplies 6 and 9.'}},
+    {src:'Worksheet · Ex 2.3 · Q5 b)',q:'Copy and complete the workings to simplify these expressions.<br>b) 9d − 7d + 3h − h = ____d + 2h',o:['16d + 2h','2d + 2h','4dh','−2d + 2h'],a:1,
+      why:'9d − 7d = 2d and 3h − h = 2h: <b>2d + 2h</b>.',whyNot:{0:'that adds 9d and 7d, but the sign is minus.',2:'d and h are unlike terms. They cannot join.',3:'9 − 7 is 2, not minus 2.'}},
+    {src:'Worksheet · Ex 2.3 · Q5 d)',q:'Copy and complete the workings to simplify these expressions.<br>d) 8p + 12t − 3p + t = 8p − 3p + 12t + t = ____p + ____t',o:['5p + 12t','11p + 13t','5p + 13t','18pt'],a:2,
+      why:'8p − 3p = 5p and 12t + t = 13t: <b>5p + 13t</b>.',whyNot:{0:'the t on its own was missed. t is 1t.',1:'the 3p has a minus sign, so take it away.',3:'p and t are unlike terms. They cannot join.'}},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Simplifying and like terms</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🍎','<b>Like terms</b> have the same letter and power.',`Like terms have the same letter, and the same power.`],
+    ['➕','3x + 2x = <b>5x</b>',`To add like terms, add the numbers in front. 3x plus 2x is 5x.`],
+    ['➖','7w − 4w = <b>3w</b>',`To take away, take away the numbers in front. 7w minus 4w is 3w.`],
+    ['1️⃣','n means <b>1n</b><br>8n − n = 7n',`A letter on its own means one of it. 8n minus n is 7n.`],
+    ['🔢','9b² − 5b² = <b>4b²</b><br>the power stays',`Powers stay the same. 9b squared minus 5b squared is 4b squared.`],
+    ['🧱','Pyramid: <b>add</b> the two bricks below',`In a pyramid, add the two bricks below.`],
+    ['🚚','The sign <b>travels</b> with its term',`When you move terms, the sign in front travels with them.`],
+    ['🚫','3x + 2y can\'t be simplified',`Unlike terms, like 3x and 2y, can't be joined.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now simplify expressions. Next up: <b>expanding brackets</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

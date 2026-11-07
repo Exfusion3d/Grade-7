@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Substituting into expressions and formulae</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.sw-box{position:absolute;width:84px;height:84px;border-radius:20px;background:linear-gradient(135deg,#e06a1b,#f5a54a);box-shadow:0 6px 0 #c4520e;
+  display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:800;color:#fff;font-family:Georgia,serif;font-style:italic}
+.sw-box.in{background:linear-gradient(135deg,#2c66cf,#5d9cf5);box-shadow:0 6px 0 #1d4b9e;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-style:normal;font-size:34px}
+.sw-num{position:absolute;min-width:84px;height:84px;padding:0 8px;border-radius:20px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);box-shadow:0 6px 0 #1d4b9e;
+  display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#fff;z-index:5}
+.sw-in{display:inline-block;padding:0 14px;border-radius:14px;background:#e06a1b;color:#fff;font-family:Georgia,serif;font-style:italic}
+.sw-in.n{background:#2c66cf;font-family:inherit;font-style:normal}
+.rung{position:absolute;top:44px;width:212px;height:104px;border-radius:16px;text-align:center;padding-top:8px}
+.rung b{display:block;font-size:30px;line-height:1.1}
+.rung span{display:block;font-size:14.5px;font-weight:700;line-height:1.25;margin-top:4px;padding:0 6px}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 2 · Chapter 2 · Exercise 2.2 (Q1, Q2, Q8) and Chapter 9 Getting started Q4.
+   Every worksheet question type is taught with teachQ (maths.js): question first and read aloud, key words lit up,
+   the student taps "Show me", then the working one line at a time, the answer and why. The rest are in the Exam check. */
+const WS='Worksheet · Ex 2.2 · ';
+const STEM1='Copy and complete the workings to find the value of each expression.';
+const STEM2='Work out the value of each expression.';
+const STEM8='Jan calculates how much money he has left each week, using the formula <b>M = P − E</b>, where M is the money he has left over, P is the money he is paid for working and E is his expenses.';
+const READ8='Jan calculates how much money he has left each week, using the formula M = P − E. M is the money he has left over, P is the money he is paid for working, and E is his expenses.';
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+/* Next question: clear the stage but keep some of a scene's drawing */
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+/* flip a letter inside an expression into its number */
+async function flip(sp,txt){beep(560,.06);await an(sp,[{transform:'rotateY(0)'},{transform:'rotateY(90deg)'}],{duration:280});
+  sp.textContent=txt;sp.classList.add('n');await an(sp,[{transform:'rotateY(90deg)'},{transform:'rotateY(0)'}],{duration:280});}
+/* The "swap station" on the right: each letter in an orange box, its number beside it.
+   swap() slides each number into its box, so the student sees the letter go out and the number come in. */
+function station(pairs,title='🔁 Swap station'){
+  const p=panel(684,12,262,496,title,'Letters out, numbers in!');pop(p);
+  const rows=pairs.map(([L,V],i)=>{const y=58+i*118;
+    const tag=mk('mx',`left:8px;top:${y+22}px;width:124px;font-size:26px;text-align:center;color:#1d4b9e;white-space:nowrap`,`${L} = ${V}`,p);
+    const box=mk('sw-box',`left:152px;top:${y}px`,L,p);pop(box,i*150);return{L,V,tag,box};});
+  return{p,rows,swap:async()=>{for(const r of rows){point(r.box);
+    const c=mk('sw-num',`left:30px;top:${r.box.offsetTop}px`,r.V,p);pop(c);await w0(450);
+    await an(c,[{transform:'translateX(0)'},{transform:`translateX(${152-30}px)`}],{duration:700});
+    r.box.textContent=r.V;r.box.classList.add('in');c.remove();beep(700,.08);await w0(300);}}};}
+/* Jan's money as a tower: pay P is split into expenses E (red) and money left M (green). */
+function tower(){const p=panel(684,12,262,496,'💰 Jan\'s week','');pop(p);return p;}
+function seg(p,top,h,col,txt){const s=mk('',`left:60px;top:${top}px;width:142px;height:${h}px;border-radius:12px;background:${col};color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;transform-origin:50% 100%`,txt,p);
+  an(s,[{transform:'scaleY(0)',opacity:0},{transform:'scaleY(1)',opacity:1}],{duration:700});return s;}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m02', num:2, part:'Chapter 2', emoji:'🔢', title:'Substituting into expressions and formulae',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's swap letters for numbers. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Swap the letter',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to <b>substitute</b>. That means swapping a letter for a number, then working it out.`);
+  await w(3000);
+  const board=mk('','left:40px;top:28px;width:330px;height:190px;border-radius:22px;background:linear-gradient(#2a8f4e,#1e6e3b);box-shadow:0 8px 0 #145028;color:#fff;text-align:center;font-weight:800',
+    `<div style="font-size:15px;letter-spacing:.12em;margin-top:14px;color:#c9f2d6">SUBSTITUTE</div>
+     <div style="display:flex;justify-content:space-around;margin-top:14px;font-size:20px">
+       <div><div style="color:#ff9b9b">⬇ OFF</div><div style="font-size:58px;font-family:Georgia,serif;font-style:italic">x</div></div>
+       <div><div style="color:#9bffbf">⬆ ON</div><div style="font-size:58px">13</div></div></div>`);
+  pop(board);const ball=mk('big-emoji','left:390px;top:70px;font-size:60px','⚽');pop(ball,300);
+  loop(ball,[{transform:'translateY(0) rotate(0)'},{transform:'translateY(-16px) rotate(180deg)'}],900,{direction:'alternate'});
+  point(board);
+  say(`In football, a <b>substitute</b> swaps one player for another. In maths, we swap a <b>letter</b> for a <b>number</b>.`);
+  await w(3400);
+  const ex=mk('mx','left:500px;top:60px;width:420px;text-align:center;font-size:64px;white-space:nowrap',`<span class="sw-in">x</span> + 9`);pop(ex);point(ex);
+  say(`Here's an expression: <b>x + 9</b>. We can't work it out yet, because x is a mystery number.`);
+  await w(3200);
+  const tg=mk('tag','left:640px;top:160px;background:#e6efff;color:#1d4b9e;font-size:28px','x = 13');pop(tg);point(tg);
+  say(`But now we're told <b>x = 13</b>. So we take x out, and put 13 in.`);
+  await w(2800);
+  await flip(ex.querySelector('.sw-in'),'13');point(ex);
+  say(`Now it says <b>13 + 9</b>. That's just a sum!`);
+  await w(2400);
+  const ans=mk('mx','left:500px;top:220px;width:420px;text-align:center;font-size:52px;color:#18a058','= 22');pop(ans);yay();point(ans);
+  say(`13 + 9 is <b>22</b>. So when x is 13, x + 9 is 22.`);
+  await w(2800);
+  const R=[['1️⃣ Write the expression.','First, write the expression out.'],['2️⃣ Swap each letter for its number.','Second, swap each letter for its number.'],['3️⃣ Work it out.','Third, work it out. Be careful with the order of the jobs.']];
+  for(let i=0;i<3;i++){const r=mk('mx-step',`left:96px;top:${312+i*64}px`,R[i][0]);pop(r);point(r);say(R[i][1]);await w(2400);}
+  say(`That's the whole idea: <b>swap, then work it out</b>. Let's learn the traps!`);
+  await w(2600);}},
+
+/* 1 */ {t:'Hidden times signs',run:async w=>{
+  say(`In algebra, the <b>times sign</b> is often hidden. You have to spot it before you swap.`);
+  await w(2800);
+  const A=panel(13,8,460,244,'Number next to a letter','');pop(A);
+  const a1=mk('mx','left:0;top:46px;width:460px;text-align:center;font-size:34px','2m &nbsp;when m = 7',A);pop(a1);point(a1);
+  say(`Look at <b>2m</b> when m = 7. What do you think it is?`);
+  await w(2600);
+  const a2=mk('mx','left:0;top:104px;width:460px;text-align:center;font-size:34px;color:#e04848','27 ❌',A);pop(a2);shake(a2);boo();point(a2);
+  say(`It is <b>not</b> 27! We don't just write the 2 and the 7 side by side.`);
+  await w(2800);
+  const a3=mk('mx','left:0;top:164px;width:460px;text-align:center;font-size:34px;color:#18a058','2 × 7 = 14 ✔',A);pop(a3);yay();point(a3);
+  say(`A number next to a letter means <b>multiply</b>. 2m means 2 times m, so it's 2 times 7, which is <b>14</b>.`);
+  await w(3400);
+  const B=panel(487,8,460,244,'Two letters together','');pop(B);
+  const b1=mk('mx','left:0;top:46px;width:460px;text-align:center;font-size:30px','ab &nbsp;when a = 9, b = 8',B);pop(b1);point(b1);
+  say(`Two letters side by side also hide a times sign. <b>a b</b> means a times b.`);
+  await w(2800);
+  const b2=mk('mx','left:0;top:110px;width:460px;text-align:center;font-size:34px','a × b',B);pop(b2);point(b2);
+  await w(900);
+  const b3=mk('mx','left:0;top:164px;width:460px;text-align:center;font-size:34px;color:#18a058','9 × 8 = 72 ✔',B);pop(b3);point(b3);
+  say(`So when a is 9 and b is 8, a b is 9 times 8, which is <b>72</b>.`);
+  await w(3000);
+  const C=panel(13,266,934,244,'Which job first? BIDMAS','');pop(C);
+  say(`After you swap, there may be several jobs to do. <b>BIDMAS</b> tells us which to do first.`);
+  await w(2800);
+  const RG=[['B','Brackets','#6a45d8',`<b>B</b> is for brackets. Always work out brackets first.`],
+    ['I','Indices (powers)','#2c66cf',`<b>I</b> is for indices, like squared.`],
+    ['D M','Divide and Multiply<br>left to right','#e06a1b',`<b>D</b> and <b>M</b>: divide and multiply. They are equal partners, so do them from left to right.`],
+    ['A S','Add and Subtract<br>left to right','#18a058',`Last, <b>A</b> and <b>S</b>: add and subtract. Also equal partners, left to right.`]];
+  for(let i=0;i<4;i++){const [k,d,col,s]=RG[i];
+    const r=mk('rung',`left:${14+i*228}px;background:${col}1f;border:3px solid ${col};color:${col}`,`<b>${k}</b><span>${d}</span>`,C);pop(r);point(r);beep(500+i*90,.08);
+    say(s);await w(2600);}
+  const ex=mk('mx-step','left:150px;top:166px',`2 × 7 + 6 = <span style="color:#e06a1b">14</span> + 6 = <span style="color:#18a058">20</span> <i>× before +</i>`,C);pop(ex);point(ex);
+  say(`So 2 × 7 + 6: multiply first to get 14, then add 6, which makes <b>20</b>.`);
+  await w(3200);}},
+
+/* 2 */ {t:'Swap and work out',run:async w=>{
+  say(`Let's do the worksheet questions. <b>One at a time</b>, and watch the swap station on the right.`);
+  await w(2600);
+  let S=station([['x','13']]);
+  await teachQ(w,{src:WS+'Q1 a)',q:STEM1+'<br>a) x + 9 when x = 13',read:'Find the value of x + 9, when x = 13.',wd:620,
+    keys:[['when x = 13',`<b>When x = 13</b> tells us the hidden number. Every x becomes 13.`]],
+    steps:[{show:'x + 9 <i>write it out</i>',say:`Start by writing the expression: <b>x + 9</b>.`},
+      {act:()=>S.swap(),show:'= 13 + 9 <i>x → 13</i>',say:`Now swap: take x out, and put 13 in. That gives <b>13 + 9</b>.`,wait:2200},
+      {show:'= 22',say:`13 + 9 is <b>22</b>.`}],
+    answer:'22',why:'Swap the letter for its number, then work it out. Check: 22 is 9 more than 13. ✔'});
+  await w(1200);clear();
+  S=station([['x','40']]);
+  await teachQ(w,{src:WS+'Q1 b)',q:STEM1+'<br>b) '+frac('x',5)+' when x = 40',read:'Find the value of x over 5, when x = 40.',wd:620,
+    keys:[[frac('x',5),`A fraction line means <b>divide</b>. x over 5 means x divided by 5.`]],
+    steps:[{show:frac('x',5)+' <i>x divided by 5</i>',say:`Write the expression: x over 5.`},
+      {act:()=>S.swap(),show:'= '+frac(40,5)+' <i>x → 40</i>',say:`Swap x for 40. Now it's 40 over 5.`,wait:2200},
+      {show:'= 40 ÷ 5 = 8',say:`40 divided by 5 is <b>8</b>.`}],
+    answer:'8',why:'The fraction line means divide. Check: 5 × 8 = 40. ✔'});
+  await w(1200);clear();
+  S=station([['x','3']]);
+  await teachQ(w,{src:WS+'Q1 c)',q:STEM1+'<br>c) 10 − x when x = 3',read:'Find the value of 10 − x, when x = 3.',wd:620,
+    keys:[['10 − x',`<b>10 − x</b> means start at 10 and take x away.`]],
+    steps:[{show:'10 − x',say:`Write the expression: <b>10 − x</b>.`},
+      {act:()=>S.swap(),show:'= 10 − 3 <i>x → 3</i>',say:`Swap x for 3. Only the letter changes. The 10 and the minus sign stay put.`,wait:2400},
+      {show:'= 7',say:`10 − 3 is <b>7</b>.`}],
+    answer:'7',why:'Only the letter changes. Everything else stays exactly where it was.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Number next to a letter',run:async w=>{
+  say(`Now the hidden times sign. Remember: a number next to a letter means <b>multiply</b>.`);
+  await w(2600);
+  let S=station([['x','5']]);
+  await teachQ(w,{src:WS+'Q1 e)',q:STEM1+'<br>e) 7x when x = 5',read:'Find the value of 7x, when x = 5.',wd:620,
+    keys:[['7x',`<b>7x</b> means 7 times x. There's a hidden times sign.`]],
+    steps:[{show:'7x <i>means 7 × x</i>',say:`Write it out: <b>7x</b>, which means 7 times x.`},
+      {act:()=>S.swap(),show:'= 7 × 5 <i>x → 5</i>',say:`Swap x for 5, and put the times sign back: <b>7 × 5</b>.`,wait:2200},
+      {show:'= 35',say:`7 times 5 is <b>35</b>.`}],
+    answer:'35',why:'It is NOT 75. Writing the 7 and the 5 side by side is the trap. 7x means 7 × x.'});
+  await w(1200);clear();
+  S=station([['m','7'],['n','6']]);
+  await teachQ(w,{src:WS+'Q1 d)',q:STEM1+'<br>d) 2m + n when m = 7 and n = 6',read:'Find the value of 2m + n, when m = 7 and n = 6.',wd:620,
+    keys:[['2m',`<b>2m</b> means 2 times m.`],['m = 7 and n = 6',`Two letters this time: m is 7 and n is 6.`]],
+    steps:[{show:'2m + n',say:`Write the expression: <b>2m + n</b>.`},
+      {act:()=>S.swap(),show:'= 2 × 7 + 6 <i>m → 7, n → 6</i>',say:`Swap both letters: m becomes 7 and n becomes 6. That gives <b>2 × 7 + 6</b>.`,wait:2400},
+      {show:'= 14 + 6 <i>× before +</i>',say:`BIDMAS: multiply before you add. 2 times 7 is <b>14</b>.`,wait:2200},
+      {show:'= 20',say:`Then 14 + 6 is <b>20</b>.`}],
+    answer:'20',why:'Multiply before you add. Adding first would give 2 × 13 = 26, which is wrong.'});
+  await w(1500);}},
+
+/* 4 */ {t:'Lots of letters',run:async w=>{
+  say(`Some questions have <b>three letters</b> to swap, or two times jobs. Swap them all, then BIDMAS.`);
+  await w(2800);
+  let S=station([['a','9'],['b','8'],['c','32']]);
+  await teachQ(w,{src:WS+'Q1 f)',q:STEM1+'<br>f) ab − c when a = 9, b = 8 and c = 32',read:'Find the value of a b minus c, when a = 9, b = 8 and c = 32.',wd:620,
+    keys:[['ab',`<b>a b</b> means a times b.`],['− c',`Then <b>take away c</b>.`]],
+    steps:[{show:'ab − c <i>ab means a × b</i>',say:`Write the expression: a b minus c. Remember, a b means a times b.`},
+      {act:()=>S.swap(),show:'= 9 × 8 − 32',say:`Swap all three letters: <b>9 × 8 − 32</b>.`,wait:2200},
+      {show:'= 72 − 32 <i>× before −</i>',say:`Multiply first: 9 times 8 is <b>72</b>.`},
+      {show:'= 40',say:`Then 72 − 32 is <b>40</b>.`}],
+    answer:'40',why:'ab means a × b, so multiply first, then take away. Check: 40 + 32 = 72. ✔'});
+  await w(1200);clear();
+  S=station([['h','8'],['t','5']]);
+  await teachQ(w,{src:WS+'Q2 g)',q:STEM2+'<br>g) 2h + 3t when h = 8 and t = 5',read:'Work out the value of 2h + 3t, when h = 8 and t = 5.',wd:620,
+    keys:[['2h + 3t',`Two hidden times signs: <b>2h</b> means 2 times h, and <b>3t</b> means 3 times t.`]],
+    steps:[{show:'2h + 3t',say:`Write the expression: <b>2h + 3t</b>.`},
+      {act:()=>S.swap(),show:'= 2 × 8 + 3 × 5',say:`Swap: h becomes 8 and t becomes 5. That gives <b>2 × 8 + 3 × 5</b>.`,wait:2400},
+      {show:'= 16 + 15 <i>both × first</i>',say:`Do both multiplications first: 2 times 8 is 16, and 3 times 5 is 15.`,wait:2400},
+      {show:'= 31',say:`Then add: 16 + 15 is <b>31</b>.`}],
+    answer:'31',why:'Do both × jobs before the +. Adding first would give a wrong answer.'});
+  await w(1500);}},
+
+/* 5 */ {t:'Fractions mean divide',run:async w=>{
+  say(`A <b>fraction line</b> means divide. And it works like a bracket: finish the top before you divide.`);
+  await w(2800);
+  let S=station([['c','6']]);
+  await teachQ(w,{src:WS+'Q2 i)',q:STEM2+'<br>i) '+frac(30,'c')+' − 2 when c = 6',read:'Work out the value of 30 over c, minus 2, when c = 6.',wd:620,
+    keys:[[frac(30,'c'),`30 over c means <b>30 divided by c</b>.`],['− 2',`Then <b>take away 2</b>.`]],
+    steps:[{act:()=>S.swap(),show:frac(30,'c')+' − 2 = '+frac(30,6)+' − 2 <i>c → 6</i>',say:`Write the expression, then swap c for 6. Now it's 30 over 6, minus 2.`,wait:2400},
+      {show:'= 5 − 2 <i>÷ before −</i>',say:`Divide first: 30 divided by 6 is <b>5</b>.`},
+      {show:'= 3',say:`Then 5 − 2 is <b>3</b>.`}],
+    answer:'3',why:'Divide before you take away: 30 ÷ 6 = 5, then 5 − 2 = 3.'});
+  await w(1200);clear();
+  S=station([['x','19'],['y','11']]);
+  await teachQ(w,{src:WS+'Q2 j)',q:STEM2+'<br>j) '+frac('x + y',2)+' when x = 19 and y = 11',read:'Work out the value of x plus y, all over 2, when x = 19 and y = 11.',wd:620,
+    keys:[[frac('x + y',2),`The whole of <b>x + y</b> is on top. So we add first, then divide by 2.`]],
+    steps:[{act:()=>S.swap(),show:frac('x + y',2)+' = '+frac('19 + 11',2)+' <i>x → 19, y → 11</i>',say:`Write the expression, then swap: x becomes 19 and y becomes 11.`,wait:2400},
+      {show:'= '+frac(30,2)+' <i>the top first</i>',say:`The fraction line works like a bracket, so do the top first: 19 + 11 is <b>30</b>.`,wait:2400},
+      {show:'= 15',say:`Then divide: 30 divided by 2 is <b>15</b>.`}],
+    answer:'15',why:'The fraction line works like a bracket: (19 + 11) ÷ 2 = 30 ÷ 2 = 15.'});
+  await w(1500);}},
+
+/* 6 */ {t:'Below zero',run:async w=>{
+  say(`Sometimes the answer goes <b>below zero</b>. A number line helps you see it.`);
+  await w(2600);
+  const p=panel(684,12,262,496,'📏 Number line','');pop(p);
+  const Y=v=>56+(10-v)*28;
+  mk('',`left:128px;top:${Y(10)}px;width:5px;height:${14*28}px;background:#1f2433;border-radius:3px`,'',p);
+  for(let v=10;v>=-4;v--){mk('',`left:120px;top:${Y(v)-1}px;width:22px;height:3px;background:${v===0?'#e04848':'#1f2433'}`,'',p);
+    mk('',`left:44px;top:${Y(v)-11}px;width:66px;text-align:right;font-size:17px;font-weight:800;color:${v===0?'#e04848':v<0?'#2c66cf':'#5a5f70'}`,v<0?'−'+(-v):v,p);}
+  const zero=mk('tag',`left:150px;top:${Y(0)-14}px;background:#fde3e3;color:#b02a2a;font-size:14px`,'zero',p);
+  const dot=mk('',`left:118px;top:${Y(8)-12}px;width:24px;height:24px;border-radius:50%;background:#e06a1b;border:3px solid #fff;box-shadow:0 0 0 3px #e06a1b;opacity:0`,'',p);
+  const move=async(from,to)=>{await an(dot,[{transform:`translateY(${Y(from)-Y(8)}px)`},{transform:`translateY(${Y(to)-Y(8)}px)`}],{duration:1400,easing:'ease-in-out'});beep(700,.08);};
+  await w(400);
+  await teachQ(w,{src:'Worksheet · Ch 9 Getting started · Q4 d)',q:'Work out the value of each expression.<br>d) n − 10 when n = 8.',read:'Work out the value of n − 10, when n = 8.',wd:620,
+    keys:[['n − 10',`<b>n − 10</b> means start at n and go <b>down 10</b>.`],['n = 8',`And n is <b>8</b>.`]],
+    steps:[{show:'n − 10',say:`Write the expression: <b>n − 10</b>.`},
+      {act:async()=>{an(dot,[{opacity:0},{opacity:1}],{duration:400});point(dot);await w0(500);},show:'= 8 − 10 <i>n → 8</i>',say:`Swap n for 8: <b>8 − 10</b>. Start at 8 on the number line.`,wait:2400},
+      {act:async()=>{await move(8,0);point(zero);},show:'8 down 8 → 0 <i>8 steps reach zero</i>',say:`Go down 10 steps. The first <b>8 steps</b> take us down to zero.`,wait:2400},
+      {act:async()=>{await move(0,-2);point(dot);},show:'= −2 <i>2 more steps below zero</i>',say:`We still have 2 more steps to go, so we land on <b>minus 2</b>.`,wait:2400}],
+    answer:'−2',why:'Taking away more than you have goes below zero. Check: −2 + 10 = 8. ✔'});
+  await w(1500);}},
+
+/* 7 */ {t:'Using a formula',run:async w=>{
+  say(`A <b>formula</b> is a rule that connects letters. To use it, you swap in the numbers you know, just like before.`);
+  await w(3000);
+  let p=tower();const K=1.45,B=470;
+  await teachQ(w,{src:WS+'Q8 a) (i)',q:STEM8+'<br>a) Find the value of M when: (i) P = $225 and E = $72.',read:READ8+' Find the value of M when P is 225 dollars and E is 72 dollars.',wd:620,
+    keys:[['M = P − E',`The formula says: money <b>left</b> equals <b>pay</b> minus <b>expenses</b>.`],['expenses',`<b>Expenses</b> are the money he spends.`]],
+    steps:[{act:async()=>{const s=seg(p,B-225*K,225*K,'#2c66cf','P = $225<br>pay');point(s);await w0(800);},show:'M = P − E <i>the formula</i>',say:`Start with the formula: <b>M = P − E</b>. Jan is paid 225 dollars.`,wait:2400},
+      {act:async()=>{const s=seg(p,B-225*K,72*K,'#e04848','E = $72<br>spent');point(s);await w0(800);},show:'M = 225 − 72 <i>swap P and E</i>',say:`Swap in the numbers: P is 225 and E is 72. So <b>M = 225 − 72</b>.`,wait:2400},
+      {act:async()=>{const s=seg(p,B-153*K,153*K,'#18a058','M = $153<br>left');point(s);await w0(800);
+        mk('',`left:10px;top:${B-225*K}px;width:40px;height:${225*K}px;border:4px solid #2c66cf;border-right:none;border-radius:14px 0 0 14px`,'',p);
+        pop(mk('tag',`left:30px;top:${B-225*K-34}px;background:#e6efff;color:#1d4b9e;font-size:20px`,'P = $225 pay',p));},show:'M = $153',say:`225 − 72 is <b>153</b>. So Jan has 153 dollars left.`,wait:2400}],
+    answer:'M = $153',why:'Check: 153 + 72 = 225. ✔ What he spends and what is left make his pay.'});
+  await w(1200);clear();p=tower();
+  await teachQ(w,{src:WS+'Q8 b)',q:STEM8+'<br>b) Work out the value of P when M = $160, E = $45.',read:READ8+' Work out the value of P, when M is 160 dollars and E is 45 dollars.',wd:620,
+    keys:[['value of P',`This time we want <b>P</b>, his pay. We know M and E.`]],
+    steps:[{act:async()=>{const s=seg(p,B-160*K,160*K,'#18a058','M = $160<br>left');point(s);await w0(600);const e=seg(p,B-205*K,45*K,'#e04848','E = $45');point(e);await w0(600);},show:'160 = P − 45 <i>swap M and E into M = P − E</i>',say:`Start with the formula M = P − E, and swap in what we know: <b>160 = P − 45</b>. He had 160 left after spending 45.`,wait:2800},
+      {act:async()=>{const b=mk('',`left:10px;top:${B-205*K}px;width:40px;height:${205*K}px;border:4px solid #2c66cf;border-right:none;border-radius:14px 0 0 14px`,'',p);pop(b);point(b);await w0(600);},show:'P = 160 + 45 <i>add back what he spent</i>',say:`His pay is what is left <b>plus</b> what he spent. So P = 160 + 45.`,wait:2600},
+      {act:async()=>{const t=mk('tag',`left:30px;top:${B-205*K-34}px;background:#e6efff;color:#1d4b9e;font-size:20px`,'P = $205',p);pop(t);point(t);await w0(500);},show:'P = $205',say:`160 + 45 is <b>205</b>. So Jan was paid 205 dollars.`}],
+    answer:'P = $205',why:'To undo a minus, add. Check in the formula: 205 − 45 = 160. ✔'});
+  await w(1500);}},
+
+/* 8 */ {t:'Swap it in!',run:async w=>{
+  const R=[['p + 2q when p = 5 and q = 3',['5','3','2','+','×','23','−'],[['5','+','2','×','3']],'5 + 2 × 3',`Multiply first: 2 times 3 is 6. Then 5 + 6 is <b>11</b>.`],
+    ['3k when k = 5',['3','5','35','×','+'],[['3','×','5']],'3 × 5',`3k means 3 times k, so 3 × 5, which is <b>15</b>.`],
+    ['ab − c when a = 9, b = 8 and c = 32',['9','8','32','98','×','−','+'],[['9','×','8','−','32']],'9 × 8 − 32',`Multiply first: 72. Then 72 − 32 is <b>40</b>.`]];
+  say(`Your turn! For each one, tap the tiles to build the line <b>with the numbers swapped in</b>. Put the times signs back! Then press <b>Check</b>.`);
+  await w(3400);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,val]=R[i];
+    mk('ex-head','',`🔁 Swap it in · ${i+1} of ${R.length}`);
+    say(`Swap the numbers into <b>${q}</b>.`);
+    const r=await buildExpr(w,{q:`Swap the numbers into: <b>${q}</b>`,tiles,answer,top:44});
+    if(r.ok){right++;say(`Yes! <b>${model}</b>. ${val}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+model);pop(s);point(s);say(`Not quite. It should be <b>${model}</b>. ${val}`);}
+    await w(3200);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🔁</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You swapped ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You're a substitution star.`:`Good effort! Press Replay to try them again.`);
+  await w(2500);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 2.2 · Q2 a)',q:'Work out the value of each expression.<br>a) a + 5 when a = 3',o:['8','35','15','2'],a:0,
+      why:'Swap a for 3: 3 + 5 = <b>8</b>.',whyNot:{1:'that writes the 3 and 5 side by side.',2:'that multiplies, but the sign is plus.',3:'that takes away, but the sign is plus.'}},
+    {src:'Worksheet · Ex 2.2 · Q2 b)',q:'Work out the value of each expression.<br>b) x − 9 when x = 20',o:['29','−11','11','180'],a:2,
+      why:'Swap x for 20: 20 − 9 = <b>11</b>.',whyNot:{0:'that adds, but the sign is minus.',1:'that is 9 − 20, the wrong way round.',3:'that multiplies, but the sign is minus.'}},
+    {src:'Worksheet · Ex 2.2 · Q2 c)',q:'Work out the value of each expression.<br>c) f + g when f = 7, g = 4',o:['74','28','11','3'],a:2,
+      why:'Swap both letters: 7 + 4 = <b>11</b>.',whyNot:{0:'that writes 7 and 4 side by side.',1:'that multiplies, but the sign is plus.',3:'that takes away, but the sign is plus.'}},
+    {src:'Worksheet · Ex 2.2 · Q2 d)',q:'Work out the value of each expression.<br>d) m − n when m = 100 and n = 25',o:['125','75','4','−75'],a:1,
+      why:'Swap both letters: 100 − 25 = <b>75</b>.',whyNot:{0:'that adds, but the sign is minus.',2:'that divides, but the sign is minus.',3:'that is 25 − 100, the wrong way round.'}},
+    {src:'Worksheet · Ex 2.2 · Q2 e)',q:'Work out the value of each expression.<br>e) 3k when k = 5',o:['35','8','15','53'],a:2,
+      why:'3k means 3 × k, so 3 × 5 = <b>15</b>.',whyNot:{0:'3k means 3 times k, not 3 and 5 side by side.',1:'3k means multiply, not add.',3:'that writes 5 and 3 side by side.'}},
+    {src:'Worksheet · Ex 2.2 · Q2 f)',q:'Work out the value of each expression.<br>f) p + 2q when p = 5 and q = 3.',o:['10','11','21','28'],a:1,
+      why:'2q means 2 × 3 = 6. Then 5 + 6 = <b>11</b>.',whyNot:{0:'2q means 2 times q, not 2 plus q.',2:'that adds first, then multiplies. Multiply first!',3:'2q means 2 times 3, not 23.'}},
+    {src:'Worksheet · Ex 2.2 · Q2 h)',q:`Work out the value of each expression.<br>h) ${frac('y',4)} when y = 32.`,o:['128','8','36','28'],a:1,
+      why:'y over 4 means y ÷ 4, so 32 ÷ 4 = <b>8</b>.',whyNot:{0:'that multiplies, but a fraction line means divide.',2:'that adds, but a fraction line means divide.',3:'that takes away, but a fraction line means divide.'}},
+    {src:'Worksheet · Ex 2.2 · Q8 a) (ii)',q:'Jan calculates how much money he has left each week, using the formula M = P − E, where M is the money he has left over, P is the money he is paid for working and E is his expenses.<br>a) Find the value of M when: (ii) P = $178 and E = $36.',o:['$214','$142','$152','$132'],a:1,
+      why:'M = P − E = 178 − 36 = <b>$142</b>. Check: 142 + 36 = 178.',whyNot:{0:'that adds, but the formula says minus.',2:'that is a slip: 152 + 36 = 188, not 178.',3:'that is a slip: 132 + 36 = 168, not 178.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q4 a)',q:'Work out the value of each expression.<br>a) n + 4 when n = 5',o:['54','9','20','1'],a:1,
+      why:'Swap n for 5: 5 + 4 = <b>9</b>.',whyNot:{0:'that writes 5 and 4 side by side.',2:'that multiplies, but the sign is plus.',3:'that takes away, but the sign is plus.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q4 b)',q:'Work out the value of each expression.<br>b) 6n when n = 3.',o:['63','9','18','2'],a:2,
+      why:'6n means 6 × n, so 6 × 3 = <b>18</b>.',whyNot:{0:'6n means 6 times n, not 6 and 3 side by side.',1:'6n means multiply, not add.',3:'6n means multiply, not divide.'}},
+    {src:'Worksheet · Ch 9 Getting started · Q4 c)',q:'Work out the value of each expression.<br>c) n − 9 when n = 20',o:['−11','11','29','209'],a:1,
+      why:'Swap n for 20: 20 − 9 = <b>11</b>.',whyNot:{0:'that is 9 − 20, the wrong way round.',2:'that adds, but the sign is minus.',3:'that writes 20 and 9 side by side.'}},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Substituting</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🔁','<b>Substitute</b> means swap the letter for its number.',`Substitute means swap the letter for its number.`],
+    ['✖️','7x means <b>7 × x</b><br>(not 75!)',`7x means 7 times x. Not 75!`],
+    ['🔤','ab means <b>a × b</b>',`Two letters together, a b, means a times b.`],
+    ['🪜','× and ÷ <b>before</b><br>+ and −',`BIDMAS: times and divide before plus and minus.`],
+    ['➗',`${frac('x',5)} means <b>x ÷ 5</b>`,`A fraction line means divide. x over 5 means x divided by 5.`],
+    ['🧱','Fraction line: work out the <b>top</b> first',`With a fraction line, work out the whole top first.`],
+    ['📏','8 − 10 = <b>−2</b><br>below zero',`8 − 10 goes below zero: minus 2.`],
+    ['💰','Formula: <b>swap in</b>,<br>then work it out',`For a formula, swap in the numbers you know, then work it out.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now substitute into expressions and formulae. Next up: <b>simplifying</b> expressions.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

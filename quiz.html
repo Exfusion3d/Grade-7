@@ -446,7 +446,9 @@ const pickr=a=>a[Math.floor(Math.random()*a.length)];
 /* ---------- continuing a level ----------
    An unfinished level is saved after every answer (through src/account.js, so it follows the student between
    devices) and listed on the menu as "Continue where you left off". */
-function savedRuns(){try{const me=JSON.parse(localStorage.getItem('g7_me'));return JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes||{};}catch(e){return{};}}
+/* only this quiz's levels: other subjects' quizzes (e.g. Maths Quest) save theirs in the same place */
+function savedRuns(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const all=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes||{};
+  const mine=new Set([...MODES.map(m=>m.id),'retry']);return Object.fromEntries(Object.entries(all).filter(([m])=>mine.has(m)));}catch(e){return{};}}
 function saveRun(i){track('quizState',S.mode,{ids:S.qs.map(q=>q.id),i,score:S.score,streak:S.streak,best:S.best,right:S.right,wrong:S.wrong.map(q=>q.id)});}
 function resumeRun(mode,st){const byId=Object.fromEntries(BANK.map(q=>[q.id,q]));const qs=st.ids.map(id=>byId[id]).filter(Boolean);if(!qs.length)return;
   S={mode,qs,i:Math.min(st.i,qs.length),score:st.score,streak:st.streak,best:st.best,right:st.right,wrong:st.wrong.map(id=>byId[id]).filter(Boolean)};

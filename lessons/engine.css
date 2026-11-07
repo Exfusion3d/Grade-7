@@ -56,6 +56,7 @@ body.side #mascot{grid-column:2;grid-row:2;justify-self:center;width:72px;height
 body.side #bubble{grid-column:2;grid-row:3;min-height:0;justify-content:flex-start;padding:10px 16px 30px;overflow:auto}
 body.side #bubble .again{top:auto;bottom:8px}
 body.side #text{font-size:19px}
+body.side #text.long{font-size:16.5px;line-height:1.3}body.side #text.xlong{font-size:14.5px;line-height:1.28} /* long lines (exam explanations) still fit the panel */
 body.side #dots{grid-column:2;grid-row:4;gap:5px;align-self:center}
 body.side #dots button{width:12px;height:12px}
 body.side #dots button.cur{width:24px}
@@ -146,6 +147,7 @@ canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:100}
 .ex-opt.ok{border-color:#18a058;background:#e3f7ec;box-shadow:0 4px 0 #9fdcbb}.ex-opt.ok .k{background:#18a058;color:#fff}
 .ex-opt.bad{border-color:#e04848;background:#fde3e3;box-shadow:0 4px 0 #f2b0b0}.ex-opt.bad .k{background:#e04848;color:#fff}
 .ex-opt.locked{cursor:default;pointer-events:none}
+.ex-opt.reading{border-color:#f2c200;background:#fffbe9;box-shadow:0 4px 0 #f2c200,0 0 0 5px rgba(255,216,77,.55)} /* the choice being read aloud */
 .ex-model{position:absolute;left:40px;width:880px;background:#e3f7ec;border:3px solid #18a058;border-radius:18px;padding:12px 18px;font-size:18px;font-weight:700;line-height:1.4}
 .ex-model b.t{color:#18a058;display:block;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
 .ex-why{position:absolute;left:40px;width:880px;background:#fff8e6;border:3px solid #f2c200;border-radius:18px;padding:10px 16px;font-size:16.5px;font-weight:600;line-height:1.4}

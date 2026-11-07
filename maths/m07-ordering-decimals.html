@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Ordering and comparing decimals</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 7 · Chapter 4 · Exercise 4.1 (Q1, Q4, Q5)
+   Taught with teachQ: Q1 a) f) h), Q4 e) f), Q5 a) c). Everything else is in the Exam check. */
+const WS='Worksheet · Ex 4.1 · ';
+const STEM1='Write down which is the smallest decimal number.';
+const STEM4='Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.';
+const STEM5='Write the correct sign = or ≠';
+/* question card on the left, a picture (table / number line) on the right */
+const LAY={x:24,wd:548,workX:40};
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* A place-value table. ints = whole-number columns (1-3), decs = decimal columns (1-4).
+   put(row,'3.21') slides the digits in, lined up by the decimal point; pad(row,n) adds green zeros
+   to make n decimal places; glow(col) lights up one column; tick(row) marks a row. Column 0 is the leftmost. */
+function pvTable(x,y,{ints=1,decs=3,rows=2,cw=52}={}){
+  const IL=['Hundreds','Tens','Ones'].slice(3-ints),DL=[frac(1,10),frac(1,100),frac(1,1000),frac(1,10000)].slice(0,decs);
+  const cols=[...IL.map(l=>({l,w:cw})),{l:'',w:20,pt:1},...DL.map(l=>({l,w:cw}))];
+  let cx=8;cols.forEach(c=>{c.x=cx;cx+=c.w;});
+  const W=cx+8,H=50+rows*58+6;
+  const t=mk('',`left:${x}px;top:${y}px;width:${W}px;height:${H}px;background:#fff;border:3px solid #f7d3b5;border-radius:16px;box-shadow:0 4px 0 #f7d3b5`);
+  cols.forEach((c,i)=>{if(!c.pt)mk('',`left:${c.x}px;top:6px;width:${c.w}px;height:40px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:${i<ints?12:15}px;font-weight:800;color:#c4520e`,c.l,t);});
+  for(let r=0;r<rows;r++)mk('',`left:6px;top:${48+r*58}px;width:${W-12}px;height:2px;background:#f2e3d6`,'',t);
+  const cells=[...Array(rows)].map(()=>({}));let g=null;
+  const cell=(r,i,txt,col)=>mk('mx',`left:${cols[i].x}px;top:${52+r*58}px;width:${cols[i].w}px;height:52px;display:flex;align-items:center;justify-content:center;font-size:34px;color:${col}`,txt,t);
+  return{el:t,W,H,
+    put:async(r,s,col='#2c66cf')=>{const [a,b='']=s.split('.');const es=[];
+      [...a].forEach((d,k)=>es.push([ints-1-(a.length-1-k),d]));
+      if(s.includes('.'))es.push([ints,'.']);
+      [...b].forEach((d,k)=>es.push([ints+1+k,d]));
+      for(const [i,d] of es){const e=cell(r,i,d,col);cells[r][i]=e;an(e,[{opacity:0,transform:'translateY(-40px)'},{opacity:1,transform:'none'}],{duration:450});beep(480+i*40,.05);await w0(160);}},
+    pad:(r,n)=>{for(let i=ints+1;i<=ints+n;i++)if(!cells[r][i]){const e=cell(r,i,'0','#18a058');cells[r][i]=e;pop(e);}beep(820,.08);},
+    glow:(i,col='#ffd84d')=>{if(g)g.remove();g=mk('',`left:${cols[i].x}px;top:4px;width:${cols[i].w}px;height:${H-12}px;border-radius:10px;background:${col};opacity:.5`,'');t.insertBefore(g,t.firstChild);pop(g);beep(300,.08);return g;},
+    tick:(r,txt='✅')=>{const e=mk('',`left:${W+2}px;top:${60+r*58}px;font-size:28px`,txt,t);pop(e);return e;}};}
+
+/* two tiles and a sign between them (the crocodile scene) */
+function numTile(x,y,txt,col='#2c66cf'){const e=mk('mx',`left:${x}px;top:${y}px;width:200px;height:120px;border-radius:24px;background:#fff;border:4px solid ${col};color:${col};font-size:64px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 ${col}55`,txt);pop(e);return e;}
+
+/* a number line from a to b (in steps of `step`), labelled every `every` ticks */
+function numLine(x,y,wd,a,b,step,every,fs=13){const n=Math.round((b-a)/step),dx=wd/n;
+  mk('',`left:${x}px;top:${y}px;width:${wd}px;height:4px;border-radius:2px;background:#1f2433`);
+  for(let i=0;i<=n;i++){const big=i%every===0;mk('',`left:${x+i*dx-1}px;top:${y-(big?9:5)}px;width:2px;height:${big?22:14}px;background:#1f2433`);
+    if(big)mk('',`left:${x+i*dx-24}px;top:${y+16}px;width:48px;text-align:center;font-size:${fs}px;font-weight:800;color:#5a5f70`,+(a+i*step).toFixed(3));}
+  return v=>x+(v-a)/step*dx;}
+function dot(x,y,col){const d=mk('',`left:${x-10}px;top:${y-8}px;width:20px;height:20px;border-radius:50%;background:${col};border:3px solid #fff;box-shadow:0 0 0 3px ${col}`);pop(d);beep(700,.08);return d;}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m07', num:7, part:'Chapter 4', emoji:'🔍', title:'Ordering and comparing decimals',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's find out which decimal is bigger. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Which is bigger?',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today's question: which decimal is <b>bigger</b>? It's trickier than it looks!`);
+  await w(2600);
+  const sam=mk('','left:60px;top:20px;font-size:70px','🧒');pop(sam);
+  const sb=mk('','left:140px;top:30px;padding:8px 16px;border-radius:18px;background:#fff;border:3px solid #bcd2f7;font-size:20px;font-weight:800;color:#1d4b9e','0.45 is bigger. It has more digits!');pop(sb,200);
+  const mia=mk('','left:60px;top:110px;font-size:70px','👧');pop(mia,400);
+  const mb=mk('','left:140px;top:120px;padding:8px 16px;border-radius:18px;background:#fff;border:3px solid #f7d3b5;font-size:20px;font-weight:800;color:#7a2e00','No! 0.5 is bigger!');pop(mb,600);
+  say(`Sam says <b>0.45</b> is bigger, because it has more digits. Mia says <b>0.5</b> is bigger. Who is right?`);
+  await w(3400);
+  const bar=(y,v,lab,col)=>{mk('mx',`left:60px;top:${y+6}px;width:110px;font-size:34px;color:${col}`,lab);
+    mk('',`left:180px;top:${y}px;width:600px;height:56px;border-radius:12px;background:#fff;border:3px solid #c9cfdb`);
+    for(let i=1;i<10;i++)mk('',`left:${183+i*60}px;top:${y+3}px;width:1px;height:50px;background:#e2e6ee`);
+    const f=mk('',`left:183px;top:${y+3}px;width:${600*v}px;height:50px;border-radius:9px;background:${col};transform-origin:0 50%;transform:scaleX(0)`);
+    return an(f,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:1400});};
+  say(`Let's draw them as bars. Each bar is <b>one whole</b>. 0.5 fills <b>half</b> of the bar.`);
+  await bar(240,.5,'0.5','#e06a1b');await w(2600);
+  say(`0.45 fills a little <b>less</b> than half.`);
+  await bar(330,.45,'0.45','#2c66cf');await w(2400);
+  const m=mk('mx-step','left:180px;top:420px','0.5 dollars = <b>50 cents</b> &nbsp;·&nbsp; 0.45 dollars = <b>45 cents</b>');pop(m);point(m);
+  say(`Or think of money. 0.5 dollars is <b>50 cents</b>. 0.45 dollars is <b>45 cents</b>. So <b>Mia</b> is right!`);
+  await w(3200);yay();
+  say(`More digits does <b>not</b> mean bigger. Today you'll learn to compare decimals <b>column by column</b>.`);
+  await w(3000);}},
+
+/* 1 */ {t:'The place-value table',run:async w=>{
+  say(`To compare decimals we use a <b>place-value table</b>. Each column is worth <b>ten times less</b> than the column on its left.`);
+  await w(3200);
+  const T=pvTable(332,14,{ints:2,decs:3});pop(T.el);await w(600);
+  point(T.el.children[1]);T.glow(1);
+  say(`This is the <b>ones</b> column. After the decimal point come the <b>tenths</b>, the <b>hundredths</b> and the <b>thousandths</b>.`);
+  await w(2600);T.glow(3);await w(800);T.glow(4);await w(800);T.glow(5);await w(1200);
+  say(`Let's compare <b>5.3</b> and <b>5.17</b>. The decimal points go in the <b>same column</b>, one above the other.`);
+  await T.put(0,'5.3');await w(600);await T.put(1,'5.17','#e06a1b');await w(2400);
+  const S=[];let y=210;const line=(h,cls='mx-step')=>{const e=mk(cls,`left:200px;top:${y}px;max-width:620px`,h);pop(e);point(e);y+=58;S.push(e);return e;};
+  T.glow(1);line('Ones: <b>5</b> and <b>5</b> <i>the same, so move right</i>');
+  say(`Start on the <b>left</b>. Ones: 5 and 5. They're the same, so we move one column to the right.`);
+  await w(3000);
+  T.glow(3);line('Tenths: <b>3</b> and <b>1</b> <i>different: this column decides!</i>');
+  say(`Tenths: 3 and 1. They're different, so this column <b>decides</b>. 3 tenths is more than 1 tenth.`);
+  await w(3000);
+  T.tick(0,'⭐');line('So <b>5.3</b> is bigger than 5.17');
+  say(`So <b>5.3</b> is bigger, even though 5.17 has more digits. We stop at the <b>first column that is different</b>.`);
+  await w(3200);
+  T.pad(0,2);line('Trick: 5.3 = 5.3<b style="color:#18a058">0</b> <i>30 hundredths beat 17</i>');
+  say(`A handy trick: fill the gap with a <b>zero</b>. 5.3 is the same as 5.30. Now 30 hundredths beats 17 hundredths.`);
+  await w(3400);
+  say(`So: line up the points, add zeros to make them the <b>same length</b>, and compare from the <b>left</b>.`);
+  await w(3000);}},
+
+/* 2 */ {t:'Which is the smallest?',run:async w=>{
+  say(`Now some worksheet questions. We'll use the table on the right for each one.`);
+  await w(2400);
+  let T;
+  await teachQ(w,{...LAY,src:WS+'Q1 a)',q:STEM1+'<br>a) 13.5, 9.99',read:'Write down which is the smallest decimal number: 13.5 or 9.99.',
+    keys:[['smallest',`<b>Smallest</b> means the <b>least</b> value. Not the fewest digits!`]],
+    before:[{show:'Try whole numbers: 13 or 9? → <b>9</b>',say:`Try the whole numbers first. Which is smaller, 13 or 9? <b>9</b>, of course.`,try:true,wait:2400}],
+    steps:[{act:async()=>{T=pvTable(596,20,{ints:2,decs:2});pop(T.el);await w(400);await T.put(0,'13.5');await T.put(1,'9.99','#e06a1b');},
+        show:'Line up the decimal points',say:`Put both numbers in the table, with the decimal points lined up. Notice 9.99 has <b>no tens</b>.`,wait:2600},
+      {act:async()=>{T.glow(0);},show:'Tens: <b>1</b> and <b>0</b> <i>this column decides</i>',say:`Start on the left. Tens: 13.5 has <b>one ten</b>, 9.99 has <b>none</b>. So 9.99 is smaller.`,wait:2800},
+      {act:async()=>{T.tick(1);},show:'9.99 &lt; 13.5',say:`The other digits don't matter now. <b>9.99</b> is the smallest.`}],
+    answer:'9.99',why:'9.99 has more digits, but 9 is less than 13. Look at the whole numbers first. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{...LAY,src:WS+'Q1 f)',q:STEM1+'<br>f) 3.4, 3.21',read:'Write down which is the smallest decimal number: 3.4 or 3.21.',
+    keys:[['smallest',`<b>Smallest</b> means the least value.`]],
+    before:[{show:'Money: $3.40 or $3.21?',say:`Think of money. 3.4 dollars is 3 dollars and <b>40 cents</b>. 3.21 dollars is 3 dollars and <b>21 cents</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{T=pvTable(596,20,{ints:1,decs:2});pop(T.el);await w(400);await T.put(0,'3.4');await T.put(1,'3.21','#e06a1b');},
+        show:'Ones: <b>3</b> and <b>3</b> <i>the same</i>',say:`Line them up. Ones: 3 and 3. The same, so move right.`,wait:2400},
+      {act:async()=>{T.glow(2);},show:'Tenths: <b>4</b> and <b>2</b> <i>this decides</i>',say:`Tenths: 4 and 2. Different! 2 tenths is less than 4 tenths, so 3.21 is smaller.`,wait:2800},
+      {act:async()=>{T.pad(0,2);T.glow(3,'#bfeacd');T.tick(1);},show:'Check: 3.4<b style="color:#18a058">0</b> and 3.21',say:`Check with the zero trick: 3.4 is 3.40. And 21 is less than 40. ✔`,wait:2600}],
+    answer:'3.21',why:'The first column that is different decides: 2 tenths is less than 4 tenths. ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Zeros after the point',run:async w=>{
+  say(`This one has <b>zeros</b> straight after the decimal point. Zeros like that are very important!`);
+  await w(2600);
+  let T;
+  await teachQ(w,{...LAY,src:WS+'Q1 h)',q:STEM1+'<br>h) 0.05, 0.043',read:'Write down which is the smallest decimal number: 0.05 or 0.043.',
+    keys:[['smallest',`<b>Smallest</b> means the least value. Careful: 0.043 is longer!`]],
+    before:[{show:'Try 0.5 or 0.43? → <b>0.43</b> is smaller',say:`Try an easier pair first: 0.5 and 0.43. 4 tenths is less than 5 tenths, so <b>0.43</b> is smaller.`,try:true,wait:2800}],
+    steps:[{act:async()=>{T=pvTable(596,20,{ints:1,decs:3});pop(T.el);await w(400);await T.put(0,'0.05');await T.put(1,'0.043','#e06a1b');},
+        show:'Ones <b>0</b>, tenths <b>0</b>: the same',say:`Line them up. Ones: 0 and 0. Tenths: 0 and 0. Both the same, so keep moving right.`,wait:2800},
+      {act:async()=>{T.glow(3);},show:'Hundredths: <b>5</b> and <b>4</b> <i>this decides</i>',say:`Hundredths: 5 and 4. Different! 4 is less than 5, so 0.043 is smaller.`,wait:2600},
+      {act:async()=>{T.pad(0,3);T.tick(1);},show:'0.05<b style="color:#18a058">0</b> and 0.043 <i>50 and 43</i>',say:`Check with the zero trick: 0.05 is 0.050. That's 50 thousandths, and 0.043 is 43 thousandths.`,wait:3000}],
+    answer:'0.043',why:'Longer is not bigger! 43 thousandths is less than 50 thousandths. ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'The number crocodile',run:async w=>{
+  say(`The worksheet also uses two <b>signs</b> to compare numbers. Meet the <b>number crocodile</b>!`);
+  await w(2600);
+  const croc=mk('','left:420px;top:20px;font-size:80px','🐊');pop(croc);loop(croc,[{transform:'translateY(0)'},{transform:'translateY(-8px)'}],700,{direction:'alternate'});
+  const a=numTile(110,170,'3'),b=numTile(650,170,'8','#e06a1b');
+  const s=mk('mx',`left:380px;top:150px;width:200px;text-align:center;font-size:150px;color:#18a058;line-height:1`,'&lt;');pop(s);point(s);
+  say(`The crocodile is always hungry, so its mouth opens towards the <b>bigger</b> number. Here it opens towards the 8.`);
+  await w(3200);
+  const r1=mk('mx-step','left:250px;top:330px','3 &lt; 8 &nbsp;<i>3 is less than 8</i>');pop(r1);point(r1);
+  say(`Read it from the left: 3 <b>is less than</b> 8. The small pointy end points at the <b>smaller</b> number.`);
+  await w(3200);
+  an(a,[{transform:'none'},{transform:'translateX(540px)'}],{duration:900});await an(b,[{transform:'none'},{transform:'translateX(-540px)'}],{duration:900});
+  an(s,[{transform:'scaleX(1)'},{transform:'scaleX(-1)'}],{duration:600});beep(500,.1);
+  const r2=mk('mx-step','left:250px;top:400px','8 &gt; 3 &nbsp;<i>8 is greater than 3</i>');pop(r2);point(r2);
+  say(`Swap the numbers and the crocodile turns round. Now it reads: 8 <b>is greater than</b> 3.`);
+  await w(3200);
+  say(`So the open mouth always faces the bigger number. Let's try a worksheet question.`);
+  await w(2600);clear();
+  let T;
+  await teachQ(w,{...LAY,src:WS+'Q4 e)',q:STEM4+'<br>e) 9.2 ☐ 9.01',read:'Write the correct sign, less than or greater than, between 9.2 and 9.01.',
+    keys:[['Write correct sign',`We put the crocodile sign in the box. Its mouth must face the <b>bigger</b> number.`]],
+    before:[{show:'Try: 9 ☐ 7 → 9 &gt; 7',say:`Try whole numbers first. 9 is bigger than 7, so the mouth faces the 9: 9 is greater than 7.`,try:true,wait:2600}],
+    steps:[{act:async()=>{T=pvTable(596,20,{ints:1,decs:2});pop(T.el);await w(400);await T.put(0,'9.2');await T.put(1,'9.01','#e06a1b');T.pad(0,2);},
+        show:'9.2 = 9.2<b style="color:#18a058">0</b> <i>same length</i>',say:`Line them up and add a zero: 9.2 is the same as <b>9.20</b>.`,wait:2400},
+      {act:async()=>{T.glow(2);T.tick(0,'⭐');},show:'Tenths: <b>2</b> and <b>0</b>',say:`Ones are the same. Tenths: 2 and 0. 2 tenths is more, so <b>9.2 is bigger</b>.`,wait:2600},
+      {show:'Mouth faces 9.2: <b>9.2 &gt; 9.01</b>',say:`The mouth opens towards 9.2. So 9.2 is greater than 9.01.`}],
+    answer:'9.2 &gt; 9.01',why:'9.01 is longer, but 9.20 beats 9.01: 20 hundredths is more than 1 hundredth. ✔'});
+  await w(1500);}},
+
+/* 5 */ {t:'Zoom in on the number line',run:async w=>{
+  say(`A <b>number line</b> shows it too: the further <b>right</b>, the bigger the number. We can zoom in between decimals!`);
+  await w(3000);
+  let P;
+  await teachQ(w,{...LAY,src:WS+'Q4 f)',q:STEM4+'<br>f) 2.19 ☐ 2.205',read:'Write the correct sign, less than or greater than, between 2.19 and 2.205.',
+    keys:[['Write correct sign',`Put the crocodile sign in the box, mouth towards the <b>bigger</b> number.`]],
+    before:[{show:'Try 2.2 or 2.19? → 2.2<b>0</b> is bigger',say:`Try an easier pair: 2.2 and 2.19. Make them the same length: 2.20 and 2.19. So 2.2 is bigger.`,try:true,wait:2800}],
+    steps:[{show:'Same length: <b>2.190</b> and <b>2.205</b>',say:`Now the real numbers. Add a zero so both have three decimal places: <b>2.190</b> and <b>2.205</b>.`,wait:2600},
+      {show:'Tenths: <b>1</b> and <b>2</b> <i>2.19 is smaller</i>',say:`Ones: 2 and 2, the same. Tenths: 1 and 2. 1 tenth is less, so <b>2.19 is smaller</b>.`,wait:2600},
+      {act:async()=>{const f=numLine(600,80,330,2,3,.1,1,12);await w(1200);
+          const hl=mk('',`left:${f(2.1)}px;top:64px;width:${f(2.3)-f(2.1)}px;height:28px;border-radius:8px;background:#ffd84d;opacity:.55`);pop(hl);
+          const sv=mk('','left:0;top:0;width:960px;height:520px;pointer-events:none',`<svg width="960" height="520"><path d="M${f(2.1)} 104 L600 236 M${f(2.3)} 104 L930 236" stroke="#d6a600" stroke-width="2" stroke-dasharray="6 5" fill="none"/></svg>`);
+          an(sv,[{opacity:0},{opacity:1}],{duration:700});await w(900);
+          P=numLine(600,250,330,2.1,2.3,.01,5,12);await w(1000);},
+        say:`Let's zoom in. Between 2.1 and 2.3 we can fit lots of <b>hundredths</b> and thousandths.`,wait:2600},
+      {act:async()=>{const a=P(2.19),b=P(2.205);dot(a,252,'#2c66cf');mk('mx',`left:${a-64}px;top:206px;width:60px;text-align:right;font-size:20px;color:#2c66cf`,'2.19');
+          await w(700);dot(b,252,'#e06a1b');mk('mx',`left:${b+4}px;top:206px;width:70px;font-size:20px;color:#e06a1b`,'2.205');
+          const c=mk('',`left:600px;top:300px;width:330px;text-align:center;font-size:16px;font-weight:800;color:#5a5f70`,'⬅ smaller &nbsp;&nbsp;&nbsp; bigger ➡');pop(c);},
+        show:'<b>2.19 &lt; 2.205</b>',say:`2.19 is to the <b>left</b> of 2.205, so it's smaller. The mouth faces 2.205: 2.19 is less than 2.205.`,wait:3000}],
+    answer:'2.19 &lt; 2.205',why:'The tenths decide: 1 tenth is less than 2 tenths. The pointy end points at the smaller number. ✔'});
+  await w(1500);}},
+
+/* 6 */ {t:'Equal or not equal?',run:async w=>{
+  say(`Last sign: <b>equals</b>, or <b>not equal</b>. Some decimals look different but are really the <b>same</b> number!`);
+  await w(3000);
+  const X=180,Y=120;
+  mk('',`left:${X}px;top:${Y}px;width:600px;height:70px;border-radius:10px;background:#fff;border:3px solid #9aa3b5`);
+  const sh=mk('',`left:${X+3}px;top:${Y+3}px;width:120px;height:64px;background:#5d9cf5;transform-origin:0 50%`);an(sh,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:900});
+  for(let i=1;i<10;i++)mk('',`left:${X+3+i*60}px;top:${Y+3}px;width:2px;height:64px;background:#1f2433`);
+  const l1=mk('mx-step',`left:${X}px;top:${Y+90}px`,'2 tenths = <b>0.2</b>');pop(l1);point(l1);
+  say(`Here's one whole bar cut into <b>10</b> equal parts. 2 parts are blue: 2 tenths, or <b>0.2</b>.`);
+  await w(3200);
+  const thin=[];for(let i=0;i<10;i++)for(let j=1;j<10;j++)thin.push(mk('',`left:${X+3+i*60+j*6}px;top:${Y+3}px;width:1px;height:64px;background:#1f2433;opacity:0`));
+  thin.forEach((e,k)=>an(e,[{opacity:0},{opacity:.45}],{duration:400,delay:k*6}));await w(1400);
+  const l2=mk('mx-step',`left:${X}px;top:${Y+160}px`,'20 hundredths = <b>0.20</b>');pop(l2);point(l2);
+  say(`Now cut every part into 10 again. That makes 100 tiny parts. The blue covers <b>20</b> of them: 20 hundredths, or <b>0.20</b>.`);
+  await w(3400);
+  const l3=mk('mx',`left:${X}px;top:${Y+240}px;width:600px;text-align:center;font-size:52px;color:#18a058`,'0.2 = 0.20');pop(l3);point(l3);yay();
+  say(`The blue part didn't change! So <b>0.2 equals 0.20</b>. A zero at the <b>end</b>, after the decimal point, changes nothing.`);
+  await w(3400);clear();
+  let T;
+  await teachQ(w,{...LAY,src:WS+'Q5 a)',q:STEM5+'<br>a) 4.2 ☐ 4.20',read:'Write the correct sign, equals or not equal, between 4.2 and 4.20.',
+    keys:[['≠',`This sign means <b>not equal</b>. The line through it says no!`]],
+    before:[{show:'Remember: 0.2 = 0.20',say:`Remember the bar: 2 tenths is the same as 20 hundredths.`,try:true,wait:2400}],
+    steps:[{act:async()=>{T=pvTable(596,20,{ints:1,decs:2});pop(T.el);await w(400);await T.put(0,'4.2');await T.put(1,'4.20','#e06a1b');},
+        show:'Ones <b>4</b> and <b>4</b>, tenths <b>2</b> and <b>2</b>',say:`Line them up. Ones: 4 and 4. Tenths: 2 and 2. The same!`,wait:2600},
+      {act:async()=>{T.pad(0,2);T.glow(3,'#bfeacd');},show:'4.2 = 4.2<b style="color:#18a058">0</b>',say:`4.20 just has a zero on the end. Add the same zero to 4.2 and they match exactly.`,wait:2600}],
+    answer:'4.2 = 4.20',why:'A zero at the end, after the decimal point, does not change the value. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{...LAY,src:WS+'Q5 c)',q:STEM5+'<br>c) 0.340 ☐ 0.304',read:'Write the correct sign, equals or not equal, between 0.340 and 0.304.',
+    keys:[['≠',`<b>Not equal</b> means the two numbers have different values.`]],
+    before:[{show:'0.340 = 0.34 <i>end zero: no change</i>',say:`First, the zero at the <b>end</b> of 0.340 changes nothing. 0.340 is the same as 0.34.`,try:true,wait:2600}],
+    steps:[{act:async()=>{T=pvTable(596,20,{ints:1,decs:3});pop(T.el);await w(400);await T.put(0,'0.340');await T.put(1,'0.304','#e06a1b');},
+        show:'Tenths: <b>3</b> and <b>3</b> <i>the same</i>',say:`Line them up. Ones: 0 and 0. Tenths: 3 and 3. The same so far.`,wait:2600},
+      {act:async()=>{T.glow(3);},show:'Hundredths: <b>4</b> and <b>0</b> <i>different!</i>',say:`Hundredths: 4 and 0. Different! The zero in 0.304 is in the <b>middle</b>, and it pushes the 4 along.`,wait:2800},
+      {show:'0.340 ≠ 0.304',say:`So they are <b>not equal</b>. 0.340 is the bigger one.`}],
+    answer:'0.340 ≠ 0.304',why:'A zero at the end changes nothing, but a zero in the middle moves the digits and changes the value. ✔'});
+  await w(1500);}},
+
+/* 7 */ {t:'Tap the bigger number',run:async w=>{
+  const R=[['0.45','0.5',1,'0.50 &gt; 0.45','0.5 is 0.50, and 50 hundredths is more than 45 hundredths.'],
+    ['7.8','7.08',0,'7.80 &gt; 7.08','Tenths: 8 is more than 0. So 7.8 is bigger.'],
+    ['1.29','1.3',1,'1.30 &gt; 1.29','Tenths: 3 is more than 2. The 9 comes too late to matter!'],
+    ['6.1','6.099',0,'6.100 &gt; 6.099','Tenths: 1 is more than 0. So 6.1 is bigger.'],
+    ['0.07','0.7',1,'0.70 &gt; 0.07','7 tenths is much more than 7 hundredths.']];
+  say(`Your turn! Two numbers will appear. <b>Tap the bigger one</b>. Remember: line up the points and compare from the left.`);
+  await w(3200);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [l,r,a,show,why]=R[i];
+    mk('ex-head','',`👆 Tap the bigger number · ${i+1} of ${R.length}`);
+    let picked=-1;const B=[l,r].map((t,k)=>{const b=btn('mx-tile',`left:${110+k*440}px;top:110px;width:300px;height:150px;font-size:66px;border-radius:26px`,t,()=>{if(picked<0)picked=k;});pop(b,k*150);return b;});
+    say(`Which is bigger: <b>${l}</b> or <b>${r}</b>?`);
+    window.AUTOPLAY=()=>{if(picked<0)picked=i<3?a:1-a;};
+    await w.until(()=>picked>=0);window.AUTOPLAY=null;
+    const ok=picked===a;if(ok){right++;yay();confetti(30);}else{boo();shake(B[picked]);}
+    B[a].style.borderColor='#18a058';B[a].style.background='#e6f7ee';if(!ok){B[picked].style.borderColor='#e04848';B[picked].style.background='#fdecec';}
+    const s=mk('mx-step',`left:110px;top:300px`,show);pop(s);point(s);
+    const e=mk('mx-why','left:110px;top:370px;width:740px','💡 '+why);pop(e);
+    say((ok?'Yes! ':'Not quite. ')+why);await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🏅</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You got ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You're a decimal detective.`:`Good effort! Press Replay to try again.`);
+  await w(2500);}},
+
+/* 8 */ {t:'Sort: equal or not?',run:async w=>{
+  const r=await sortGame(w,{bins:['= 0.6 (equal)','≠ 0.6 (not equal)'],colors:['#45c288','#f5a54a'],top:200,
+    items:[['0.60',0],['0.600',0],['0.6000',0],['0.06',1],['6.0',1],['0.606',1],['0.006',1],['0.16',1]],
+    intro:`Which cards are <b>equal to 0.6</b>? Tap a card, then tap its box. Press <b>Check</b> when you're done.`});
+  say(r.ok===r.total?`Perfect! Every card is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's see why.`);
+  await w(2600);
+  say(`<b>0.60</b>, <b>0.600</b> and <b>0.6000</b> just have zeros on the <b>end</b>. They all equal 0.6.`);await w(3000);
+  say(`<b>0.06</b> and <b>0.006</b> have zeros in <b>front</b> of the 6, which moves it. <b>6.0</b> is six whole ones. Not equal!`);await w(3200);
+  say(`And <b>0.606</b> and <b>0.16</b> have extra digits that are not zeros, so they're different numbers too.`);
+  await w(3000);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Line up the points in your head, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 4.1 · Q1 b)',q:'Write down which is the smallest decimal number.<br>b) 4.32, 3.67',o:['4.32','3.67'],a:1,
+      why:'Ones first: <b>3</b> is less than 4, so <b>3.67</b> is smaller.',whyNot:{0:'4.32 has 4 ones, but 3.67 has only 3 ones.'}},
+    {src:'Worksheet · Ex 4.1 · Q1 c)',q:'Write down which is the smallest decimal number.<br>c) 12.56, 21.652',o:['21.652','12.56'],a:1,
+      why:'Tens first: 1 ten is less than 2 tens, so <b>12.56</b> is smaller.',whyNot:{0:'21.652 is longer, but 21 is bigger than 12.'}},
+    {src:'Worksheet · Ex 4.1 · Q1 d)',q:'Write down which is the smallest decimal number.<br>d) 127.06, 246.9',o:['127.06','246.9'],a:0,
+      why:'Hundreds first: 1 hundred is less than 2 hundreds, so <b>127.06</b> is smaller.',whyNot:{1:'246.9 is shorter, but 246 is bigger than 127.'}},
+    {src:'Worksheet · Ex 4.1 · Q1 e)',q:'Write down which is the smallest decimal number.<br>e) 0.67, 0.72',o:['0.72','0.67'],a:1,
+      why:'Tenths: 6 is less than 7, so <b>0.67</b> is smaller.',whyNot:{0:'0.72 has 7 tenths, which is more than 6 tenths.'}},
+    {src:'Worksheet · Ex 4.1 · Q1 g)',q:'Write down which is the smallest decimal number.<br>g) 18.54, 18.45',o:['18.54','18.45'],a:1,
+      why:'The wholes are the same. Tenths: 4 is less than 5, so <b>18.45</b> is smaller.',whyNot:{0:'18.54 has 5 tenths, but 18.45 has only 4 tenths.'}},
+    {src:'Worksheet · Ex 4.1 · Q1 i)',q:'Write down which is the smallest decimal number.<br>i) 0.09, 0.1',o:['0.1','0.09'],a:1,
+      why:'Write 0.1 as 0.10. Then 9 hundredths is less than 10 hundredths, so <b>0.09</b> is smaller.',whyNot:{0:'0.1 is shorter, but it is 0.10, which is more than 0.09.'}},
+    {src:'Worksheet · Ex 4.1 · Q4 a)',q:'Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.<br>a) 6.03 ☐ 6.24',o:['6.03 &lt; 6.24','6.03 &gt; 6.24'],a:0,
+      why:'Tenths: 0 is less than 2, so 6.03 is smaller: <b>6.03 &lt; 6.24</b>.',whyNot:{1:'that says 6.03 is bigger, but 6.24 has more tenths.'}},
+    {src:'Worksheet · Ex 4.1 · Q4 b)',q:'Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.<br>b) 9.35 ☐ 9.41',o:['9.35 &gt; 9.41','9.35 &lt; 9.41'],a:1,
+      why:'Tenths: 3 is less than 4, so <b>9.35 &lt; 9.41</b>.',whyNot:{0:'the mouth must face the bigger number, 9.41.'}},
+    {src:'Worksheet · Ex 4.1 · Q4 c)',q:'Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.<br>c) 0.49 ☐ 0.51',o:['0.49 &gt; 0.51','0.49 &lt; 0.51'],a:1,
+      why:'Tenths: 4 is less than 5, so <b>0.49 &lt; 0.51</b>. The 9 comes too late to matter.',whyNot:{0:'9 is a big digit, but the tenths decide first: 4 is less than 5.'}},
+    {src:'Worksheet · Ex 4.1 · Q4 d)',q:'Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.<br>d) 18.05 ☐ 18.02',o:['18.05 &lt; 18.02','18.05 &gt; 18.02'],a:1,
+      why:'Wholes and tenths are the same. Hundredths: 5 is more than 2, so <b>18.05 &gt; 18.02</b>.',whyNot:{0:'that says 18.05 is smaller, but 5 hundredths is more than 2 hundredths.'}},
+    {src:'Worksheet · Ex 4.1 · Q4 g)',q:'Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.<br>g) 0.072 ☐ 0.06',o:['0.072 &lt; 0.06','0.072 &gt; 0.06'],a:1,
+      why:'Write 0.06 as 0.060. Then 72 thousandths is more than 60, so <b>0.072 &gt; 0.06</b>.',whyNot:{0:'longer does not mean smaller either: hundredths 7 beats 6, so 0.072 is bigger.'}},
+    {src:'Worksheet · Ex 4.1 · Q4 h)',q:'Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write correct sign, &lt; or &gt;.<br>h) 29.882 ☐ 29.82',o:['29.882 &lt; 29.82','29.882 &gt; 29.82'],a:1,
+      why:'Write 29.82 as 29.820. Tenths are both 8; hundredths: 8 is more than 2. So <b>29.882 &gt; 29.82</b>.',whyNot:{0:'the hundredths decide: 8 is more than 2, so 29.882 is the bigger one.'}},
+    {src:'Worksheet · Ex 4.1 · Q5 b)',q:'Write the correct sign = or ≠<br>b) 3.75 ☐ 3.57',o:['3.75 = 3.57','3.75 ≠ 3.57'],a:1,
+      why:'Same digits, different places: 7 tenths is not 5 tenths. So <b>3.75 ≠ 3.57</b>.',whyNot:{0:'the digits are swapped round, so the values are different.'}},
+    {src:'Worksheet · Ex 4.1 · Q5 d)',q:'Write the correct sign = or ≠<br>d) 9.58 ☐ 9.580',o:['9.58 = 9.580','9.58 ≠ 9.580'],a:0,
+      why:'A zero on the <b>end</b> after the point changes nothing: <b>9.58 = 9.580</b>.',whyNot:{1:'the extra zero adds 0 thousandths, so the value stays the same.'}},
+    {src:'Worksheet · Ex 4.1 · Q5 e)',q:'Write the correct sign = or ≠<br>e) 128.00 ☐ 128',o:['128.00 ≠ 128','128.00 = 128'],a:1,
+      why:'128.00 means 128 with no tenths and no hundredths. So <b>128.00 = 128</b>.',whyNot:{0:'.00 adds nothing at all, so they are equal.'}},
+    {src:'Worksheet · Ex 4.1 · Q5 f)',q:'Write the correct sign = or ≠<br>f) 0.0034 ☐ 0.034',o:['0.0034 = 0.034','0.0034 ≠ 0.034'],a:1,
+      why:'Write 0.034 as 0.0340. Hundredths: 0 and 3 are different. So <b>0.0034 ≠ 0.034</b>.',whyNot:{0:'the extra zero is in front of the digits, so it moves them and changes the value.'}},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Ordering and comparing decimals</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['📏','Line up the <b>decimal points</b>.',`Line up the decimal points.`],
+    ['⬅️','Compare from the <b>left</b>. The first different column decides.',`Compare from the left. The first column that is different decides.`],
+    ['0️⃣','Add zeros on the end:<br><b>3.4 = 3.40</b>',`Add zeros on the end to make them the same length: 3.4 is 3.40.`],
+    ['🧐','Longer is <b>not</b> bigger:<br>0.05 &gt; 0.043',`Longer is not bigger: 0.05 is greater than 0.043.`],
+    ['🐊','The open mouth faces the <b>bigger</b> number.',`The crocodile's open mouth faces the bigger number.`],
+    ['➡️','On a number line, further <b>right</b> is bigger.',`On a number line, further right is bigger.`],
+    ['⚖️','4.2 = 4.20<br>0.340 ≠ 0.304',`An end zero changes nothing, but a zero in the middle does.`],
+    ['🔍','You are a <b>decimal detective</b>!',`And you're now a decimal detective!`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now compare any decimals. Next up: <b>mental methods</b> with decimals.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

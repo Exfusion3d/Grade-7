@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Grade 7 Maths – Exam Study Guide</title>
+<style>
+@page { size: A4; margin: 14mm 15mm 16mm 15mm;
+  @bottom-center { content: counter(page); font: 600 9pt "Avenir Next", sans-serif; color: #8a90a2; }
+}
+@page :first { @bottom-center { content: none; } }
+:root{
+  --ink:#1f2433; --muted:#5b6275; --line:#dfe3ec;
+  --g:#17935b; --gl:#e4f6ec; --gd:#0e6b41;
+  --o:#e06a1b; --ol:#fdeedf; --od:#a84a0c;
+  --b:#2c66cf; --bl:#e5eefc; --bd:#1c4a9c;
+  --y:#fff4c2; --pu:#6a45d8; --pul:#efe9ff; --pud:#4a2ea6; --pk:#d6336c; --pkl:#fde4ec; --pkd:#a01e4e; --yb:#f2c200; --r:#fde6e6; --rb:#e04848; --p:#f0e9ff; --pb:#7d55d6;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+body{font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif; color:var(--ink); font-size:11pt; line-height:1.45; margin:0}
+h1,h2,h3{line-height:1.15; margin:0}
+h2{font-size:17pt; font-weight:800; margin:18px 0 8px; display:flex; align-items:center; gap:10px}
+h2 .n{display:inline-flex; align-items:center; justify-content:center; min-width:34px; height:34px; padding:0 8px; border-radius:10px; color:#fff; font-size:13pt}
+h3{font-size:12.5pt; font-weight:700; margin:12px 0 4px}
+p{margin:5px 0}
+ul{margin:4px 0; padding-left:20px} li{margin:2px 0}
+b,strong{font-weight:700}
+.u4 h2 .n{background:var(--g)} .u4 h2{color:var(--gd)} .u4 h3{color:var(--gd)}
+.u5 h2 .n{background:var(--o)} .u5 h2{color:var(--od)} .u5 h3{color:var(--od)}
+.u9 h2 .n{background:var(--b)} .u9 h2{color:var(--bd)} .u9 h3{color:var(--bd)}
+.unit{break-before:page}
+.banner{border-radius:18px; padding:18px 22px; color:#fff; display:flex; align-items:center; gap:18px; margin-bottom:6px}
+.banner .big{font-size:38pt; font-weight:800; line-height:1}
+.banner h1{font-size:22pt; font-weight:800}
+.banner p{margin:4px 0 0; font-size:11pt; opacity:.95}
+.u4 .banner{background:linear-gradient(120deg,#17935b,#4cc28a)}
+.u5 .banner{background:linear-gradient(120deg,#e06a1b,#f5a54a)}
+.u9 .banner{background:linear-gradient(120deg,#2c66cf,#5aa0f0)}
+.bigidea{border:2px dashed currentColor; border-radius:14px; padding:10px 14px; margin:10px 0; font-size:11.5pt}
+.u4 .bigidea{color:var(--gd); background:var(--gl)} .u5 .bigidea{color:var(--od); background:var(--ol)} .u9 .bigidea{color:var(--bd); background:var(--bl)}
+.bigidea span{color:var(--ink)}
+.box{border-radius:12px; padding:9px 13px 9px 13px; margin:9px 0; break-inside:avoid; border-left:6px solid}
+.box .lab{font-weight:800; font-size:9.5pt; letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:2px}
+.tip{background:var(--y); border-color:var(--yb)} .tip .lab{color:#8a6a00}
+.warn{background:var(--r); border-color:var(--rb)} .warn .lab{color:#b02525}
+.trick{background:var(--p); border-color:var(--pb)} .trick .lab{color:#5a35b0}
+.real{background:#eef3f7; border-color:#7a8ca3} .real .lab{color:#4b5d75}
+table{border-collapse:collapse; width:100%; margin:8px 0; font-size:10.3pt}
+tr{break-inside:avoid}
+h2,h3{break-after:avoid; break-inside:avoid}
+h2 + *, h3 + *{break-before:avoid}
+.fig svg{break-inside:avoid}
+th,td{border:1px solid var(--line); padding:5px 8px; text-align:left; vertical-align:top}
+th{font-weight:700}
+.u4 th{background:var(--gl)} .u5 th{background:var(--ol)} .u9 th{background:var(--bl)}
+.letter{font-size:16pt; font-weight:800; text-align:center; width:34px}
+.u4 .letter{color:var(--g)}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+.fig{text-align:center; margin:8px 0; break-inside:avoid}
+.fig .cap{font-size:9pt; color:var(--muted); margin-top:2px}
+.qa{break-inside:avoid; margin:4px 0}
+.ans td:first-child{width:36px; font-weight:700; text-align:center}
+.small{font-size:9.5pt; color:var(--muted)}
+.chip{display:inline-block; padding:1px 8px; border-radius:20px; font-weight:700; font-size:9.5pt}
+.keep{break-inside:avoid}
+.pb{break-before:page}
+/* cover */
+.cover{height:262mm; display:flex; flex-direction:column; justify-content:space-between}
+.cover .top{background:linear-gradient(135deg,#2a2f6b,#5b3fb5 55%,#2c66cf); color:#fff; border-radius:24px; padding:34px 30px}
+.cover .top .k{font-size:12pt; letter-spacing:.14em; text-transform:uppercase; opacity:.85; font-weight:600}
+.cover .top h1{font-size:40pt; font-weight:800; margin:8px 0 6px}
+.cover .top p{font-size:13pt; margin:0; opacity:.95}
+.cards{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+.card{border-radius:18px; padding:16px; color:#fff; min-height:150px}
+.card .u{font-weight:800; font-size:10pt; letter-spacing:.1em; text-transform:uppercase; opacity:.9}
+.card h3{color:#fff; font-size:15pt; margin:4px 0 6px}
+.card p{font-size:10pt; margin:0}
+.how{border:2px solid var(--line); border-radius:18px; padding:14px 18px}
+.how h3{margin-top:0}
+.legend{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; margin-top:8px}
+.legend .box{margin:0; padding:5px 10px; font-size:10pt}
+/* cheat sheet */
+.cheat{break-before:page}
+.cheat h1{font-size:22pt; text-align:center; margin-bottom:8px}
+.cheatgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:9.4pt; line-height:1.35}
+.cheatgrid section{border-radius:12px; padding:10px 11px}
+.cheatgrid h3{margin:0 0 4px; font-size:11.5pt}
+.cheatgrid ul{padding-left:15px}
+.cg{background:var(--gl)} .cg h3{color:var(--gd)}
+.co{background:var(--ol)} .co h3{color:var(--od)}
+.cb{background:var(--bl)} .cb h3{color:var(--bd)}
+svg text{font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif}
+
+/* ---- Maths chapters: c2 orange, c4 blue, c6 green, c9 purple, c10 pink ---- */
+.c2 h2 .n{background:var(--o)} .c2 h2,.c2 h3{color:var(--od)} .c2 .banner{background:linear-gradient(120deg,#e06a1b,#f5a54a)} .c2 .bigidea{color:var(--od);background:var(--ol)} .c2 th{background:var(--ol)} .c2 .ans{color:var(--od)} .c2 .try{border-color:var(--o)}
+.c4 h2 .n{background:var(--b)} .c4 h2,.c4 h3{color:var(--bd)} .c4 .banner{background:linear-gradient(120deg,#2c66cf,#5aa0f0)} .c4 .bigidea{color:var(--bd);background:var(--bl)} .c4 th{background:var(--bl)} .c4 .ans{color:var(--bd)} .c4 .try{border-color:var(--b)}
+.c6 h2 .n{background:var(--g)} .c6 h2,.c6 h3{color:var(--gd)} .c6 .banner{background:linear-gradient(120deg,#17935b,#4cc28a)} .c6 .bigidea{color:var(--gd);background:var(--gl)} .c6 th{background:var(--gl)} .c6 .ans{color:var(--gd)} .c6 .try{border-color:var(--g)}
+.c9 h2 .n{background:var(--pu)} .c9 h2,.c9 h3{color:var(--pud)} .c9 .banner{background:linear-gradient(120deg,#6a45d8,#9b7cf0)} .c9 .bigidea{color:var(--pud);background:var(--pul)} .c9 th{background:var(--pul)} .c9 .ans{color:var(--pud)} .c9 .try{border-color:var(--pu)}
+.c10 h2 .n{background:var(--pk)} .c10 h2,.c10 h3{color:var(--pkd)} .c10 .banner{background:linear-gradient(120deg,#d6336c,#f06595)} .c10 .bigidea{color:var(--pkd);background:var(--pkl)} .c10 th{background:var(--pkl)} .c10 .ans{color:var(--pkd)} .c10 .try{border-color:var(--pk)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.05; margin:0 .12em; font-size:.92em}
+.fr>span:first-child{border-bottom:.08em solid currentColor; padding:0 .15em}
+.m{font-weight:700; white-space:nowrap}
+ol.steps{margin:4px 0; padding-left:22px} ol.steps li{margin:3px 0}
+.ex{border:1.5px solid var(--line); border-radius:12px; padding:8px 12px; margin:8px 0; break-inside:avoid}
+.ex .src{font-size:8.5pt; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.ex .q{font-weight:700; margin:1px 0 4px}
+.work{border-left:3px solid var(--line); padding-left:10px; margin:2px 0}
+.work div{padding:1px 0}
+.work i{font-style:normal; color:var(--muted); font-size:9.5pt; margin-left:6px}
+.ans{font-weight:800}
+.try{border:2px dashed; border-radius:12px; padding:8px 12px 6px; margin:10px 0 14px; break-inside:avoid}
+.try .lab{font-weight:800; font-size:9.5pt; letter-spacing:.06em; text-transform:uppercase}
+.try ol{margin:3px 0; padding-left:22px} .try li{margin:2px 0}
+.check{list-style:none; padding:0; columns:3; font-size:10pt} .check li{margin:2px 0} .check li:before{content:"☐ "; font-size:12pt}
+/* answer key */
+.keygrid{columns:2; column-gap:18px; font-size:9.6pt; line-height:1.35}
+.keygrid .k{break-inside:avoid; margin:0 0 6px}
+.keygrid h3{break-after:avoid; margin:8px 0 3px; font-size:11pt}
+.cm2{background:var(--ol)} .cm2 h3{color:var(--od)} .cm4{background:var(--bl)} .cm4 h3{color:var(--bd)} .cm6{background:var(--gl)} .cm6 h3{color:var(--gd)}
+.cm9{background:var(--pul)} .cm9 h3{color:var(--pud)} .cm10{background:var(--pkl)} .cm10 h3{color:var(--pkd)}
+
+/* ---- tighter print layout (the guide covers every worksheet question) ---- */
+body{font-size:10pt; line-height:1.36}
+h2{font-size:15pt; margin:14px 0 6px} h2 .n{min-width:30px; height:30px; font-size:12pt}
+h3{font-size:11.5pt; margin:9px 0 3px}
+p{margin:4px 0}
+table{font-size:9.2pt; margin:5px 0} th,td{padding:3px 6px}
+.ex{padding:6px 10px; margin:6px 0; break-inside:auto} .ex .q{margin:1px 0 3px}
+.ex:not(:has(table)){break-inside:avoid}
+.box{padding:6px 11px; margin:7px 0}
+.try{padding:6px 11px 4px; margin:8px 0 10px}
+.fig{margin:5px 0} .fig svg{max-height:150px; width:auto; max-width:100%}
+table{break-inside:avoid} .ex table{break-inside:auto} /* short tables stay whole; long worksheet tables may continue on the next page */
+.bigidea{padding:8px 12px; margin:8px 0}
+ol.steps li{margin:2px 0}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="top" style="background:linear-gradient(135deg,#7a2e00,#e06a1b 55%,#f5a54a)">
+    <div class="k">Grade 7 · Cambridge Maths · 2nd Term Review</div>
+    <h1>The Maths<br>Study Guide 🤖</h1>
+    <p>Everything on your 2nd Term worksheet, explained step by step by Pi the Robot: the method, the worksheet questions worked out line by line, the mistakes to avoid, and practice questions with answers.</p>
+  </div>
+  <div class="cards" style="grid-template-columns:repeat(5,1fr);gap:8px">
+    <div class="card" style="background:linear-gradient(140deg,#e06a1b,#f5a54a);min-height:120px;padding:12px"><div class="u">Chapter 2</div><h3 style="font-size:12pt">Expressions, formulae &amp; equations</h3></div>
+    <div class="card" style="background:linear-gradient(140deg,#2c66cf,#5aa0f0);min-height:120px;padding:12px"><div class="u">Chapter 4</div><h3 style="font-size:12pt">Decimals</h3></div>
+    <div class="card" style="background:linear-gradient(140deg,#17935b,#4cc28a);min-height:120px;padding:12px"><div class="u">Chapter 6</div><h3 style="font-size:12pt">Collecting data</h3></div>
+    <div class="card" style="background:linear-gradient(140deg,#6a45d8,#9b7cf0);min-height:120px;padding:12px"><div class="u">Chapter 9</div><h3 style="font-size:12pt">Sequences &amp; functions</h3></div>
+    <div class="card" style="background:linear-gradient(140deg,#d6336c,#f06595);min-height:120px;padding:12px"><div class="u">Chapter 10</div><h3 style="font-size:12pt">Percentages</h3></div>
+  </div>
+  <div class="how">
+    <h3>How to use this guide</h3>
+    <p>There is one section for each of the 15 Maths lessons. Each section gives the <b>big idea</b>, the <b>method</b> in numbered steps, the <b>worksheet questions worked out</b> line by line, and <b>Try these</b> practice questions. The answers to every <b>Try these</b> question are in the <b>answer key</b> at the back. The <b>cheat sheet</b> has every rule on one page.</p>
+    <div class="legend">
+      <div class="box tip"><span class="lab">Exam tip</span>How to get the marks.</div>
+      <div class="box warn"><span class="lab">Watch out!</span>A common mistake to avoid.</div>
+      <div class="box trick"><span class="lab">Memory trick</span>An easy way to remember.</div>
+      <div class="box real"><span class="lab">Try a number</span>Check a rule with a real number.</div>
+    </div>
+    <h3 style="margin-top:12px">Tick off each lesson when you know it</h3>
+    <ul class="check">
+      <li>2.1 Writing expressions</li><li>2.2 Substituting</li><li>2.3 Like terms</li><li>2.4 Expanding brackets</li><li>2.5 Solving equations</li>
+      <li>2.6 Inequalities</li><li>4.1 Ordering decimals</li><li>4.2 Mental methods</li><li>4.3 Multiplying decimals</li><li>4.4 Dividing decimals</li>
+      <li>6.1 Types of data</li><li>6.2 Mode, median, mean</li><li>9.1 BIDMAS &amp; negatives</li><li>9.2 Sequences</li><li>9.3 nth term &amp; machines</li>
+      <li>10.1 % ↔ fractions ↔ decimals</li><li>10.2 Percentages of amounts</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ CHAPTER 2 ============ -->
+<div class="unit c2">
+  <div class="banner"><div class="big">2</div><div><h1>Expressions, Formulae &amp; Equations</h1><p>Turning words into algebra, working out values, tidying expressions, expanding brackets, solving equations and inequalities.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>A <b>letter</b> stands for a number we don't know yet. Algebra has rules for writing, tidying and solving with letters, and every rule works the same way it does with ordinary numbers. <b>If you're stuck, try a real number first.</b></span></div>
+
+  <h2><span class="n">2.1</span> Writing expressions</h2>
+  <p>An <b>expression</b> is a maths recipe with a letter in it, like <span class="m">y + 3</span>: "whatever y is, add 3". There is no = sign in an expression.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Find the <b>letter</b> (the unknown number).</li>
+    <li>Turn each word into a symbol: <b>more than / plus / increased by</b> → +; <b>less than / take away / decreased by</b> → −; <b>times / multiplied by / twice</b> → ×; <b>divided by / half</b> → ÷.</li>
+    <li>Do the steps <b>in the order the question says</b>.</li>
+    <li>Write it the short algebra way: no × sign, <b>number first</b> (3 × y = <span class="m">3y</span>, p × q = <span class="m">pq</span>), and ÷ as a fraction (y ÷ 2 = <span class="fr"><span>y</span><span>2</span></span>).</li>
+  </ol>
+  <div class="fig"><svg width="520" height="96" viewBox="0 0 520 96">
+    <circle cx="44" cy="46" r="30" fill="#2c66cf"/><text x="44" y="56" text-anchor="middle" font-size="28" font-weight="800" fill="#fff">y</text>
+    <path d="M80,46 h46" stroke="#1f2433" stroke-width="3" marker-end="url(#ah)"/>
+    <rect x="132" y="16" width="110" height="60" rx="12" fill="#3b4152"/><text x="187" y="54" text-anchor="middle" font-size="22" font-weight="800" fill="#ffd84d">× 4</text>
+    <path d="M246,46 h40" stroke="#1f2433" stroke-width="3" marker-end="url(#ah)"/>
+    <rect x="292" y="16" width="110" height="60" rx="12" fill="#3b4152"/><text x="347" y="54" text-anchor="middle" font-size="22" font-weight="800" fill="#ffd84d">+ 1</text>
+    <path d="M406,46 h30" stroke="#1f2433" stroke-width="3" marker-end="url(#ah)"/>
+    <rect x="440" y="18" width="76" height="56" rx="28" fill="#18a058"/><text x="478" y="53" text-anchor="middle" font-size="19" font-weight="800" fill="#fff">4y + 1</text>
+    <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f2433"/></marker></defs>
+  </svg><div class="cap">A number machine: y goes in, is multiplied by 4, then 1 is added. Out comes 4y + 1.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 2.1 · Q3</div>
+    <div class="q">The temperature on Tuesday was t°C. Write an expression for the temperature when it is: a) 2°C higher, b) twice as warm, c) half as warm as it was on Tuesday.</div>
+    <div class="work"><div>a) higher → add 2: <span class="ans">(t + 2)°C</span></div><div>b) twice → × 2: <span class="ans">2t°C</span></div><div>c) half → ÷ 2: <span class="ans"><span class="fr"><span>t</span><span>2</span></span>°C</span> <i>(or (t ÷ 2)°C)</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.1 · Q6</div>
+    <div class="q">Maliha thinks of a number 'y'. Write an expression for the number Maliha gets when she:</div>
+    <table><tr><th>She…</th><th>Working</th><th>Answer</th></tr>
+      <tr><td>(i) multiplies the number by 3</td><td>y × 3</td><td class="ans">3y</td></tr>
+      <tr><td>(ii) divides the number by 2</td><td>y ÷ 2</td><td class="ans"><span class="fr"><span>y</span><span>2</span></span> or y ÷ 2</td></tr>
+      <tr><td>(iii) multiplies the number by 4, then adds 1</td><td>y × 4 = 4y, then + 1</td><td class="ans">4y + 1</td></tr>
+      <tr><td>(iv) multiplies the number by 2, then subtract 5</td><td>y × 2 = 2y, then − 5</td><td class="ans">2y − 5</td></tr>
+      <tr><td>(v) multiplies the number by 5, then subtract the result from 52</td><td>y × 5 = 5y, then 52 − 5y</td><td class="ans">52 − 5y</td></tr>
+      <tr><td>(vi) divides the number by 4, then add 3</td><td>y ÷ 4, then + 3</td><td class="ans"><span class="fr"><span>y</span><span>4</span></span> + 3</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.1 · Q10</div>
+    <div class="q">Write an expression for each of these.</div>
+    <div class="work"><div>a) x more than y → <span class="ans">x + y</span> <i>(or y + x)</i></div><div>b) x less than y → start with y, take x away: <span class="ans">y − x</span></div>
+      <div>c) m more than two times n → 2n, then add m: <span class="ans">m + 2n</span></div><div>d) a less than 3 times b → 3b, then take a away: <span class="ans">3b − a</span></div>
+      <div>e) p multiplied by q → <span class="ans">pq</span></div><div>f) four times g multiplied by h → <span class="ans">4gh</span></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>"x less than y" is y − x, not x − y.</b> With numbers: 3 less than 10 is 10 − 3 = 7. The words come in the <i>opposite</i> order to the expression. The same goes for "subtract the result <b>from 52</b>": 52 comes first.</div>
+  <div class="box real"><span class="lab">Try a number</span>Stuck? Pretend y = 5. "Multiply by 4, then add 1" gives 5 × 4 + 1 = 21. Now do exactly the same with the letter: 4y + 1.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Write an expression for 6 less than k.</li><li>Write an expression for: multiply n by 7, then add 2.</li><li>Write an expression for: subtract 3w from 20.</li></ol></div>
+
+  <h2><span class="n">2.2</span> Substituting into expressions and formulae</h2>
+  <p><b>Substitute</b> means "swap in". When you know what the letter is worth, put that number in place of the letter, then work it out. A <b>formula</b> is a rule with an = sign that links letters, like <span class="m">M = P − E</span>.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Write the expression (or formula) down first.</li>
+    <li>Rewrite it with each letter swapped for its number. Put back the hidden signs: <span class="m">2m</span> means 2 × m, <span class="m">ab</span> means a × b, and a fraction line means ÷.</li>
+    <li>Work it out: <b>× and ÷ before + and −</b>. Work out the top of a fraction first.</li>
+    <li>For a formula, if the letter you want is not on its own, rearrange first (<span class="m">M = P − E</span> gives <span class="m">P = M + E</span>).</li>
+  </ol>
+  <div class="fig"><svg width="500" height="92" viewBox="0 0 500 92">
+    <text x="70" y="40" text-anchor="middle" font-size="26" font-weight="800" fill="#1f2433">2<tspan fill="#2c66cf">m</tspan> + <tspan fill="#e06a1b">n</tspan></text>
+    <rect x="22" y="56" width="96" height="26" rx="13" fill="#eef3f7"/><text x="70" y="74" text-anchor="middle" font-size="13" fill="#4b5d75">m = 7, n = 6</text>
+    <path d="M136,32 h50" stroke="#1f2433" stroke-width="3" marker-end="url(#ah2)"/>
+    <text x="275" y="40" text-anchor="middle" font-size="26" font-weight="800" fill="#1f2433">2 × <tspan fill="#2c66cf">7</tspan> + <tspan fill="#e06a1b">6</tspan></text>
+    <path d="M364,32 h50" stroke="#1f2433" stroke-width="3" marker-end="url(#ah2)"/>
+    <rect x="420" y="10" width="64" height="44" rx="22" fill="#18a058"/><text x="452" y="40" text-anchor="middle" font-size="24" font-weight="800" fill="#fff">20</text>
+    <defs><marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f2433"/></marker></defs>
+  </svg><div class="cap">Swap each letter for its number, put the × back in, then work it out: 14 + 6 = 20.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 2.2 · Q1 and Q2</div>
+    <div class="q">Find the value of each expression.</div>
+    <table><tr><th>Expression</th><th>Working</th><th>Answer</th><th>Expression</th><th>Working</th><th>Answer</th></tr>
+      <tr><td>Q1 a) x + 9, x = 13</td><td>13 + 9</td><td class="ans">22</td><td>Q2 b) x − 9, x = 20</td><td>20 − 9</td><td class="ans">11</td></tr>
+      <tr><td>Q1 b) <span class="fr"><span>x</span><span>5</span></span>, x = 40</td><td>40 ÷ 5</td><td class="ans">8</td><td>Q2 c) f + g, f = 7, g = 4</td><td>7 + 4</td><td class="ans">11</td></tr>
+      <tr><td>Q1 c) 10 − x, x = 3</td><td>10 − 3</td><td class="ans">7</td><td>Q2 d) m − n, m = 100, n = 25</td><td>100 − 25</td><td class="ans">75</td></tr>
+      <tr><td>Q1 d) 2m + n, m = 7, n = 6</td><td>2 × 7 + 6 = 14 + 6</td><td class="ans">20</td><td>Q2 e) 3k, k = 5</td><td>3 × 5</td><td class="ans">15</td></tr>
+      <tr><td>Q1 e) 7x, x = 5</td><td>7 × 5</td><td class="ans">35</td><td>Q2 f) p + 2q, p = 5, q = 3</td><td>5 + 2 × 3 = 5 + 6</td><td class="ans">11</td></tr>
+      <tr><td>Q1 f) ab − c, a = 9, b = 8, c = 32</td><td>9 × 8 − 32 = 72 − 32</td><td class="ans">40</td><td>Q2 g) 2h + 3t, h = 8, t = 5</td><td>2 × 8 + 3 × 5 = 16 + 15</td><td class="ans">31</td></tr>
+      <tr><td>Q2 a) a + 5, a = 3</td><td>3 + 5</td><td class="ans">8</td><td>Q2 h) <span class="fr"><span>y</span><span>4</span></span>, y = 32</td><td>32 ÷ 4</td><td class="ans">8</td></tr>
+      <tr><td>Q2 i) <span class="fr"><span>30</span><span>c</span></span> − 2, c = 6</td><td>30 ÷ 6 − 2 = 5 − 2</td><td class="ans">3</td><td>Q2 j) <span class="fr"><span>x + y</span><span>2</span></span>, x = 19, y = 11</td><td>(19 + 11) ÷ 2 = 30 ÷ 2</td><td class="ans">15</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ch 9 Getting started · Q4</div>
+    <div class="q">Work out the value of each expression. a) n + 4 when n = 5 &nbsp; b) 6n when n = 3 &nbsp; c) n − 9 when n = 20 &nbsp; d) n − 10 when n = 8</div>
+    <div class="work"><div>a) 5 + 4 = <span class="ans">9</span> &nbsp; b) 6 × 3 = <span class="ans">18</span> &nbsp; c) 20 − 9 = <span class="ans">11</span></div>
+      <div>d) 8 − 10 = <span class="ans">−2</span> <i>(start at 8 and go down 10: past 0 to −2)</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.2 · Q8</div>
+    <div class="q">Jan calculates how much money he has left each week, using the formula M = P − E, where M is the money he has left over, P is the money he is paid for working and E is his expenses. a) Find the value of M when: (i) P = $225 and E = $72, (ii) P = $178 and E = $36. b) Work out the value of P when M = $160, E = $45.</div>
+    <div class="work"><div>a) (i) M = 225 − 72 = <span class="ans">$153</span> &nbsp; (ii) M = 178 − 36 = <span class="ans">$142</span></div>
+      <div>b) P is the pay, so P = M + E = 160 + 45 = <span class="ans">$205</span> <i>(check: 205 − 45 = 160 ✓)</i></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>2m with m = 7 is 2 × 7 = 14, not 27.</b> The letter next to a number means multiply. And in <span class="m">p + 2q</span>, do the × first: 5 + 2 × 3 = 5 + 6 = 11, not 7 × 3.</div>
+  <div class="box tip"><span class="lab">Tip</span>Write the expression, then the line with the numbers in, then the answer. Showing the middle line earns marks even if you slip later.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Find the value of 4p − 3 when p = 6.</li><li>Find the value of <span class="fr"><span>a + b</span><span>3</span></span> when a = 14 and b = 13.</li><li>Using M = P − E, work out the value of P when M = $90 and E = $38.</li></ol></div>
+
+  <h2><span class="n">2.3</span> Simplifying and like terms</h2>
+  <p><b>Like terms</b> have exactly the same letter part: <span class="m">5x</span> and <span class="m">2x</span> are like terms; <span class="m">5x</span> and <span class="m">2y</span> are not. To <b>simplify</b>, add or take away the numbers in front of like terms. Think of x as "apples": 5 apples + 4 apples = 9 apples.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Find the like terms. Each term keeps the sign <b>in front of it</b> (− 3p goes with the minus).</li>
+    <li>Move the like terms next to each other, signs and all.</li>
+    <li>Add or take away the numbers in front. A letter on its own counts as 1 (<span class="m">x</span> = <span class="m">1x</span>), and you write <span class="m">1x</span> as just <span class="m">x</span>.</li>
+    <li>Numbers with no letter are like terms too: collect them on their own.</li>
+  </ol>
+  <div class="fig"><svg width="300" height="132" viewBox="0 0 300 132">
+    <g font-size="20" font-weight="800" text-anchor="middle">
+    <rect x="105" y="6" width="90" height="36" rx="6" fill="#18a058"/><text x="150" y="31" fill="#fff">14x</text>
+    <rect x="60" y="46" width="90" height="36" rx="6" fill="#fdeedf" stroke="#e06a1b" stroke-width="2"/><text x="105" y="71" fill="#a84a0c">8x</text>
+    <rect x="150" y="46" width="90" height="36" rx="6" fill="#fdeedf" stroke="#e06a1b" stroke-width="2"/><text x="195" y="71" fill="#a84a0c">6x</text>
+    <rect x="15" y="86" width="90" height="36" rx="6" fill="#e5eefc" stroke="#2c66cf" stroke-width="2"/><text x="60" y="111" fill="#1c4a9c">3x</text>
+    <rect x="105" y="86" width="90" height="36" rx="6" fill="#e5eefc" stroke="#2c66cf" stroke-width="2"/><text x="150" y="111" fill="#1c4a9c">5x</text>
+    <rect x="195" y="86" width="90" height="36" rx="6" fill="#e5eefc" stroke="#2c66cf" stroke-width="2"/><text x="240" y="111" fill="#1c4a9c">x</text></g>
+  </svg><div class="cap">An algebra pyramid: each block is the two blocks under it added. 3x + 5x = 8x, 5x + x = 6x, 8x + 6x = 14x.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 2.3 · Q2</div>
+    <div class="q">Match each expression, a to f, to its correctly simplified expression, i to vi. (i) 7x (ii) x (iii) 4x (iv) 9x (v) 2x (vi) 3x</div>
+    <div class="work"><div>a) x + x = 1x + 1x = 2x → <span class="ans">(v)</span> &nbsp; b) 5x + 4x = 9x → <span class="ans">(iv)</span> &nbsp; c) x + 6x = 7x → <span class="ans">(i)</span></div>
+      <div>d) 5x − 2x = 3x → <span class="ans">(vi)</span> &nbsp; e) 2x − x = 1x = x → <span class="ans">(ii)</span> &nbsp; f) 8x − 4x = 4x → <span class="ans">(iii)</span></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.3 · Q3</div>
+    <div class="q">Simplify each of these expressions.</div>
+    <table><tr><th>Question</th><th>Answer</th><th>Question</th><th>Answer</th><th>Question</th><th>Answer</th></tr>
+      <tr><td>a) x + x + x + x + x</td><td class="ans">5x</td><td>e) 8g + 5g + g</td><td class="ans">14g</td><td>i) 9b² − 5b²</td><td class="ans">4b²</td></tr>
+      <tr><td>b) 2y + 4y</td><td class="ans">6y</td><td>f) 9p + p + 6p</td><td class="ans">16p</td><td>j) 6f + 2f − 3f = 8f − 3f</td><td class="ans">5f</td></tr>
+      <tr><td>c) 5d + 3d</td><td class="ans">8d</td><td>g) 7w − 4w</td><td class="ans">3w</td><td>k) 9j + j − 7j = 10j − 7j</td><td class="ans">3j</td></tr>
+      <tr><td>d) 6t + 3t + 4t</td><td class="ans">13t</td><td>h) 8n − n</td><td class="ans">7n</td><td>l) 8k³ − 5k³ − 2k³ = 3k³ − 2k³</td><td class="ans">k³</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.3 · Q4 and Q5</div>
+    <div class="q">Q4: In an algebra pyramid, you find the expression in each block by adding the expressions in the two blocks below it. Complete the pyramids. Q5: Complete the workings to simplify these expressions.</div>
+    <div class="work"><div>Q4 a) bottom 3x, 5x, x → middle 8x, 6x → top <span class="ans">14x</span> (see the picture) &nbsp; b) bottom 7p, p, 3p → middle <span class="ans">8p</span>, <span class="ans">4p</span> → top <span class="ans">12p</span></div>
+      <div>Q5 a) 2x + 8x + 6y + 9y = <span class="ans">10x + 15y</span></div>
+      <div>b) 9d − 7d + 3h − h = <span class="ans">2d + 2h</span></div>
+      <div>c) 2g + 8 + 3g − 5 = 2g + 3g + 8 − 5 = <span class="ans">5g + 3</span></div>
+      <div>d) 8p + 12t − 3p + t = 8p − 3p + 12t + t = <span class="ans">5p + 13t</span></div>
+      <div>e) 3a + 4b + 5c − 2b − 8c = 3a + 4b − 2b + 5c − 8c = <span class="ans">3a + 2b − 3c</span> <i>(5c − 8c = −3c)</i></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Only like terms join.</b> <span class="m">10x + 15y</span> cannot be made any shorter, and <span class="m">5g + 3</span> is not 8g. Also, <span class="m">b²</span> and <span class="m">b</span> are <i>not</i> like terms. Keep the power the same: 9b² − 5b² = 4b².</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>Carry the sign with the term.</b> Circle each term together with the sign in front of it, then shuffle the circles so like terms sit together.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Simplify 7m + 2m − 4m.</li><li>Simplify 6a + 5 + 2a − 3.</li><li>An algebra pyramid has 2y, 4y, 3y on the bottom row. Find the two middle blocks and the top block.</li></ol></div>
+
+  <h2><span class="n">2.4</span> Expanding brackets</h2>
+  <p><b>Expand</b> (or "multiply out") means get rid of the brackets. The number outside multiplies <b>every</b> term inside: <span class="m">3(y + 6)</span> = 3 × y + 3 × 6 = <span class="m">3y + 18</span>.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Multiply the number outside by the <b>first</b> term inside.</li>
+    <li>Multiply it by the <b>next</b> term, and keep the sign in front of that term (+ stays +, − stays −).</li>
+    <li>Do the same for every term inside: there may be three.</li>
+    <li>Check: one term out for each term in.</li>
+  </ol>
+  <div class="fig"><svg width="440" height="132" viewBox="0 0 440 132">
+    <rect x="50" y="20" width="240" height="90" fill="#fdeedf" stroke="#e06a1b" stroke-width="2.5"/>
+    <rect x="290" y="20" width="110" height="90" fill="#e5eefc" stroke="#2c66cf" stroke-width="2.5"/>
+    <text x="170" y="72" text-anchor="middle" font-size="20" font-weight="800" fill="#a84a0c">8 × 3y = 24y</text>
+    <text x="345" y="72" text-anchor="middle" font-size="20" font-weight="800" fill="#1c4a9c">8 × 4 = 32</text>
+    <text x="30" y="72" text-anchor="middle" font-size="18" font-weight="800" fill="#1f2433">8</text>
+    <text x="170" y="13" text-anchor="middle" font-size="16" font-weight="700" fill="#a84a0c">3y</text>
+    <text x="345" y="13" text-anchor="middle" font-size="16" font-weight="700" fill="#1c4a9c">4</text>
+    <text x="225" y="128" text-anchor="middle" font-size="15" font-weight="700" fill="#1f2433">length 3y + 4 cm</text>
+  </svg><div class="cap">Area = 8(3y + 4). Split the rectangle in two: 8 × 3y = 24y and 8 × 4 = 32, so the area is 24y + 32.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 2.4 · Q3</div>
+    <div class="q">Expand the brackets.</div>
+    <table><tr><th>Question</th><th>Answer</th><th>Question</th><th>Answer</th><th>Question</th><th>Answer</th></tr>
+      <tr><td>a) 3(y + 6)</td><td class="ans">3y + 18</td><td>e) 6(d − 9)</td><td class="ans">6d − 54</td><td>i) 9(3 + i)</td><td class="ans">27 + 9i</td></tr>
+      <tr><td>b) 4(w + 2)</td><td class="ans">4w + 8</td><td>f) 2(e − 8)</td><td class="ans">2e − 16</td><td>j) 6(2 − x)</td><td class="ans">12 − 6x</td></tr>
+      <tr><td>c) 5(z + 5)</td><td class="ans">5z + 25</td><td>g) 6(2 + f)</td><td class="ans">12 + 6f</td><td>k) 2(1 − y)</td><td class="ans">2 − 2y</td></tr>
+      <tr><td>d) 3(b − 1)</td><td class="ans">3b − 3</td><td>h) 2(l + g)</td><td class="ans">2l + 2g</td><td>l) 5(7 − p)</td><td class="ans">35 − 5p</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.4 · Q5</div>
+    <div class="q">Multiply out the brackets.</div>
+    <table><tr><th>Question</th><th>Working</th><th>Answer</th><th>Question</th><th>Working</th><th>Answer</th></tr>
+      <tr><td>a) 3(2x + 1)</td><td>3 × 2x, 3 × 1</td><td class="ans">6x + 3</td><td>g) 6(5d − 1)</td><td>6 × 5d, 6 × 1</td><td class="ans">30d − 6</td></tr>
+      <tr><td>b) 4(3y + 5)</td><td>4 × 3y, 4 × 5</td><td class="ans">12y + 20</td><td>h) 8(3e − 6 + 2f)</td><td>8 × 3e, 8 × 6, 8 × 2f</td><td class="ans">24e − 48 + 16f</td></tr>
+      <tr><td>c) 5(2w + 3)</td><td>5 × 2w, 5 × 3</td><td class="ans">10w + 15</td><td>i) 3(a + 2f)</td><td>3 × a, 3 × 2f</td><td class="ans">3a + 6f</td></tr>
+      <tr><td>d) 6(4z + 7v + 9)</td><td>6 × 4z, 6 × 7v, 6 × 9</td><td class="ans">24z + 42v + 54</td><td>j) 5(3b + 4g)</td><td>5 × 3b, 5 × 4g</td><td class="ans">15b + 20g</td></tr>
+      <tr><td>e) 2(3b − 4)</td><td>2 × 3b, 2 × 4 (keep the −)</td><td class="ans">6b − 8</td><td>k) 7(6c − 7h)</td><td>7 × 6c, 7 × 7h</td><td class="ans">42c − 49h</td></tr>
+      <tr><td>f) 4(2c − 3)</td><td>4 × 2c, 4 × 3</td><td class="ans">8c − 12</td><td>l) 9(5 + 3h − 4i)</td><td>9 × 5, 9 × 3h, 9 × 4i</td><td class="ans">45 + 27h − 36i</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.4 · Q9</div>
+    <div class="q">The diagram shows a rectangle. The width of the rectangle is 8 cm. The length of the rectangle is 3y + 4 cm. Write an expression, in its simplest form, for the: a) area of the rectangle, b) perimeter of the rectangle.</div>
+    <div class="work"><div>a) Area = width × length = 8(3y + 4) = <span class="ans">24y + 32 cm²</span></div>
+      <div>b) Perimeter = 2(width + length) = 2(8 + 3y + 4) = 2(3y + 12) = <span class="ans">6y + 24 cm</span> <i>(tidy inside the bracket first: 8 + 4 = 12)</i></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Multiply every term, and keep the minus.</b> 2(3b − 4) is 6b <b>−</b> 8, not 6b + 8, and not 6b − 4. The 2 multiplies the 4 too.</div>
+  <div class="box real"><span class="lab">Try a number</span>Check with b = 1: 2(3 × 1 − 4) = 2 × (−1) = −2, and 6 × 1 − 8 = −2 too. ✓ Same answer, so the expansion is right.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Expand 5(k − 3).</li><li>Multiply out 4(2x + 7).</li><li>Expand 3(6 − 2y).</li></ol></div>
+
+  <h2><span class="n">2.5</span> Solving equations</h2>
+  <p>An <b>equation</b> has an = sign: both sides are worth the same, like a balanced scale. <b>Solving</b> means finding the number the letter stands for. Whatever you do to one side, do to the other side, and it stays balanced.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Look at what is being done to x.</li>
+    <li>Do the <b>opposite</b> to <b>both sides</b>: + ↔ −, × ↔ ÷. (x + 6: take away 6. x − 6: add 6. 2x: divide by 2.)</li>
+    <li>Keep going until x is on its own: <span class="m">x = …</span></li>
+    <li><b>Check:</b> put your answer back into the first equation. Both sides must match.</li>
+  </ol>
+  <div class="fig"><svg width="460" height="132" viewBox="0 0 460 132">
+    <path d="M230,40 L215,118 h30 z" fill="#5b6275"/><rect x="60" y="36" width="340" height="7" rx="3" fill="#3b4152"/>
+    <rect x="80" y="2" width="44" height="34" rx="8" fill="#2c66cf"/><text x="102" y="26" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">x</text>
+    <g fill="#ffd84d" stroke="#a84a0c" stroke-width="1.5"><circle cx="138" cy="26" r="9"/><circle cx="158" cy="26" r="9"/><circle cx="178" cy="26" r="9"/><circle cx="148" cy="9" r="8"/><circle cx="168" cy="9" r="8"/><circle cx="188" cy="9" r="8"/></g>
+    <text x="140" y="68" text-anchor="middle" font-size="18" font-weight="800" fill="#1f2433">x + 6</text>
+    <rect x="270" y="6" width="110" height="30" rx="8" fill="#18a058"/><text x="325" y="27" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">10</text>
+    <text x="325" y="68" text-anchor="middle" font-size="18" font-weight="800" fill="#1f2433">10</text>
+    <text x="230" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="#a84a0c">take 6 off both sides</text>
+    <text x="400" y="110" text-anchor="middle" font-size="20" font-weight="800" fill="#18a058">x = 4</text>
+  </svg><div class="cap">x + 6 = 10 on a balance. Take 6 from both pans and it still balances: x = 4.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 2.5 · Q1</div>
+    <div class="q">Copy and complete to solve these equations. Check your answers are correct. a) x + 6 = 10 &nbsp; b) x − 6 = 10 &nbsp; c) 2x = 10</div>
+    <div class="work"><div>a) x + 6 − 6 = 10 − 6, so <span class="ans">x = 4</span> <i>check: 4 + 6 = 10 ✓</i></div>
+      <div>b) x − 6 + 6 = 10 + 6, so <span class="ans">x = 16</span> <i>check: 16 − 6 = 10 ✓</i></div>
+      <div>c) 2x ÷ 2 = 10 ÷ 2, so <span class="ans">x = 5</span> <i>check: 2 × 5 = 10 ✓</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.5 · Q2</div>
+    <div class="q">Solve each of these equations and check your answers.</div>
+    <table><tr><th>Equation</th><th>Do this to both sides</th><th>Answer</th><th>Equation</th><th>Do this to both sides</th><th>Answer</th></tr>
+      <tr><td>a) x + 4 = 11</td><td>− 4: 11 − 4</td><td class="ans">x = 7</td><td>g) x − 12 = 14</td><td>+ 12: 14 + 12</td><td class="ans">x = 26</td></tr>
+      <tr><td>b) x + 3 = 6</td><td>− 3: 6 − 3</td><td class="ans">x = 3</td><td>h) x − 18 = 30</td><td>+ 18: 30 + 18</td><td class="ans">x = 48</td></tr>
+      <tr><td>c) 2 + x = 15</td><td>− 2: 15 − 2</td><td class="ans">x = 13</td><td>i) 3x = 12</td><td>÷ 3: 12 ÷ 3</td><td class="ans">x = 4</td></tr>
+      <tr><td>d) 7 + x = 19</td><td>− 7: 19 − 7</td><td class="ans">x = 12</td><td>j) 5x = 30</td><td>÷ 5: 30 ÷ 5</td><td class="ans">x = 6</td></tr>
+      <tr><td>e) x − 4 = 9</td><td>+ 4: 9 + 4</td><td class="ans">x = 13</td><td>k) 7x = 70</td><td>÷ 7: 70 ÷ 7</td><td class="ans">x = 10</td></tr>
+      <tr><td>f) x − 2 = 8</td><td>+ 2: 8 + 2</td><td class="ans">x = 10</td><td>l) 12x = 72</td><td>÷ 12: 72 ÷ 12</td><td class="ans">x = 6</td></tr>
+    </table>
+    <div class="small">Check each one by putting x back in, e.g. h) 48 − 18 = 30 ✓, l) 12 × 6 = 72 ✓.</div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Do the opposite, not the same.</b> For x − 4 = 9, add 4 (x = 13), don't take it away (x = 5 is wrong: 5 − 4 = 1, not 9). For 3x = 12, divide by 3 (x = 4); don't take away 3.</div>
+  <div class="box tip"><span class="lab">Tip</span>The check takes ten seconds and catches nearly every mistake. Always write it.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Solve x + 9 = 23.</li><li>Solve x − 7 = 15.</li><li>Solve 8x = 56.</li></ol></div>
+
+  <h2><span class="n">2.6</span> Inequalities</h2>
+  <p>An <b>inequality</b> says one side is bigger than the other. <span class="m">&lt;</span> means "is less than" and <span class="m">&gt;</span> means "is greater than". <span class="m">x &gt; 4</span> means x could be any number bigger than 4, but not 4 itself.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Read the sign from left to right: <span class="m">x &lt; 10</span> is "x is less than 10"; <span class="m">x &gt; 10</span> is "x is greater than 10".</li>
+    <li>The <b>open (wide) end</b> of the sign faces the bigger number.</li>
+    <li>On a number line: an <b>open circle</b> on the number (it is not allowed), and an arrow towards the numbers that work.</li>
+    <li>An <b>integer</b> is a whole number (it can be negative). For <span class="m">y &gt; 4</span>, the smallest integer is the next whole number <b>up</b>: 5.</li>
+  </ol>
+  <div class="fig"><svg width="520" height="96" viewBox="0 0 520 96">
+    <line x1="20" y1="40" x2="500" y2="40" stroke="#1f2433" stroke-width="2"/>
+    <g font-size="14" text-anchor="middle" fill="#1f2433">
+      <line x1="40" y1="34" x2="40" y2="46" stroke="#1f2433" stroke-width="2"/><text x="40" y="66">0</text>
+      <line x1="100" y1="34" x2="100" y2="46" stroke="#1f2433" stroke-width="2"/><text x="100" y="66">1</text>
+      <line x1="160" y1="34" x2="160" y2="46" stroke="#1f2433" stroke-width="2"/><text x="160" y="66">2</text>
+      <line x1="220" y1="34" x2="220" y2="46" stroke="#1f2433" stroke-width="2"/><text x="220" y="66">3</text>
+      <line x1="280" y1="34" x2="280" y2="46" stroke="#1f2433" stroke-width="2"/><text x="280" y="66" font-weight="800">4</text>
+      <line x1="340" y1="34" x2="340" y2="46" stroke="#1f2433" stroke-width="2"/><text x="340" y="66" font-weight="800" fill="#18a058">5</text>
+      <line x1="400" y1="34" x2="400" y2="46" stroke="#1f2433" stroke-width="2"/><text x="400" y="66" fill="#18a058">6</text>
+      <line x1="460" y1="34" x2="460" y2="46" stroke="#1f2433" stroke-width="2"/><text x="460" y="66" fill="#18a058">7</text></g>
+    <path d="M288,20 H492" stroke="#e06a1b" stroke-width="5" marker-end="url(#ah6)"/>
+    <circle cx="280" cy="20" r="8" fill="#fff" stroke="#e06a1b" stroke-width="3"/>
+    <text x="150" y="20" text-anchor="middle" font-size="18" font-weight="800" fill="#a84a0c">y &gt; 4</text>
+    <text x="400" y="88" text-anchor="middle" font-size="12" fill="#5b6275">smallest integer: 5, then 6, 7, …</text>
+    <defs><marker id="ah6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#e06a1b"/></marker></defs>
+  </svg><div class="cap">y &gt; 4: an open circle at 4 (4 is not allowed) and an arrow to the right. The integers that work are 5, 6, 7, …</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 2.6 · Q1 and Q2</div>
+    <div class="q">Q1: Write in words what each of these inequalities means. Q2: Write these statements as inequalities.</div>
+    <div class="two"><div class="work"><div>Q1 a) x &lt; 10: <span class="ans">x is less than 10</span></div><div>b) x &gt; 10: <span class="ans">x is greater than 10</span></div>
+      <div>c) x &lt; −4: <span class="ans">x is less than −4</span></div><div>d) x &gt; −4: <span class="ans">x is greater than −4</span></div></div>
+      <div class="work"><div>Q2 a) y is greater than 8: <span class="ans">y &gt; 8</span></div><div>b) n is greater than −1: <span class="ans">n &gt; −1</span></div>
+      <div>c) p is less than zero: <span class="ans">p &lt; 0</span></div><div>d) q is less than −2: <span class="ans">q &lt; −2</span></div></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 2.6 · Q6</div>
+    <div class="q">For each of these inequalities: a) y &gt; 4 &nbsp; b) y &gt; −7 &nbsp; c) y &gt; 2.5 &nbsp; (i) Write down the smallest integer that y could be. (ii) Write a list of the integer values that y could be.</div>
+    <table><tr><th>Inequality</th><th>(i) Smallest integer</th><th>(ii) Integer values</th><th>Why</th></tr>
+      <tr><td>a) y &gt; 4</td><td class="ans">5</td><td class="ans">5, 6, 7, …</td><td>4 is not allowed; the next whole number up is 5</td></tr>
+      <tr><td>b) y &gt; −7</td><td class="ans">−6</td><td class="ans">−6, −5, −4, …</td><td>going up from −7 means towards 0: −6 is bigger than −7</td></tr>
+      <tr><td>c) y &gt; 2.5</td><td class="ans">3</td><td class="ans">3, 4, 5, …</td><td>2.5 is not whole; the next whole number up is 3</td></tr>
+    </table></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Negative numbers go the other way.</b> −6 is <i>greater</i> than −7 (it is nearer 0, further right on the number line). So the smallest integer for y &gt; −7 is −6, not −8.</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>The crocodile eats the bigger number.</b> The open mouth of &lt; or &gt; always faces the bigger side: 3 &lt; 8, 8 &gt; 3.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Write in words what m &lt; 3 means.</li><li>Write as an inequality: k is greater than −3.</li><li>For y &gt; 6.5, write the smallest integer y could be, and a list of the integer values y could be.</li></ol></div>
+</div>
+
+<div class="unit c4">
+  <div class="banner"><div class="big">4</div><div><h1>Decimals</h1><p>Ordering and comparing decimals, quick mental methods, multiplying decimals, dividing decimals and sharing money.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>Every digit in a decimal has a <b>place value</b>: ones, then <b>tenths</b>, <b>hundredths</b>, <b>thousandths</b>. Line the digits up by place value and decimals work just like whole numbers. <b>Always estimate first</b>, so you can spot a decimal point in the wrong place.</span></div>
+
+  <h2><span class="n">4.1</span> Ordering and comparing decimals</h2>
+  <p>To compare two decimals, compare them <b>place by place</b>, starting from the left. The first place where the digits differ decides which number is bigger.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Compare the <b>whole-number parts</b> first. If one is bigger, that number is bigger.</li>
+    <li>If they are the same, line up the decimal points and <b>pad with zeros</b> so both have the same number of decimal places (2.19 → 2.190).</li>
+    <li>Compare the <b>tenths</b>, then the <b>hundredths</b>, then the <b>thousandths</b>, until two digits are different.</li>
+    <li>Write the sign: <span class="m">&lt;</span> means "is smaller than", <span class="m">&gt;</span> means "is bigger than". <span class="m">=</span> means equal, <span class="m">≠</span> means "not equal".</li>
+  </ol>
+  <div class="fig"><svg width="580" height="150" viewBox="0 0 580 150">
+    <rect x="150" y="6" width="84" height="138" rx="8" fill="#ffd84d" opacity=".45"/>
+    <text x="70" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#5b6275">Ones</text>
+    <text x="192" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#5b6275">Tenths</text>
+    <text x="290" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#5b6275">Hundredths</text>
+    <text x="400" y="26" text-anchor="middle" font-size="13" font-weight="700" fill="#5b6275">Thousandths</text>
+    <line x1="10" y1="36" x2="460" y2="36" stroke="#dfe3ec" stroke-width="2"/>
+    <g font-size="30" font-weight="800" text-anchor="middle">
+      <text x="70" y="78" fill="#1f2433">2</text><text x="128" y="78" fill="#1f2433">.</text><text x="192" y="78" fill="#2c66cf">1</text><text x="290" y="78" fill="#1f2433">9</text><text x="400" y="78" fill="#e04848">0</text>
+      <text x="70" y="126" fill="#1f2433">2</text><text x="128" y="126" fill="#1f2433">.</text><text x="192" y="126" fill="#2c66cf">2</text><text x="290" y="126" fill="#1f2433">0</text><text x="400" y="126" fill="#1f2433">5</text>
+    </g>
+    <text x="470" y="78" font-size="13" fill="#e04848">← padded zero</text>
+    <text x="470" y="104" font-size="13" font-weight="700" fill="#1c4a9c">1 &lt; 2,</text>
+    <text x="470" y="120" font-size="13" font-weight="700" fill="#1c4a9c">so</text>
+    <text x="470" y="136" font-size="13" font-weight="700" fill="#1c4a9c">2.19 &lt; 2.205</text>
+  </svg><div class="cap">Line up the place values and pad 2.19 to 2.190. The ones are equal, so look at the tenths: 1 tenth is less than 2 tenths.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 4.1 · Q1</div>
+    <div class="q">Write down which is the smallest decimal number.</div>
+    <table><tr><th>Numbers</th><th>Why</th><th>Smallest</th></tr>
+      <tr><td>a) 13.5, 9.99</td><td>9 ones &lt; 13 ones</td><td class="ans">9.99</td></tr>
+      <tr><td>b) 4.32, 3.67</td><td>3 ones &lt; 4 ones</td><td class="ans">3.67</td></tr>
+      <tr><td>c) 12.56, 21.652</td><td>12 &lt; 21</td><td class="ans">12.56</td></tr>
+      <tr><td>d) 127.06, 246.9</td><td>127 &lt; 246</td><td class="ans">127.06</td></tr>
+      <tr><td>e) 0.67, 0.72</td><td>tenths: 6 &lt; 7</td><td class="ans">0.67</td></tr>
+      <tr><td>f) 3.4, 3.21</td><td>tenths: 2 &lt; 4 (3.21 vs 3.40)</td><td class="ans">3.21</td></tr>
+      <tr><td>g) 18.54, 18.45</td><td>tenths: 4 &lt; 5</td><td class="ans">18.45</td></tr>
+      <tr><td>h) 0.05, 0.043</td><td>0.050 vs 0.043: hundredths 4 &lt; 5</td><td class="ans">0.043</td></tr>
+      <tr><td>i) 0.09, 0.1</td><td>0.09 vs 0.10: tenths 0 &lt; 1</td><td class="ans">0.09</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.1 · Q4</div>
+    <div class="q">Greg uses the inequalities &lt; and &gt; to show that one number is smaller than or is larger than another number. Write the correct sign, &lt; or &gt;.</div>
+    <table><tr><th>Question</th><th>First place that differs</th><th>Answer</th></tr>
+      <tr><td>a) 6.03 ☐ 6.24</td><td>tenths: 0 &lt; 2</td><td class="ans">6.03 &lt; 6.24</td></tr>
+      <tr><td>b) 9.35 ☐ 9.41</td><td>tenths: 3 &lt; 4</td><td class="ans">9.35 &lt; 9.41</td></tr>
+      <tr><td>c) 0.49 ☐ 0.51</td><td>tenths: 4 &lt; 5</td><td class="ans">0.49 &lt; 0.51</td></tr>
+      <tr><td>d) 18.05 ☐ 18.02</td><td>hundredths: 5 &gt; 2</td><td class="ans">18.05 &gt; 18.02</td></tr>
+      <tr><td>e) 9.2 ☐ 9.01</td><td>tenths: 2 &gt; 0</td><td class="ans">9.2 &gt; 9.01</td></tr>
+      <tr><td>f) 2.19 ☐ 2.205</td><td>tenths: 1 &lt; 2</td><td class="ans">2.19 &lt; 2.205</td></tr>
+      <tr><td>g) 0.072 ☐ 0.06</td><td>hundredths: 7 &gt; 6</td><td class="ans">0.072 &gt; 0.06</td></tr>
+      <tr><td>h) 29.882 ☐ 29.82</td><td>hundredths: 8 &gt; 2</td><td class="ans">29.882 &gt; 29.82</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.1 · Q5</div>
+    <div class="q">Write the correct sign = or ≠</div>
+    <div class="work"><div>a) 4.2 and 4.20: a zero on the end changes nothing → <span class="ans">4.2 = 4.20</span></div>
+      <div>b) 3.75 and 3.57: same digits, different places → <span class="ans">3.75 ≠ 3.57</span></div>
+      <div>c) 0.340 and 0.304: 4 hundredths vs 0 hundredths → <span class="ans">0.340 ≠ 0.304</span></div>
+      <div>d) <span class="ans">9.58 = 9.580</span> <i>(end zero)</i> &nbsp; e) <span class="ans">128.00 = 128</span> <i>(no tenths, no hundredths)</i></div>
+      <div>f) 0.0034 and 0.034: the zero is <b>inside</b>, so it moves the digits → <span class="ans">0.0034 ≠ 0.034</span></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>The longer decimal is not always bigger.</b> 2.205 has more digits than 2.19, but that is not why it is bigger; 3.21 has more digits than 3.4 and is <i>smaller</i>. Always compare place by place. Zeros on the <b>end</b> after the point change nothing (4.2 = 4.20); zeros <b>straight after the point</b> do (0.034 ≠ 0.0034).</div>
+  <div class="box trick"><span class="lab">Memory trick</span>The sign is a hungry crocodile: its mouth opens towards the <b>bigger</b> number. 9.2 &gt; 9.01.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Which is the smallest: 0.8 or 0.75?</li><li>Write &lt; or &gt;: 5.306 ☐ 5.31</li><li>Write in order, smallest first: 3.4, 3.04, 3.399, 3.41</li></ol></div>
+
+  <h2><span class="n">4.2</span> Mental methods with decimals</h2>
+  <p>Many decimal sums can be done in your head. Split numbers into <b>wholes and decimals</b>, or round one number to a <b>whole number</b> and then adjust. For harder ones, use a written column method.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>Split:</b> add (or take away) the wholes, then the decimals, then put them together. 12.7 + 4.5 → 16 + 1.2 = 17.2.</li>
+    <li><b>Zara's method</b> for subtracting: wholes first, then decimals. The decimal part may go below zero: 7.4 − 2.6 → 5 and −0.2 → 4.8.</li>
+    <li><b>Round and adjust:</b> round one number to a whole, work it out, then undo the rounding. Added too much? Take it back off. Took away too much? Add it back.</li>
+    <li><b>Times by a decimal:</b> 0.3 is 3 tenths, so 4 × 0.3 = 12 tenths = 1.2.</li>
+    <li><b>Written method:</b> line up the decimal points, pad with zeros, then add or subtract in columns.</li>
+  </ol>
+  <div class="fig"><svg width="520" height="110" viewBox="0 0 520 110">
+    <line x1="20" y1="80" x2="500" y2="80" stroke="#1f2433" stroke-width="2.5"/>
+    <g stroke="#1f2433" stroke-width="2"><line x1="40" y1="74" x2="40" y2="86"/><line x1="90" y1="74" x2="90" y2="86"/><line x1="140" y1="74" x2="140" y2="86"/><line x1="190" y1="74" x2="190" y2="86"/><line x1="240" y1="74" x2="240" y2="86"/><line x1="290" y1="74" x2="290" y2="86"/><line x1="340" y1="74" x2="340" y2="86"/><line x1="390" y1="74" x2="390" y2="86"/><line x1="440" y1="74" x2="440" y2="86"/><line x1="490" y1="74" x2="490" y2="86"/></g>
+    <g font-size="12" fill="#5b6275" text-anchor="middle"><text x="40" y="102">4</text><text x="90" y="102">5</text><text x="140" y="102">6</text><text x="190" y="102">7</text><text x="240" y="102">8</text><text x="290" y="102">9</text><text x="340" y="102">10</text><text x="390" y="102">11</text><text x="440" y="102">12</text><text x="490" y="102">13</text></g>
+    <circle cx="55" cy="80" r="6" fill="#2c66cf"/><text x="55" y="66" text-anchor="middle" font-size="13" font-weight="800" fill="#2c66cf">4.3</text>
+    <path d="M55,72 Q255,-14 455,72" fill="none" stroke="#18a058" stroke-width="3"/><text x="255" y="30" text-anchor="middle" font-size="15" font-weight="800" fill="#18a058">+ 8 (instead of 7.9)</text>
+    <circle cx="455" cy="80" r="5" fill="#18a058"/><text x="470" y="66" font-size="12" font-weight="700" fill="#18a058">12.3</text>
+    <path d="M455,84 Q452,96 450,84" fill="none" stroke="#e04848" stroke-width="2.5"/>
+    <circle cx="450" cy="80" r="6" fill="#e06a1b"/><text x="408" y="60" text-anchor="middle" font-size="13" font-weight="800" fill="#e06a1b">12.2</text><text x="408" y="46" text-anchor="middle" font-size="11" fill="#e04848">− 0.1</text>
+  </svg><div class="cap">4.3 + 7.9: add 8 instead (easy!) to get 12.3. That was 0.1 too much, so take 0.1 back off: 12.2.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 4.2 · Q1</div>
+    <div class="q">Use a mental method to work out the answer to the following.</div>
+    <div class="work"><div>a) 3.5 + 4.2 → 3 + 4 = 7 and 0.5 + 0.2 = 0.7 → <span class="ans">7.7</span></div>
+      <div>b) 12.7 + 4.5 → 12 + 4 = 16 and 0.7 + 0.5 = 1.2 → 16 + 1.2 = <span class="ans">17.2</span></div>
+      <div>c) 4.9 − 1.5 → 4 − 1 = 3 and 0.9 − 0.5 = 0.4 → <span class="ans">3.4</span></div>
+      <div>d) 14.6 − 6.6 → both end in .6, so the decimals cancel: 14 − 6 = <span class="ans">8</span></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.2 · Q4</div>
+    <div class="q">Use Zara's method to mentally work out</div>
+    <table><tr><th>Question</th><th>Wholes</th><th>Decimals</th><th>Put together</th></tr>
+      <tr><td>a) 7.4 − 2.6</td><td>7 − 2 = 5</td><td>0.4 − 0.6 = −0.2</td><td class="ans">5 − 0.2 = 4.8</td></tr>
+      <tr><td>b) 8.3 − 2.9</td><td>8 − 2 = 6</td><td>0.3 − 0.9 = −0.6</td><td class="ans">6 − 0.6 = 5.4</td></tr>
+      <tr><td>c) 12.5 − 9.8</td><td>12 − 9 = 3</td><td>0.5 − 0.8 = −0.3</td><td class="ans">3 − 0.3 = 2.7</td></tr>
+      <tr><td>d) 15.1 − 5.7</td><td>15 − 5 = 10</td><td>0.1 − 0.7 = −0.6</td><td class="ans">10 − 0.6 = 9.4</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.2 · Q6</div>
+    <div class="q">Use the method of rounding one of the numbers to a whole number.</div>
+    <table><tr><th>Question</th><th>Round</th><th>Work out</th><th>Adjust</th></tr>
+      <tr><td>a) 4.3 + 7.9</td><td>7.9 → 8 (+0.1)</td><td>4.3 + 8 = 12.3</td><td class="ans">− 0.1 → 12.2</td></tr>
+      <tr><td>b) 8.9 + 9.6</td><td>8.9 → 9 (+0.1)</td><td>9 + 9.6 = 18.6</td><td class="ans">− 0.1 → 18.5</td></tr>
+      <tr><td>c) 22.8 + 3.3</td><td>22.8 → 23 (+0.2)</td><td>23 + 3.3 = 26.3</td><td class="ans">− 0.2 → 26.1</td></tr>
+      <tr><td>d) 5.4 − 1.9</td><td>1.9 → 2 (took 0.1 too much)</td><td>5.4 − 2 = 3.4</td><td class="ans">+ 0.1 → 3.5</td></tr>
+      <tr><td>e) 14.9 − 4.4</td><td>14.9 → 15 (+0.1)</td><td>15 − 4.4 = 10.6</td><td class="ans">− 0.1 → 10.5</td></tr>
+      <tr><td>f) 21.1 − 6.7</td><td>6.7 → 7 (took 0.3 too much)</td><td>21.1 − 7 = 14.1</td><td class="ans">+ 0.3 → 14.4</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.2 · Q7 and Q15</div>
+    <div class="q">Use a written method to work out the following.</div>
+    <div class="work"><div>Q7 a) 25.81 + 8.40 (pad with a zero) → <span class="ans">34.21</span> &nbsp; b) 8.76 − 4.10 → <span class="ans">4.66</span> &nbsp; c) 38.91 − 9.78 → <span class="ans">29.13</span></div>
+      <div>Q15 a) −5.43 − 9.57: both take you further below zero, so add 5.43 + 9.57 = 15.00 and keep the minus → <span class="ans">−15</span></div>
+      <div>Q15 b) −8.12 − 15.4: add 8.12 + 15.40 = 23.52, keep the minus → <span class="ans">−23.52</span></div>
+      <div>Q15 d) −8.12 − −15.4: minus a minus is plus, so −8.12 + 15.4 = 15.40 − 8.12 → <span class="ans">7.28</span></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.3 · Q1 and Q2</div>
+    <div class="q">Use a mental method to work out the following.</div>
+    <div class="work"><div>Q1 a) 0.1 × 8 = 8 tenths = <span class="ans">0.8</span> &nbsp; b) 0.5 × 5 = 25 tenths = <span class="ans">2.5</span> &nbsp; c) 0.9 × 2 = 18 tenths = <span class="ans">1.8</span></div>
+      <div>Q2 a) 6 × 0.02 = 12 hundredths = <span class="ans">0.12</span> &nbsp; b) 4 × 0.3 = 12 tenths = <span class="ans">1.2</span></div>
+      <div>Q2 c) 3 × 0.004 = 12 thousandths = <span class="ans">0.012</span> &nbsp; d) 120 × 0.1 = 120 tenths = <span class="ans">12</span> <i>(× 0.1 is the same as ÷ 10)</i></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span>When you round and adjust, think about <b>which way</b> to adjust. In 5.4 − 1.9 you took away 2, which is 0.1 <b>too much</b>, so you must <b>add</b> 0.1 back: 3.5, not 3.3. And in a written method, always line up the <b>decimal points</b>, not the last digits.</div>
+  <div class="box tip"><span class="lab">Exam tip</span>Check a subtraction by adding back: 2.7 + 9.8 = 12.5 ✔. If it doesn't come back to the starting number, look again.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Use Zara's method: 9.2 − 3.7</li><li>Round one number to a whole number: 5.6 + 2.9</li><li>Work out mentally: 7 × 0.03</li></ol></div>
+
+  <h2><span class="n">4.3</span> Multiplying decimals</h2>
+  <p>To multiply decimals, forget the decimal points for a moment, multiply whole numbers, then put the point back. An <b>estimate</b> tells you if the point is in the right place.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>Estimate</b> by rounding: 3.2 × 52 ≈ 3 × 50 = 150.</li>
+    <li><b>Ignore the points</b> and multiply the whole numbers: 32 × 52 = 1664.</li>
+    <li><b>Count the decimal places</b> in the question (digits after the points): 3.2 has 1.</li>
+    <li>Give the answer the <b>same number of decimal places</b>: 166.4. Check it is close to your estimate.</li>
+    <li>Shortcuts: <b>0.6 × 410</b> = 6 tenths of 410 = 6 × 41; <b>× 9</b> = × 10, then take one lot away.</li>
+  </ol>
+  <div class="fig"><svg width="520" height="118" viewBox="0 0 520 118">
+    <defs><marker id="ah4" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f2433"/></marker></defs>
+    <rect x="6" y="20" width="130" height="56" rx="12" fill="#e5eefc" stroke="#2c66cf" stroke-width="2"/><text x="71" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="#1f2433">3<tspan fill="#e04848">.</tspan>2 × 52</text>
+    <path d="M140,48 h34" stroke="#1f2433" stroke-width="3" marker-end="url(#ah4)"/>
+    <rect x="180" y="20" width="150" height="56" rx="12" fill="#3b4152"/><text x="255" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="#ffd84d">32 × 52 = 1664</text>
+    <path d="M334,48 h34" stroke="#1f2433" stroke-width="3" marker-end="url(#ah4)"/>
+    <rect x="374" y="20" width="140" height="56" rx="28" fill="#18a058"/><text x="444" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">166.4</text>
+    <text x="71" y="98" text-anchor="middle" font-size="12" fill="#5b6275">1 decimal place</text>
+    <text x="255" y="98" text-anchor="middle" font-size="12" fill="#5b6275">ignore the point, multiply</text>
+    <text x="444" y="98" text-anchor="middle" font-size="12" fill="#5b6275">put back 1 decimal place</text>
+    <text x="444" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#1c4a9c">estimate 150 ✔</text>
+  </svg><div class="cap">Ignore the point, multiply, then count the decimal places and put them back. The estimate (3 × 50 = 150) shows 166.4 is sensible.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 4.3 · Q8</div>
+    <div class="q">Work out these multiplications. Show how to check your answer.</div>
+    <table><tr><th>Question</th><th>Ignore the points</th><th>Decimal places</th><th>Answer</th><th>Check</th></tr>
+      <tr><td>a) 3.2 × 52</td><td>32 × 52 = 1664</td><td>1</td><td class="ans">166.4</td><td>3 × 50 = 150</td></tr>
+      <tr><td>b) 8.1 × 384</td><td>81 × 384 = 31104</td><td>1</td><td class="ans">3110.4</td><td>8 × 400 = 3200</td></tr>
+      <tr><td>c) 0.78 × 41</td><td>78 × 41 = 3198</td><td>2</td><td class="ans">31.98</td><td>0.8 × 40 = 32</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.5 · Q2</div>
+    <div class="q">Work out the answer of the following.</div>
+    <div class="work"><div>a) 0.6 × 410 = 6 × 41 = 6 × 40 + 6 × 1 = 240 + 6 = <span class="ans">246</span> <i>(0.6 = 6 tenths; a tenth of 410 is 41)</i></div>
+      <div>b) 0.9 × 320 = 9 × 32 = 9 × 30 + 9 × 2 = 270 + 18 = <span class="ans">288</span></div>
+      <div>c) 0.02 × 3200 = 2 × 32 = <span class="ans">64</span> <i>(0.02 = 2 hundredths; a hundredth of 3200 is 32)</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.5 · Q6 and Q8</div>
+    <div class="q">Work out the answer to the following.</div>
+    <div class="work"><div>Q6 a) 6.8 × 9 = 6.8 × 10 − 6.8 = 68 − 6.8 = <span class="ans">61.2</span></div>
+      <div>Q6 b) 4.7 × 9 = 47 − 4.7 = <span class="ans">42.3</span> &nbsp; c) 12.6 × 9 = 126 − 12.6 = <span class="ans">113.4</span></div>
+      <div>Q8 a) 4.2 × 6: 42 × 6 = 252 → <span class="ans">25.2</span> &nbsp; b) 7.8 × 5: 78 × 5 = 390 → 39.0 = <span class="ans">39</span> &nbsp; c) 6.3 × 8: 63 × 8 = 504 → <span class="ans">50.4</span></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>A misplaced decimal point</b> makes the answer 10 times too big or too small. 3.2 × 52 is not 1664 or 16.64: the estimate 150 says 166.4. Count the decimal places in the <b>question</b>, not in your working.</div>
+  <div class="box real"><span class="lab">Estimate first</span>Round each number to one easy digit before you start: 0.78 × 41 ≈ 0.8 × 40 = 32. If your answer is nowhere near 32, the point is in the wrong place.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Work out 2.6 × 34. Show how to check your answer.</li><li>Work out 0.7 × 520.</li><li>Work out 5.3 × 9 (use 9 = 10 − 1).</li></ol></div>
+
+  <h2><span class="n">4.4</span> Dividing decimals and money problems</h2>
+  <p>To divide a decimal by a whole number, use <b>short division</b> (the "bus stop"). The decimal point in the answer goes <b>straight above</b> the point in the number. Sharing money equally is just division.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>Estimate</b> first: 18.25 ÷ 5 ≈ 20 ÷ 5 = 4.</li>
+    <li>Write the bus stop. Put the <b>decimal point in the answer</b> straight above the one inside.</li>
+    <li>Divide digit by digit from the left. Carry each <b>remainder</b> to the next digit.</li>
+    <li>If the divisor has two digits (12, 15, 25), use the first two or three digits together: 27 ÷ 12 = 2 r 3.</li>
+    <li><b>Check by multiplying back:</b> 3.65 × 5 = 18.25 ✔. For money, write the answer with 2 decimal places and a $ sign.</li>
+  </ol>
+  <div class="fig"><svg width="420" height="120" viewBox="0 0 420 120">
+    <text x="60" y="84" text-anchor="middle" font-size="30" font-weight="800" fill="#e06a1b">5</text>
+    <path d="M86,50 Q98,72 86,96" fill="none" stroke="#1f2433" stroke-width="3"/>
+    <line x1="88" y1="50" x2="300" y2="50" stroke="#1f2433" stroke-width="3"/>
+    <g font-size="30" font-weight="800" text-anchor="middle" fill="#1f2433"><text x="120" y="84">1</text><text x="152" y="84">8</text><text x="176" y="84" fill="#e04848">.</text><text x="210" y="84">2</text><text x="260" y="84">5</text></g>
+    <g font-size="15" font-weight="800" fill="#e04848"><text x="190" y="70">3</text><text x="240" y="70">2</text></g>
+    <g font-size="30" font-weight="800" text-anchor="middle" fill="#2c66cf"><text x="152" y="40">3</text><text x="176" y="40" fill="#e04848">.</text><text x="210" y="40">6</text><text x="260" y="40">5</text></g>
+    <g font-size="12" fill="#5b6275"><text x="318" y="34">18 ÷ 5 = 3 r 3</text><text x="318" y="56">32 ÷ 5 = 6 r 2</text><text x="318" y="78">25 ÷ 5 = 5</text></g>
+    <text x="210" y="114" text-anchor="middle" font-size="12" fill="#5b6275">Small red digits are carried remainders.</text>
+  </svg><div class="cap">Short division (the bus stop): 18.25 ÷ 5 = 3.65.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 4.3 · Q4</div>
+    <div class="q">In a supermarket, five chickens cost $18.25. What is the cost of one chicken?</div>
+    <div class="work"><div>Many → one, so divide: 18.25 ÷ 5 <i>(estimate 20 ÷ 5 = 4)</i></div><div>18 ÷ 5 = 3 r 3; 32 ÷ 5 = 6 r 2; 25 ÷ 5 = 5</div><div>One chicken costs <span class="ans">$3.65</span> <i>(check: 3.65 × 5 = 18.25 ✔)</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.3 · Q5</div>
+    <div class="q">Six friends have a meal in a restaurant. The total bill is $145.50. They share the bill equally. How much do they each pay?</div>
+    <div class="work"><div>Share equally, so divide: 145.50 ÷ 6 <i>(estimate 150 ÷ 6 = 25)</i></div><div>14 ÷ 6 = 2 r 2; 25 ÷ 6 = 4 r 1; 15 ÷ 6 = 2 r 3; 30 ÷ 6 = 5</div><div>Each friend pays <span class="ans">$24.25</span> <i>(check: 24.25 × 6 = 145.50 ✔)</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.4 · Q3</div>
+    <div class="q">Maggie pays $9.28 for 8 m of ribbon. What is the cost of the ribbon, per metre?</div>
+    <div class="work"><div>Per metre means ÷ 8: 9 ÷ 8 = 1 r 1; 12 ÷ 8 = 1 r 4; 48 ÷ 8 = 6</div><div>Cost per metre = <span class="ans">$1.16</span> <i>(check: 1.16 × 8 = 9.28 ✔)</i></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 4.4 · Q2 and Q6</div>
+    <div class="q">Q2: Work out. &nbsp; Q6: Complete these divisions.</div>
+    <table><tr><th>Question</th><th>Bus-stop steps</th><th>Answer</th></tr>
+      <tr><td>Q2 a) 8.654 ÷ 2</td><td>8÷2 = 4; 6÷2 = 3; 5÷2 = 2 r 1; 14÷2 = 7</td><td class="ans">4.327</td></tr>
+      <tr><td>Q2 b) 8.922 ÷ 6</td><td>8÷6 = 1 r 2; 29÷6 = 4 r 5; 52÷6 = 8 r 4; 42÷6 = 7</td><td class="ans">1.487</td></tr>
+      <tr><td>Q2 c) 32.925 ÷ 5</td><td>32÷5 = 6 r 2; 29÷5 = 5 r 4; 42÷5 = 8 r 2; 25÷5 = 5</td><td class="ans">6.585</td></tr>
+      <tr><td>Q2 d) 58.912 ÷ 8</td><td>58÷8 = 7 r 2; 29÷8 = 3 r 5; 51÷8 = 6 r 3; 32÷8 = 4</td><td class="ans">7.364</td></tr>
+      <tr><td>Q6 a) 27.852 ÷ 12</td><td>27÷12 = 2 r 3; 38÷12 = 3 r 2; 25÷12 = 2 r 1; 12÷12 = 1</td><td class="ans">2.321</td></tr>
+      <tr><td>Q6 b) 46.875 ÷ 15</td><td>46÷15 = 3 r 1; 18÷15 = 1 r 3; 37÷15 = 2 r 7; 75÷15 = 5</td><td class="ans">3.125</td></tr>
+      <tr><td>Q6 c) 782.825 ÷ 25</td><td>78÷25 = 3 r 3; 32÷25 = 1 r 7; 78÷25 = 3 r 3; 32÷25 = 1 r 7; 75÷25 = 3</td><td class="ans">31.313</td></tr>
+    </table></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Put the point in the answer first</b>, straight above the point inside the bus stop. A point in the wrong place makes 3.65 into 36.5. Don't forget the remainders: each one is carried to the <b>next</b> digit. And for money, $39 is fine, but $3.6 should be written <b>$3.60</b>.</div>
+  <div class="box tip"><span class="lab">Exam tip</span>Words like <b>each</b>, <b>per</b>, <b>one</b> and <b>share equally</b> mean divide. Always check by multiplying back: 2.321 × 12 = 27.852 ✔.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Work out 9.636 ÷ 3.</li><li>Four cinema tickets cost $27.40. What is the cost of one ticket?</li><li>Work out 51.75 ÷ 15.</li></ol></div>
+</div>
+<!-- ============ CHAPTER 6 ============ -->
+<div class="unit c6">
+  <div class="banner"><div class="big">6</div><div><h1>Collecting Data</h1><p>Naming the type of data, using questionnaires, and finding the mode, median and mean of a set of numbers.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>Data is information we collect to answer a question. First decide <b>what kind</b> of data it is. Then use one number, an <b>average</b>, to describe the whole set: the <b>mode</b>, the <b>median</b> or the <b>mean</b>.</span></div>
+
+  <h2><span class="n">6.1</span> Types of data and questionnaires</h2>
+  <p>Every piece of data is one of three types. Ask yourself: is it a <b>word</b>, a number you <b>count</b>, or a number you <b>measure</b>?</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Is the answer a <b>word or a group</b> (a colour, a subject, a pet)? It is <b>categorical</b>.</li>
+    <li>Is it a number you <b>count</b> or that can only be certain values (pages, people, shoe size 5, 5½, 6)? It is <b>discrete</b>.</li>
+    <li>Is it a number you <b>measure</b> that can be any value, even 1.37 (mass, height, time, length)? It is <b>continuous</b>.</li>
+  </ol>
+  <div class="fig"><svg width="540" height="104" viewBox="0 0 540 104">
+    <rect x="4" y="4" width="168" height="96" rx="14" fill="#e4f6ec" stroke="#17935b" stroke-width="2"/>
+    <text x="88" y="30" text-anchor="middle" font-size="16" font-weight="800" fill="#0e6b41">Categorical</text>
+    <text x="88" y="52" text-anchor="middle" font-size="12" fill="#1f2433">words or groups</text>
+    <text x="88" y="80" text-anchor="middle" font-size="22">🎨 📚 🐱</text>
+    <rect x="186" y="4" width="168" height="96" rx="14" fill="#e5eefc" stroke="#2c66cf" stroke-width="2"/>
+    <text x="270" y="30" text-anchor="middle" font-size="16" font-weight="800" fill="#1c4a9c">Discrete</text>
+    <text x="270" y="52" text-anchor="middle" font-size="12" fill="#1f2433">you COUNT it</text>
+    <text x="270" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#1c4a9c">1, 2, 3 pages</text>
+    <rect x="368" y="4" width="168" height="96" rx="14" fill="#fdeedf" stroke="#e06a1b" stroke-width="2"/>
+    <text x="452" y="30" text-anchor="middle" font-size="16" font-weight="800" fill="#a84a0c">Continuous</text>
+    <text x="452" y="52" text-anchor="middle" font-size="12" fill="#1f2433">you MEASURE it</text>
+    <text x="452" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#a84a0c">1.37 kg, 152.4 cm</text>
+  </svg><div class="cap">The three types of data. Words → categorical; counting → discrete; measuring → continuous.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 6.1 · Q1 and Q2</div>
+    <div class="q">Q1 Choose the correct word (discrete, continuous, categorical) to describe the following. Q2 Here are some facts about a person. Write down the type of data for each fact.</div>
+    <table><tr><th>Fact</th><th>Ask yourself</th><th>Type</th></tr>
+      <tr><td>Q1 1) The mass of a book</td><td>measured on scales, any value</td><td class="ans">continuous</td></tr>
+      <tr><td>Q1 2) The colour of a book</td><td>a word</td><td class="ans">categorical</td></tr>
+      <tr><td>Q1 3) The number of pages in a book</td><td>counted</td><td class="ans">discrete</td></tr>
+      <tr><td>Q2 a) age, in years</td><td>whole years: 11, 12, 13</td><td class="ans">discrete</td></tr>
+      <tr><td>Q2 b) shoe size</td><td>only certain sizes: 5, 5½, 6</td><td class="ans">discrete</td></tr>
+      <tr><td>Q2 c) height</td><td>measured, any value</td><td class="ans">continuous</td></tr>
+      <tr><td>Q2 d) time to travel to school</td><td>measured, any value</td><td class="ans">continuous</td></tr>
+      <tr><td>Q2 e) favourite subject</td><td>a word</td><td class="ans">categorical</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Getting started · Q1 and Q2</div>
+    <div class="q">a) What is a questionnaire? &nbsp; b) Why would you use a questionnaire?</div>
+    <div class="work"><div>a) <span class="ans">A set of questions used in a survey.</span></div><div>b) <span class="ans">To investigate a statistical question or to test a prediction.</span> <i>(for example: "Do most students in my class walk to school?")</i></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>A number is not always continuous.</b> Age in years and shoe size are numbers, but they jump from one value to the next, so they are <b>discrete</b>. Continuous data is <b>measured</b> and can be any value in between.</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>Count → Discrete. Measure → Continuous. Words → Categorical.</b> "You can't have 2.5 people, but you can be 152.5 cm tall."</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>What type of data is the number of goals scored in a football match?</li><li>What type of data is the length of a pencil?</li><li>What type of data is a person's favourite fruit?</li></ol></div>
+
+  <h2><span class="n">6.2</span> Mode, median and mean</h2>
+  <p>An <b>average</b> is one number that sums up a whole set of data. There are three kinds, and each is found in its own way.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>Mode</b>: the value that appears <b>most often</b>. Count how many times each value appears.</li>
+    <li><b>Median</b>: the <b>middle</b> value. First <b>put the numbers in order</b>, smallest to largest. With an odd number of values, take the one in the middle. With an <b>even</b> number of values there are two in the middle: add them and divide by 2.</li>
+    <li><b>Mean</b>: <b>add up</b> all the values, then <b>divide by how many</b> values there are.</li>
+  </ol>
+  <div class="fig"><svg width="552" height="112" viewBox="0 0 552 112">
+    <path d="M249,24 v-8 h53 v8" fill="none" stroke="#e0a800" stroke-width="2.5"/>
+    <text x="276" y="11" text-anchor="middle" font-size="12" font-weight="800" fill="#8a6a00">middle two: (15 + 15) ÷ 2 = 15 = median</text>
+    <rect x="6" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="18" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">7</text><rect x="33" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="45" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">8</text><rect x="60" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="72" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">8</text><rect x="87" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="99" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">9</text><rect x="114" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="126" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">12</text><rect x="141" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="153" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">14</text><rect x="168" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="180" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">14</text><rect x="195" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="207" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">14</text><rect x="222" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="234" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">15</text><rect x="249" y="30" width="24" height="30" rx="5" fill="#ffd84d" stroke="#e0a800" stroke-width="1.5"/><text x="261" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">15</text><rect x="276" y="30" width="24" height="30" rx="5" fill="#ffd84d" stroke="#e0a800" stroke-width="1.5"/><text x="288" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">15</text><rect x="303" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="315" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">16</text><rect x="330" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="342" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">16</text><rect x="357" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="369" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">17</text><rect x="384" y="30" width="24" height="30" rx="5" fill="#18a058" stroke="#17935b" stroke-width="1.5"/><text x="396" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">18</text><rect x="411" y="30" width="24" height="30" rx="5" fill="#18a058" stroke="#17935b" stroke-width="1.5"/><text x="423" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">18</text><rect x="438" y="30" width="24" height="30" rx="5" fill="#18a058" stroke="#17935b" stroke-width="1.5"/><text x="450" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">18</text><rect x="465" y="30" width="24" height="30" rx="5" fill="#18a058" stroke="#17935b" stroke-width="1.5"/><text x="477" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">18</text><rect x="492" y="30" width="24" height="30" rx="5" fill="#18a058" stroke="#17935b" stroke-width="1.5"/><text x="504" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">18</text><rect x="519" y="30" width="24" height="30" rx="5" fill="#e4f6ec" stroke="#17935b" stroke-width="1.5"/><text x="531" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#1f2433">20</text>
+    <path d="M384,66 v8 h132 v-8" fill="none" stroke="#17935b" stroke-width="2.5"/>
+    <text x="450" y="90" text-anchor="middle" font-size="12" font-weight="800" fill="#0e6b41">18 appears 5 times = mode</text>
+    <text x="10" y="90" font-size="12" font-weight="700" fill="#5b6275">10 marks on each side of the middle</text>
+    <text x="10" y="106" font-size="12" font-weight="700" fill="#5b6275">mean = 290 ÷ 20 = 14.5</text>
+  </svg><div class="cap">The 20 test marks in order. The 10th and 11th marks (yellow) are in the middle; the 18s (green) are the most common.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Getting started · Q4</div>
+    <div class="q">Here are 20 test marks: 7 8 8 9 12 14 14 14 15 15 15 16 16 17 18 18 18 18 18 20. a) Which mark is the mode? b) Which mark is the median? c) The sum of the marks is 290. What is the mean mark?</div>
+    <div class="work"><div>a) Count each mark: 14 appears 3 times, 15 appears 3 times, 18 appears <b>5 times</b>. Mode = <span class="ans">18</span></div>
+      <div>b) The marks are already in order. There are 20 marks (even), so the middle two are the 10th and 11th: 15 and 15.</div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;Median = (15 + 15) ÷ 2 = 30 ÷ 2 = <span class="ans">15</span></div>
+      <div>c) Mean = sum ÷ how many = 290 ÷ 20 = <span class="ans">14.5</span> <i>(the mean does not have to be one of the marks)</i></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Always sort the numbers before finding the median.</b> The middle of a jumbled list is not the median. And for the <b>mean</b>, divide by <b>how many</b> numbers there are (20 here), not by the largest number.</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>MOde = MOst. MEDian = MIDDLE</b> (like the median strip in the middle of a road). <b>MEAN</b> is the "mean" one: it makes you do the most work, add and divide.</div>
+  <div class="box tip"><span class="lab">Exam tip</span>To find where the middle is: for <b>n</b> numbers, the median is the <span class="m">(n + 1) ÷ 2</span>th value. For 20 marks that is the 10.5th, so halfway between the 10th and 11th.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <div class="small">Use these numbers: <b>4, 9, 2, 7, 4, 10</b></div>
+    <ol type="a"><li>Find the mode.</li><li>Find the median.</li><li>Find the mean.</li></ol></div>
+</div>
+<div class="unit c9">
+  <div class="banner"><div class="big">9</div><div><h1>Sequences &amp; Functions</h1><p>Doing calculations in the right order, working with negative numbers, finding rules for sequences and patterns, the nth term, and function machines.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>Maths follows <b>rules</b>. BIDMAS tells you the order to work in. A sequence has a <b>rule</b> that makes each term. A function machine has a <b>rule</b> that turns each input into an output. <b>Find the rule, and you can work out anything.</b></span></div>
+
+  <!-- ===== 9.1 ===== -->
+  <h2><span class="n">9.1</span> Order of operations &amp; negative numbers</h2>
+  <p>When a calculation has more than one operation, everyone must do them in the <b>same order</b>, or we would all get different answers. That order is called <b>BIDMAS</b>.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>B</b>rackets first: work out anything inside ( ).</li>
+    <li><b>I</b>ndices next: powers like 3² = 3 × 3 = 9.</li>
+    <li><b>D</b>ivide and <b>M</b>ultiply next. They are <b>equal</b>, so do them from <b>left to right</b>.</li>
+    <li><b>A</b>dd and <b>S</b>ubtract last. They are also <b>equal</b>, so do them from <b>left to right</b>.</li>
+    <li>A fraction line works like a bracket: <span class="fr"><span>12 + 9</span><span>3</span></span> means (12 + 9) ÷ 3.</li>
+    <li>Negatives: adding moves <b>right</b> on the number line, subtracting moves <b>left</b>. For × and ÷: <b>same signs give +, different signs give −</b>.</li>
+  </ol>
+  <div class="two">
+    <div class="fig"><svg width="250" height="190" viewBox="0 0 250 190">
+      <rect x="10" y="6" width="230" height="38" rx="10" fill="#4a2ea6"/><text x="125" y="31" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">1  Brackets  ( )</text>
+      <rect x="10" y="50" width="230" height="38" rx="10" fill="#6a45d8"/><text x="125" y="75" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">2  Indices  x²</text>
+      <rect x="10" y="94" width="230" height="38" rx="10" fill="#8a6ae6"/><text x="125" y="119" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">3  ÷  and  ×   (left → right)</text>
+      <rect x="10" y="138" width="230" height="38" rx="10" fill="#b4a0f2"/><text x="125" y="163" text-anchor="middle" font-size="16" font-weight="800" fill="#1f2433">4  +  and  −   (left → right)</text>
+    </svg><div class="cap">The BIDMAS ladder: start at the top. ÷ and × share a step, and so do + and −.</div></div>
+    <div class="fig"><svg width="300" height="110" viewBox="0 0 300 110">
+      <defs><marker id="ah9a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#18a058"/></marker></defs>
+      <line x1="10" y1="70" x2="290" y2="70" stroke="#1f2433" stroke-width="2"/>
+      <g font-size="12" text-anchor="middle" fill="#1f2433">
+        <line x1="30" y1="64" x2="30" y2="76" stroke="#1f2433"/><text x="30" y="92">−3</text>
+        <line x1="65" y1="64" x2="65" y2="76" stroke="#1f2433"/><text x="65" y="92">−2</text>
+        <line x1="100" y1="64" x2="100" y2="76" stroke="#1f2433"/><text x="100" y="92">−1</text>
+        <line x1="135" y1="64" x2="135" y2="76" stroke="#1f2433" stroke-width="2"/><text x="135" y="92" font-weight="800">0</text>
+        <line x1="170" y1="64" x2="170" y2="76" stroke="#1f2433"/><text x="170" y="92">1</text>
+        <line x1="205" y1="64" x2="205" y2="76" stroke="#1f2433"/><text x="205" y="92">2</text>
+        <line x1="240" y1="64" x2="240" y2="76" stroke="#1f2433"/><text x="240" y="92">3</text>
+        <line x1="275" y1="64" x2="275" y2="76" stroke="#1f2433"/><text x="275" y="92">4</text>
+      </g>
+      <circle cx="65" cy="70" r="6" fill="#6a45d8"/><circle cx="275" cy="70" r="6" fill="#18a058"/>
+      <path d="M65,60 Q170,0 271,60" fill="none" stroke="#18a058" stroke-width="3" marker-end="url(#ah9a)"/>
+      <text x="170" y="22" text-anchor="middle" font-size="14" font-weight="800" fill="#0e6b41">+ 6</text>
+    </svg><div class="cap">−2 + 6: start at −2 and jump 6 to the right. You land on 4.</div></div>
+  </div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ch 9 Getting started · Q1</div>
+    <div class="q">Work out.</div>
+    <table><tr><th>a) 8 + 6</th><th>b) 17 − 5</th><th>c) −2 + 6</th><th>d) 9 − 12</th></tr>
+      <tr><td class="ans">14</td><td class="ans">12</td><td><span class="ans">4</span> <i class="small">(−2, jump 6 right)</i></td><td><span class="ans">−3</span> <i class="small">(9, jump 12 left)</i></td></tr>
+      <tr><th>e) 5 × 7</th><th>f) 24 ÷ 6</th><th>g) −3 × 6</th><th>h) 35 ÷ −7</th></tr>
+      <tr><td class="ans">35</td><td class="ans">4</td><td><span class="ans">−18</span> <i class="small">(− × + = −)</i></td><td><span class="ans">−5</span> <i class="small">(+ ÷ − = −)</i></td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ch 9 Getting started · Q2</div>
+    <div class="q">Complete these calculations.</div>
+    <table><tr><th>Question</th><th>Think</th><th>Missing number</th></tr>
+      <tr><td>a) 4 + □ = 11</td><td>11 − 4</td><td class="ans">7</td></tr>
+      <tr><td>b) 23 − □ = 18</td><td>23 − 18</td><td class="ans">5</td></tr>
+      <tr><td>c) □ + 3 = 12</td><td>12 − 3</td><td class="ans">9</td></tr>
+      <tr><td>d) −3 + □ = 3</td><td>from −3 up to 3 is 6 steps</td><td class="ans">6</td></tr>
+      <tr><td>e) □ − 8 = −5</td><td>−5 + 8</td><td class="ans">3</td></tr>
+      <tr><td>f) 10 − □ = −4</td><td>from 10 down to −4 is 14 steps</td><td class="ans">14</td></tr>
+      <tr><td>g) 3 × □ = 12</td><td>12 ÷ 3</td><td class="ans">4</td></tr>
+      <tr><td>h) □ × 12 = 96</td><td>96 ÷ 12</td><td class="ans">8</td></tr>
+      <tr><td>i) □ ÷ −2 = □</td><td>many answers work, for example</td><td class="ans">10 ÷ −2 = −5</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ch 9 Getting started · Q3</div>
+    <div class="q">Use the correct order of operations.</div>
+    <table><tr><th>Question</th><th>Working</th><th>Answer</th></tr>
+      <tr><td>a) 5 + 4 × 3</td><td>× first: 5 + 12</td><td class="ans">17</td></tr>
+      <tr><td>b) (5 + 4) × 3</td><td>brackets first: 9 × 3</td><td class="ans">27</td></tr>
+      <tr><td>c) 6 + 4 ÷ 2</td><td>÷ first: 6 + 2</td><td class="ans">8</td></tr>
+      <tr><td>d) (6 + 4) ÷ 2</td><td>brackets first: 10 ÷ 2</td><td class="ans">5</td></tr>
+      <tr><td>e) <span class="fr"><span>12</span><span>3</span></span> + 9</td><td>÷ first: 12 ÷ 3 = 4, then 4 + 9</td><td class="ans">13</td></tr>
+      <tr><td>f) <span class="fr"><span>12 + 9</span><span>3</span></span></td><td>top first: 21 ÷ 3</td><td class="ans">7</td></tr>
+      <tr><td>g) −2 × 3 + 10</td><td>× first: −6 + 10</td><td class="ans">4</td></tr>
+      <tr><td>h) −5 − <span class="fr"><span>10</span><span>5</span></span></td><td>÷ first: 10 ÷ 5 = 2, then −5 − 2</td><td class="ans">−7</td></tr>
+    </table></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Don't just work from left to right.</b> 5 + 4 × 3 is not 9 × 3 = 27. The × comes first: 5 + 12 = 17. And watch the signs: −6 + 10 is <b>+4</b> (start at −6, go up 10), and −5 − 2 is <b>−7</b> (go further down).</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>BIDMAS</b> = Brackets, Indices, Divide/Multiply, Add/Subtract. D and M are a <b>team</b>, and A and S are a <b>team</b>: inside a team, go left to right. For × and ÷ with negatives: <b>same signs, plus; different signs, minus.</b></div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>20 − 12 ÷ 4</li><li>(−3 + 7) × 2</li><li>−4 × 5 + 6</li></ol></div>
+
+  <!-- ===== 9.2 ===== -->
+  <h2><span class="n">9.2</span> Sequences &amp; patterns</h2>
+  <p>A <b>sequence</b> is a list of numbers that follow a rule. Each number is a <b>term</b>. The <b>term-to-term rule</b> tells you how to get from one term to the next.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Look at the <b>gap</b> between each term and the next one.</li>
+    <li>If the gap is the same each time, the rule is <b>add</b> (going up) or <b>subtract</b> (going down) that number. Some rules multiply or divide instead.</li>
+    <li>Use the rule on the last term to get the <b>next terms</b>.</li>
+    <li>For missing terms in the middle, find the rule from two terms that are next to each other, then fill the gaps.</li>
+    <li>A sequence that ends is <b>finite</b>. A sequence with "…" at the end goes on for ever: it is <b>infinite</b>.</li>
+  </ol>
+  <div class="fig"><svg width="500" height="96" viewBox="0 0 500 96">
+    <defs><marker id="ah9b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#6a45d8"/></marker></defs>
+    <g font-size="20" font-weight="800" text-anchor="middle">
+      <circle cx="40" cy="66" r="24" fill="#6a45d8"/><text x="40" y="73" fill="#fff">7</text>
+      <circle cx="124" cy="66" r="24" fill="#6a45d8"/><text x="124" y="73" fill="#fff">11</text>
+      <circle cx="208" cy="66" r="24" fill="#6a45d8"/><text x="208" y="73" fill="#fff">15</text>
+      <circle cx="292" cy="66" r="24" fill="#6a45d8"/><text x="292" y="73" fill="#fff">19</text>
+      <circle cx="376" cy="66" r="24" fill="#18a058"/><text x="376" y="73" fill="#fff">23</text>
+      <circle cx="460" cy="66" r="24" fill="#18a058"/><text x="460" y="73" fill="#fff">27</text>
+    </g>
+    <g fill="none" stroke="#6a45d8" stroke-width="2.5" marker-end="url(#ah9b)">
+      <path d="M52,42 Q82,8 112,40"/><path d="M136,42 Q166,8 196,40"/><path d="M220,42 Q250,8 280,40"/><path d="M304,42 Q334,8 364,40"/><path d="M388,42 Q418,8 448,40"/>
+    </g>
+    <g font-size="13" font-weight="800" fill="#4a2ea6" text-anchor="middle"><text x="82" y="16">+4</text><text x="166" y="16">+4</text><text x="250" y="16">+4</text><text x="334" y="16">+4</text><text x="418" y="16">+4</text></g>
+  </svg><div class="cap">7, 11, 15, 19 … The gap is always 4, so the term-to-term rule is "add 4". The next two terms are 23 and 27.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 9.1 · Q1 and Q2</div>
+    <div class="q">Q1: Find the term-to-term rule and the next two terms. Q2: For each of these infinite sequences, write down (i) the term-to-term rule (ii) the next two terms.</div>
+    <table><tr><th>Sequence</th><th>Gap</th><th>(i) Rule</th><th>(ii) Next two terms</th></tr>
+      <tr><td>Q1 a) 7, 11, 15, 19, …</td><td>11 − 7 = 4</td><td class="ans">add 4</td><td class="ans">23, 27</td></tr>
+      <tr><td>Q1 b) 40, 35, 30, 25, …</td><td>35 − 40 = −5</td><td class="ans">subtract 5</td><td class="ans">20, 15</td></tr>
+      <tr><td>Q2 a) 2, 4, 6, 8, …</td><td>+2</td><td class="ans">add 2</td><td class="ans">10, 12</td></tr>
+      <tr><td>Q2 b) 1, 4, 7, 10, …</td><td>+3</td><td class="ans">add 3</td><td class="ans">13, 16</td></tr>
+      <tr><td>Q2 c) 5, 9, 13, 17, …</td><td>+4</td><td class="ans">add 4</td><td class="ans">21, 25</td></tr>
+      <tr><td>Q2 d) 3, 8, 13, 18, …</td><td>+5</td><td class="ans">add 5</td><td class="ans">23, 28</td></tr>
+      <tr><td>Q2 e) 30, 28, 26, 24, …</td><td>−2</td><td class="ans">subtract 2</td><td class="ans">22, 20</td></tr>
+      <tr><td>Q2 f) 17, 14, 11, 8, …</td><td>−3</td><td class="ans">subtract 3</td><td class="ans">5, 2</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.1 · Q3</div>
+    <div class="q">Write down the first three terms of each of these sequences.</div>
+    <table><tr><th></th><th>First term</th><th>Term-to-term rule</th><th>First three terms</th></tr>
+      <tr><td>a)</td><td>1</td><td>add 5</td><td class="ans">1, 6, 11</td></tr>
+      <tr><td>b)</td><td>45</td><td>subtract 7</td><td class="ans">45, 38, 31</td></tr>
+      <tr><td>c)</td><td>6</td><td>multiply by 2</td><td class="ans">6, 12, 24</td></tr>
+      <tr><td>d)</td><td>60</td><td>divide by 2</td><td class="ans">60, 30, 15</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.1 · Q4</div>
+    <div class="q">Copy these finite sequences and fill in the missing terms.</div>
+    <table><tr><th>Sequence</th><th>Rule</th><th>Complete sequence (missing terms in bold)</th></tr>
+      <tr><td>a) 2, 5, □, 11, □, 17, 20</td><td>add 3</td><td>2, 5, <span class="ans">8</span>, 11, <span class="ans">14</span>, 17, 20</td></tr>
+      <tr><td>b) 5, 11, 17, □, □, 35, □</td><td>add 6</td><td>5, 11, 17, <span class="ans">23</span>, <span class="ans">29</span>, 35, <span class="ans">41</span></td></tr>
+      <tr><td>c) 26, 23, □, □, 14, □, 8</td><td>subtract 3</td><td>26, 23, <span class="ans">20</span>, <span class="ans">17</span>, 14, <span class="ans">11</span>, 8</td></tr>
+      <tr><td>d) 90, 82, □, 66, □, 50, □</td><td>subtract 8</td><td>90, 82, <span class="ans">74</span>, 66, <span class="ans">58</span>, 50, <span class="ans">42</span></td></tr>
+      <tr><td>e) 8, □, □, 32, 40, □, □</td><td>add 8</td><td>8, <span class="ans">16</span>, <span class="ans">24</span>, 32, 40, <span class="ans">48</span>, <span class="ans">56</span></td></tr>
+      <tr><td>f) □, □, 28, 23, □, □, 8</td><td>subtract 5</td><td><span class="ans">38</span>, <span class="ans">33</span>, 28, 23, <span class="ans">18</span>, <span class="ans">13</span>, 8</td></tr>
+    </table>
+    <div class="small">In f), work backwards from 28: the rule is subtract 5, so going back you add 5: 28 + 5 = 33, 33 + 5 = 38.</div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.1 · Q5</div>
+    <div class="q">Write down whether each of these sequences is finite or infinite.</div>
+    <div class="work"><div>a) 4, 6, 8, 10, … → ends with "…": <span class="ans">infinite</span></div><div>b) 3, 5, 7, 9, 11, 13, 15 → it stops: <span class="ans">finite</span></div>
+      <div>c) 85, 75, 65, 55, 45, 35 → it stops: <span class="ans">finite</span></div><div>d) 100, 97, 94, 91, 88, … → ends with "…": <span class="ans">infinite</span></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.2 · Q1 and Q2</div>
+    <div class="q">Q1: This sequence of patterns is made from dots (4 dots, 7 dots, 10 dots). Q2: This sequence of patterns is made from squares (5 squares, 8 squares, 11 squares).</div>
+    <table><tr><th>Pattern number</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>8</th></tr>
+      <tr><td>Q1 Dots</td><td>4</td><td>7</td><td>10</td><td class="ans">13</td><td class="ans">16</td><td></td><td></td></tr>
+      <tr><td>Q2 Squares</td><td>5</td><td>8</td><td>11</td><td class="ans">14</td><td class="ans">17</td><td class="ans">20</td><td class="ans">26</td></tr>
+    </table>
+    <div class="work"><div>Q1 a) Draw patterns 4 and 5 with <b>13</b> and <b>16</b> dots: add 3 more dots each time.</div>
+      <div>Q1 b) Sequence of numbers of dots: <span class="ans">4, 7, 10, 13, 16</span></div>
+      <div>Q1 c) Term-to-term rule: <span class="ans">add 3</span></div>
+      <div>Q1 d) How the sequence is formed: <span class="ans">start with 4 dots, then add 3 more dots to the previous pattern each time</span></div>
+      <div>Q2 a), b) Patterns 4 and 5 have <span class="ans">14</span> and <span class="ans">17</span> squares. c) Rule: <span class="ans">add 3</span></div>
+      <div>Q2 d) (i) Pattern 6: 17 + 3 = <span class="ans">20</span> (ii) Pattern 8: 20 + 3 + 3 = <span class="ans">26</span></div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Check the direction.</b> If the terms get smaller, the rule is <b>subtract</b>, not add. And always check your rule works for <b>every</b> gap, not just the first one.</div>
+  <div class="box tip"><span class="lab">Exam tip</span>Write the rule in words, like "add 4" or "subtract 5". Writing just "4" does not say whether it goes up or down.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Find the term-to-term rule and the next two terms: 3, 10, 17, 24, …</li><li>The first term is 80 and the term-to-term rule is subtract 6. Write down the first three terms.</li><li>Fill in the missing terms: 4, □, 16, 22, □</li></ol></div>
+
+  <!-- ===== 9.3 ===== -->
+  <h2><span class="n">9.3</span> The nth term &amp; function machines</h2>
+  <p>The <b>nth term rule</b> links each term to its <b>position number</b> n (1st, 2nd, 3rd …). With it you can jump straight to any term, like the 20th, without listing them all. A <b>function machine</b> uses a rule to turn an <b>input</b> into an <b>output</b>.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li>Make a table: <b>position number</b> 1, 2, 3 … on top, <b>term</b> underneath.</li>
+    <li>If the terms are the <b>times table</b> of a number (6, 12, 18 …), the rule is "term = 6 × position", so the nth term is <span class="m">6n</span>.</li>
+    <li>If the terms go up by 1 (10, 11, 12 …), compare each term with its position: 10 is 9 more than 1, so the nth term is <span class="m">n + 9</span>.</li>
+    <li>To find a term, put its position in for n: the 10th term of 6n is 6 × 10 = 60.</li>
+    <li>Function machine: do the rule to each <b>input</b> to get the <b>output</b>. To go <b>backwards</b> from an output, use the <b>inverse</b> (opposite): + ↔ −, × ↔ ÷.</li>
+  </ol>
+  <table><tr><th>Position number (n)</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>n</td></tr>
+    <tr><th>Working</th><td>1 × 6</td><td>2 × 6</td><td>3 × 6</td><td>4 × 6</td><td>5 × 6</td><td>n × 6</td></tr>
+    <tr><th>Term</th><td>6</td><td>12</td><td>18</td><td>24</td><td>30</td><td class="ans">6n</td></tr></table>
+  <div class="fig"><svg width="520" height="150" viewBox="0 0 520 150">
+    <defs><marker id="ah9c" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f2433"/></marker></defs>
+    <text x="10" y="20" font-size="12" font-weight="800" fill="#4a2ea6">FUNCTION MACHINE</text>
+    <rect x="10" y="30" width="90" height="40" rx="20" fill="#2c66cf"/><text x="55" y="56" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">input 3</text>
+    <path d="M104,50 h70" stroke="#1f2433" stroke-width="3" marker-end="url(#ah9c)"/>
+    <rect x="180" y="26" width="110" height="48" rx="12" fill="#3b4152"/><text x="235" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="#ffd84d">× 8</text>
+    <path d="M294,50 h70" stroke="#1f2433" stroke-width="3" marker-end="url(#ah9c)"/>
+    <rect x="370" y="30" width="110" height="40" rx="20" fill="#18a058"/><text x="425" y="56" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">output 24</text>
+    <text x="10" y="98" font-size="12" font-weight="800" fill="#4a2ea6">INVERSE MACHINE (backwards)</text>
+    <rect x="10" y="106" width="90" height="40" rx="20" fill="#2c66cf"/><text x="55" y="132" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">input 3</text>
+    <path d="M174,126 h-70" stroke="#1f2433" stroke-width="3" marker-end="url(#ah9c)"/>
+    <rect x="180" y="102" width="110" height="48" rx="12" fill="#6a45d8"/><text x="235" y="133" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">÷ 8</text>
+    <path d="M364,126 h-70" stroke="#1f2433" stroke-width="3" marker-end="url(#ah9c)"/>
+    <rect x="370" y="106" width="110" height="40" rx="20" fill="#18a058"/><text x="425" y="132" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">output 24</text>
+  </svg><div class="cap">Forwards: 3 × 8 = 24. Backwards with the inverse: 24 ÷ 8 = 3.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 9.3 · Q1</div>
+    <div class="q">a) Complete the working shown to work out the nth term rule for this sequence: 6, 12, 18, 24, 30, … b) Use your rule to work out the (i) 10th term (ii) 15th term.</div>
+    <div class="work"><div>a) Every term is <b>6 ×</b> its position number (see the table above), so <span class="ans">nth term = 6n</span></div>
+      <div>b) (i) 10th term = 6 × 10 = <span class="ans">60</span> (ii) 15th term = 6 × 15 = <span class="ans">90</span></div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.3 · Q2 and Q3</div>
+    <div class="q">Q2: For each of these sequences, work out the nth term rule. Q3: For each of the sequences in Q2, use its nth term rule to work out the (i) eighth term (ii) 20th term.</div>
+    <table><tr><th>Sequence</th><th>nth term</th><th>(i) 8th term</th><th>(ii) 20th term</th></tr>
+      <tr><td>a) 5, 10, 15, 20, 25, …</td><td class="ans">5n</td><td>5 × 8 = <span class="ans">40</span></td><td>5 × 20 = <span class="ans">100</span></td></tr>
+      <tr><td>b) 8, 16, 24, 32, 40, …</td><td class="ans">8n</td><td>8 × 8 = <span class="ans">64</span></td><td>8 × 20 = <span class="ans">160</span></td></tr>
+      <tr><td>c) 15, 30, 45, 60, 75, …</td><td class="ans">15n</td><td>15 × 8 = <span class="ans">120</span></td><td>15 × 20 = <span class="ans">300</span></td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.3 · Q5</div>
+    <div class="q">For each of these sequences, work out its nth term rule.</div>
+    <table><tr><th>Sequence</th><th>Compare term with position</th><th>nth term</th></tr>
+      <tr><td>a) 10, 11, 12, 13, 14, …</td><td>1st term 10 = 1 + 9</td><td class="ans">n + 9</td></tr>
+      <tr><td>b) 5, 6, 7, 8, 9, …</td><td>1st term 5 = 1 + 4</td><td class="ans">n + 4</td></tr>
+      <tr><td>c) 22, 23, 24, 25, 26, …</td><td>1st term 22 = 1 + 21</td><td class="ans">n + 21</td></tr>
+      <tr><td>d) 43, 44, 45, 46, 47, …</td><td>1st term 43 = 1 + 42</td><td class="ans">n + 42</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.4 · Q1 and Q2</div>
+    <div class="q">Copy these function machines and work out the missing outputs. In Q2, use inverse operations to work out the missing inputs.</div>
+    <table><tr><th>Machine</th><th>Inputs</th><th>Outputs</th></tr>
+      <tr><td>Q1 a) + 5</td><td>2, 3, 4</td><td class="ans">7, 8, 9</td></tr>
+      <tr><td>Q1 b) − 3</td><td>12, 8, 6</td><td class="ans">9, 5, 3</td></tr>
+      <tr><td>Q1 c) × 6</td><td>1, 3, 5</td><td class="ans">6, 18, 30</td></tr>
+      <tr><td>Q1 d) ÷ 4</td><td>12, 20, 40</td><td class="ans">3, 5, 10</td></tr>
+      <tr><td>Q2 a) + 7</td><td>2, 5, 9</td><td class="ans">9, 12, 16</td></tr>
+      <tr><td>Q2 b) − 5 <i class="small">(inverse + 5)</i></td><td class="ans">7, 10, 15</td><td>2, 5, 10</td></tr>
+      <tr><td>Q2 c) × 3 <i class="small">(inverse ÷ 3)</i></td><td class="ans">4, 5, 10</td><td>12, 15, 30</td></tr>
+      <tr><td>Q2 d) ÷ 2</td><td>8, 12, 18</td><td class="ans">4, 6, 9</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 9.4 · Q4</div>
+    <div class="q">Copy and complete these inverse function machines and tables of values.</div>
+    <table><tr><th>Machine</th><th>Inverse machine</th><th>Input</th><th>Output</th></tr>
+      <tr><td>a) input → − 13 → output</td><td class="ans">input ← + 13 ← output</td><td>20, 25, 51</td><td>7, 12, 38</td></tr>
+      <tr><td>b) input → × 8 → output</td><td class="ans">input ← ÷ 8 ← output</td><td>3, 7, 15</td><td>24, 56, 120</td></tr>
+      <tr><td>c) input → + 9 → output</td><td class="ans">input ← − 9 ← output</td><td>8, 15, 36</td><td>17, 24, 45</td></tr>
+    </table>
+    <div class="small">Check one in each row: 51 − 13 = 38 and 38 + 13 = 51; 15 × 8 = 120 and 120 ÷ 8 = 15; 36 + 9 = 45 and 45 − 9 = 36.</div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>The term-to-term rule is not the nth term.</b> For 5, 10, 15 … the term-to-term rule is "add 5", but the nth term is <b>5n</b>, not n + 5. Test it: n + 5 gives 1 + 5 = 6 for the 1st term, which is wrong. 5n gives 5 × 1 = 5. Correct!</div>
+  <div class="box real"><span class="lab">Try a number</span>Always check your nth term with n = 1 and n = 2. For n + 9: 1 + 9 = 10 and 2 + 9 = 11. Those match the first two terms, so the rule is right.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Find the nth term of 9, 18, 27, 36, … and use it to work out the 12th term.</li><li>Find the nth term of 14, 15, 16, 17, …</li><li>A function machine is × 7. The outputs are 42 and 63. Use the inverse to find the inputs.</li></ol></div>
+</div>
+<!-- ============ CHAPTER 10 ============ -->
+<div class="unit c10">
+  <div class="banner"><div class="big">10</div><div><h1>Percentages</h1><p>Changing between percentages, fractions and decimals, and finding fractions and percentages of amounts.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span><b>Per cent means "out of 100".</b> 64% is 64 out of every 100, which is <span class="fr"><span>64</span><span>100</span></span> or 0.64. A percentage, a fraction and a decimal are three ways of writing the <b>same amount</b>.</span></div>
+
+  <h2><span class="n">10.1</span> Percentages, fractions and decimals</h2>
+  <p>To change between the three forms, you only need two moves: <b>÷ 100</b> to leave a percentage, and <b>× 100</b> to make one.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>Percentage → fraction:</b> write the number over 100, then <b>simplify</b>: divide the top and bottom by the same number until you can't any more. If the percentage has a decimal point (7.5%), multiply the top and bottom by 10 first: <span class="fr"><span>7.5</span><span>100</span></span> = <span class="fr"><span>75</span><span>1000</span></span>.</li>
+    <li><b>Percentage → decimal:</b> divide by 100. The digits move <b>two places</b> to the right of the point: 40% = 0.40 = 0.4, 4% = 0.04.</li>
+    <li><b>Fraction → percentage:</b> multiply by 100%. Turn the fraction into a decimal first (top ÷ bottom), then × 100: <span class="fr"><span>1</span><span>4</span></span> = 0.25, and 0.25 × 100 = 25%.</li>
+    <li><b>Mixed number → percentage:</b> the whole number 1 is 100%. So 1<span class="fr"><span>1</span><span>2</span></span> = 1.5 = 150%. Percentages over 100% mean "more than the whole".</li>
+  </ol>
+  <div class="fig"><svg width="560" height="142" viewBox="0 0 560 142">
+    <defs><marker id="ah10" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#1f2433"/></marker></defs>
+    <rect x="10" y="10" width="10" height="10" fill="#d6336c"/><rect x="21" y="10" width="10" height="10" fill="#d6336c"/><rect x="32" y="10" width="10" height="10" fill="#d6336c"/><rect x="43" y="10" width="10" height="10" fill="#d6336c"/><rect x="54" y="10" width="10" height="10" fill="#d6336c"/><rect x="65" y="10" width="10" height="10" fill="#d6336c"/><rect x="76" y="10" width="10" height="10" fill="#d6336c"/><rect x="87" y="10" width="10" height="10" fill="#d6336c"/><rect x="98" y="10" width="10" height="10" fill="#d6336c"/><rect x="109" y="10" width="10" height="10" fill="#d6336c"/><rect x="10" y="21" width="10" height="10" fill="#d6336c"/><rect x="21" y="21" width="10" height="10" fill="#d6336c"/><rect x="32" y="21" width="10" height="10" fill="#d6336c"/><rect x="43" y="21" width="10" height="10" fill="#d6336c"/><rect x="54" y="21" width="10" height="10" fill="#d6336c"/><rect x="65" y="21" width="10" height="10" fill="#d6336c"/><rect x="76" y="21" width="10" height="10" fill="#d6336c"/><rect x="87" y="21" width="10" height="10" fill="#d6336c"/><rect x="98" y="21" width="10" height="10" fill="#d6336c"/><rect x="109" y="21" width="10" height="10" fill="#d6336c"/><rect x="10" y="32" width="10" height="10" fill="#d6336c"/><rect x="21" y="32" width="10" height="10" fill="#d6336c"/><rect x="32" y="32" width="10" height="10" fill="#d6336c"/><rect x="43" y="32" width="10" height="10" fill="#d6336c"/><rect x="54" y="32" width="10" height="10" fill="#d6336c"/><rect x="65" y="32" width="10" height="10" fill="#d6336c"/><rect x="76" y="32" width="10" height="10" fill="#d6336c"/><rect x="87" y="32" width="10" height="10" fill="#d6336c"/><rect x="98" y="32" width="10" height="10" fill="#d6336c"/><rect x="109" y="32" width="10" height="10" fill="#d6336c"/><rect x="10" y="43" width="10" height="10" fill="#d6336c"/><rect x="21" y="43" width="10" height="10" fill="#d6336c"/><rect x="32" y="43" width="10" height="10" fill="#d6336c"/><rect x="43" y="43" width="10" height="10" fill="#d6336c"/><rect x="54" y="43" width="10" height="10" fill="#d6336c"/><rect x="65" y="43" width="10" height="10" fill="#d6336c"/><rect x="76" y="43" width="10" height="10" fill="#d6336c"/><rect x="87" y="43" width="10" height="10" fill="#d6336c"/><rect x="98" y="43" width="10" height="10" fill="#d6336c"/><rect x="109" y="43" width="10" height="10" fill="#d6336c"/><rect x="10" y="54" width="10" height="10" fill="#d6336c"/><rect x="21" y="54" width="10" height="10" fill="#d6336c"/><rect x="32" y="54" width="10" height="10" fill="#d6336c"/><rect x="43" y="54" width="10" height="10" fill="#d6336c"/><rect x="54" y="54" width="10" height="10" fill="#d6336c"/><rect x="65" y="54" width="10" height="10" fill="#d6336c"/><rect x="76" y="54" width="10" height="10" fill="#d6336c"/><rect x="87" y="54" width="10" height="10" fill="#d6336c"/><rect x="98" y="54" width="10" height="10" fill="#d6336c"/><rect x="109" y="54" width="10" height="10" fill="#d6336c"/><rect x="10" y="65" width="10" height="10" fill="#d6336c"/><rect x="21" y="65" width="10" height="10" fill="#d6336c"/><rect x="32" y="65" width="10" height="10" fill="#d6336c"/><rect x="43" y="65" width="10" height="10" fill="#d6336c"/><rect x="54" y="65" width="10" height="10" fill="#d6336c"/><rect x="65" y="65" width="10" height="10" fill="#d6336c"/><rect x="76" y="65" width="10" height="10" fill="#d6336c"/><rect x="87" y="65" width="10" height="10" fill="#d6336c"/><rect x="98" y="65" width="10" height="10" fill="#d6336c"/><rect x="109" y="65" width="10" height="10" fill="#d6336c"/><rect x="10" y="76" width="10" height="10" fill="#d6336c"/><rect x="21" y="76" width="10" height="10" fill="#d6336c"/><rect x="32" y="76" width="10" height="10" fill="#d6336c"/><rect x="43" y="76" width="10" height="10" fill="#d6336c"/><rect x="54" y="76" width="10" height="10" fill="#fde4ec"/><rect x="65" y="76" width="10" height="10" fill="#fde4ec"/><rect x="76" y="76" width="10" height="10" fill="#fde4ec"/><rect x="87" y="76" width="10" height="10" fill="#fde4ec"/><rect x="98" y="76" width="10" height="10" fill="#fde4ec"/><rect x="109" y="76" width="10" height="10" fill="#fde4ec"/><rect x="10" y="87" width="10" height="10" fill="#fde4ec"/><rect x="21" y="87" width="10" height="10" fill="#fde4ec"/><rect x="32" y="87" width="10" height="10" fill="#fde4ec"/><rect x="43" y="87" width="10" height="10" fill="#fde4ec"/><rect x="54" y="87" width="10" height="10" fill="#fde4ec"/><rect x="65" y="87" width="10" height="10" fill="#fde4ec"/><rect x="76" y="87" width="10" height="10" fill="#fde4ec"/><rect x="87" y="87" width="10" height="10" fill="#fde4ec"/><rect x="98" y="87" width="10" height="10" fill="#fde4ec"/><rect x="109" y="87" width="10" height="10" fill="#fde4ec"/><rect x="10" y="98" width="10" height="10" fill="#fde4ec"/><rect x="21" y="98" width="10" height="10" fill="#fde4ec"/><rect x="32" y="98" width="10" height="10" fill="#fde4ec"/><rect x="43" y="98" width="10" height="10" fill="#fde4ec"/><rect x="54" y="98" width="10" height="10" fill="#fde4ec"/><rect x="65" y="98" width="10" height="10" fill="#fde4ec"/><rect x="76" y="98" width="10" height="10" fill="#fde4ec"/><rect x="87" y="98" width="10" height="10" fill="#fde4ec"/><rect x="98" y="98" width="10" height="10" fill="#fde4ec"/><rect x="109" y="98" width="10" height="10" fill="#fde4ec"/><rect x="10" y="109" width="10" height="10" fill="#fde4ec"/><rect x="21" y="109" width="10" height="10" fill="#fde4ec"/><rect x="32" y="109" width="10" height="10" fill="#fde4ec"/><rect x="43" y="109" width="10" height="10" fill="#fde4ec"/><rect x="54" y="109" width="10" height="10" fill="#fde4ec"/><rect x="65" y="109" width="10" height="10" fill="#fde4ec"/><rect x="76" y="109" width="10" height="10" fill="#fde4ec"/><rect x="87" y="109" width="10" height="10" fill="#fde4ec"/><rect x="98" y="109" width="10" height="10" fill="#fde4ec"/><rect x="109" y="109" width="10" height="10" fill="#fde4ec"/>
+    <text x="65" y="138" text-anchor="middle" font-size="12" font-weight="800" fill="#a01e4e">64 out of 100 = 64%</text>
+    <rect x="160" y="45" width="110" height="52" rx="12" fill="#fde4ec" stroke="#d6336c" stroke-width="2"/>
+    <text x="200" y="64" text-anchor="middle" font-size="16" font-weight="800" fill="#1f2433">16</text>
+    <path d="M185,70 h30" stroke="#1f2433" stroke-width="2"/>
+    <text x="200" y="88" text-anchor="middle" font-size="16" font-weight="800" fill="#1f2433">25</text>
+    <text x="231" y="78" font-size="9" font-weight="700" fill="#a01e4e">fraction</text>
+    <rect x="300" y="45" width="110" height="52" rx="12" fill="#d6336c"/>
+    <text x="355" y="78" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">64%</text>
+    <rect x="440" y="45" width="110" height="52" rx="12" fill="#fde4ec" stroke="#d6336c" stroke-width="2"/>
+    <text x="495" y="73" text-anchor="middle" font-size="20" font-weight="800" fill="#1f2433">0.64</text>
+    <text x="495" y="90" text-anchor="middle" font-size="9" font-weight="700" fill="#a01e4e">decimal</text>
+    <path d="M330,44 Q285,12 244,42" fill="none" stroke="#1f2433" stroke-width="2" marker-end="url(#ah10)"/>
+    <text x="285" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#1f2433">÷ 100, simplify</text>
+    <path d="M380,44 Q425,12 466,42" fill="none" stroke="#1f2433" stroke-width="2" marker-end="url(#ah10)"/>
+    <text x="425" y="18" text-anchor="middle" font-size="11" font-weight="800" fill="#1f2433">÷ 100</text>
+    <path d="M244,98 Q285,130 326,100" fill="none" stroke="#1f2433" stroke-width="2" marker-end="url(#ah10)"/>
+    <text x="285" y="136" text-anchor="middle" font-size="11" font-weight="800" fill="#1f2433">× 100</text>
+    <path d="M466,98 Q425,130 384,100" fill="none" stroke="#1f2433" stroke-width="2" marker-end="url(#ah10)"/>
+    <text x="425" y="136" text-anchor="middle" font-size="11" font-weight="800" fill="#1f2433">× 100</text>
+  </svg><div class="cap">64 squares out of 100 are shaded: that is 64%. Leaving a percentage: ÷ 100. Making a percentage: × 100.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 10.1 · Q2</div>
+    <div class="q">Write these percentages as fractions. Write your answers in the simplest form.</div>
+    <table><tr><th>Percentage</th><th>Over 100</th><th>Simplify</th><th>Answer</th></tr>
+      <tr><td>a) 60%</td><td><span class="fr"><span>60</span><span>100</span></span></td><td>÷ 20 top and bottom</td><td class="ans"><span class="fr"><span>3</span><span>5</span></span></td></tr>
+      <tr><td>b) 61%</td><td><span class="fr"><span>61</span><span>100</span></span></td><td>nothing divides both</td><td class="ans"><span class="fr"><span>61</span><span>100</span></span></td></tr>
+      <tr><td>c) 62%</td><td><span class="fr"><span>62</span><span>100</span></span></td><td>÷ 2 top and bottom</td><td class="ans"><span class="fr"><span>31</span><span>50</span></span></td></tr>
+      <tr><td>d) 64%</td><td><span class="fr"><span>64</span><span>100</span></span></td><td>÷ 2 → <span class="fr"><span>32</span><span>50</span></span>, ÷ 2 again → <span class="fr"><span>16</span><span>25</span></span></td><td class="ans"><span class="fr"><span>16</span><span>25</span></span></td></tr>
+      <tr><td>e) 65%</td><td><span class="fr"><span>65</span><span>100</span></span></td><td>÷ 5 top and bottom</td><td class="ans"><span class="fr"><span>13</span><span>20</span></span></td></tr>
+      <tr><td>f) 70%</td><td><span class="fr"><span>70</span><span>100</span></span></td><td>÷ 10 top and bottom</td><td class="ans"><span class="fr"><span>7</span><span>10</span></span></td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 10.1 · Q4</div>
+    <div class="q">Write these percentages as a decimal and as a fraction.</div>
+    <table><tr><th>Percentage</th><th>Decimal (÷ 100)</th><th>Fraction (over 100, simplify)</th></tr>
+      <tr><td>a) 40%</td><td class="ans">0.4</td><td><span class="fr"><span>40</span><span>100</span></span> ÷ 20 → <span class="ans"><span class="fr"><span>2</span><span>5</span></span></span></td></tr>
+      <tr><td>b) 4%</td><td class="ans">0.04</td><td><span class="fr"><span>4</span><span>100</span></span> ÷ 4 → <span class="ans"><span class="fr"><span>1</span><span>25</span></span></span></td></tr>
+      <tr><td>c) 9%</td><td class="ans">0.09</td><td>already simplest: <span class="ans"><span class="fr"><span>9</span><span>100</span></span></span></td></tr>
+      <tr><td>d) 90%</td><td class="ans">0.9</td><td><span class="fr"><span>90</span><span>100</span></span> ÷ 10 → <span class="ans"><span class="fr"><span>9</span><span>10</span></span></span></td></tr>
+      <tr><td>e) 5%</td><td class="ans">0.05</td><td><span class="fr"><span>5</span><span>100</span></span> ÷ 5 → <span class="ans"><span class="fr"><span>1</span><span>20</span></span></span></td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 10.1 · Q5</div>
+    <div class="q">Write these fractions as percentages.</div>
+    <table><tr><th>Fraction</th><th>Decimal (top ÷ bottom)</th><th>× 100</th></tr>
+      <tr><td>a) <span class="fr"><span>1</span><span>4</span></span></td><td>0.25</td><td class="ans">25%</td></tr>
+      <tr><td>b) <span class="fr"><span>2</span><span>5</span></span></td><td>0.4</td><td class="ans">40%</td></tr>
+      <tr><td>c) <span class="fr"><span>4</span><span>5</span></span></td><td>0.8</td><td class="ans">80%</td></tr>
+      <tr><td>d) <span class="fr"><span>7</span><span>50</span></span></td><td>0.14</td><td class="ans">14%</td></tr>
+      <tr><td>e) <span class="fr"><span>7</span><span>20</span></span></td><td>0.35</td><td class="ans">35%</td></tr>
+      <tr><td>f) <span class="fr"><span>7</span><span>25</span></span></td><td>0.28</td><td class="ans">28%</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 10.2 · Q2</div>
+    <div class="q">Write these percentages as decimals and as fractions. Write each in its simplest form.</div>
+    <table><tr><th>Percentage</th><th>Decimal (÷ 100)</th><th>Fraction (× 10 top and bottom, then simplify)</th></tr>
+      <tr><td>a) 7.5%</td><td class="ans">0.075</td><td><span class="fr"><span>7.5</span><span>100</span></span> = <span class="fr"><span>75</span><span>1000</span></span>, ÷ 25 → <span class="ans"><span class="fr"><span>3</span><span>40</span></span></span></td></tr>
+      <tr><td>b) 62.5%</td><td class="ans">0.625</td><td><span class="fr"><span>62.5</span><span>100</span></span> = <span class="fr"><span>625</span><span>1000</span></span>, ÷ 125 → <span class="ans"><span class="fr"><span>5</span><span>8</span></span></span></td></tr>
+      <tr><td>c) 1.5%</td><td class="ans">0.015</td><td><span class="fr"><span>1.5</span><span>100</span></span> = <span class="fr"><span>15</span><span>1000</span></span>, ÷ 5 → <span class="ans"><span class="fr"><span>3</span><span>200</span></span></span></td></tr>
+      <tr><td>d) 47.5%</td><td class="ans">0.475</td><td><span class="fr"><span>47.5</span><span>100</span></span> = <span class="fr"><span>475</span><span>1000</span></span>, ÷ 25 → <span class="ans"><span class="fr"><span>19</span><span>40</span></span></span></td></tr>
+      <tr><td>e) 32.5%</td><td class="ans">0.325</td><td><span class="fr"><span>32.5</span><span>100</span></span> = <span class="fr"><span>325</span><span>1000</span></span>, ÷ 25 → <span class="ans"><span class="fr"><span>13</span><span>40</span></span></span></td></tr>
+    </table>
+    <div class="work"><div>Simplifying in small steps is fine too: <span class="fr"><span>625</span><span>1000</span></span> ÷ 5 → <span class="fr"><span>125</span><span>200</span></span> ÷ 5 → <span class="fr"><span>25</span><span>40</span></span> ÷ 5 → <span class="fr"><span>5</span><span>8</span></span>. Keep going until nothing divides both.</div></div></div>
+  <div class="ex"><div class="src">Worksheet · Ex 10.2 · Q9</div>
+    <div class="q">Write each of these mixed numbers as a percentage.</div>
+    <table><tr><th>Mixed number</th><th>Improper fraction</th><th>Decimal</th><th>× 100</th></tr>
+      <tr><td>a) 1<span class="fr"><span>1</span><span>2</span></span></td><td><span class="fr"><span>3</span><span>2</span></span></td><td>1.5</td><td class="ans">150%</td></tr>
+      <tr><td>b) 1<span class="fr"><span>1</span><span>4</span></span></td><td><span class="fr"><span>5</span><span>4</span></span></td><td>1.25</td><td class="ans">125%</td></tr>
+      <tr><td>c) 1<span class="fr"><span>3</span><span>4</span></span></td><td><span class="fr"><span>7</span><span>4</span></span></td><td>1.75</td><td class="ans">175%</td></tr>
+      <tr><td>d) 1<span class="fr"><span>3</span><span>10</span></span></td><td><span class="fr"><span>13</span><span>10</span></span></td><td>1.3</td><td class="ans">130%</td></tr>
+      <tr><td>e) 1<span class="fr"><span>7</span><span>10</span></span></td><td><span class="fr"><span>17</span><span>10</span></span></td><td>1.7</td><td class="ans">170%</td></tr>
+      <tr><td>f) 2<span class="fr"><span>1</span><span>4</span></span></td><td><span class="fr"><span>9</span><span>4</span></span></td><td>2.25</td><td class="ans">225%</td></tr>
+    </table></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>7.5% is 0.075, not 0.75 and not 7.5.</b> Dividing by 100 moves the digits <b>two</b> places, so put in a zero: 7.5 → 0.75 (÷ 10) → 0.075 (÷ 100). Check: 7.5% is less than 10% = 0.1, and 0.075 is less than 0.1.</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>Leaving % → ÷ 100. Making % → × 100.</b> "Per cent" is like "century": 100 years. Every percentage is secretly "out of 100".</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Write 35% as a fraction in its simplest form.</li><li>Write 12.5% as a decimal and as a fraction in its simplest form.</li><li>Write 1<span class="fr"><span>2</span><span>5</span></span> as a percentage.</li></ol></div>
+
+  <h2><span class="n">10.2</span> Percentages of amounts</h2>
+  <p>"Of" means <b>multiply</b>. To find a fraction or a percentage of an amount, cut the amount into equal parts, then take the parts you need.</p>
+  <h3>The method</h3>
+  <ol class="steps">
+    <li><b>Fraction of an amount:</b> divide by the <b>bottom</b>, then multiply by the <b>top</b>. <span class="fr"><span>3</span><span>4</span></span> of 60 g: 60 ÷ 4 = 15, then 15 × 3 = 45 g.</li>
+    <li><b>10%</b> of an amount: divide by 10. <b>1%</b>: divide by 100 (or divide the 10% by 10).</li>
+    <li><b>0.5%</b> is half of 1%, and <b>0.1%</b> is 1% ÷ 10.</li>
+    <li>Build the percentage you want by <b>adding chunks</b>: 3.5% = 1% + 1% + 1% + 0.5%.</li>
+  </ol>
+  <div class="fig"><svg width="560" height="126" viewBox="0 0 560 126">
+    <rect x="20" y="22" width="50" height="34" rx="4" fill="#d6336c"/><text x="45" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="72" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="97" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="124" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="149" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="176" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="201" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="228" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="253" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="280" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="305" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="332" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="357" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="384" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="409" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="436" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="461" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text><rect x="488" y="22" width="50" height="34" rx="4" fill="#f06595"/><text x="513" y="44" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">60 kg</text>
+    <text x="45" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="97" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="149" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="201" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="253" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="305" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="357" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="409" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="461" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text><text x="513" y="16" text-anchor="middle" font-size="11" font-weight="800" fill="#a01e4e">10%</text>
+    <path d="M20,56 L20,84 M70,56 L270,84" fill="none" stroke="#a01e4e" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="20" y="86" width="23" height="26" rx="3" fill="#a01e4e" stroke="#d6336c" stroke-width="1.2"/><text x="31.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">6</text><rect x="45" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="56.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="70" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="81.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="95" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="106.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="120" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="131.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="145" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="156.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="170" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="181.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="195" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="206.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="220" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="231.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text><rect x="245" y="86" width="23" height="26" rx="3" fill="#fde4ec" stroke="#d6336c" stroke-width="1.2"/><text x="256.5" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1f2433">6</text>
+    <text x="290" y="100" font-size="13" font-weight="800" fill="#a01e4e">1% = 6 kg · 0.5% = 3 kg · 0.1% = 0.6 kg</text>
+    <text x="290" y="118" font-size="12" font-weight="700" fill="#1f2433">So 2.2% = 6 + 6 + 0.6 + 0.6 = 13.2 kg</text>
+  </svg><div class="cap">600 kg is 100%. Cut it into ten 10% chunks of 60 kg, then cut one chunk into ten 1% pieces of 6 kg.</div></div>
+
+  <h3>Worksheet questions, worked out</h3>
+  <div class="ex"><div class="src">Worksheet · Ex 10.1 · Q9</div>
+    <div class="q">Work out: a) <span class="fr"><span>1</span><span>2</span></span> of 60 grams, b) <span class="fr"><span>3</span><span>4</span></span> of 60 grams, c) <span class="fr"><span>4</span><span>5</span></span> of 60 grams, d) <span class="fr"><span>7</span><span>10</span></span> of 60 grams, e) <span class="fr"><span>11</span><span>20</span></span> of 60 grams.</div>
+    <table><tr><th>Fraction of 60 g</th><th>÷ bottom</th><th>× top</th><th>Answer</th></tr>
+      <tr><td>a) <span class="fr"><span>1</span><span>2</span></span></td><td>60 ÷ 2 = 30</td><td>30 × 1 = 30</td><td class="ans">30 g</td></tr>
+      <tr><td>b) <span class="fr"><span>3</span><span>4</span></span></td><td>60 ÷ 4 = 15</td><td>15 × 3 = 45</td><td class="ans">45 g</td></tr>
+      <tr><td>c) <span class="fr"><span>4</span><span>5</span></span></td><td>60 ÷ 5 = 12</td><td>12 × 4 = 48</td><td class="ans">48 g</td></tr>
+      <tr><td>d) <span class="fr"><span>7</span><span>10</span></span></td><td>60 ÷ 10 = 6</td><td>6 × 7 = 42</td><td class="ans">42 g</td></tr>
+      <tr><td>e) <span class="fr"><span>11</span><span>20</span></span></td><td>60 ÷ 20 = 3</td><td>3 × 11 = 33</td><td class="ans">33 g</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Ex 10.2 · Q5</div>
+    <div class="q">Work out: (i) 1% of 600 kg, (ii) 1.5% of 600 kg, (iii) 3.5% of 600 kg, (iv) 2.2% of 600 kg.</div>
+    <div class="work"><div>1% of 600 kg = 600 ÷ 100 = 6 kg. Every answer is built from this.</div>
+      <div>(i) 1% = <span class="ans">6 kg</span></div>
+      <div>(ii) 1.5% = 1% + 0.5% = 6 + 3 = <span class="ans">9 kg</span> <i>(or 1.5 × 6 = 9)</i></div>
+      <div>(iii) 3.5% = 3% + 0.5% = 18 + 3 = <span class="ans">21 kg</span> <i>(or 3.5 × 6 = 21)</i></div>
+      <div>(iv) 2.2% = 2% + 0.2% = 12 + 1.2 = <span class="ans">13.2 kg</span> <i>(0.1% = 0.6 kg, so 0.2% = 1.2 kg)</i></div>
+      <div>With fractions: 2.2% = <span class="fr"><span>22</span><span>1000</span></span>, and <span class="fr"><span>22</span><span>1000</span></span> × 600 = <span class="fr"><span>22 × 3</span><span>5</span></span> = <span class="fr"><span>66</span><span>5</span></span> = 13.2 kg. Same answer.</div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>1% means ÷ 100, not ÷ 10.</b> 1% of 600 kg is 6 kg. Dividing by 10 gives 60 kg, which is <b>10%</b>. Check your answer makes sense: 1.5% of 600 kg must be a small part of it.</div>
+  <div class="box real"><span class="lab">Try a number</span>Check with an easy one: 50% is a half, and half of 600 kg is 300 kg. Using chunks: 50% = five 10% chunks = 5 × 60 = 300 kg. It matches.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Work out <span class="fr"><span>3</span><span>5</span></span> of 80 grams.</li><li>Work out 15% of 600 kg.</li><li>Work out 2.5% of 400 kg.</li></ol></div>
+</div>
+
+<!-- ============ CHEAT SHEET ============ -->
+<div class="cheat">
+  <h1>🤖 Maths Cheat Sheet</h1>
+  <div class="cheatgrid">
+    <section class="cm2"><h3>Words → algebra</h3><ul>
+      <li><b>more than, plus, increased by</b> → +</li><li><b>less than, take away, decreased by</b> → −</li>
+      <li><b>times, multiplied by, twice</b> → ×</li><li><b>divided by, shared, half</b> → ÷</li>
+      <li>3 × y = <b>3y</b> · p × q = <b>pq</b> · y ÷ 2 = <span class="fr"><span>y</span><span>2</span></span></li>
+      <li><b>x less than y = y − x</b> (start with y)</li><li>subtract <b>from 52</b> → 52 − …</li></ul></section>
+    <section class="cm2"><h3>Substitute &amp; simplify</h3><ul>
+      <li>Swap each letter for its number, then use BIDMAS: 2m + n, m = 7, n = 6 → 14 + 6 = <b>20</b></li>
+      <li>ab means a × b; 2h means 2 × h</li>
+      <li><b>Like terms</b> have the same letter: 5x + 4x = 9x · x on its own = 1x</li>
+      <li>Collect each kind: 2g + 8 + 3g − 5 = <b>5g + 3</b></li>
+      <li>Pyramid: each block = the two below added</li></ul></section>
+    <section class="cm2"><h3>Brackets &amp; equations</h3><ul>
+      <li><b>Expand:</b> multiply <b>every</b> term inside: 2(3b − 4) = <b>6b − 8</b></li>
+      <li><b>Solve:</b> do the <b>inverse</b> to <b>both sides</b>: + ↔ −, × ↔ ÷</li>
+      <li>x − 18 = 30 → x = 30 + 18 = <b>48</b> · 12x = 72 → x = <b>6</b></li>
+      <li><b>Check</b> by putting the answer back in</li></ul></section>
+    <section class="cm2"><h3>Inequalities</h3><ul>
+      <li><b>&lt;</b> less than · <b>&gt;</b> greater than: the small end points at the smaller number</li>
+      <li>x &lt; 3: <b>open circle</b> at 3, arrow <b>left</b></li><li>y &gt; −7: smallest integer is <b>−6</b></li></ul></section>
+    <section class="cm4"><h3>Decimals: order &amp; mental</h3><ul>
+      <li>Line up the points; fill gaps with zeros: 2.19 = 2.190 &lt; 2.205</li>
+      <li>Compare digit by digit from the left</li>
+      <li>Round, then adjust: 4.3 + 7.9 = 4.3 + 8 − 0.1 = <b>12.2</b></li>
+      <li>3 × 0.004 = <b>0.012</b> (3 × 4 = 12, three decimal places)</li></ul></section>
+    <section class="cm4"><h3>× and ÷ decimals</h3><ul>
+      <li><b>×:</b> ignore the points, multiply, count the decimal places, put them back: 3.2 × 52 → 32 × 52 = 1664 → <b>166.4</b></li>
+      <li><b>÷:</b> bus stop, point goes straight up: 18.25 ÷ 5 = <b>3.65</b></li>
+      <li><b>Estimate first</b>, check by multiplying back</li>
+      <li>Money: 2 decimal places ($3.60)</li></ul></section>
+    <section class="cm6"><h3>Data</h3><ul>
+      <li><b>Count</b> → discrete · <b>Measure</b> → continuous · <b>Words</b> → categorical</li>
+      <li><b>Mode</b> = most common</li><li><b>Median</b> = middle, <b>after sorting</b> (two middles: halfway)</li>
+      <li><b>Mean</b> = total ÷ how many: 290 ÷ 20 = <b>14.5</b></li></ul></section>
+    <section class="cm9"><h3>BIDMAS &amp; negatives</h3><ul>
+      <li><b>B</b>rackets → <b>I</b>ndices → <b>D M</b> (equal, left to right) → <b>A S</b> (equal, left to right)</li>
+      <li>A fraction line means ÷: <span class="fr"><span>12</span><span>3</span></span> + 9 = 4 + 9 = <b>13</b></li>
+      <li>−2 + 6 = <b>4</b> (move right) · 9 − 12 = −3</li>
+      <li>× ÷: same signs → +, different signs → −: −2 × 3 = −6</li></ul></section>
+    <section class="cm9"><h3>Sequences &amp; machines</h3><ul>
+      <li><b>Term-to-term rule:</b> what you do to get the next term (add 4)</li>
+      <li><b>nth term:</b> position → term. Jumps of 5 starting at 5 → <b>5n</b> (not n + 5)</li>
+      <li>5n: 8th term = 40, 20th = 100</li>
+      <li>Jumps of 1: n + 21 → 22, 23, 24…</li>
+      <li><b>Inverse machine:</b> undo each step, in reverse order</li></ul></section>
+    <section class="cm10"><h3>Percentages</h3><ul>
+      <li><b>Per cent = out of 100</b></li>
+      <li>% → decimal: <b>÷ 100</b> · decimal → %: <b>× 100</b></li>
+      <li>% → fraction: over 100, then simplify: 64% = <span class="fr"><span>64</span><span>100</span></span> = <span class="fr"><span>16</span><span>25</span></span></li>
+      <li>7.5% = <b>0.075</b> = <span class="fr"><span>3</span><span>40</span></span></li>
+      <li>1 <span class="fr"><span>1</span><span>2</span></span> = 150% (more than one whole)</li></ul></section>
+    <section class="cm10"><h3>% of an amount</h3><ul>
+      <li>10% = ÷ 10 · 1% = ÷ 100 · 50% = half · 25% = quarter</li>
+      <li>Build it: 2.2% of 600 kg = 2 × 6 + 0.2 × 6 = <b>13.2 kg</b></li>
+      <li><span class="fr"><span>3</span><span>4</span></span> of 60 g: ÷ 4, × 3 = <b>45 g</b></li></ul></section>
+    <section class="cm2" style="background:#fff4c2"><h3 style="color:#8a6a00">Stuck? 🤖</h3><ul>
+      <li><b>Try a real number first</b>, then do the same with the letter</li>
+      <li><b>Estimate</b> before you calculate</li><li><b>Check</b>: put your answer back in, or work backwards</li></ul></section>
+  </div>
+</div>
+
+<!-- ============ ANSWER KEY ============ -->
+<div class="pb">
+  <div class="banner" style="background:linear-gradient(120deg,#1f2433,#5b6275)"><div class="big">✔</div><div><h1>Answer key: Try these</h1><p>Check your answers. If one is wrong, read the working, then look back at that section.</p></div></div>
+  <div class="keygrid">
+    <h3 style="color:var(--od)">Chapter 2</h3>
+    <div class="k"><b>2.1 a)</b> k − 6 <i class="small">(start with k, take 6 away)</i></div>
+    <div class="k"><b>2.1 b)</b> 7n + 2</div>
+    <div class="k"><b>2.1 c)</b> 20 − 3w <i class="small">(subtract from 20, so 20 comes first)</i></div>
+    <div class="k"><b>2.2 a)</b> 21 <i class="small">(4 × 6 − 3 = 24 − 3)</i></div>
+    <div class="k"><b>2.2 b)</b> 9 <i class="small">((14 + 13) ÷ 3 = 27 ÷ 3)</i></div>
+    <div class="k"><b>2.2 c)</b> $128 <i class="small">(P = M + E = 90 + 38)</i></div>
+    <div class="k"><b>2.3 a)</b> 5m <i class="small">(7 + 2 − 4 = 5)</i></div>
+    <div class="k"><b>2.3 b)</b> 8a + 2 <i class="small">(6a + 2a = 8a, 5 − 3 = 2)</i></div>
+    <div class="k"><b>2.3 c)</b> middle 6y and 7y, top 13y <i class="small">(2y + 4y, 4y + 3y, 6y + 7y)</i></div>
+    <div class="k"><b>2.4 a)</b> 5k − 15 <i class="small">(5 × k, 5 × 3, keep the −)</i></div>
+    <div class="k"><b>2.4 b)</b> 8x + 28 <i class="small">(4 × 2x, 4 × 7)</i></div>
+    <div class="k"><b>2.4 c)</b> 18 − 6y <i class="small">(3 × 6, 3 × 2y, keep the −)</i></div>
+    <div class="k"><b>2.5 a)</b> x = 14 <i class="small">(23 − 9; check 14 + 9 = 23)</i></div>
+    <div class="k"><b>2.5 b)</b> x = 22 <i class="small">(15 + 7; check 22 − 7 = 15)</i></div>
+    <div class="k"><b>2.5 c)</b> x = 7 <i class="small">(56 ÷ 8; check 8 × 7 = 56)</i></div>
+    <div class="k"><b>2.6 a)</b> m is less than 3</div>
+    <div class="k"><b>2.6 b)</b> k &gt; −3</div>
+    <div class="k"><b>2.6 c)</b> smallest integer 7; integer values 7, 8, 9, … <i class="small">(6.5 is not whole; next whole number up is 7)</i></div>
+    <h3 style="color:var(--bd)">Chapter 4</h3>
+    <div class="k"><b>4.1 a)</b> 0.75 <i class="small">(0.80 vs 0.75: tenths 7 &lt; 8)</i></div>
+    <div class="k"><b>4.1 b)</b> 5.306 &lt; 5.31 <i class="small">(5.306 vs 5.310: hundredths 0 &lt; 1)</i></div>
+    <div class="k"><b>4.1 c)</b> 3.04, 3.399, 3.4, 3.41 <i class="small">(pad: 3.040, 3.399, 3.400, 3.410)</i></div>
+    <div class="k"><b>4.2 a)</b> 5.5 <i class="small">(9 − 3 = 6; 0.2 − 0.7 = −0.5; 6 − 0.5)</i></div>
+    <div class="k"><b>4.2 b)</b> 8.5 <i class="small">(5.6 + 3 = 8.6, then − 0.1)</i></div>
+    <div class="k"><b>4.2 c)</b> 0.21 <i class="small">(7 × 3 hundredths = 21 hundredths)</i></div>
+    <div class="k"><b>4.3 a)</b> 88.4 <i class="small">(26 × 34 = 884, 1 decimal place; check 3 × 30 = 90)</i></div>
+    <div class="k"><b>4.3 b)</b> 364 <i class="small">(7 × 52 = 350 + 14)</i></div>
+    <div class="k"><b>4.3 c)</b> 47.7 <i class="small">(53 − 5.3)</i></div>
+    <div class="k"><b>4.4 a)</b> 3.212 <i class="small">(9÷3 = 3; 6÷3 = 2; 3÷3 = 1; 6÷3 = 2)</i></div>
+    <div class="k"><b>4.4 b)</b> $6.85 <i class="small">(27.40 ÷ 4: 27÷4 = 6 r 3; 34÷4 = 8 r 2; 20÷4 = 5)</i></div>
+    <div class="k"><b>4.4 c)</b> 3.45 <i class="small">(51÷15 = 3 r 6; 67÷15 = 4 r 7; 75÷15 = 5)</i></div>
+    <h3 style="color:var(--gd)">Chapter 6</h3>
+    <div class="k"><b>6.1 a)</b> discrete <i class="small">(goals are counted: 0, 1, 2…)</i></div>
+    <div class="k"><b>6.1 b)</b> continuous <i class="small">(length is measured and can be any value)</i></div>
+    <div class="k"><b>6.1 c)</b> categorical <i class="small">(the answer is a word, like "mango")</i></div>
+    <div class="k"><b>6.2 a)</b> 4 <i class="small">(4 appears twice; every other number once)</i></div>
+    <div class="k"><b>6.2 b)</b> 5.5 <i class="small">(in order: 2, 4, 4, 7, 9, 10; middle two (4 + 7) ÷ 2 = 5.5)</i></div>
+    <div class="k"><b>6.2 c)</b> 6 <i class="small">(sum 36 ÷ 6 numbers = 6)</i></div>
+    <h3 style="color:var(--pud)">Chapter 9</h3>
+    <div class="k"><b>9.1 a)</b> 17 <i class="small">(÷ first: 12 ÷ 4 = 3, then 20 − 3)</i></div>
+    <div class="k"><b>9.1 b)</b> 8 <i class="small">(brackets first: −3 + 7 = 4, then 4 × 2)</i></div>
+    <div class="k"><b>9.1 c)</b> −14 <i class="small">(× first: −4 × 5 = −20, then −20 + 6)</i></div>
+    <div class="k"><b>9.2 a)</b> add 7; 31, 38 <i class="small">(24 + 7 = 31, 31 + 7 = 38)</i></div>
+    <div class="k"><b>9.2 b)</b> 80, 74, 68 <i class="small">(80 − 6 = 74, 74 − 6 = 68)</i></div>
+    <div class="k"><b>9.2 c)</b> 10 and 28 <i class="small">(the rule is add 6: 4, 10, 16, 22, 28)</i></div>
+    <div class="k"><b>9.3 a)</b> 9n; 12th term = 108 <i class="small">(9 × 12)</i></div>
+    <div class="k"><b>9.3 b)</b> n + 13 <i class="small">(1st term 14 = 1 + 13)</i></div>
+    <div class="k"><b>9.3 c)</b> 6 and 9 <i class="small">(inverse ÷ 7: 42 ÷ 7 = 6, 63 ÷ 7 = 9)</i></div>
+    <h3 style="color:var(--pkd)">Chapter 10</h3>
+    <div class="k"><b>10.1 a)</b> <span class="fr"><span>7</span><span>20</span></span> <i class="small">(<span class="fr"><span>35</span><span>100</span></span>, ÷ 5 top and bottom)</i></div>
+    <div class="k"><b>10.1 b)</b> 0.125 and <span class="fr"><span>1</span><span>8</span></span> <i class="small">(12.5 ÷ 100 = 0.125; <span class="fr"><span>125</span><span>1000</span></span>, ÷ 125)</i></div>
+    <div class="k"><b>10.1 c)</b> 140% <i class="small">(1<span class="fr"><span>2</span><span>5</span></span> = 1.4, × 100)</i></div>
+    <div class="k"><b>10.2 a)</b> 48 g <i class="small">(80 ÷ 5 = 16, 16 × 3 = 48)</i></div>
+    <div class="k"><b>10.2 b)</b> 90 kg <i class="small">(10% = 60 kg, 5% = 30 kg, 60 + 30 = 90)</i></div>
+    <div class="k"><b>10.2 c)</b> 10 kg <i class="small">(1% = 4 kg, so 2% = 8 kg and 0.5% = 2 kg; 8 + 2 = 10)</i></div>
+  </div>
+</div>
+
+</body>
+</html>

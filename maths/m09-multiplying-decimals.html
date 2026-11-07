@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Multiplying decimals</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.ch{display:inline-block}
+.pt{display:inline-block;color:#e04848}
+.dpk{display:inline-block;border-radius:8px;padding:0 2px}
+.gcell{position:absolute;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;border:2px solid #f0c9a8;background:#fff;color:#7a2e00;box-sizing:border-box}
+.gcell.h{background:#ffe6cf;color:#c4520e}
+.lot{position:absolute;width:76px;height:54px;border-radius:14px;background:#f5a54a;color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 #c4520e}
+.gap-b{position:absolute;width:40px;height:96px;border-radius:12px;border:3px dashed #9db8ee;background:#eef4ff;cursor:pointer}
+.gap-b:active{background:#d6e4ff}
+.digit{position:absolute;width:70px;height:96px;border-radius:14px;background:#fff;border:3px solid #f7d3b5;font-size:56px;font-weight:800;color:#7a2e00;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 9 · Chapter 4 · Multiplying decimals: Exercise 4.3 Q8 and Exercise 4.5 (Q2, Q6, Q8).
+   Taught with teachQ (maths.js): question first, read aloud, key words, an estimate first, "Show me",
+   then the working one line at a time, the answer and why. */
+const WS43='Worksheet · Ex 4.3 · ',WS45='Worksheet · Ex 4.5 · ';
+const STEM8='Work out these multiplications. Show how to check your answer.';
+const STEM2='Work out the answer of the following.';
+const STEM6='Work out the answer to the following.';
+const STEMQ8='Work out the following.';
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* a number written digit by digit; the decimal point is red, digits after the point are marked (.dpk) */
+function chars(t){let after=false;return [...t].map(c=>{if(c==='.'){after=true;return '<span class="pt">.</span>';}
+  if(/\d/.test(c))return after?`<span class="dpk">${c}</span>`:`<span class="ch">${c}</span>`;
+  after=false;return c===' '?'&nbsp;':`<span class="ch">${c}</span>`;}).join('');}
+
+/* "The point trick" board: the question, the points fly off, the whole-number answer, count the decimal places,
+   then the point drops back into the answer. */
+function trick(x,y,expr,wd=400){
+  const box=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:252px;border-radius:22px;background:#fff;border:3px solid #f7d3b5;box-shadow:0 5px 0 #f7d3b5`);pop(box);
+  const row=(t,yy,col,fs=44)=>{const r=mk('mx',`left:0;top:${yy}px;width:${wd}px;text-align:center;font-size:${fs}px;white-space:nowrap;color:${col}`,chars(t),box);pop(r);return r;};
+  const r1=row(expr,12,'#7a2e00');
+  return{box,r1,
+    fly:async()=>{const p=[...r1.querySelectorAll('.pt')];beep(820,.1);point(r1);
+      await Promise.all(p.map(e=>an(e,[{opacity:1,transform:'none'},{opacity:0,transform:'translateY(-50px) scale(2)'}],{duration:800})));p.forEach(e=>e.style.display='none');},
+    prod:t=>{const r=row(t,108,'#1d4b9e',40);point(r);return r;},
+    count:async n=>{for(const e of r1.querySelectorAll('.dpk')){an(e,[{background:'#fff'},{background:'#ffd84d'}],{duration:500});beep(660,.06);await w0(450);}
+      const tg=mk('tag',`left:${wd/2-100}px;top:72px;width:200px;text-align:center;background:#ffe680;color:#7a2e00;font-size:17px`,`${n} decimal place${n>1?'s':''}`,box);pop(tg);point(tg);return tg;},
+    place:async t=>{const r=row(t,170,'#18a058',50);const p=r.querySelector('.pt');point(r);
+      if(p){p.style.opacity=0;await w0(350);await an(p,[{opacity:0,transform:'translateY(-90px)'},{opacity:1,transform:'none'}],{duration:800,easing:'cubic-bezier(.5,1.6,.5,1)'});beep(900,.1);}return r;}};}
+
+/* a grid for multiplying: column and row headings, each cell fills in, then the total */
+function grid(x,y,cols,rows,cw=100,hw=72,chh=50){
+  const W=hw+cols.length*cw,H=(rows.length+1)*chh;
+  const g=mk('',`left:${x}px;top:${y}px;width:${W}px;height:${H}px`);pop(g);
+  mk('gcell h',`left:0;top:0;width:${hw}px;height:${chh}px`,'×',g);
+  cols.forEach((c,i)=>mk('gcell h',`left:${hw+i*cw}px;top:0;width:${cw}px;height:${chh}px`,c,g));
+  rows.forEach((r,j)=>mk('gcell h',`left:0;top:${(j+1)*chh}px;width:${hw}px;height:${chh}px`,r,g));
+  return{g,fill:async()=>{let sum=0;for(let j=0;j<rows.length;j++)for(let i=0;i<cols.length;i++){const v=cols[i]*rows[j];sum+=v;
+      const c=mk('gcell',`left:${hw+i*cw}px;top:${(j+1)*chh}px;width:${cw}px;height:${chh}px;color:#1d4b9e`,v,g);pop(c);beep(520+i*60+j*90,.06);await w0(650);}
+    const t=mk('tag',`left:0;top:${H+12}px;background:#e6f7ee;color:#0f7a40;font-size:22px;border:3px solid #18a058`,`Add them up: ${sum}`,g);pop(t);point(t);return sum;}};}
+
+/* ten "lots" of a number in a row; one can be taken away */
+function lots(y,label,n=10){return [...Array(n)].map((_,i)=>{const e=mk('lot',`left:${50+i*86}px;top:${y}px`,label);pop(e,i*90);return e;});}
+
+/* a bar of `total` split into `parts` equal pieces, some of them shaded */
+function bar(y,total){const b=mk('',`left:60px;top:${y}px;width:840px;height:58px;border-radius:12px;background:#fff;border:3px solid #7a2e00;overflow:hidden`);pop(b);
+  const lab=mk('mx','left:0;top:8px;width:840px;text-align:center;font-size:30px',total,b);
+  return{b,split:async(parts,each)=>{lab.remove();const pw=840/parts;
+      for(let i=1;i<parts;i++){const l=mk('',`left:${i*pw-1}px;top:0;width:2px;height:58px;background:#7a2e00`,'',b);an(l,[{transform:'scaleY(0)'},{transform:'scaleY(1)'}],{duration:400,delay:parts>20?i*8:i*60});}
+      if(parts<=20)for(let i=0;i<parts;i++)mk('mx',`left:${i*pw}px;top:13px;width:${pw}px;text-align:center;font-size:22px`,each,b);
+      await w0(parts>20?1000:800);beep(600,.08);},
+    shade:async(k,parts)=>{const pw=840/parts;for(let i=0;i<k;i++){const s=mk('',`left:${i*pw}px;top:0;width:${pw}px;height:58px;background:rgba(224,106,27,.55)`,'',b);
+      an(s,[{opacity:0},{opacity:1}],{duration:400});beep(640+i*40,.06);await w0(380);}}};}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m09', num:9, part:'Chapter 4', emoji:'✖️', title:'Multiplying decimals',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's multiply decimals with one clever trick. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Three pieces of ribbon',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to <b>multiply decimals</b>. Let's start with some ribbon.`);
+  await w(2600);
+  /* a metre ruler 0 to 4 m */
+  mk('','left:60px;top:150px;width:800px;height:5px;background:#1f2433;border-radius:3px');
+  for(let i=0;i<=20;i++){const big=i%5===0;mk('',`left:${60+i*40}px;top:${big?140:146}px;width:3px;height:${big?24:14}px;background:#1f2433`);
+    if(big)mk('',`left:${36+i*40}px;top:168px;width:50px;text-align:center;font-size:16px;font-weight:800;color:#5a5f70`,`${i/5} m`);}
+  say(`Each piece of ribbon is <b>1.2 metres</b> long. We have <b>3 pieces</b>. How long are they altogether?`);
+  const cols=['#e06a1b','#2c66cf','#18a058'];
+  for(let i=0;i<3;i++){const r=mk('',`left:${60+i*240}px;top:96px;width:236px;height:38px;border-radius:8px;background:${cols[i]};color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center`,'1.2 m');
+    await an(r,[{transform:'translateY(-120px)',opacity:0},{transform:'none',opacity:1}],{duration:700});beep(500+i*120,.08);await w0(300);}
+  await w(2600);
+  const end=mk('tag','left:752px;top:40px;background:#ffe680;color:#7a2e00;font-size:22px','3.6 m');pop(end);point(end);
+  say(`Laid end to end, they reach <b>3.6 metres</b>. So 1.2 × 3 = 3.6. Now let's find that answer with a <b>trick</b>.`);
+  await w(3400);
+  const T=trick(40,214,'1.2 × 3');
+  const R=[['① Estimate: 1 × 3 = 3',`<b>Step 1: estimate.</b> 1.2 is about 1. 1 times 3 is 3. So the answer is close to 3.`],
+    ['② Ignore the point: 12 × 3 = 36',`<b>Step 2: ignore the point.</b> Now it's 12 times 3, which is 36.`],
+    ['③ Count decimal places: 1',`<b>Step 3: count the decimal places</b> in the question: digits after the point. 1.2 has <b>one</b>.`],
+    ['④ Put the point back: 3.6',`<b>Step 4: put the point back</b>, so the answer has one decimal place too: <b>3.6</b>.`]];
+  for(let i=0;i<4;i++){
+    if(i===1){await T.fly();T.prod('= 36');}
+    if(i===2)await T.count(1);
+    if(i===3)await T.place('3.6');
+    const s=mk('mx-step',`left:470px;top:${222+i*62}px;font-size:22px`,R[i][0]);pop(s);point(s);say(R[i][1]);await w(2800);}
+  say(`3.6 matches the ribbon, and it's close to our estimate of 3. ✔ That's the whole trick!`);
+  await w(3000);}},
+
+/* 1 */ {t:'The point trick',run:async w=>{
+  say(`Let's use the trick on worksheet questions. One question at a time.`);
+  await w(2200);
+  let T;
+  await teachQ(w,{src:WS45+'Q8 a)',q:STEMQ8+'<br>a) 4.2 × 6',read:'Work out the following: 4.2 times 6.',workX:470,workY:156,
+    keys:[['4.2',`<b>4.2</b> has <b>one</b> digit after the point. Remember that for later.`]],
+    before:[{act:async()=>{T=trick(40,156,'4.2 × 6');await w(400);},show:'Estimate: 4 × 6 = 24',say:`First, <b>estimate</b>. 4.2 is about 4, and 4 times 6 is 24. So the answer is close to 24.`,try:true,wait:2600}],
+    steps:[{act:async()=>{await T.fly();T.prod('= 252');},show:'42 × 6 = 252',say:`Ignore the point: 42 times 6. 40 times 6 is 240, and 2 times 6 is 12. Together, <b>252</b>.`,wait:2800},
+      {act:()=>T.count(1),show:'1 decimal place',say:`Count the decimal places in the question. 4.2 has <b>one</b> digit after the point.`,wait:2400},
+      {act:()=>T.place('25.2'),show:'252 → 25.2',say:`So the answer needs one decimal place. Put the point back: <b>25.2</b>.`,wait:2400}],
+    answer:'25.2',why:'25.2 is close to the estimate 24 ✔. One decimal place in the question, so one in the answer.'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS45+'Q8 b)',q:STEMQ8+'<br>b) 7.8 × 5',read:'Work out the following: 7.8 times 5.',workX:470,workY:156,
+    keys:[['7.8',`<b>7.8</b> has <b>one</b> digit after the point.`]],
+    before:[{act:async()=>{T=trick(40,156,'7.8 × 5');await w(400);},show:'Estimate: 8 × 5 = 40',say:`Estimate first. 7.8 is about 8, and 8 times 5 is 40.`,try:true,wait:2400}],
+    steps:[{act:async()=>{await T.fly();T.prod('= 390');},show:'78 × 5 = 390',say:`Ignore the point: 78 times 5. 70 times 5 is 350, and 8 times 5 is 40. Together, <b>390</b>.`,wait:2800},
+      {act:()=>T.count(1),show:'1 decimal place',say:`7.8 has <b>one</b> decimal place, so the answer has one too.`,wait:2200},
+      {act:()=>T.place('39.0'),show:'39.0 = 39',say:`Put the point back: 39.0. A zero at the end after the point is worth nothing, so it's just <b>39</b>.`,wait:2800}],
+    answer:'39',why:'39 is close to the estimate 40 ✔. 39.0 and 39 are the same number.'});
+  await w(1500);}},
+
+/* 2 */ {t:'Times 9: ten lots, take one away',run:async w=>{
+  say(`Here's a shortcut for <b>times 9</b>. Look at 9 lots of 7.`);
+  await w(2400);
+  const L=lots(60,'7');
+  await w(1400);
+  const t1=mk('tag','left:50px;top:136px;background:#ffe6cf;color:#7a2e00;font-size:22px','10 lots of 7 = 70');pop(t1);point(t1);
+  say(`Here are <b>10 lots</b> of 7. That's easy: 10 times 7 is <b>70</b>.`);
+  await w(2800);
+  an(L[9],[{transform:'none',opacity:1,background:'#f5a54a'},{transform:'translateY(150px) rotate(25deg)',opacity:.25,background:'#e04848'}],{duration:1000});boo();
+  const t2=mk('tag','left:50px;top:186px;background:#e6f7ee;color:#0f7a40;font-size:22px','9 lots of 7 = 70 − 7 = 63');pop(t2,600);
+  say(`Now take <b>one lot away</b>. 70 minus 7 is <b>63</b>. And 9 times 7 really is 63!`);
+  await w(3200);
+  say(`So <b>times 9</b> is the same as <b>times 10, then take one lot away</b>. Let's try it with a decimal.`);
+  await w(3000);
+  clear();let D;
+  await teachQ(w,{src:WS45+'Q6 a)',q:STEM6+'<br>a) 6.8 × 9 (9 = 10 − 1)',read:'Work out: 6.8 times 9. The hint says 9 equals 10 minus 1.',workY:258,
+    keys:[['(9 = 10 − 1)',`This hint says 9 is the same as <b>10 take away 1</b>. So 9 lots is 10 lots, minus 1 lot.`]],
+    before:[{act:async()=>{D=lots(156,'6.8');await w(1200);},show:'Estimate: 7 × 9 = 63',say:`Here are 10 lots of 6.8. First, estimate. 6.8 is about 7, and 7 times 9 is 63.`,try:true,wait:2800}],
+    steps:[{act:async()=>{const t=mk('tag','left:50px;top:218px;background:#ffe6cf;color:#7a2e00;font-size:18px','10 lots of 6.8 = 68');pop(t);await w(300);},
+        show:'6.8 × 10 = 68 <i>10 lots</i>',say:`Times 10 is easy: 6.8 times 10 is <b>68</b>. The digits move one place bigger.`,wait:2600},
+      {act:async()=>{an(D[9],[{transform:'none',opacity:1},{transform:'translateY(60px) rotate(25deg)',opacity:.2}],{duration:900});boo();await w(600);},
+        show:'68 − 6.8 = 61.2 <i>take 1 lot away</i>',say:`Now take one lot of 6.8 away. 68 minus 7 is 61. But we took 0.2 too many, so add it back: <b>61.2</b>.`,wait:3200}],
+    answer:'61.2',why:'Times 9 = times 10, then take one lot away. 61.2 is close to the estimate 63 ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Tenths of a big number',run:async w=>{
+  say(`Now a decimal times a <b>big</b> number. The trick: <b>0.6</b> means <b>6 tenths</b>.`);
+  await w(2600);
+  let B;
+  await teachQ(w,{src:WS45+'Q2 a)',q:STEM2+'<br>a) 0.6 × 410',read:'Work out: 0.6 times 410.',workY:256,
+    keys:[['0.6',`<b>0.6</b> means <b>6 tenths</b>: 6 out of every 10 equal parts.`]],
+    before:[{act:async()=>{B=bar(156,'410');await w(800);},show:'Estimate: a bit more than half of 410',say:`Estimate first. 0.6 is a bit more than a half, and half of 410 is 205. So the answer is a bit more than 205.`,try:true,wait:3000}],
+    steps:[{act:()=>B.split(10,'41'),show:'410 ÷ 10 = 41 <i>one tenth</i>',say:`Split 410 into <b>10 equal parts</b>. 410 divided by 10 is 41. So one tenth is <b>41</b>.`,wait:2800},
+      {act:()=>B.shade(6,10),show:'6 × 41 = 246 <i>six tenths</i>',say:`We want <b>6</b> of those tenths. 6 times 40 is 240, plus 6 times 1 is 6. That makes <b>246</b>.`,wait:3000}],
+    answer:'246',why:'0.6 × 410 = 6 × 41 = 246. It is a bit more than half of 410, as we estimated ✔'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS45+'Q2 c)',q:STEM2+'<br>c) 0.02 × 3200',read:'Work out: 0.02 times 3200.',workY:256,
+    keys:[['0.02',`<b>0.02</b> means <b>2 hundredths</b>: 2 out of every 100 equal parts.`]],
+    before:[{act:async()=>{B=bar(156,'3200');await w(800);},show:'Estimate: 0.02 is tiny, so much less than 3200',say:`Estimate first. 0.02 is a very small number, so the answer will be <b>much smaller</b> than 3200.`,try:true,wait:2800}],
+    steps:[{act:async()=>{await B.split(100);const t=mk('tag','left:640px;top:222px;background:#ffe6cf;color:#7a2e00;font-size:17px','100 parts, 32 in each');pop(t);},
+        show:'3200 ÷ 100 = 32 <i>one hundredth</i>',say:`Split 3200 into <b>100 equal parts</b>. 3200 divided by 100 is 32. So one hundredth is <b>32</b>.`,wait:2800},
+      {act:async()=>{await B.shade(2,100);const t=mk('tag','left:60px;top:222px;background:#e6f7ee;color:#0f7a40;font-size:17px','← 2 parts');pop(t);},
+        show:'2 × 32 = 64 <i>two hundredths</i>',say:`We want <b>2</b> of those hundredths. 2 times 32 is <b>64</b>.`,wait:2600}],
+    answer:'64',why:'0.02 × 3200 = 2 × 32 = 64. Much smaller than 3200, as we estimated ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'Bigger multiplications',run:async w=>{
+  say(`Now bigger numbers. Same trick: <b>estimate</b>, <b>ignore the point</b>, multiply, then <b>put the point back</b>. A grid helps with the big multiplying.`);
+  await w(3400);
+  let G;
+  await teachQ(w,{src:WS43+'Q8 a)',q:STEM8+'<br>a) 3.2 × 52',read:'Work out 3.2 times 52. Show how to check your answer.',workX:450,workY:156,
+    keys:[['Show how to check',`<b>Check</b> means round the numbers and work out an <b>estimate</b>. The real answer should be close to it.`]],
+    before:[{show:'Check: 3 × 50 = 150',say:`The check first. 3.2 is about 3, and 52 is about 50. 3 times 50 is <b>150</b>.`,try:true,wait:2600}],
+    steps:[{show:'Ignore the point: 32 × 52',say:`Now ignore the point. 3.2 becomes 32, so we work out <b>32 times 52</b>.`,wait:2400},
+      {act:async()=>{G=grid(40,156,[50,2],[30,2],110);await w(600);
+        say(`Split 32 into 30 and 2, and 52 into 50 and 2. Multiply each pair.`);await G.fill();},
+        show:'32 × 52 = 1664',say:`30 times 50 is 1500, 30 times 2 is 60, 2 times 50 is 100 and 2 times 2 is 4. Add them up: <b>1664</b>.`,wait:3400},
+      {show:'1 decimal place → 166.4',say:`3.2 has <b>one</b> decimal place, so the answer has one: <b>166.4</b>.`,wait:2600}],
+    answer:'166.4',why:'Check: 3 × 50 = 150, and 166.4 is close to 150 ✔. If you got 16.64 or 1664, the check would tell you something went wrong.'});
+  await w(1500);}},
+
+/* 5 */ {t:'Check with an estimate',run:async w=>{
+  say(`Next one. The estimate is our <b>safety check</b>. It tells us where the point must go.`);
+  await w(2600);
+  let G;
+  await teachQ(w,{src:WS43+'Q8 b)',q:STEM8+'<br>b) 8.1 × 384',read:'Work out 8.1 times 384. Show how to check your answer.',workX:450,workY:156,
+    keys:[['8.1',`<b>8.1</b> has <b>one</b> digit after the point.`]],
+    before:[{show:'Check: 8 × 400 = 3200',say:`The check first. 8.1 is about 8, and 384 is about 400. 8 times 400 is <b>3200</b>.`,try:true,wait:2600}],
+    steps:[{show:'Ignore the point: 81 × 384',say:`Ignore the point: we work out <b>81 times 384</b>.`,wait:2200},
+      {act:async()=>{G=grid(40,156,[300,80,4],[80,1],100);await w(600);
+        say(`Split 384 into 300, 80 and 4. Split 81 into 80 and 1. Multiply each pair.`);await G.fill();},
+        show:'81 × 384 = 31104',say:`The grid gives 24000, 6400, 320, 300, 80 and 4. Add them all up: <b>31104</b>.`,wait:3400},
+      {show:'1 decimal place → 3110.4',say:`8.1 has <b>one</b> decimal place, so the answer has one: <b>3110.4</b>.`,wait:2600}],
+    answer:'3110.4',why:'Check: 8 × 400 = 3200, and 3110.4 is close to 3200 ✔. 311.04 or 31104 would be far away from it.'});
+  await w(1500);}},
+
+/* 6 */ {t:'Two decimal places',run:async w=>{
+  say(`This time the decimal has <b>two</b> digits after the point. Watch what happens.`);
+  await w(2400);
+  let G;
+  await teachQ(w,{src:WS43+'Q8 c)',q:STEM8+'<br>c) 0.78 × 41',read:'Work out 0.78 times 41. Show how to check your answer.',workX:450,workY:156,
+    keys:[['0.78',`<b>0.78</b> has <b>two</b> digits after the point: the 7 and the 8.`]],
+    before:[{show:'Check: 0.8 × 40 = 32',say:`The check first. 0.78 is about 0.8, and 41 is about 40. 0.8 times 40 is 8 tenths of 40, which is <b>32</b>.`,try:true,wait:3000}],
+    steps:[{show:'Ignore the point: 78 × 41',say:`Ignore the point: we work out <b>78 times 41</b>.`,wait:2200},
+      {act:async()=>{G=grid(40,156,[40,1],[70,8],110);await w(600);
+        say(`Split 41 into 40 and 1, and 78 into 70 and 8. Multiply each pair.`);await G.fill();},
+        show:'78 × 41 = 3198',say:`70 times 40 is 2800, 70 times 1 is 70, 8 times 40 is 320 and 8 times 1 is 8. Add them up: <b>3198</b>.`,wait:3400},
+      {show:'2 decimal places → 31.98',say:`0.78 has <b>two</b> decimal places, so the answer has two: <b>31.98</b>.`,wait:2600}],
+    answer:'31.98',why:'Check: 0.8 × 40 = 32, and 31.98 is very close ✔. Two decimal places in the question, so two in the answer.'});
+  await w(1500);}},
+
+/* 7 */ {t:'Put the point back!',run:async w=>{
+  const R=[['5.3 × 4','53 × 4 = 212','212',1,'5.3 has one decimal place, so 21.2. Check: 5 × 4 = 20 ✔'],
+    ['1.4 × 2.1','14 × 21 = 294','294',2,'One decimal place in 1.4 and one in 2.1: that makes two. So 2.94. Check: 1 × 2 = 2 ✔'],
+    ['0.25 × 3','25 × 3 = 75','75',2,'0.25 has two decimal places, so 0.75. We write a 0 in front of the point. Check: 0.25 is a quarter, and a quarter of 3 is 0.75 ✔'],
+    ['6.8 × 9','68 × 9 = 612','612',1,'6.8 has one decimal place, so 61.2. Check: 7 × 9 = 63 ✔']];
+  say(`Your turn! I've already multiplied without the point. <b>You</b> put the point back. Tap the gap where it goes.`);
+  await w(3200);
+  let right=0;
+  for(let r=0;r<R.length;r++){stage.innerHTML='';const [q,work,dig,dp,why]=R[r];
+    mk('ex-head','',`🎯 Put the point back · ${r+1} of ${R.length}`);
+    const qe=mk('mx','left:0;top:46px;width:960px;text-align:center;font-size:50px',q);pop(qe);
+    const we=mk('mx-step','left:220px;top:124px;width:520px;text-align:center;white-space:nowrap','Ignore the point: '+work);pop(we,300);
+    const n=dig.length,tot=n*70+(n+1)*44,x0=480-tot/2;let pick=-1;
+    const gaps=[];for(let k=0;k<=n;k++){const g=btn('gap-b',`left:${x0+k*114}px;top:236px`,'',()=>{if(pick<0)pick=k;});pop(g,400+k*60);gaps.push(g);}
+    for(let i=0;i<n;i++){const d=mk('digit',`left:${x0+44+i*114}px;top:236px`,dig[i]);pop(d,400+i*60);}
+    say(`${q}. Ignore the point: ${work}. Where does the point go? Count the decimal places in the question, then tap a gap.`);
+    window.AUTOPLAY=()=>{if(pick<0)pick=n-dp;};
+    await w.until(()=>pick>=0);window.AUTOPLAY=null;
+    const ok=pick===n-dp,good=n-dp;
+    const dot=k=>{const e=mk('',`left:${x0+k*114+8}px;top:300px;width:24px;height:24px;border-radius:50%;background:${ok?'#18a058':'#e04848'}`);
+      an(e,[{transform:'translateY(-120px)',opacity:0},{transform:'none',opacity:1}],{duration:600});return e;};
+    const ans=(good===0?'0':'')+dig.slice(0,good)+'.'+dig.slice(good);
+    if(ok){right++;dot(pick);yay();confetti(40);}
+    else{const bad=dot(pick);boo();shake(gaps[pick]);await w(900);bad.remove();
+      const e=mk('',`left:${x0+good*114+8}px;top:300px;width:24px;height:24px;border-radius:50%;background:#18a058`);pop(e);}
+    const s=mk('stamp',`left:380px;top:356px;width:200px;text-align:center;font-size:30px`,'✔ '+ans);pop(s);point(s);
+    const wy=mk('mx-why','left:120px;top:430px;width:720px',(ok?'✅ ':'💡 ')+why);pop(wy);
+    say((ok?'Yes! ':'Not quite. ')+why);await w(3600);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🎯</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You placed ${right} of ${R.length} points!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! Count the decimal places, and the point lands in the right spot.`:`Good effort! Remember: count the digits after the point in the question. Press Replay to try again.`);
+  await w(2600);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. <b>Estimate first</b>, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 4.5 · Q8 c)',q:'Work out the following.<br>c) 6.3 × 8',o:['5.04','50.4','504','48.3'],a:1,
+      why:'63 × 8 = 504. 6.3 has one decimal place, so <b>50.4</b>. Check: 6 × 8 = 48 ✔',whyNot:{0:'that has two decimal places, but 6.3 has only one.',2:'the point was never put back.',3:'only the 6 was multiplied by 8; the 0.3 must be multiplied too.'}},
+    {src:'Worksheet · Ex 4.5 · Q8 b)',q:'Work out the following.<br>b) 7.8 × 5',o:['3.9','35.8','39','390'],a:2,
+      why:'78 × 5 = 390, so 39.0, which is <b>39</b>. Check: 8 × 5 = 40 ✔',whyNot:{0:'that is ten times too small. The check 8 × 5 = 40 shows that.',1:'only the 7 was multiplied by 5; the 0.8 must be multiplied too.',3:'the point was never put back.'}},
+    {src:'Worksheet · Ex 4.5 · Q6 b)',q:'Work out the answer to the following.<br>b) 4.7 × 9',o:['47','42.3','43.3','423'],a:1,
+      why:'4.7 × 10 = 47, then take one lot away: 47 − 4.7 = <b>42.3</b>. Check: 5 × 9 = 45 ✔',whyNot:{0:'that is 10 lots; one lot of 4.7 still has to be taken away.',2:'the subtraction slipped: 47 − 5 is 42, then add back 0.3 to get 42.3.',3:'the point was never put back.'}},
+    {src:'Worksheet · Ex 4.5 · Q6 c)',q:'Work out the answer to the following.<br>c) 12.6 × 9',o:['126','117','113.4','1134'],a:2,
+      why:'12.6 × 10 = 126, then take one lot away: 126 − 12.6 = <b>113.4</b>. Check: 13 × 9 = 117, close ✔',whyNot:{0:'that is 10 lots; one lot of 12.6 still has to be taken away.',1:'that is only the estimate 13 × 9, not the exact answer.',3:'the point was never put back.'}},
+    {src:'Worksheet · Ex 4.5 · Q2 b)',q:'Work out the answer of the following.<br>b) 0.9 × 320',o:['28.8','288','2880','32.9'],a:1,
+      why:'0.9 is 9 tenths. 320 ÷ 10 = 32, and 9 × 32 = <b>288</b>. Check: 0.9 is nearly 1, so the answer is nearly 320 ✔',whyNot:{0:'that is ten times too small.',2:'0.9 is less than 1, so the answer must be less than 320.',3:'that adds 0.9 to 32 instead of multiplying.'}},
+    {src:'Worksheet · Ex 4.5 · Q2 c)',q:'Work out the answer of the following.<br>c) 0.02 × 3200',o:['640','6.4','64','0.64'],a:2,
+      why:'0.02 is 2 hundredths. 3200 ÷ 100 = 32, and 2 × 32 = <b>64</b>.',whyNot:{0:'that is 0.2 × 3200, ten times too big.',1:'that is ten times too small.',3:'that is a hundred times too small.'}},
+    {src:'Worksheet · Ex 4.3 · Q8 a)',q:'Work out these multiplications. Show how to check your answer.<br>a) 3.2 × 52',o:['16.64','166.4','1664','156.4'],a:1,
+      why:'32 × 52 = 1664, and one decimal place gives <b>166.4</b>. Check: 3 × 50 = 150 ✔',whyNot:{0:'that has two decimal places, but 3.2 has only one.',2:'the point was never put back.',3:'only the 3 was multiplied by 52; 0.2 × 52 = 10.4 is missing.'}},
+    {src:'Worksheet · Ex 4.3 · Q8 b)',q:'Work out these multiplications. Show how to check your answer.<br>b) 8.1 × 384',
+      model:'Ignore the point: 81 × 384 = 31104. 8.1 has one decimal place, so the answer is <b>3110.4</b>.<br>Check: 8 × 400 = 3200, which is close ✔'},
+    {src:'Worksheet · Ex 4.3 · Q8 c)',q:'Work out these multiplications. Show how to check your answer.<br>c) 0.78 × 41',o:['319.8','31.98','3.198','32'],a:1,
+      why:'78 × 41 = 3198. 0.78 has two decimal places, so <b>31.98</b>. Check: 0.8 × 40 = 32 ✔',whyNot:{0:'that has one decimal place, but 0.78 has two.',2:'that has three decimal places, but 0.78 has only two.',3:'32 is the check (the estimate), not the exact answer.'}},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Multiplying decimals</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🎯','<b>Estimate</b> first:<br>3.2 × 52 ≈ 3 × 50 = 150',`Always estimate first. 3.2 times 52 is about 3 times 50, which is 150.`],
+    ['🙈','<b>Ignore the point</b><br>and multiply:<br>32 × 52 = 1664',`Ignore the point and multiply the whole numbers.`],
+    ['🔢','<b>Count</b> the digits after the point in the question',`Count the digits after the point in the question.`],
+    ['📍','<b>Put the point back</b>:<br>166.4',`Put the point back, with the same number of decimal places.`],
+    ['✖️','4.2 × 6:<br>42 × 6 = 252<br>→ <b>25.2</b>',`4.2 times 6: 42 times 6 is 252, so 25.2.`],
+    ['9️⃣','× 9 = × 10, take one lot away<br>68 − 6.8 = <b>61.2</b>',`Times 9 is times 10, then take one lot away.`],
+    ['🍰','0.6 × 410:<br>6 tenths of 410<br>6 × 41 = <b>246</b>',`0.6 times 410 is 6 tenths of 410: 6 times 41, which is 246.`],
+    ['✌️','0.78 has <b>two</b> decimal places → <b>31.98</b>',`0.78 has two decimal places, so the answer 31.98 has two as well.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now multiply decimals and check your answers. Next up: <b>dividing decimals</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

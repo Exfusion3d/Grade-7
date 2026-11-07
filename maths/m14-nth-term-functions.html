@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>The nth term and function machines</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 14 · Chapter 9 · Exercises 9.3 and 9.4
+   Every worksheet question type is taught with teachQ (maths.js); the rest are in the Exam check. */
+const W3='Worksheet · Ex 9.3 · ',W4='Worksheet · Ex 9.4 · ';
+const Q2S='For each of these sequences work out nth term rule.';
+const Q5S='For each of these sequences, work out its nth term rule.';
+const F1='Copy these function machines and work out the missing outputs.';
+const F2='Copy these function machines and work out the missing outputs. Use inverse operations to work out the missing inputs.';
+const F4='Copy and complete these inverse function machines and tables of values.';
+const BOX='<i class="bx">____</i>'; /* a box to fill in; the voice reads it as "blank" */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.bx{display:inline-block;min-width:40px;height:1.1em;vertical-align:-.18em;border:2.5px solid #e06a1b;border-radius:6px;background:#fff7ee;color:transparent;font-style:normal;line-height:1;overflow:hidden}
+.tb{display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.15);opacity:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif}
+.arc{border:4px solid #18a058;border-bottom:none;border-radius:50% 50% 0 0/100% 100% 0 0}
+.plab{text-align:center;font-size:15px;font-weight:800;color:#5a5f70}
+.tc{display:flex;align-items:center;justify-content:center;border:2.5px solid #9aa3b5;background:#fff;font-size:21px;font-weight:800;color:#1f2433;margin:-1.25px 0 0 -1.25px;text-align:center}
+.tc.h{background:#efeaff;color:#4a2ea6;font-size:15px;line-height:1.15}
+.tc.gap{background:#fff7ee}
+.fly{display:flex;align-items:center;justify-content:center;width:64px;height:44px;border-radius:22px;color:#fff;font-size:21px;font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.18);z-index:15;white-space:nowrap}
+.mach{border-radius:20px;background:linear-gradient(#5a6378,#3b4152);color:#ffd84d;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 7px 0 #262b38;white-space:nowrap}
+.arw{font-size:34px;font-weight:800;color:#9aa3b5;text-align:center}
+.lbl{padding:6px 14px;border-radius:14px;background:#eef4ff;color:#1d4b9e;font-size:18px;font-weight:800;white-space:nowrap}
+</style>`);
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* a row of terms; null = an empty box. jump(i,j,label) draws an arc from term i to term j (from Lesson 13) */
+function seq(vals,y,{d=104,sz=64,col='#2c66cf',x}={}){const n=vals.length;x=x??480-((n-1)*d+sz)/2;
+  const X=i=>x+i*d;
+  const B=vals.map((v,i)=>mk('tb',`left:${X(i)}px;top:${y}px;width:${sz}px;height:${sz}px;font-size:${Math.round(sz*.42)}px;`+
+    (v==null?'background:#fff;border:3px dashed #e06a1b;color:#e06a1b':`background:${col};color:#fff`),v==null?'?':v));
+  const show=(i,delay=0)=>{pop(B[i],delay);beep(480+i*50,.06);};
+  const jump=async(i,j,lab,c='#18a058')=>{const a=X(Math.min(i,j))+sz/2,wd=Math.abs(j-i)*d;
+    const arc=mk('arc',`left:${a}px;top:${y-26}px;width:${wd}px;height:22px;border-color:${c};transform-origin:${j>i?'0':'100%'} 100%`);
+    const t=mk('mx',`left:${a+wd/2-40}px;top:${y-56}px;width:80px;text-align:center;font-size:21px;color:${c}`,lab);
+    an(arc,[{transform:'scaleX(0)',opacity:0},{transform:'scaleX(1)',opacity:1}],{duration:700});await w0(500);pop(t);beep(640,.06);await w0(500);return[arc,t];};
+  const under=(i,txt,c='#5a5f70',dy=6)=>{const e=mk('plab',`left:${X(i)-20}px;top:${y+sz+dy}px;width:${sz+40}px;color:${c}`,txt);pop(e);return e;};
+  return{B,X,show,jump,under,all:()=>vals.forEach((v,i)=>show(i,i*120))};}
+
+/* a table: rows = [[heading,[values]]]; null = an empty cell to fill in. Returns the value cells, cells[row][column]. */
+function grid(x,y,hw,cw,rh,rows){return rows.map(([h,vals],r)=>{const H=mk('tc h',`left:${x}px;top:${y+r*rh}px;width:${hw}px;height:${rh}px`,h);pop(H);
+  const C=vals.map((v,c)=>{const e=mk('tc'+(v==null?' gap':''),`left:${x+hw+c*cw}px;top:${y+r*rh}px;width:${cw}px;height:${rh}px`,v??'');pop(e,c*60);return e;});C.head=H;return C;});}
+const put=(c,v,col='#18a058')=>{c.innerHTML=v;c.classList.remove('gap');c.style.color=col;pop(c);beep(700,.08);};
+const glow=e=>e.animate([{background:'#fff'},{background:'#ffe680'},{background:'#fff'}],{duration:900});
+/* an input or output column: a heading cell and value cells underneath */
+function ioCol(x,y,title,vals,rh=40,wd=120){const H=mk('tc h',`left:${x}px;top:${y}px;width:${wd}px;height:36px;font-size:17px`,title);pop(H);
+  return vals.map((v,i)=>{const e=mk('tc'+(v==null?' gap':''),`left:${x}px;top:${y+36+i*rh}px;width:${wd}px;height:${rh}px`,v??'');pop(e,i*80);return e;});}
+/* a function machine (grey); flip() turns it into its orange inverse machine */
+function machine(x,y,wd,h,label,fs=32){const m=mk('mach',`left:${x}px;top:${y}px;width:${wd}px;height:${h}px;font-size:${fs}px`,`<span>${label}</span>`);m.lab=m.firstChild;
+  const g=mk('',`left:${wd-36}px;top:-18px;font-size:${Math.min(30,h*.4)}px`,'⚙️',m);loop(g,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],2500,{easing:'linear'});pop(m);return m;}
+async function flip(m,label){await an(m,[{transform:'rotateY(0)'},{transform:'rotateY(90deg)'}],{duration:300});
+  m.lab.innerHTML=label;Object.assign(m.style,{background:'linear-gradient(#f5a54a,#e06a1b)',boxShadow:'0 7px 0 #c4520e',color:'#fff'});beep(500,.1);
+  await an(m,[{transform:'rotateY(90deg)'},{transform:'rotateY(0)'}],{duration:300});}
+const ctr=e=>[e.offsetLeft+e.offsetWidth/2,e.offsetTop+e.offsetHeight/2];
+function chip(txt,[x,y],col){const c=mk('fly',`left:${x-32}px;top:${y-22}px;background:${col}`,txt);pop(c);return c;}
+const glide=(c,[x,y],ms=800)=>an(c,[{transform:`translate(${x-c.offsetLeft-32}px,${y-c.offsetTop-22}px)`}],{duration:ms});
+/* a number leaves cell `from`, goes through machine m and lands in cell `to` as `out` */
+async function sendThrough(m,from,to,out,col='#2c66cf'){const a=chip(from.textContent.trim(),ctr(from),col);await w0(250);await glide(a,ctr(m));a.remove();
+  shake(m);beep(260,.12,'square',.05);await w0(300);const b=chip(out,ctr(m),'#18a058');await glide(b,ctr(to));b.remove();put(to,out);await w0(250);}
+/* the same with big balls, for the machines that are not attached to a table */
+function ball(x,y,txt,col='#2c66cf'){const b=mk('fly',`left:${x}px;top:${y}px;width:110px;height:70px;border-radius:35px;font-size:30px;background:${col}`,txt);pop(b);return b;}
+async function feed(m,inp,out,{y=0,col='#2c66cf'}={}){const yy=m.offsetTop+m.offsetHeight/2-35;
+  const a=ball(60,yy,inp,col);await w0(500);const mx=m.offsetLeft+m.offsetWidth/2-55;
+  await an(a,[{transform:'none',opacity:1},{transform:`translateX(${mx-60}px) scale(.4)`,opacity:0}],{duration:900});a.remove();shake(m);beep(260,.12,'square',.05);
+  await w0(300);const b=ball(790,yy,out,'#18a058');point(b);beep(700,.1);return b;}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m14', num:14, part:'Chapter 9', emoji:'⚙️', title:'The nth term and function machines',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's find any term of a sequence in one go, and build some number machines. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Jump straight to any term',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Last time you used the <b>term-to-term rule</b>. Today you'll learn a faster trick, called the <b>nth term</b>.`);
+  await w(3000);
+  const S=seq(['3','6','9','12','15'],96,{d:130,sz:72});S.all();await w(900);
+  const P=[0,1,2,3,4].map(i=>S.under(i,'position '+(i+1),'#6a45d8'));point(P[0]);
+  say(`Here's a sequence: 3, 6, 9, 12, 15. Under each term is its <b>position number</b>. 3 is in position 1, 6 is in position 2.`);
+  await w(3200);
+  for(let i=0;i<4;i++)await S.jump(i,i+1,'+3');
+  say(`The term-to-term rule is <b>add 3</b>. That's great for finding the <b>next</b> term.`);
+  await w(2600);
+  const q=mk('tag','left:300px;top:206px;background:#ffe6cf;color:#7a2e00;font-size:24px;white-space:nowrap','What is the 100th term? 🤔');pop(q);point(q);
+  say(`But what is the <b>hundredth</b> term? Adding 3 again and again, ninety-five more times, would take ages!`);
+  await w(3400);
+  [0,1,2].forEach(i=>an(S.B[i],[{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:700,delay:i*500}));
+  say(`Look at the positions and terms. Position 1 gives 3. Position 2 gives 6. Position 3 gives 9. Each term is its position <b>times 3</b>!`);
+  await w(3600);
+  q.remove();
+  const m=machine(330,272,300,96,'× 3');
+  mk('lbl','left:60px;top:378px','position in');mk('lbl','left:790px;top:378px','term out');
+  point(m);say(`So let's build a <b>machine</b>. The position goes in, the machine times it by 3, and the term comes out.`);
+  await w(3000);
+  let o=await feed(m,'4','12');
+  say(`Put in position <b>4</b>: 4 times 3 is <b>12</b>. That's the 4th term!`);
+  await w(2600);o.remove();
+  o=await feed(m,'100','300');
+  say(`Now put in <b>100</b>. Out comes <b>300</b>. That's the hundredth term, straight away!`);
+  await w(3000);
+  const r=mk('mx-step','left:250px;top:440px','nth term = 3 × n = <b style="color:#e06a1b">3n</b>');pop(r);point(r);
+  say(`We call the position <b>n</b>. So the <b>nth term</b> of this sequence is 3 times n, written <b>3n</b>. It works for any position!`);
+  await w(3600);}},
+
+/* 1 */ {t:'Position and term',run:async w=>{
+  let T;
+  await teachQ(w,{src:W3+'Q1 a)',q:'Complete the working shown to work out the nth term rule for this sequence:<br>6, 12, 18, 24, 30, . . .',
+    read:'Complete the working shown to work out the nth term rule for this sequence: 6, 12, 18, 24, 30, and so on.',workY:300,
+    keys:[['nth term rule',`The <b>nth term rule</b> works out any term from its <b>position number</b>, n.`],['working shown',`The <b>working</b> is a table. Let's look at it.`]],
+    before:[{act:async()=>{T=grid(140,154,200,104,44,[['Position number',['1','2','3','4','5']],['× ?',[null,null,null,null,null]],['Term',['6','12','18','24','30']]]);await w(900);point(T[0].head);},
+      say:`Top row: the <b>position number</b>. Bottom row: the <b>term</b> in that position. The middle row is the job that turns one into the other.`,wait:3200}],
+    steps:[{act:async()=>{for(let c=0;c<5;c++){glow(T[0][c]);glow(T[2][c]);point(T[1][c]);await w(400);put(T[1][c],'× 6','#e06a1b');await w(300);}put(T[1].head,'× 6','#e06a1b');},
+        show:'1 × 6 = 6, &nbsp;2 × 6 = 12, &nbsp;3 × 6 = 18 …',say:`What turns 1 into 6? <b>Times 6</b>. 2 times 6 is 12. 3 times 6 is 18. Every column is times 6.`,wait:3000},
+      {show:'Term = 6 × n = <b>6n</b>',say:`So the term is 6 times the position number. For position n, that's 6 times n, written <b>6n</b>.`,wait:2800}],
+    answer:'nth term = 6n',why:'Check: put n = 1, 2, 3 into 6n and you get 6, 12, 18. They match the sequence. ✔'});
+  await w(1500);}},
+
+/* 2 */ {t:'Using the rule',run:async w=>{
+  let m,o;
+  await teachQ(w,{src:W3+'Q1 b)',q:'The nth term rule for 6, 12, 18, 24, 30, . . . is 6n.<br>b) Use your rule to work out the: (i) 10th term (ii) 15th term',
+    read:'Use your rule, 6n, to work out the tenth term and the fifteenth term.',workY:282,
+    keys:[['10th term',`The <b>tenth term</b> is the term in <b>position 10</b>. So n is 10.`],['15th term',`And the <b>fifteenth term</b> is in position 15, so n is 15.`]],
+    before:[{act:async()=>{m=machine(330,168,300,96,'× 6');await w(700);o=await feed(m,'3','18');},show:'Test it: 3rd term = 6 × 3 = 18 ✔',
+      say:`Let's test the rule on a term we can see. Put in position <b>3</b>: 6 times 3 is <b>18</b>. That's the 3rd term!`,try:true,wait:2800}],
+    steps:[{act:async()=>{o.remove();o=await feed(m,'10','60');},show:'10th term: 6 × 10 = <b>60</b>',say:`Now position <b>10</b>. Put 10 in place of n: 6 times 10 is <b>60</b>.`,wait:2400},
+      {act:async()=>{o.remove();o=await feed(m,'15','90');},show:'15th term: 6 × 15 = <b>90</b>',say:`Position <b>15</b>: 6 times 15 is <b>90</b>.`,wait:2200}],
+    answer:'60 and 90',why:'Swap n for the position number. No need to count along the sequence!'});
+  await w(1500);}},
+
+/* 3 */ {t:'Times-table sequences',run:async w=>{
+  say(`Now you find the rule yourself. Here's a big clue: look at the <b>jump</b> between the terms.`);
+  await w(2600);
+  let S;
+  await teachQ(w,{src:W3+'Q2 a)',q:Q2S+'<br>a) 5, 10, 15, 20, 25, . . .',read:'For each of these sequences, work out the nth term rule. a: 5, 10, 15, 20, 25, and so on.',workY:338,
+    keys:[['nth term rule',`Remember: the <b>nth term rule</b> gives any term from its position, n.`]],
+    before:[{act:async()=>{S=seq(['5','10','15','20','25'],214,{d:120,sz:60});S.all();await w(700);[0,1,2,3,4].forEach(i=>S.under(i,'n = '+(i+1)));await w(500);},
+      say:`Here are the terms, with their positions underneath.`,wait:2000}],
+    steps:[{act:async()=>{for(let i=0;i<4;i++)await S.jump(i,i+1,'+5');},show:'Jumps of +5 → the <b>5 times table</b>',
+        say:`Each jump is <b>add 5</b>. So these are the numbers in the <b>5 times table</b>.`,wait:2400},
+      {act:async()=>{for(let i=0;i<5;i++){S.under(i,'5 × '+(i+1),'#18a058',30);await w(250);}},show:'Term = 5 × position → <b>5n</b>',
+        say:`Each term is 5 times its position: 5 times 1, 5 times 2, and so on. So the rule is <b>5n</b>.`,wait:2800}],
+    answer:'5n',why:'It is not n + 5: n = 1 would give 6. Check 5n: n = 1, 2, 3 gives 5, 10, 15. ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'Any term you like',run:async w=>{
+  let m,o;
+  await teachQ(w,{src:W3+'Q3 a)',q:'For each of the sequences in Q2, use its nth term rule to work out the: (i) eighth term (ii) 20th term<br>a) 5, 10, 15, 20, 25, . . . &nbsp;(nth term = 5n)',
+    read:'For each of the sequences in question 2, use its nth term rule to work out the eighth term and the twentieth term. Start with a: 5, 10, 15, 20, 25. Its nth term is 5n.',workY:296,
+    keys:[['eighth term',`The <b>eighth term</b> is in position <b>8</b>, so n is 8.`],['20th term',`The <b>twentieth term</b> is in position 20, so n is 20.`]],
+    before:[{act:async()=>{m=machine(330,172,300,96,'× 5');await w(700);o=await feed(m,'2','10');},
+      say:`Test the rule first. Position <b>2</b>: 5 times 2 is 10. That's the 2nd term, so the rule works.`,wait:2800}],
+    steps:[{act:async()=>{o.remove();o=await feed(m,'8','40');},show:'Eighth term: 5 × 8 = <b>40</b>',say:`Eighth term: put in <b>8</b>. 5 times 8 is <b>40</b>.`},
+      {act:async()=>{o.remove();o=await feed(m,'20','100');},show:'20th term: 5 × 20 = <b>100</b>',say:`Twentieth term: put in <b>20</b>. 5 times 20 is <b>100</b>.`}],
+    answer:'40 and 100',why:'Put the position number in place of n, then work it out. Check: the 7th term is 35, and 35 + 5 = 40. ✔'});
+  await w(1200);clear();
+  say(`The question says <b>each</b> sequence in Q2, so let's do all three. First we need the rules for b and c.`);
+  const t=mk('ex-head','','Ex 9.3 · Q2 and Q3 · all three sequences');pop(t);
+  await w(2800);
+  const hd=grid(45,48,250,215,62,[['Sequence',['nth term','eighth term','20th term']]])[0];hd.forEach(c=>{c.classList.add('h');c.style.fontSize='18px';});
+  const R=grid(45,110,250,215,62,[['a) 5, 10, 15, …',[null,null,null]],['b) 8, 16, 24, …',[null,null,null]],['c) 15, 30, 45, …',[null,null,null]]]);
+  R.forEach(r=>r.head.style.fontSize='19px');await w(800);
+  const fill=async(r,vals,lines)=>{point(R[r].head);for(let k=0;k<3;k++){if(lines[k]){say(lines[k]);}put(R[r][k],vals[k],k?'#18a058':'#e06a1b');point(R[r][k]);await w(lines[k]?2600:900);}};
+  await fill(0,['5n','40','100'],[`Sequence a is the one we just did. Its rule is <b>5n</b>...`,`...so the eighth term is <b>40</b>...`,`...and the twentieth term is <b>100</b>.`]);
+  await fill(1,['8n','64','160'],[`Sequence b, 8, 16, 24, jumps by 8. It's the 8 times table, so its rule is <b>8n</b>.`,`Eighth term: 8 times 8 is <b>64</b>.`,`Twentieth term: 8 times 20 is <b>160</b>.`]);
+  await fill(2,['15n','120','300'],[`Sequence c, 15, 30, 45, jumps by 15. Its rule is <b>15n</b>.`,`Eighth term: 15 times 8 is <b>120</b>.`,`Twentieth term: 15 times 20 is <b>300</b>.`]);
+  const tip=mk('mx-step','left:80px;top:330px;width:800px;text-align:center;font-size:24px;white-space:nowrap','Times-table sequence: <b>the jump goes in front of n</b>');pop(tip);point(tip);
+  say(`For a times-table sequence, the <b>jump</b> becomes the number in front of n. Jumps of 8 give 8n.`);
+  await w(3200);
+  const c2=mk('mx-why','left:80px;top:410px;width:800px','💡 Check 8n: n = 1, 2, 3 gives 8, 16, 24. ✔ Just like the sequence.');pop(c2);point(c2);
+  say(`And always check: put n equals 1, 2 and 3 into 8n. You get 8, 16, 24. It matches!`);
+  await w(3000);}},
+
+/* 5 */ {t:'Rules like n + 9',run:async w=>{
+  say(`Not every sequence is a times table. Some go up by just <b>1</b> each time. Let's crack those.`);
+  await w(2600);
+  let T;
+  await teachQ(w,{src:W3+'Q5 a)',q:Q5S+'<br>a) 10, 11, 12, 13, 14, . . .',read:'For each of these sequences, work out its nth term rule. a: 10, 11, 12, 13, 14, and so on.',workY:288,
+    keys:[['10, 11, 12, 13, 14',`These go up by <b>1</b> each time, just like the position numbers 1, 2, 3.`]],
+    before:[{act:async()=>{T=grid(140,150,200,104,42,[['Position number',['1','2','3','4','5']],['+ ?',[null,null,null,null,null]],['Term',['10','11','12','13','14']]]);await w(900);point(T[0].head);},
+      say:`Top row: the position numbers. Bottom row: the terms. What job turns the top number into the bottom one?`,wait:2800}],
+    steps:[{act:async()=>{for(let c=0;c<5;c++){glow(T[0][c]);glow(T[2][c]);point(T[1][c]);await w(400);put(T[1][c],'+ 9','#e06a1b');await w(300);}put(T[1].head,'+ 9','#e06a1b');},
+        show:'1 + 9 = 10, &nbsp;2 + 9 = 11, &nbsp;3 + 9 = 12 …',say:`What turns 1 into 10? <b>Add 9</b>. 2 add 9 is 11. 3 add 9 is 12. Every column is add 9.`,wait:3000},
+      {show:'Term = position + 9 → <b>n + 9</b>',say:`So the term is the position number, add 9. For position n, that's <b>n + 9</b>.`,wait:2600}],
+    answer:'n + 9',why:'It is not 9n, which would jump by 9. Check n + 9: n = 1, 2, 3 gives 10, 11, 12. ✔'});
+  await w(1200);clear();
+  let S;
+  await teachQ(w,{src:W3+'Q5 b)',q:Q5S+'<br>b) 5, 6, 7, 8, 9, . . .',read:'Work out the nth term rule. b: 5, 6, 7, 8, 9, and so on.',workY:316,
+    keys:[['5, 6, 7, 8, 9',`Up by 1 again, but this time it starts at <b>5</b>.`]],
+    before:[{act:async()=>{S=seq(['5','6','7','8','9'],214,{d:120,sz:60,col:'#6a45d8'});S.all();await w(700);[0,1,2,3,4].forEach(i=>S.under(i,'n = '+(i+1)));await w(500);},
+      say:`Here are the terms with their positions. Here's a quick way: first look at the jump.`,wait:2400}],
+    steps:[{act:async()=>{for(let i=0;i<4;i++)await S.jump(i,i+1,'+1');},show:'Jumps of +1 → start with <b>n</b>',say:`Every jump is <b>add 1</b>, just like n itself. So the rule starts with just <b>n</b>.`,wait:2600},
+      {act:async()=>{point(S.B[0]);await w(400);},show:'n = 1 gives 1, but the 1st term is 5 → <b>n + 4</b>',say:`But n equals 1 gives 1, and the first term is 5. That's 4 more. So add 4: <b>n + 4</b>.`,wait:3000}],
+    answer:'n + 4',why:'Check n + 4: n = 1, 2, 3 gives 5, 6, 7. ✔ It matches the sequence.'});
+  await w(1500);}},
+
+/* 6 */ {t:'Build the rule!',run:async w=>{
+  const R=[['What is the nth term rule? 15, 30, 45, 60, 75, . . .',['n','15','30','+','14','×'],[['15','n'],['15','×','n']],'15n',`It's the 15 times table, so the rule is 15n.`],
+    ['What is the nth term rule? 22, 23, 24, 25, 26, . . .',['n','22','21','+','×','1'],[['n','+','21'],['21','+','n']],'n + 21',`It goes up by 1, so start with n. n = 1 gives 1, and the first term is 22, so add 21.`],
+    ['What is the nth term rule? 43, 44, 45, 46, 47, . . .',['n','43','42','+','×','1'],[['n','+','42'],['42','+','n']],'n + 42',`Up by 1, so start with n. The first term is 43, which is 1 + 42. So n + 42.`]];
+  say(`Your turn to build! Read each sequence, then tap the tiles <b>in order</b> to make its nth term rule. Press <b>Check</b> when you're done.`);
+  await w(3400);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,why]=R[i];
+    mk('ex-head','',`🧩 Build it · ${i+1} of ${R.length}`);
+    say(q);
+    const r=await buildExpr(w,{q,tiles,answer,top:44});
+    if(r.ok){right++;say(`Yes! <b>${model}</b> is right. ${why}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+model);pop(s);point(s);say(`Not quite. ${why}`);}
+    await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🧩</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You're an nth term expert.`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 7 */ {t:'Function machines',run:async w=>{
+  say(`The nth term was a machine: position in, term out. Now for more <b>function machines</b>, with any numbers going in.`);
+  await w(3000);
+  const Q=[{p:'a)',op:'+ 5',ins:['2','3','4'],outs:['7','8','9'],
+      key:`This machine <b>adds 5</b>. The <b>outputs</b> are the numbers that come out.`,read:'a: the inputs 2, 3 and 4 go into a machine that adds 5.',
+      tshow:'Try 10: &nbsp;10 + 5 = 15',tsay:`Try any number first. If 10 goes in, the machine adds 5, so <b>15</b> comes out.`,
+      show:'2 + 5 = 7, &nbsp;3 + 5 = 8, &nbsp;4 + 5 = 9',say:`Now each input in turn. 2 add 5 is <b>7</b>. 3 add 5 is <b>8</b>. 4 add 5 is <b>9</b>.`,
+      why:'Every input goes through the same machine: add 5 each time.'},
+    {p:'c)',op:'× 6',ins:['1','3','5'],outs:['6','18','30'],
+      key:`This machine <b>multiplies by 6</b>.`,read:'c: the inputs 1, 3 and 5 go into a machine that multiplies by 6.',
+      tshow:'Try 10: &nbsp;10 × 6 = 60',tsay:`Try a number first. If 10 goes in, the machine times it by 6, so <b>60</b> comes out.`,
+      show:'1 × 6 = 6, &nbsp;3 × 6 = 18, &nbsp;5 × 6 = 30',say:`Now the inputs. 1 times 6 is <b>6</b>. 3 times 6 is <b>18</b>. 5 times 6 is <b>30</b>.`,
+      why:'Not 6, 12, 18! The inputs are 1, 3 and 5, so work out 1 × 6, 3 × 6 and 5 × 6.'}];
+  for(const P of Q){clear();let In,Out,m;
+    await teachQ(w,{src:W4+'Q1 '+P.p,q:F1+'<br>'+P.p+' Input '+P.ins.join(', ')+' → <b>'+P.op+'</b> → Output '+BOX+', '+BOX+', '+BOX,
+      read:'Copy these function machines and work out the missing outputs. '+P.read,workY:332,
+      keys:[['function machines',`A <b>function machine</b> does the same job to every number you put in.`],[P.op,P.key]],
+      before:[{act:async()=>{In=ioCol(80,150,'Input',P.ins);Out=ioCol(760,150,'Output',[null,null,null]);
+          mk('arw','left:215px;top:206px;width:90px','➜');mk('arw','left:655px;top:206px;width:90px','➜');m=machine(330,178,300,96,P.op);await w(600);point(m);},
+        say:`Here's the machine, with the inputs on the left and the empty outputs on the right.`,wait:2400},
+        {show:P.tshow,say:P.tsay,try:true,wait:2600}],
+      steps:[{act:async()=>{for(let i=0;i<3;i++)await sendThrough(m,In[i],Out[i],P.outs[i]);point(Out[0]);},show:P.show,say:P.say,wait:3000}],
+      answer:P.outs.join(', '),why:P.why});
+    await w(1200);}
+  }},
+
+/* 8 */ {t:'Running a machine backwards',run:async w=>{
+  say(`What if we know what comes <b>out</b>, but not what went <b>in</b>? Then we run the machine <b>backwards</b>.`);
+  await w(3000);
+  let In,Out,m,A;
+  await teachQ(w,{src:W4+'Q2 b)',q:F2+'<br>b) Input '+BOX+', '+BOX+', '+BOX+' → <b>− 5</b> → Output 2, 5, 10',
+    read:'Use inverse operations to work out the missing inputs. b: a machine takes away 5. The outputs are 2, 5 and 10. What were the inputs?',workY:348,
+    keys:[['inverse operations',`<b>Inverse</b> means <b>opposite</b>. An inverse operation <b>undoes</b> a job. Add undoes take away.`],['Output 2, 5, 10',`This time we know the <b>outputs</b>. We need the <b>inputs</b>.`]],
+    before:[{act:async()=>{In=ioCol(80,176,'Input',[null,null,null]);Out=ioCol(760,176,'Output',['2','5','10']);
+        A=[mk('arw','left:215px;top:230px;width:90px','➜'),mk('arw','left:655px;top:230px;width:90px','➜')];m=machine(330,202,300,96,'− 5');await w(600);point(In[0]);},
+      say:`The inputs are missing. Ask yourself: what number, take away 5, gives 2? To find out, we go <b>backwards</b>.`,wait:3200}],
+    steps:[{act:async()=>{await flip(m,'+ 5');A.forEach(a=>{a.innerHTML='⬅';a.style.color='#e06a1b';pop(a);});point(m);},show:'Inverse machine: <b>+ 5</b> &nbsp;(it undoes − 5)',
+        say:`Turn the machine round. The inverse of take away 5 is <b>add 5</b>. Now the numbers go from right to left.`,wait:2800},
+      {act:async()=>{for(let i=0;i<3;i++)await sendThrough(m,Out[i],In[i],['7','10','15'][i],'#2c66cf');point(In[0]);},show:'2 + 5 = 7, &nbsp;5 + 5 = 10, &nbsp;10 + 5 = 15',
+        say:`2 add 5 is <b>7</b>. 5 add 5 is <b>10</b>. 10 add 5 is <b>15</b>. Those are the inputs.`,wait:2800}],
+    answer:'7, 10, 15',why:'Check forwards: 7 − 5 = 2, 10 − 5 = 5, 15 − 5 = 10. ✔'});
+  await w(1500);}},
+
+/* 9 */ {t:'Inverse machines and tables',run:async w=>{
+  let fm,inv,T;
+  await teachQ(w,{src:W4+'Q4 a)',q:F4+'<br>a) input → <b>− 13</b> → output',read:'Copy and complete these inverse function machines and tables of values. a: the machine takes away 13.',workY:328,
+    keys:[['inverse function machines',`An <b>inverse machine</b> does the <b>opposite</b> job, so it undoes the first machine.`],['tables of values',`The <b>table</b> pairs each input with its output. Three numbers are missing.`]],
+    before:[{act:async()=>{
+        mk('lbl','left:40px;top:180px','input');mk('arw','left:136px;top:172px;width:56px','➜');fm=machine(196,164,170,66,'− 13',28);mk('arw','left:372px;top:172px;width:56px','➜');mk('lbl','left:432px;top:180px','output');
+        mk('lbl','left:40px;top:260px','input');mk('arw','left:136px;top:252px;width:56px;color:#e06a1b','⬅');inv=machine(196,244,170,66,'?',28);mk('arw','left:372px;top:252px;width:56px;color:#e06a1b','⬅');mk('lbl','left:432px;top:260px','output');
+        T=grid(586,186,104,76,46,[['Input',['20','25',null]],['Output',[null,null,'38']]]);await w(800);point(fm);},
+      say:`The top machine takes away 13. Underneath is its <b>inverse</b> machine, which goes backwards. And here's the table, with three gaps.`,wait:3400}],
+    steps:[{act:async()=>{await flip(inv,'+ 13');point(inv);},show:'Inverse of − 13 is <b>+ 13</b>',say:`The inverse of take away 13 is <b>add 13</b>. That goes in the inverse machine.`,wait:2600},
+      {act:async()=>{await sendThrough(fm,T[0][0],T[1][0],'7');await sendThrough(fm,T[0][1],T[1][1],'12');point(T[1][1]);},
+        say:`Inputs 20 and 25 go forwards through the first machine. 20 take away 13 is <b>7</b>. 25 take away 13 is <b>12</b>.`,wait:3000},
+      {act:async()=>{await sendThrough(inv,T[1][2],T[0][2],'51');point(T[0][2]);},show:'38 + 13 = <b>51</b> <i>the missing input</i>',say:`For the output 38, go backwards through the inverse machine. 38 add 13 is <b>51</b>.`,wait:2800}],
+    answer:'inverse + 13; outputs 7 and 12; input 51',why:'Check forwards: 51 − 13 = 38. ✔ The inverse undoes the machine.'});
+  await w(1500);}},
+
+/* 10 */ {t:'Undo it!',run:async w=>{
+  const h=mk('ex-head','','↩️ Which job undoes each machine?');pop(h);
+  const r=await sortGame(w,{bins:['− subtract','+ add','÷ divide','× multiply'],colors:['#f5a54a','#45c288','#5d9cf5','#c9b6f4'],top:200,
+    items:[['+ 5',0],['+ 13',0],['− 5',1],['− 3',1],['× 3',2],['× 8',2],['÷ 2',3],['÷ 4',3]],
+    intro:`Each card is a machine. Tap it, then tap the box with its <b>inverse</b>: the job that undoes it. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! You know every inverse.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box.`);
+  await w(2600);
+  say(`<b>Add</b> and <b>subtract</b> undo each other. <b>Multiply</b> and <b>divide</b> undo each other.`);
+  await w(3000);
+  say(`So to run a machine backwards, use the <b>inverse</b>, with the same number.`);
+  await w(2600);}},
+
+/* 11 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 9.3 · Q1 a)',q:'Complete the working shown to work out the nth term rule for this sequence:<br>6, 12, 18, 24, 30, . . .',o:['n + 6','6n','n + 5','+ 6'],a:1,
+      why:'Each term is <b>6 × its position</b>, so the rule is <b>6n</b>. Check: n = 1, 2, 3 gives 6, 12, 18.',whyNot:{0:'n = 1 would give 7, not 6.',2:'n = 2 would give 7, not 12.',3:'+ 6 is the term-to-term rule, not the nth term.'}},
+    {src:'Worksheet · Ex 9.3 · Q2 b)',q:'For each of these sequences work out nth term rule.<br>b) 8, 16, 24, 32, 40, . . .',o:['n + 8','8n','n + 7','16n'],a:1,
+      why:'It is the 8 times table: the term is <b>8 × n</b>, so <b>8n</b>.',whyNot:{0:'+ 8 is the jump; n = 1 would give 9.',2:'n = 2 would give 9, not 16.',3:'16 is the 2nd term; n = 1 would give 16.'}},
+    {src:'Worksheet · Ex 9.3 · Q2 c)',q:'For each of these sequences work out nth term rule.<br>c) 15, 30, 45, 60, 75, . . .',o:['n + 15','30n','15n','n + 14'],a:2,
+      why:'It is the 15 times table: <b>15n</b>. Check: n = 1, 2, 3 gives 15, 30, 45.',whyNot:{0:'+ 15 is the jump; n = 1 would give 16.',1:'30 is the 2nd term; n = 1 would give 30.',3:'n = 2 would give 16, not 30.'}},
+    {src:'Worksheet · Ex 9.3 · Q3 a)',q:'For each of the sequences in Q2, use its nth term rule to work out the: (i) eighth term (ii) 20th term<br>a) 5, 10, 15, 20, 25, . . .',o:['40 and 100','13 and 25','45 and 105','35 and 95'],a:0,
+      why:'The rule is 5n: 5 × 8 = <b>40</b> and 5 × 20 = <b>100</b>.',whyNot:{1:'that used n + 5 instead of 5n.',2:'those are the 9th and 21st terms.',3:'those are the 7th and 19th terms.'}},
+    {src:'Worksheet · Ex 9.3 · Q3 b)',q:'For each of the sequences in Q2, use its nth term rule to work out the: (i) eighth term (ii) 20th term<br>b) 8, 16, 24, 32, 40, . . .',o:['16 and 28','64 and 160','72 and 168','40 and 100'],a:1,
+      why:'The rule is 8n: 8 × 8 = <b>64</b> and 8 × 20 = <b>160</b>.',whyNot:{0:'that used n + 8 instead of 8n.',2:'those are the 9th and 21st terms.',3:'those come from 5n, the rule for sequence a.'}},
+    {src:'Worksheet · Ex 9.3 · Q3 c)',q:'For each of the sequences in Q2, use its nth term rule to work out the: (i) eighth term (ii) 20th term<br>c) 15, 30, 45, 60, 75, . . .',o:['23 and 35','135 and 315','120 and 300','105 and 285'],a:2,
+      why:'The rule is 15n: 15 × 8 = <b>120</b> and 15 × 20 = <b>300</b>.',whyNot:{0:'that used n + 15 instead of 15n.',1:'those are the 9th and 21st terms.',3:'those are the 7th and 19th terms.'}},
+    {src:'Worksheet · Ex 9.3 · Q5 a)',q:'For each of these sequences, work out its nth term rule.<br>a) 10, 11, 12, 13, 14, . . .',o:['n + 10','9n','n + 9','10n'],a:2,
+      why:'It goes up by 1, so start with n. Then add 9: <b>n + 9</b>. Check: n = 1 gives 10.',whyNot:{0:'n = 1 would give 11, not 10.',1:'9n would jump by 9 each time.',3:'10n gives 10, 20, 30, jumping by 10.'}},
+    {src:'Worksheet · Ex 9.3 · Q5 c)',q:'For each of these sequences, work out its nth term rule.<br>c) 22, 23, 24, 25, 26, . . .',o:['n + 22','n + 21','21n','n + 1'],a:1,
+      why:'Up by 1, so start with n. n = 1 must give 22, so add 21: <b>n + 21</b>.',whyNot:{0:'n = 1 would give 23, not 22.',2:'21n would jump by 21 each time.',3:'+ 1 is the jump; n = 1 would give 2.'}},
+    {src:'Worksheet · Ex 9.3 · Q5 d)',q:'For each of these sequences, work out its nth term rule.<br>d) 43, 44, 45, 46, 47, . . .',o:['n + 43','42n','n + 1','n + 42'],a:3,
+      why:'Up by 1, so start with n. n = 1 must give 43, so add 42: <b>n + 42</b>.',whyNot:{0:'n = 1 would give 44, not 43.',1:'42n would jump by 42 each time.',2:'+ 1 is the jump; n = 1 would give 2.'}},
+    {src:'Worksheet · Ex 9.4 · Q1 b)',q:'Copy these function machines and work out the missing outputs.<br>b) Input 12, 8, 6 → <b>− 3</b> → Output <i class="bx">____</i>, <i class="bx">____</i>, <i class="bx">____</i>',o:['15, 11, 9','9, 5, 3','36, 24, 18','4, 8, 2'],a:1,
+      why:'Take 3 away from each input: 12 − 3 = <b>9</b>, 8 − 3 = <b>5</b>, 6 − 3 = <b>3</b>.',whyNot:{0:'that adds 3 instead of taking it away.',2:'that multiplies by 3.',3:'only 12 ÷ 3 = 4 works; the machine subtracts, it does not divide.'}},
+    {src:'Worksheet · Ex 9.4 · Q1 d)',q:'Copy these function machines and work out the missing outputs.<br>d) Input 12, 20, 40 → <b>÷ 4</b> → Output <i class="bx">____</i>, <i class="bx">____</i>, <i class="bx">____</i>',o:['8, 16, 36','48, 80, 160','3, 5, 10','4, 5, 10'],a:2,
+      why:'Divide each input by 4: 12 ÷ 4 = <b>3</b>, 20 ÷ 4 = <b>5</b>, 40 ÷ 4 = <b>10</b>.',whyNot:{0:'that subtracts 4 instead of dividing.',1:'that multiplies by 4.',3:'12 ÷ 4 is 3, not 4.'}},
+    {src:'Worksheet · Ex 9.4 · Q2 a)',q:'Copy these function machines and work out the missing outputs. Use inverse operations to work out the missing inputs.<br>a) Input 2, 5, 9 → <b>+ 7</b> → Output <i class="bx">____</i>, <i class="bx">____</i>, <i class="bx">____</i>',o:['9, 12, 16','14, 35, 63','9, 12, 15','−5, −2, 2'],a:0,
+      why:'Add 7 to each input: <b>9</b>, <b>12</b>, <b>16</b>. The inputs are given, so just go forwards.',whyNot:{1:'that multiplies by 7.',2:'9 + 7 is 16, not 15.',3:'that takes 7 away instead of adding.'}},
+    {src:'Worksheet · Ex 9.4 · Q2 b)',q:'Copy these function machines and work out the missing outputs. Use inverse operations to work out the missing inputs.<br>b) Input <i class="bx">____</i>, <i class="bx">____</i>, <i class="bx">____</i> → <b>− 5</b> → Output 2, 5, 10',o:['−3, 0, 5','10, 25, 50','7, 10, 15','2, 5, 10'],a:2,
+      why:'The inverse of − 5 is <b>+ 5</b>: 2 + 5 = 7, 5 + 5 = 10, 10 + 5 = 15. Check: 7 − 5 = 2. ✔',whyNot:{0:'that takes 5 away again. Use the inverse, + 5.',1:'that multiplies by 5; the inverse of − 5 is + 5.',3:'those are the outputs, not the inputs.'}},
+    {src:'Worksheet · Ex 9.4 · Q2 c)',q:'Copy these function machines and work out the missing outputs. Use inverse operations to work out the missing inputs.<br>c) Input <i class="bx">____</i>, <i class="bx">____</i>, <i class="bx">____</i> → <b>× 3</b> → Output 12, 15, 30',o:['36, 45, 90','9, 12, 27','15, 18, 33','4, 5, 10'],a:3,
+      why:'The inverse of × 3 is <b>÷ 3</b>: 12 ÷ 3 = 4, 15 ÷ 3 = 5, 30 ÷ 3 = 10. Check: 4 × 3 = 12. ✔',whyNot:{0:'that multiplies again. Use the inverse, ÷ 3.',1:'that takes away 3; the inverse of × 3 is ÷ 3.',2:'that adds 3; the inverse of × 3 is ÷ 3.'}},
+    {src:'Worksheet · Ex 9.4 · Q2 d)',q:'Copy these function machines and work out the missing outputs. Use inverse operations to work out the missing inputs.<br>d) Input 8, 12, 18 → <b>÷ 2</b> → Output <i class="bx">____</i>, <i class="bx">____</i>, <i class="bx">____</i>',o:['16, 24, 36','4, 6, 9','6, 10, 16'],a:1,
+      why:'Halve each input: 8 ÷ 2 = <b>4</b>, 12 ÷ 2 = <b>6</b>, 18 ÷ 2 = <b>9</b>.',whyNot:{0:'that multiplies by 2; the machine divides.',2:'that takes away 2 instead of dividing.'}},
+    {src:'Worksheet · Ex 9.4 · Q4 a)',q:'Copy and complete these inverse function machines and tables of values.<br>a) input → <b>− 13</b> → output &nbsp;·&nbsp; Input 20, 25, <i class="bx">____</i> &nbsp;·&nbsp; Output <i class="bx">____</i>, <i class="bx">____</i>, 38',
+      model:'Inverse machine: input ← <b>+ 13</b> ← output.<br>Outputs: 20 − 13 = <b>7</b> and 25 − 13 = <b>12</b>.<br>Missing input: 38 + 13 = <b>51</b>.'},
+    {src:'Worksheet · Ex 9.4 · Q4 b)',q:'Copy and complete these inverse function machines and tables of values.<br>b) input → <b>× 8</b> → output &nbsp;·&nbsp; Input 3, 7, <i class="bx">____</i> &nbsp;·&nbsp; Output <i class="bx">____</i>, <i class="bx">____</i>, 120',o:['Inverse ÷ 8 · outputs 24, 56 · input 15','Inverse − 8 · outputs 11, 15 · input 112','Inverse × 8 · outputs 24, 56 · input 960','Inverse ÷ 8 · outputs 11, 15 · input 15'],a:0,
+      why:'The inverse of × 8 is <b>÷ 8</b>. 3 × 8 = <b>24</b>, 7 × 8 = <b>56</b>, and 120 ÷ 8 = <b>15</b>.',whyNot:{1:'that adds and takes away 8. The machine multiplies.',2:'× 8 again does not undo × 8; 120 ÷ 8 is 15.',3:'the inverse is right, but 3 × 8 is 24, not 11.'}},
+    {src:'Worksheet · Ex 9.4 · Q4 c)',q:'Copy and complete these inverse function machines and tables of values.<br>c) input → <b>+ 9</b> → output &nbsp;·&nbsp; Input 8, 15, <i class="bx">____</i> &nbsp;·&nbsp; Output <i class="bx">____</i>, <i class="bx">____</i>, 45',o:['Inverse + 9 · outputs 17, 24 · input 54','Inverse − 9 · outputs 17, 24 · input 36','Inverse ÷ 9 · outputs 72, 135 · input 5','Inverse − 9 · outputs −1, 6 · input 36'],a:1,
+      why:'The inverse of + 9 is <b>− 9</b>. 8 + 9 = <b>17</b>, 15 + 9 = <b>24</b>, and 45 − 9 = <b>36</b>.',whyNot:{0:'+ 9 again does not undo + 9; 45 − 9 is 36.',2:'÷ 9 undoes × 9, not + 9.',3:'the outputs go forwards, so add 9: 8 + 9 = 17.'}},
+  ]);}},
+
+/* 12 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>The nth term and function machines</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🎯','The <b>nth term</b> finds any term from its <b>position</b>, n.',`The nth term finds any term from its position, n.`],
+    ['✖️','6, 12, 18, … → <b>6n</b><br>The jump goes in front of n.',`For 6, 12, 18, the rule is 6n. The jump goes in front of n.`],
+    ['🔟','10th term of 6n:<br>6 × 10 = <b>60</b>',`To find the tenth term of 6n, put 10 in place of n: 60.`],
+    ['➕','10, 11, 12, …<br>→ <b>n + 9</b>',`For 10, 11, 12, the rule is n + 9.`],
+    ['⚠️','Jumps of 5 → <b>5n</b>,<br>not n + 5!',`Jumps of 5 give 5n, not n + 5.`],
+    ['✅','Check: put <b>n = 1, 2, 3</b> into your rule.',`Always check: put n equals 1, 2 and 3 into your rule.`],
+    ['⚙️','A <b>function machine</b> does the same job to every input.',`A function machine does the same job to every input.`],
+    ['↩️','<b>Inverse</b> undoes it:<br>+ and −, × and ÷',`To go backwards, use the inverse. Add and subtract undo each other, and so do times and divide.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now find any term and run machines backwards. Next up: <b>percentages, fractions and decimals</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

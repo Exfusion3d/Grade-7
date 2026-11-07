@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Percentages, fractions and decimals</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+body .mx-step{font-size:22px;padding:4px 14px}
+body .mx-step.try{font-size:20px}
+body .mx-step i{font-size:15px}
+.hc{position:absolute;background:#fff;border:1px solid #f0c9a8;border-radius:3px;overflow:hidden}
+.cbox{position:absolute;min-width:84px;height:80px;padding:0 10px;border-radius:16px;background:#fff;border:3px solid #f7d3b5;box-shadow:0 4px 0 #f7d3b5;
+  display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#7a2e00;white-space:nowrap}
+.carr{position:absolute;width:76px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#c4520e;font-weight:800}
+.carr span{font-size:13px;height:18px;white-space:nowrap}
+.carr b{font-size:26px;line-height:30px}
+.pvh{position:absolute;top:0;height:22px;text-align:center;font-size:11px;font-weight:800;color:#8a6a55}
+.pvc{position:absolute;top:24px;height:70px;border-radius:10px;background:#fff8ef;border:2px solid #f7d3b5}
+.pvd{position:absolute;top:24px;height:70px;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;color:#7a2e00}
+.fbox{position:absolute;width:200px;height:140px;border-radius:22px;color:#fff;text-align:center;font-weight:800;box-shadow:0 6px 0 rgba(0,0,0,.18);
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fbox .t{font-size:18px;opacity:.9}
+.fbox .v{font-size:40px;margin-top:4px}
+.marr{position:absolute;width:150px;text-align:center;font-weight:800;color:#7a2e00}
+.marr b{display:block;font-size:30px;line-height:30px;color:#e06a1b}
+.marr span{font-size:14px;white-space:nowrap}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 15 · Chapter 10 · Percentages, fractions and decimals: Exercise 10.1 (Q2, Q4, Q5, Q9) and Exercise 10.2 (Q2, Q5, Q9).
+   Taught with teachQ (maths.js): question first, read aloud, key words, an easy number first, "Show me",
+   then the working one line at a time, the answer and why. The rest are in the two Exam checks. */
+const WS1='Worksheet · Ex 10.1 · ',WS2='Worksheet · Ex 10.2 · ';
+const STEM2='Write these percentages as fractions. Write your answers in the simplest form.';
+const STEM4='Write these percentages as a decimal and as a fraction.';
+const STEM5='Write these fractions as percentages.';
+const STEM102='Write these percentages as decimals and as fractions. Write each in its simplest form.';
+const STEM9='Write each of these mixed numbers as a percentage.';
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+/* the first free line under the question card */
+const below=()=>{const c=stage.querySelector('.ws-card');return c?c.offsetTop+c.offsetHeight+12:150;};
+
+/* a 10 × 10 hundred square; shade(n) colours n small squares (n may be 7.5), where(fn) colours the squares fn(col,row) picks */
+function hsq(x,y,c=24,g=2){const W=10*c+9*g;
+  const box=mk('',`left:${x}px;top:${y}px;width:${W}px;height:${W}px`);pop(box);
+  const C=[...Array(100)].map((_,i)=>mk('hc',`left:${(i%10)*(c+g)}px;top:${Math.floor(i/10)*(c+g)}px;width:${c}px;height:${c}px`,'',box));
+  let F=[];
+  const fill=async(list,col)=>{list.forEach(([i,f],k)=>{const s=mk('',`left:0;top:0;width:${f*100}%;height:100%;background:${col}`,'',C[i]);F.push(s);
+      an(s,[{opacity:0,transform:'scale(.2)'},{opacity:1,transform:'none'}],{duration:300,delay:k*16});});
+    beep(620,.06);await w0(list.length*16+400);};
+  return{box,W,
+    shade:(n,col='#f5a54a')=>{const L=[];for(let i=0;i<Math.ceil(n);i++)L.push([i,Math.min(1,n-i)]);return fill(L,col);},
+    where:(fn,col='#f5a54a')=>fill([...Array(100).keys()].filter(i=>fn(i%10,Math.floor(i/10))).map(i=>[i,1]),col),
+    mid:()=>{const l=mk('',`left:${5*(c+g)-g/2-2}px;top:-4px;width:4px;height:${W+8}px;background:#7a2e00;border-radius:2px`,'',box);pop(l);},
+    clear:()=>{F.forEach(e=>e.remove());F=[];}};}
+
+/* a conversion ladder: boxes joined by arrows, e.g. 60%  →out of 100→  60/100  →÷10→  6/10 */
+function ladder(x,y){let cx=x;return{
+  box:async(html,col)=>{const b=mk('cbox',`left:${cx}px;top:${y}px`+(col?`;color:${col};border-color:${col}`:''),html);pop(b);await w0(40);cx+=b.offsetWidth;point(b);beep(640,.07);await w0(350);return b;},
+  arrow:async(t,b='')=>{const a=mk('carr',`left:${cx}px;top:${y}px`,`<span>${t}</span><b>➜</b><span>${b}</span>`);cx+=76;
+    await an(a,[{opacity:0,transform:'translateX(-20px)'},{opacity:1,transform:'none'}],{duration:500});beep(500,.05);return a;}};}
+
+/* a place-value table (tens to thousandths); shift() divides by 100: every digit moves two places right, then zeros fill the gaps */
+function pvt(x,y){const CW=78,PW=24,cx=p=>p>=0?(1-p)*CW:2*CW+PW+(-p-1)*CW;
+  const box=mk('',`left:${x}px;top:${y}px;width:${5*CW+PW}px;height:96px`);pop(box);
+  [[1,'tens'],[0,'ones'],[-1,'tenths'],[-2,'hundredths'],[-3,'thousandths']].forEach(([p,n])=>{mk('pvh',`left:${cx(p)}px;width:${CW}px`,n,box);mk('pvc',`left:${cx(p)+3}px;width:${CW-6}px`,'',box);});
+  mk('pvd',`left:${2*CW}px;width:${PW}px;color:#e04848`,'.',box);
+  let D=[];const add=(ch,p,col='#7a2e00')=>{const el=mk('pvd',`left:${cx(p)}px;width:${CW}px;color:${col}`,ch,box);D.push({el,p});return el;};
+  return{box,
+    set:s=>{D.forEach(d=>d.el.remove());D=[];const [ip,dp='']=s.split('.');
+      [...ip].forEach((ch,j)=>pop(add(ch,ip.length-1-j)));[...dp].forEach((ch,j)=>pop(add(ch,-(j+1))));},
+    shift:async()=>{beep(520,.08);
+      await Promise.all(D.map(d=>an(d.el,[{transform:'none'},{transform:`translateX(${cx(d.p-2)-cx(d.p)}px)`}],{duration:1000})));
+      D.forEach(d=>{d.p-=2;d.el.style.left=cx(d.p)+'px';d.el.getAnimations().forEach(a=>a.cancel());});
+      const hi=Math.max(...D.map(d=>d.p));
+      for(let p=0;p>hi;p--){pop(add('0',p,'#18a058'));beep(760,.06);await w0(300);}}};}
+
+/* a bar for an amount; split(n) cuts it into n equal parts, shade(k) colours the next k parts (k may be 0.5) */
+function bar(x,y,wd,label,h=50){
+  const b=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:${h}px;border-radius:12px;background:#fff;border:3px solid #7a2e00;overflow:hidden`);pop(b);
+  const lab=mk('mx','left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px',label,b);
+  let E=[],parts=1,sh=0;const iw=wd-6;
+  return{b,pw:()=>iw/parts,
+    split:async(n,each,fs=18)=>{E.forEach(e=>e.remove());E=[];sh=0;lab.style.display='none';parts=n;const pw=iw/n;
+      for(let i=1;i<n;i++){const l=mk('',`left:${i*pw-1}px;top:0;width:2px;height:100%;background:#7a2e00;z-index:2`,'',b);E.push(l);
+        an(l,[{transform:'scaleY(0)'},{transform:'scaleY(1)'}],{duration:400,delay:i*45});}
+      for(let i=0;i<n;i++)E.push(mk('mx',`left:${i*pw}px;top:0;width:${pw}px;height:100%;display:flex;align-items:center;justify-content:center;font-size:${fs}px;z-index:3;white-space:nowrap`,each,b));
+      await w0(n*45+500);beep(600,.08);},
+    shade:async k=>{const pw=iw/parts,s0=sh,e0=sh+k;
+      for(let i=Math.floor(s0);i<e0;i++){const l=Math.max(i,s0),r=Math.min(i+1,e0);
+        const s=mk('',`left:${l*pw}px;top:0;width:${(r-l)*pw}px;height:100%;background:rgba(224,106,27,.5);z-index:1`,'',b);E.push(s);
+        an(s,[{opacity:0},{opacity:1}],{duration:400});beep(640+i*30,.06);await w0(380);}
+      sh=e0;}};}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m15', num:15, part:'Chapter 10', emoji:'💯', title:'Percentages, fractions and decimals',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's swap between percentages, fractions and decimals. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Per cent means out of 100',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today: <b>percentages</b>, <b>fractions</b> and <b>decimals</b>. Three ways to write the same amount!`);
+  await w(2800);
+  const S=hsq(40,40,34,2);point(S.box);
+  const tg=mk('tag','left:40px;top:410px;background:#ffe6cf;color:#7a2e00;font-size:18px','100 small squares');pop(tg);
+  say(`This big square is made of <b>100</b> small squares. <b>Per cent</b> means <b>out of 100</b>.`);
+  await w(3000);
+  const L0=mk('mx-step','left:440px;top:40px','💯 per cent = <b>out of 100</b>');pop(L0);point(L0);
+  await w(1800);
+  say(`Let's colour in <b>50</b> of the small squares.`);
+  await S.shade(50);await w(1800);
+  const L1=mk('mx-step','left:440px;top:110px','50 out of 100 = <b>50%</b>');pop(L1);point(L1);
+  say(`50 out of 100 is <b>50 percent</b>.`);
+  await w(2400);
+  const L2=mk('mx-step','left:440px;top:180px',`Fraction: 50% = ${frac(50,100)} = <b>${frac(1,2)}</b>`);pop(L2);point(L2);
+  say(`As a fraction, it's 50 over 100. That's the same as <b>one half</b>. Look: half the square is coloured.`);
+  await w(3000);
+  const L3=mk('mx-step','left:440px;top:270px','Decimal: 50 ÷ 100 = <b>0.5</b>');pop(L3);point(L3);
+  say(`As a decimal, divide 50 by 100. You get <b>0.5</b>.`);
+  await w(2800);
+  const eq=mk('tag','left:440px;top:350px;background:#e6f7ee;color:#0f7a40;font-size:22px;border:3px solid #18a058',`50% = ${frac(1,2)} = 0.5`);pop(eq);point(eq);
+  say(`50 percent, one half and 0.5 are the <b>same amount</b>, written three ways.`);
+  await w(3000);
+  clear();
+  const B=[[30,'Fraction',frac(1,2),'#2c66cf'],[380,'Percentage','50%','#e06a1b'],[730,'Decimal','0.5','#18a058']].map(([x,t,v,c])=>{
+    const b=mk('fbox',`left:${x}px;top:180px;background:${c}`,`<div class="t">${t}</div><div class="v">${v}</div>`);return b;});
+  pop(B[1]);point(B[1]);
+  say(`Here's your <b>map</b>. In the middle: the <b>percentage</b>.`);await w(2200);
+  pop(B[0]);point(B[0]);say(`On the left: the <b>fraction</b>.`);await w(1800);
+  pop(B[2]);point(B[2]);say(`On the right: the <b>decimal</b>.`);await w(1800);
+  const A1=mk('marr','left:580px;top:150px','<span>÷ 100</span><b>➜</b>');pop(A1);point(A1);
+  say(`Percentage to decimal: <b>divide by 100</b>.`);await w(2200);
+  const A2=mk('marr','left:580px;top:270px','<b>⬅</b><span>× 100</span>');pop(A2);point(A2);
+  say(`Decimal to percentage: <b>times by 100</b>.`);await w(2200);
+  const A3=mk('marr','left:230px;top:150px','<span>over 100, simplify</span><b>⬅</b>');pop(A3);point(A3);
+  say(`Percentage to fraction: write it <b>over 100</b>, then <b>simplify</b>.`);await w(2600);
+  const A4=mk('marr','left:230px;top:270px','<b>➜</b><span>make it out of 100</span>');pop(A4);point(A4);
+  say(`Fraction to percentage: make the bottom number <b>100</b>.`);await w(2600);
+  const tip=mk('tag','left:230px;top:380px;width:500px;text-align:center;background:#ffe680;color:#7a2e00;font-size:20px','Keep this map in your head! 🗺️');pop(tip);
+  say(`Keep this map in your head. Let's use it on the worksheet!`);
+  await w(2600);}},
+
+/* 1 */ {t:'Percentages to fractions',run:async w=>{
+  say(`First: turning a percentage into a <b>fraction</b> in its <b>simplest form</b>. One question at a time.`);
+  await w(2600);
+  let S,L;
+  await teachQ(w,{src:WS1+'Q2 a)',q:STEM2+'<br>a) 60%',read:'Write these percentages as fractions. Write your answers in the simplest form. a) 60%.',
+    keys:[['fractions',`A <b>fraction</b> has a top number and a bottom number, like ${frac(3,5)}.`],
+      ['simplest form',`<b>Simplest form</b> means divide the top and the bottom by the same number, until you can't any more.`]],
+    workX:330,workY:272,
+    before:[{act:async()=>{S=hsq(40,below(),24,2);await w0(400);await S.shade(50);},show:`Try 50%: ${frac(50,100)} = ${frac(1,2)} <i>÷ 50 top and bottom</i>`,
+      say:`Let's try an easy one first. 50 percent is 50 out of 100. Divide the top and the bottom by 50, and you get one half.`,try:true,wait:2800}],
+    steps:[{act:async()=>{S.clear();await S.shade(60);},say:`Now 60 percent. That's <b>60</b> small squares out of 100.`,wait:2200},
+      {act:async()=>{L=ladder(330,below());await L.box('60%');},say:`Start with 60 percent.`,wait:1600},
+      {act:async()=>{await L.arrow('over 100');await L.box(frac(60,100));},say:`Per cent means out of 100, so write it as <b>60 over 100</b>.`,wait:2400},
+      {act:async()=>{await L.arrow('÷ 10','÷ 10');await L.box(frac(6,10));},say:`Both numbers end in zero. Divide the top <b>and</b> the bottom by <b>10</b>. That gives 6 over 10.`,wait:2800},
+      {act:async()=>{await L.arrow('÷ 2','÷ 2');await L.box(frac(3,5),'#18a058');},say:`6 and 10 are both even. Divide the top and the bottom by <b>2</b>. That gives <b>3 over 5</b>.`,wait:2800},
+      {say:`Can 3 and 5 both be divided by the same number? Only by 1. So we stop: it's in its simplest form.`,wait:2600}],
+    answer:frac(3,5),why:'Check: one fifth of 100 is 20, so three fifths is 3 × 20 = 60. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS1+'Q2 d)',q:STEM2+'<br>d) 64%',read:'Write these percentages as fractions. Write your answers in the simplest form. d) 64%.',
+    keys:[['simplest form',`Remember: <b>simplest form</b> means keep dividing the top and the bottom until you can't.`]],
+    workX:330,workY:272,
+    before:[{act:async()=>{S=hsq(40,below(),24,2);await w0(400);await S.shade(20);},show:`Try 20%: ${frac(20,100)} = ${frac(1,5)} <i>÷ 20 top and bottom</i>`,
+      say:`Try an easy one first. 20 percent is 20 over 100. Divide the top and the bottom by 20: <b>one fifth</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{S.clear();await S.shade(64);},say:`Now 64 percent: <b>64</b> small squares out of 100.`,wait:2200},
+      {act:async()=>{L=ladder(330,below());await L.box('64%');await L.arrow('over 100');await L.box(frac(64,100));},say:`Write it out of 100: <b>64 over 100</b>.`,wait:2400},
+      {act:async()=>{await L.arrow('÷ 2','÷ 2');await L.box(frac(32,50));},say:`Both numbers are even. Divide the top and the bottom by <b>2</b>: 32 over 50.`,wait:2800},
+      {act:async()=>{await L.arrow('÷ 2','÷ 2');await L.box(frac(16,25),'#18a058');},say:`Still both even! Divide by <b>2</b> again: 32 ÷ 2 is 16, and 50 ÷ 2 is 25. <b>16 over 25</b>.`,wait:3000},
+      {say:`25 is odd, so we can't halve it. And 16 is not in the 5 times table. So we stop.`,wait:2600}],
+    answer:frac(16,25),why:`Check: times the top and the bottom by 4. 16 × 4 = 64 and 25 × 4 = 100. ✔`});
+  await w(1500);}},
+
+/* 2 */ {t:'Percentages to decimals',run:async w=>{
+  say(`Now percentage to <b>decimal</b>: divide by 100. Every digit moves <b>two places</b> to the right.`);
+  await w(3000);
+  let P,L;
+  await teachQ(w,{src:WS1+'Q4 b)',q:STEM4+'<br>b) 4%',read:'Write these percentages as a decimal and as a fraction. b) 4%.',
+    keys:[['decimal',`A <b>decimal</b> has a decimal point, like 0.5. To get it, divide by 100.`],['fraction',`For the <b>fraction</b>, write it over 100, then simplify.`]],
+    workX:470,
+    before:[{act:async()=>{P=pvt(40,below());await w0(300);P.set('50');await w0(800);await P.shift();},show:'Try 50%: 50 ÷ 100 = 0.5',
+      say:`Try an easy one first. 50 percent: divide 50 by 100. The digits jump <b>two places</b> right: 0.50, which is 0.5.`,try:true,wait:3000}],
+    steps:[{act:async()=>{P.set('4');await w0(800);await P.shift();},show:'Decimal: 4 ÷ 100 = <b>0.04</b>',
+        say:`Now 4 percent. Divide 4 by 100. The 4 jumps two places right, into the <b>hundredths</b>. Zeros fill the gaps: <b>0.04</b>.`,wait:3200},
+      {act:async()=>{L=ladder(40,below()+136);await L.box(frac(4,100));},say:`Now the fraction. 4 percent is <b>4 out of 100</b>.`,wait:2200},
+      {act:async()=>{await L.arrow('÷ 4','÷ 4');await L.box(frac(1,25),'#18a058');},show:`Fraction: ${frac(4,100)} = <b>${frac(1,25)}</b> <i>÷ 4</i>`,
+        say:`Divide the top and the bottom by <b>4</b>. 4 ÷ 4 is 1, and 100 ÷ 4 is 25. So it's <b>1 over 25</b>.`,wait:3000}],
+    answer:`0.04 and ${frac(1,25)}`,why:'Careful: 4% is 0.04, not 0.4. Check: 0.04 × 100 = 4. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS1+'Q4 a)',q:STEM4+'<br>a) 40%',read:'Write these percentages as a decimal and as a fraction. a) 40%.',
+    keys:[['decimal',`For the <b>decimal</b>, divide by 100.`],['fraction',`For the <b>fraction</b>, write it over 100, then simplify.`]],
+    workX:470,
+    before:[{act:async()=>{P=pvt(40,below());await w0(300);P.set('30');await w0(800);await P.shift();},show:'Try 30%: 30 ÷ 100 = 0.3',
+      say:`Try an easy one first. 30 percent: divide by 100 and the digits move two places right. 0.30, which is 0.3.`,try:true,wait:3000}],
+    steps:[{act:async()=>{P.set('40');await w0(800);await P.shift();},show:'Decimal: 40 ÷ 100 = <b>0.4</b>',
+        say:`Now 40 percent. Divide by 100: 0.40. A zero at the end, after the point, changes nothing. So it's <b>0.4</b>.`,wait:3200},
+      {act:async()=>{L=ladder(40,below()+136);await L.box(frac(40,100));},say:`Now the fraction: <b>40 over 100</b>.`,wait:2000},
+      {act:async()=>{await L.arrow('÷ 10','÷ 10');await L.box(frac(4,10));},say:`Both end in zero. Divide the top and the bottom by <b>10</b>: 4 over 10.`,wait:2600},
+      {act:async()=>{await L.arrow('÷ 2','÷ 2');await L.box(frac(2,5),'#18a058');},show:`Fraction: ${frac(40,100)} = <b>${frac(2,5)}</b> <i>÷ 10, then ÷ 2</i>`,
+        say:`Both even. Divide by <b>2</b>: <b>2 over 5</b>. 2 and 5 share nothing else, so stop.`,wait:2800}],
+    answer:`0.4 and ${frac(2,5)}`,why:'40% is ten times 4%, so 0.4 is ten times 0.04. ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Fractions to percentages',run:async w=>{
+  say(`Now the other way: <b>fraction to percentage</b>. The trick: make the bottom number <b>100</b>.`);
+  await w(2800);
+  let S;
+  await teachQ(w,{src:WS1+'Q5 a)',q:STEM5+'<br>a) '+frac(1,4),read:'Write these fractions as percentages. a) 1 quarter.',
+    keys:[['percentages',`A <b>percentage</b> is out of 100. So we want the bottom number to be <b>100</b>.`]],
+    workX:340,
+    before:[{act:async()=>{S=hsq(40,below(),24,2);await w0(400);await S.where(c=>c<5);},show:`Try ${frac(1,2)} = ${frac(50,100)} = 50% <i>× 50 top and bottom</i>`,
+      say:`Try an easy one first: one half. 2 times 50 is 100, so times the top and the bottom by 50. 50 over 100 is 50 percent.`,try:true,wait:3000}],
+    steps:[{act:async()=>{S.clear();await S.where((c,r)=>c<5&&r<5);},say:`Now one quarter. Cut the square into <b>4</b> equal parts. One part is <b>25</b> small squares.`,wait:2800},
+      {show:`${frac(1,4)} = ${frac(25,100)} <i>× 25 top and bottom</i>`,say:`4 times 25 is 100. So times the top <b>and</b> the bottom by <b>25</b>: 25 over 100.`,wait:2800},
+      {show:`${frac(25,100)} = <b>25%</b>`,say:`25 out of 100 is <b>25 percent</b>.`,wait:2000}],
+    answer:'25%',why:'Check with a decimal: 1 ÷ 4 = 0.25, and 0.25 × 100 = 25. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS1+'Q5 e)',q:STEM5+'<br>e) '+frac(7,20),read:'Write these fractions as percentages. e) 7 over 20.',
+    keys:[['percentages',`We want the bottom number to be <b>100</b>.`]],
+    workX:340,
+    before:[{act:async()=>{S=hsq(40,below(),24,2);S.mid();await w0(400);await S.shade(5);},show:`Try ${frac(1,20)}: 20 × 5 = 100, so ${frac(1,20)} = ${frac(5,100)} = 5%`,
+      say:`Try one twentieth first. Each half row is one twentieth: 5 squares. 20 times 5 is 100, so one twentieth is 5 over 100. That's 5 percent.`,try:true,wait:3200}],
+    steps:[{act:async()=>{S.clear();await S.shade(35);},show:`${frac(7,20)} = ${frac(35,100)} <i>× 5 top and bottom</i>`,
+        say:`Now 7 over 20. Times the top and the bottom by <b>5</b>. 7 times 5 is 35, so it's 35 over 100.`,wait:3000},
+      {show:`${frac(35,100)} = <b>35%</b>`,say:`35 out of 100 is <b>35 percent</b>.`,wait:2000}],
+    answer:'35%',why:'Check: 7 ÷ 20 = 0.35, and 0.35 × 100 = 35. ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'A fraction of an amount',run:async w=>{
+  say(`Next: a fraction <b>of</b> an amount. Divide by the <b>bottom</b> number, then times by the <b>top</b> number.`);
+  await w(3000);
+  let B;
+  await teachQ(w,{src:WS1+'Q9 b)',q:'Work out.<br>b) '+frac(3,4)+' of 60 grams',read:'Work out three quarters of 60 grams.',
+    keys:[['of',`<b>Of</b> means find that part of the 60 grams.`]],
+    workX:96,workY:240,
+    before:[{act:async()=>{B=bar(60,below()+6,840,'60 grams');await w0(700);await B.split(2,'30 g',20);await B.shade(1);},show:`Try ${frac(1,2)} of 60: 60 ÷ 2 = 30`,
+      say:`Try an easy one first. Half of 60: split it into 2 equal parts. Each part is <b>30 grams</b>.`,try:true,wait:2800}],
+    steps:[{act:()=>B.split(4,'15 g',20),show:'60 ÷ 4 = 15 <i>one quarter is 15 grams</i>',
+        say:`Now three quarters. The bottom number is <b>4</b>, so split 60 grams into 4 equal parts. 60 ÷ 4 = 15 grams in each part.`,wait:3200},
+      {act:()=>B.shade(3),show:'15 × 3 = <b>45 grams</b> <i>three quarters</i>',say:`The top number is <b>3</b>, so take 3 of those parts. 15 times 3 is <b>45 grams</b>.`,wait:2800}],
+    answer:'45 grams',why:'Divide by the bottom, times by the top. Check: 45 grams is more than half of 60, but less than all of it. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS1+'Q9 e)',q:'Work out.<br>e) '+frac(11,20)+' of 60 grams',read:'Work out 11 over 20 of 60 grams.',
+    keys:[['of',`<b>Of</b> means find that part of 60 grams.`]],
+    workX:96,workY:240,
+    before:[{act:async()=>{B=bar(60,below()+6,840,'60 grams');await w0(700);await B.split(20,'3',18);await B.shade(1);},show:`Try ${frac(1,20)} of 60: 60 ÷ 20 = 3`,
+      say:`Try one twentieth first. Split 60 grams into 20 equal parts. Each part is <b>3 grams</b>.`,try:true,wait:2800}],
+    steps:[{show:'60 ÷ 20 = 3 <i>one twentieth is 3 grams</i>',say:`The bottom number is <b>20</b>, so each twentieth is 60 ÷ 20, which is 3 grams.`,wait:2600},
+      {act:()=>B.shade(10),show:'3 × 11 = <b>33 grams</b> <i>eleven twentieths</i>',say:`The top number is <b>11</b>, so take 11 parts. 3 times 11 is <b>33 grams</b>.`,wait:2800}],
+    answer:'33 grams',why:'Check: 10 parts make 30 grams, and one more part is 3 grams. 30 + 3 = 33. ✔'});
+  await w(1500);}},
+
+/* 5 */ {t:'Find the twins',run:async w=>{
+  const r=await sortGame(w,{bins:['25%','40%','5%','70%'],colors:['#f5a54a','#5d9cf5','#45c288','#c9b6f4'],top:180,
+    items:[['1/4',0],['0.25',0],['25/100',0],['2/5',1],['0.4',1],['40/100',1],['1/20',2],['0.05',2],['5/100',2],['7/10',3],['0.7',3],['70/100',3]],
+    intro:`Each percentage has a fraction twin and a decimal twin. Tap a card, then tap its percentage box. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! Every twin found its percentage.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's go through them.`);
+  await w(2600);
+  say(`<b>25 percent</b>: 25 over 100, which simplifies to one quarter, and 0.25.`);await w(2800);
+  say(`<b>40 percent</b>: 40 over 100, which is 2 over 5, and 0.4.`);await w(2800);
+  say(`<b>5 percent</b>: 5 over 100, which is 1 over 20, and 0.05. Not 0.5!`);await w(3000);
+  say(`<b>70 percent</b>: 70 over 100, which is 7 over 10, and 0.7.`);await w(2800);}},
+
+/* 6 */ {t:'Percentages with a point',run:async w=>{
+  say(`Some percentages have a <b>decimal point</b>, like 7.5 percent. Same rules! Divide by 100 for the decimal.`);
+  await w(3000);
+  let P,L;
+  await teachQ(w,{src:WS2+'Q2 a)',q:STEM102+'<br>a) 7.5%',read:'Write these percentages as decimals and as fractions. Write each in its simplest form. a) 7.5%.',
+    keys:[['decimals',`For the <b>decimal</b>, divide by 100.`],['fractions',`For the <b>fraction</b>, write it over 100, then simplify.`]],
+    workX:96,workY:290,
+    before:[{act:async()=>{P=pvt(40,below());await w0(300);P.set('7');await w0(800);await P.shift();},show:'Try 7%: 7 ÷ 100 = 0.07',
+      say:`Try 7 percent first. Divide by 100: the 7 jumps two places right. <b>0.07</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{P.set('7.5');await w0(800);await P.shift();},show:'Decimal: 7.5 ÷ 100 = <b>0.075</b> <i>every digit moves 2 places right</i>',
+        say:`Now 7.5 percent. Divide by 100: <b>both</b> digits jump two places right. Fill in the zeros: <b>0.075</b>.`,wait:3200},
+      {act:async()=>{L=ladder(470,below()+8);await L.box(frac('7.5',100));},say:`Now the fraction: 7.5 over 100. But a fraction shouldn't have a decimal point in it.`,wait:2800},
+      {act:async()=>{await L.arrow('× 10','× 10');await L.box(frac(75,1000));},say:`So times the top <b>and</b> the bottom by <b>10</b>. That gives 75 over 1000.`,wait:2800},
+      {act:async()=>{await L.arrow('÷ 25','÷ 25');await L.box(frac(3,40),'#18a058');},say:`75 is 3 lots of 25, and 1000 is 40 lots of 25. Divide the top and the bottom by <b>25</b>: <b>3 over 40</b>.`,wait:3200}],
+    answer:`0.075 and ${frac(3,40)}`,why:'Careful: 7.5% is not 7.5 or 0.75. It is 0.075. Check: 0.075 × 100 = 7.5. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS2+'Q2 b)',q:STEM102+'<br>b) 62.5%',read:'Write these percentages as decimals and as fractions. Write each in its simplest form. b) 62.5%.',
+    keys:[['simplest form',`<b>Simplest form</b>: keep dividing the top and the bottom until you can't.`]],
+    workX:96,workY:282,
+    before:[{show:'Try 60%: 60 ÷ 100 = 0.6',say:`Try 60 percent first: 60 ÷ 100 = <b>0.6</b>. So 62.5 percent will be a little more.`,try:true,wait:2800}],
+    steps:[{show:'Decimal: 62.5 ÷ 100 = <b>0.625</b> <i>every digit moves 2 places right</i>',say:`Now 62.5 percent. Divide by 100, so every digit moves two places right: <b>0.625</b>.`,wait:3000},
+      {act:async()=>{L=ladder(60,below()+6);await L.box(frac('62.5',100));},say:`Now the fraction: 62.5 over 100.`,wait:2000},
+      {act:async()=>{await L.arrow('× 10','× 10');await L.box(frac(625,1000));},say:`Get rid of the decimal point: times the top and the bottom by <b>10</b>. 625 over 1000.`,wait:2800},
+      {act:async()=>{await L.arrow('÷ 5','÷ 5');await L.box(frac(125,200));},say:`Both end in 5 or 0, so divide the top and the bottom by <b>5</b>: 125 over 200.`,wait:2800},
+      {act:async()=>{await L.arrow('÷ 5','÷ 5');await L.box(frac(25,40));},say:`Divide by <b>5</b> again: 25 over 40.`,wait:2200},
+      {act:async()=>{await L.arrow('÷ 5','÷ 5');await L.box(frac(5,8),'#18a058');},say:`And once more, divide by <b>5</b>: <b>5 over 8</b>. 5 and 8 share nothing, so stop.`,wait:2800}],
+    answer:`0.625 and ${frac(5,8)}`,why:'Check: 5 ÷ 8 = 0.625. ✔ It matches the decimal.'});
+  await w(1500);}},
+
+/* 7 */ {t:'Percentages of an amount',run:async w=>{
+  say(`Now percentages <b>of</b> an amount. The secret: find <b>10 percent</b> and <b>1 percent</b> first.`);
+  await w(2800);
+  let B,Z;
+  const setup=async(zoom)=>{B=bar(40,below()+4,880,'600 kg');await w0(600);await B.split(10,'60 kg',17);
+    if(zoom){const pw=B.pw();const hl=mk('',`left:${40+3}px;top:${below()}px;width:${pw}px;height:58px;border:3px dashed #2c66cf;border-radius:8px;z-index:5`);pop(hl);
+      Z=bar(40,232,420,'60 kg',46);await w0(500);await Z.split(10,'6',17);
+      const t=mk('tag','left:40px;top:290px;background:#eef4ff;color:#1d4b9e;font-size:16px;border:2px solid #bcd2f7','each small part = 1% = 6 kg');pop(t);}};
+  await teachQ(w,{src:WS2+'Q5 (i)',q:'Work out<br>(i) 1% of 600 kg',read:'Work out 1% of 600 kilograms.',
+    keys:[['1%',`<b>1 percent</b> means 1 out of every 100. So we split 600 kilograms into <b>100</b> equal parts.`]],
+    workX:500,workY:232,
+    before:[{act:()=>setup(false),show:'Try 10%: 600 ÷ 10 = 60 kg',
+      say:`Try 10 percent first. 10 percent is one tenth, so split 600 into 10 parts. Each part is <b>60 kilograms</b>.`,try:true,wait:3000}],
+    steps:[{act:async()=>{const pw=B.pw();const hl=mk('',`left:${40+3}px;top:${below()}px;width:${pw}px;height:58px;border:3px dashed #2c66cf;border-radius:8px;z-index:5`);pop(hl);point(hl);await w0(600);
+          Z=bar(40,232,420,'60 kg',46);await w0(500);await Z.split(10,'6',17);point(Z.b);},
+        say:`Now zoom in on one 10 percent part. Split it into 10 again. That makes <b>100</b> tiny parts altogether.`,wait:3000},
+      {act:async()=>{await Z.shade(1);const t=mk('tag','left:40px;top:290px;background:#eef4ff;color:#1d4b9e;font-size:16px;border:2px solid #bcd2f7','each small part = 1% = 6 kg');pop(t);},
+        show:'1% = 600 ÷ 100 = <b>6 kg</b>',say:`Each tiny part is <b>1 percent</b>. 600 ÷ 100 = <b>6 kilograms</b>.`,wait:2600}],
+    answer:'6 kg',why:'To find 1%, divide by 100. Check: 100 parts of 6 kg make 600 kg. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS2+'Q5 (iii)',q:'Work out<br>(iii) 3.5% of 600 kg',read:'Work out 3.5% of 600 kilograms.',
+    keys:[['3.5%',`<b>3.5 percent</b> is 3 percent and another half a percent.`]],
+    workX:500,workY:232,
+    before:[{act:()=>setup(true),show:'Try 1%: 600 ÷ 100 = 6 kg',say:`Start with 1 percent: 600 ÷ 100 = <b>6 kilograms</b>. Each tiny part is 6 kilograms.`,try:true,wait:2800}],
+    steps:[{act:()=>Z.shade(3),show:'3% = 3 × 6 = 18 kg',say:`3 percent is 3 tiny parts. 3 times 6 is <b>18 kilograms</b>.`,wait:2600},
+      {act:()=>Z.shade(.5),show:'0.5% = 6 ÷ 2 = 3 kg',say:`Half a percent is half a tiny part. Half of 6 is <b>3 kilograms</b>.`,wait:2600},
+      {show:'3.5% = 18 + 3 = <b>21 kg</b>',say:`Add them together: 18 + 3 = <b>21 kilograms</b>.`,wait:2400}],
+    answer:'21 kg',why:'Split it up: 3% + 0.5%. Check: 21 kg is a bit more than 3%, which is 18 kg. ✔'});
+  await w(1500);}},
+
+/* 8 */ {t:'More than 100%',run:async w=>{
+  say(`Can a percentage be more than 100? Yes! <b>One whole</b> is 100 percent, so more than one whole is <b>more than 100 percent</b>.`);
+  await w(3200);
+  const sq=async(x,label,how)=>{const s=hsq(x,below(),12,1);await w0(300);await how(s);const t=mk('tag',`left:${x}px;top:${below()+138}px;width:129px;text-align:center;background:#ffe6cf;color:#7a2e00;font-size:18px`,label);pop(t);point(t);};
+  let y0;
+  await teachQ(w,{src:WS2+'Q9 a)',q:STEM9+'<br>a) 1'+frac(1,2),read:'Write each of these mixed numbers as a percentage. a) 1 and a half.',
+    keys:[['mixed numbers',`A <b>mixed number</b> is a whole number and a fraction, like 1 and a half.`]],
+    workX:360,
+    before:[{act:()=>sq(40,'100%',s=>s.shade(100)),show:'Try 1 whole: 100 out of 100 = 100%',
+      say:`Try one whole first. A whole square is 100 out of 100. That's <b>100 percent</b>.`,try:true,wait:2600}],
+    steps:[{act:()=>sq(190,'50%',s=>s.where(c=>c<5)),show:`${frac(1,2)} = ${frac(50,100)} = 50%`,say:`Now the half. One half is 50 over 100, which is <b>50 percent</b>.`,wait:2600},
+      {show:`1${frac(1,2)} = 100% + 50% = <b>150%</b>`,say:`Add them: 100 percent plus 50 percent is <b>150 percent</b>.`,wait:2600}],
+    answer:'150%',why:`Check: ${frac(3,2)} × 100 = 1.5 × 100 = 150. ✔`});
+  await w(1200);clear();
+  await teachQ(w,{src:WS2+'Q9 f)',q:STEM9+'<br>f) 2'+frac(1,4),read:'Write each of these mixed numbers as a percentage. f) 2 and a quarter.',
+    keys:[['mixed numbers',`This <b>mixed number</b> is 2 wholes and a quarter.`]],
+    workX:490,
+    before:[{act:async()=>{await sq(40,'100%',s=>s.shade(100));await sq(184,'100%',s=>s.shade(100));},show:'Try 2 wholes = 200%',
+      say:`Try the wholes first. Each whole is 100 percent, so 2 wholes are <b>200 percent</b>.`,try:true,wait:2600}],
+    steps:[{act:()=>sq(328,'25%',s=>s.where((c,r)=>c<5&&r<5)),show:`${frac(1,4)} = ${frac(25,100)} = 25%`,say:`Now the quarter. One quarter is 25 over 100, which is <b>25 percent</b>.`,wait:2600},
+      {show:`2${frac(1,4)} = 200% + 25% = <b>225%</b>`,say:`Add them: 200 plus 25 is <b>225 percent</b>.`,wait:2600}],
+    answer:'225%',why:`Check: ${frac(9,4)} × 100 = 2.25 × 100 = 225. ✔`});
+  await w(1500);}},
+
+/* 9 */ {t:'Build the answer',run:async w=>{
+  const R=[['Write 9% as a decimal.',`Write 9 percent as a decimal.`,['0','.','9','%'],[['0','.','0','9']],'0.09',`9 ÷ 100: the 9 moves two places right, so it's 0.09.`],
+    [`Write ${frac(3,4)} as a percentage.`,`Write three quarters as a percentage.`,['7','5','3','4','%'],[['7','5','%']],'75%',`Times the top and the bottom by 25: 75 over 100, which is 75 percent.`],
+    ['Write 1.5% as a decimal.',`Write 1.5 percent as a decimal.`,['0','.','1','5'],[['0','.','0','1','5']],'0.015',`1.5 ÷ 100: both digits move two places right, so it's 0.015.`],
+    [`Write 2${frac(1,4)} as a percentage.`,`Write 2 and a quarter as a percentage.`,['2','5','1','4','%'],[['2','2','5','%']],'225%',`2 wholes are 200 percent, and a quarter is 25 percent: 225 percent.`]];
+  say(`Your turn to build! Read each question, then tap the tiles <b>in order</b>. You can use a tile more than once. Press <b>Check</b> when you're done.`);
+  await w(3600);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,spoken,tiles,answer,model,why]=R[i];
+    mk('ex-head','',`🧩 Build it · ${i+1} of ${R.length}`);
+    say(spoken);
+    const r=await buildExpr(w,{q,tiles,answer,top:44});
+    if(r.ok){right++;say(`Yes! <b>${model}</b> is right. ${why}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+model);pop(s);point(s);say(`Not quite. ${why}`);}
+    await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🧩</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You're a conversion champion.`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 10 */ {t:'Exam check: Ex 10.1',run:async w=>{
+  say(`Exam check! First, the rest of <b>Exercise 10.1</b>. I'll read each question and its choices. Then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 10.1 · Q2 b)',q:'Write these percentages as fractions. Write your answers in the simplest form.<br>b) 61%',o:[frac(61,100),frac(6,10),frac(61,10),frac(1,61)],a:0,
+      why:`61% is 61 out of 100: ${frac(61,100)}. No number except 1 divides both 61 and 100, so it is already in its simplest form.`,
+      whyNot:{1:`${frac(6,10)} is 60%, not 61%.`,2:'per cent means out of 100, not out of 10.',3:'that is upside down: 1 out of 61.'}},
+    {src:'Worksheet · Ex 10.1 · Q2 c)',q:'Write these percentages as fractions. Write your answers in the simplest form.<br>c) 62%',o:[frac(62,100),frac(31,50),frac(6,10),frac(31,100)],a:1,
+      why:`${frac(62,100)}: divide the top and the bottom by 2 to get <b>${frac(31,50)}</b>. 31 and 50 share no other number.`,
+      whyNot:{0:'it is right, but not in its simplest form. Divide the top and the bottom by 2.',2:`${frac(6,10)} is 60%, not 62%.`,3:'only the top was halved. Halve the bottom too.'}},
+    {src:'Worksheet · Ex 10.1 · Q2 e)',q:'Write these percentages as fractions. Write your answers in the simplest form.<br>e) 65%',o:[frac(65,100),frac(13,25),frac(13,20),frac(6,5)],a:2,
+      why:`${frac(65,100)}: divide the top and the bottom by 5 to get <b>${frac(13,20)}</b>.`,
+      whyNot:{0:'not in its simplest form: 65 and 100 can both be divided by 5.',1:'100 ÷ 5 is 20, not 25.',3:`${frac(6,5)} is more than one whole. Per cent means out of 100.`}},
+    {src:'Worksheet · Ex 10.1 · Q2 f)',q:'Write these percentages as fractions. Write your answers in the simplest form.<br>f) 70%',o:[frac(7,100),frac(7,10),frac(70,10),frac(1,70)],a:1,
+      why:`${frac(70,100)}: divide the top and the bottom by 10 to get <b>${frac(7,10)}</b>.`,
+      whyNot:{0:`${frac(7,100)} is 7%, not 70%.`,2:'that is 7 wholes. Divide the bottom by 10 as well.',3:'that is upside down.'}},
+    {src:'Worksheet · Ex 10.1 · Q4 c)',q:'Write these percentages as a decimal and as a fraction.<br>c) 9%',o:[`0.9 and ${frac(9,10)}`,`0.09 and ${frac(9,100)}`,`9.0 and ${frac(9,100)}`,`0.09 and ${frac(1,9)}`],a:1,
+      why:`9 ÷ 100 = <b>0.09</b>, and 9% is 9 out of 100: <b>${frac(9,100)}</b>. It cannot be simplified.`,
+      whyNot:{0:'0.9 is 90%, not 9%.',2:'9.0 is just 9. You must divide by 100.',3:`${frac(1,9)} is not 9 out of 100.`}},
+    {src:'Worksheet · Ex 10.1 · Q4 d)',q:'Write these percentages as a decimal and as a fraction.<br>d) 90%',o:[`0.09 and ${frac(9,100)}`,`9.0 and ${frac(9,10)}`,`0.9 and ${frac(9,10)}`,`0.9 and ${frac(90,10)}`],a:2,
+      why:`90 ÷ 100 = <b>0.9</b>. ${frac(90,100)}: divide by 10 to get <b>${frac(9,10)}</b>.`,
+      whyNot:{0:'that is 9%, not 90%.',1:'9.0 is 9 wholes. 90 ÷ 100 is 0.9.',3:`${frac(90,10)} is 9 wholes. Per cent means out of 100.`}},
+    {src:'Worksheet · Ex 10.1 · Q4 e)',q:'Write these percentages as a decimal and as a fraction.<br>e) 5%',o:[`0.5 and ${frac(1,2)}`,`0.05 and ${frac(1,20)}`,`0.05 and ${frac(5,10)}`,`0.5 and ${frac(1,20)}`],a:1,
+      why:`5 ÷ 100 = <b>0.05</b>. ${frac(5,100)}: divide by 5 to get <b>${frac(1,20)}</b>.`,
+      whyNot:{0:`0.5 and ${frac(1,2)} are 50%.`,2:`${frac(5,10)} is one half, which is 50%.`,3:'the fraction is right, but 0.5 is 50%. 5% is 0.05.'}},
+    {src:'Worksheet · Ex 10.1 · Q5 b)',q:'Write these fractions as percentages.<br>b) 2/5',o:['25%','20%','40%','52%'],a:2,
+      why:`Times the top and the bottom by 20: ${frac(2,5)} = ${frac(40,100)} = <b>40%</b>. Check: 2 ÷ 5 = 0.4, and 0.4 × 100 = 40.`,
+      whyNot:{0:'that just writes the 2 and the 5 side by side.',1:`20% is ${frac(1,5)}. Two fifths is two lots of 20%.`,3:'that just writes the 5 and the 2 side by side.'}},
+    {src:'Worksheet · Ex 10.1 · Q5 c)',q:'Write these fractions as percentages.<br>c) 4/5',o:['45%','80%','20%','8%'],a:1,
+      why:`Times the top and the bottom by 20: ${frac(4,5)} = ${frac(80,100)} = <b>80%</b>. Check: 4 ÷ 5 = 0.8, and 0.8 × 100 = 80.`,
+      whyNot:{0:'that just writes the 4 and the 5 side by side.',2:`20% is only ${frac(1,5)}. Four fifths is four lots of 20%.`,3:'0.8 must be multiplied by 100, not 10.'}},
+    {src:'Worksheet · Ex 10.1 · Q5 d)',q:'Write these fractions as percentages.<br>d) 7/50',o:['7%','0.14%','35%','14%'],a:3,
+      why:`50 × 2 = 100, so times the top and the bottom by 2: ${frac(7,50)} = ${frac(14,100)} = <b>14%</b>. Check: 7 ÷ 50 = 0.14.`,
+      whyNot:{0:`7% is ${frac(7,100)}, but the bottom here is 50.`,1:'0.14 is the decimal. Times it by 100 to get the percentage.',2:'that times by 5. You need times 2, because 50 × 2 = 100.'}},
+    {src:'Worksheet · Ex 10.1 · Q5 f)',q:'Write these fractions as percentages.<br>f) 7/25',o:['28%','7%','25%','14%'],a:0,
+      why:`25 × 4 = 100, so times the top and the bottom by 4: ${frac(7,25)} = ${frac(28,100)} = <b>28%</b>. Check: 7 ÷ 25 = 0.28.`,
+      whyNot:{1:`7% is ${frac(7,100)}, but the bottom here is 25.`,2:'25 is the bottom number, not the percentage.',3:'that times by 2. 25 × 4 = 100, so times by 4.'}},
+    {src:'Worksheet · Ex 10.1 · Q9 a)',q:'Work out.<br>a) 1/2 of 60 grams',o:['120 grams','30 grams','62 grams','20 grams'],a:1,
+      why:'Half means divide by 2: 60 ÷ 2 = <b>30 grams</b>.',
+      whyNot:{0:'that is 60 × 2. Half of something is smaller.',2:'you cannot just add the 2 on.',3:'20 grams is a third of 60, not a half.'}},
+    {src:'Worksheet · Ex 10.1 · Q9 c)',q:'Work out.<br>c) 4/5 of 60 grams',o:['12 grams','75 grams','48 grams','45 grams'],a:2,
+      why:'Divide by the bottom: 60 ÷ 5 = 12 (one fifth). Times by the top: 12 × 4 = <b>48 grams</b>.',
+      whyNot:{0:'12 grams is only one fifth. You need four fifths: 12 × 4.',1:'four fifths of 60 must be less than 60.',3:`45 grams is ${frac(3,4)} of 60, not ${frac(4,5)}.`}},
+    {src:'Worksheet · Ex 10.1 · Q9 d)',q:'Work out.<br>d) 7/10 of 60 grams',o:['42 grams','6 grams','70 grams','67 grams'],a:0,
+      why:'Divide by the bottom: 60 ÷ 10 = 6 (one tenth). Times by the top: 6 × 7 = <b>42 grams</b>.',
+      whyNot:{1:'6 grams is only one tenth. You need seven tenths: 6 × 7.',2:'seven tenths of 60 must be less than 60.',3:'you cannot just add the 7 to 60.'}},
+  ],{title:'Exam check · Ex 10.1'});}},
+
+/* 11 */ {t:'Exam check: Ex 10.2',run:async w=>{
+  say(`Now the rest of <b>Exercise 10.2</b>. Take your time, then tap your answer.`);
+  await w(2600);
+  await examCheck(w,[
+    {src:'Worksheet · Ex 10.2 · Q2 c)',q:'Write these percentages as decimals and as fractions. Write each in its simplest form.<br>c) 1.5%',o:[`0.15 and ${frac(3,20)}`,`0.015 and ${frac(3,200)}`,`1.5 and ${frac(15,100)}`,`0.015 and ${frac(15,100)}`],a:1,
+      why:`1.5 ÷ 100 = <b>0.015</b>. Fraction: ${frac('1.5',100)} = ${frac(15,1000)}, then divide by 5: <b>${frac(3,200)}</b>.`,
+      whyNot:{0:'that is 15%. Dividing 1.5 by 100 moves the digits two places: 0.015.',2:'1.5 has not been divided by 100 at all.',3:`${frac(15,100)} is 15%. Times ${frac('1.5',100)} by 10 on top and bottom to get ${frac(15,1000)}.`}},
+    {src:'Worksheet · Ex 10.2 · Q2 d)',q:'Write these percentages as decimals and as fractions. Write each in its simplest form.<br>d) 47.5%',o:[`4.75 and ${frac(19,4)}`,`0.0475 and ${frac(19,400)}`,`0.475 and ${frac(475,100)}`,`0.475 and ${frac(19,40)}`],a:3,
+      why:`47.5 ÷ 100 = <b>0.475</b>. ${frac('47.5',100)} = ${frac(475,1000)}; divide by 5: ${frac(95,200)}; divide by 5 again: <b>${frac(19,40)}</b>.`,
+      whyNot:{0:'that divides by 10, not by 100.',1:'that divides by 1000, one place too far.',2:`${frac(475,100)} is more than 4 wholes. It should be ${frac(475,1000)}.`}},
+    {src:'Worksheet · Ex 10.2 · Q2 e)',q:'Write these percentages as decimals and as fractions. Write each in its simplest form.<br>e) 32.5%',o:[`3.25 and ${frac(13,4)}`,`0.325 and ${frac(13,40)}`,`0.325 and ${frac(65,200)}`,`0.0325 and ${frac(13,40)}`],a:1,
+      why:`32.5 ÷ 100 = <b>0.325</b>. ${frac('32.5',100)} = ${frac(325,1000)}; divide by 5: ${frac(65,200)}; divide by 5 again: <b>${frac(13,40)}</b>.`,
+      whyNot:{0:'that divides by 10, not by 100.',2:`${frac(65,200)} is right, but not in its simplest form. Divide by 5 again.`,3:'0.0325 divides by 1000. 32.5% is 0.325.'}},
+    {src:'Worksheet · Ex 10.2 · Q5 (ii)',q:'Work out<br>(ii) 1.5% of 600 kg.',o:['90 kg','9 kg','6 kg','7.5 kg'],a:1,
+      why:'1% of 600 kg is 6 kg. 0.5% is half of that: 3 kg. So 1.5% is 6 + 3 = <b>9 kg</b>.',
+      whyNot:{0:'90 kg is 15%, ten times too much.',2:'6 kg is only 1%. Add the half percent too.',3:'0.5% is half of 6 kg, which is 3 kg, not 1.5 kg.'}},
+    {src:'Worksheet · Ex 10.2 · Q5 (iv)',q:'Work out<br>(iv) 2.2% of 600 kg.',o:['132 kg','12.2 kg','13.2 kg','1.32 kg'],a:2,
+      why:'1% = 6 kg, so 2% = 12 kg. 0.1% = 0.6 kg, so 0.2% = 1.2 kg. Then 12 + 1.2 = <b>13.2 kg</b>.',
+      whyNot:{0:'132 kg is 22%, ten times too much.',1:'0.2% of 600 kg is 1.2 kg, not 0.2 kg.',3:'1.32 kg is 0.22%, ten times too small.'}},
+    {src:'Worksheet · Ex 10.2 · Q9 b)',q:'Write each of these mixed numbers as a percentage.<br>b) 1 1/4',o:['114%','125%','25%','1.25%'],a:1,
+      why:`1 whole is 100% and ${frac(1,4)} is 25%, so <b>125%</b>. Check: ${frac(5,4)} × 100 = 1.25 × 100 = 125.`,
+      whyNot:{0:'that just writes the digits 1, 1 and 4 together.',2:'that forgets the whole one, which is 100%.',3:'1.25 is the decimal. Times it by 100.'}},
+    {src:'Worksheet · Ex 10.2 · Q9 c)',q:'Write each of these mixed numbers as a percentage.<br>c) 1 3/4',o:['134%','75%','175%','17.5%'],a:2,
+      why:`1 whole is 100% and ${frac(3,4)} is 75%, so <b>175%</b>. Check: ${frac(7,4)} × 100 = 1.75 × 100 = 175.`,
+      whyNot:{0:'that just writes the digits together.',1:'that forgets the whole one: add 100%.',3:'1.75 × 100 is 175, not 17.5.'}},
+    {src:'Worksheet · Ex 10.2 · Q9 d)',q:'Write each of these mixed numbers as a percentage.<br>d) 1 3/10',o:['130%','103%','13%','310%'],a:0,
+      why:`1 whole is 100% and ${frac(3,10)} is 30%, so <b>130%</b>. Check: ${frac(13,10)} × 100 = 1.3 × 100 = 130.`,
+      whyNot:{1:`${frac(3,10)} is 30%, not 3%.`,2:'13% is less than one whole, but this number is more than one whole.',3:'that just writes the 3 and the 10 together.'}},
+    {src:'Worksheet · Ex 10.2 · Q9 e)',q:'Write each of these mixed numbers as a percentage.<br>e) 1 7/10',o:['107%','17%','710%','170%'],a:3,
+      why:`1 whole is 100% and ${frac(7,10)} is 70%, so <b>170%</b>. Check: ${frac(17,10)} × 100 = 1.7 × 100 = 170.`,
+      whyNot:{0:`${frac(7,10)} is 70%, not 7%.`,1:'17% is less than one whole, but this number is more than one whole.',2:'that just writes the 7 and the 10 together.'}},
+  ],{title:'Exam check · Ex 10.2'});}},
+
+/* 12 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Percentages, fractions and decimals</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['💯','<b>Per cent</b> means<br>out of 100.',`Per cent means out of 100.`],
+    ['➗','Percentage → decimal:<br><b>÷ 100</b><br>4% = 0.04',`Percentage to decimal: divide by 100. 4 percent is 0.04.`],
+    ['✂️',`Percentage → fraction:<br>over 100, simplify<br>60% = <b>${frac(3,5)}</b>`,`Percentage to fraction: write it over 100, then simplify. 60 percent is 3 over 5.`],
+    ['🎯',`Fraction → percentage:<br>make it out of 100<br>${frac(7,20)} = ${frac(35,100)} = <b>35%</b>`,`Fraction to percentage: make the bottom 100. 7 over 20 is 35 percent.`],
+    ['🍰',`${frac(3,4)} of 60 g:<br>÷ 4, then × 3<br>= <b>45 g</b>`,`For three quarters of 60, divide by 4, then times by 3. That's 45 grams.`],
+    ['🔍','7.5% = <b>0.075</b><br>not 7.5 or 0.75!',`7.5 percent is 0.075, not 7.5 or 0.75.`],
+    ['⚖️','1% of 600 kg<br>= 6 kg<br>3.5% = <b>21 kg</b>',`1 percent of 600 kilograms is 6 kilograms, so 3.5 percent is 21 kilograms.`],
+    ['🚀',`1${frac(1,2)} = <b>150%</b><br>one whole = 100%`,`One whole is 100 percent, so one and a half is 150 percent.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now swap between percentages, fractions and decimals.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

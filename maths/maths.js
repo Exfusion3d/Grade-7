@@ -27,6 +27,14 @@ document.head.insertAdjacentHTML('beforeend',`<style>
 .mx-slot i{font-size:18px;font-style:normal;color:#b39a85;font-weight:700}
 .mx-slot.ok{border-style:solid;border-color:#18a058;background:#e6f7ee;color:#0f7a40}
 .mx-slot.bad{border-style:solid;border-color:#e04848;background:#fdecec;color:#b02a2a}
+.mx-key{background:#ffe680;border-radius:6px;padding:0 4px;box-shadow:0 0 0 2px #ffd84d}
+.mx-step{background:#fff;border:3px solid #f7d3b5;border-radius:16px;padding:6px 16px;
+  font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-size:27px;font-weight:800;color:#7a2e00;box-shadow:0 3px 0 #f7d3b5}
+.mx-step i{margin-left:12px;font-style:normal;font-size:17px;font-weight:700;color:#8a6a55}
+.mx-step.try{font-size:23px;background:#eef4ff;border-color:#bcd2f7;box-shadow:0 3px 0 #bcd2f7;color:#1d4b9e}
+.mx-step.try i{color:#4a6a9e}
+.mx-why{background:#fff8e6;border:3px solid #f2c200;border-radius:16px;padding:8px 16px;font-size:17px;font-weight:700;line-height:1.35}
+.mx-point{font-size:40px;pointer-events:none;z-index:40}
 </style>`);
 /* A fraction for on-screen maths, e.g. frac('t',2). The voice reads it as "t over 2". */
 const frac=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
@@ -56,3 +64,47 @@ async function buildExpr(w,{q,src,tiles,answer,top=24}){
   const norm=a=>a.join('').replace(/\s+/g,'');const ok=answer.some(a=>norm(a)===norm(seq));
   slot.classList.add(ok?'ok':'bad');if(ok){yay();confetti(40);}else{boo();shake(slot);}
   return{ok,built:seq.join(' '),y:y+90};}
+
+/* ---------- teaching a worksheet question step by step ---------- */
+/* A pointing hand that glides to whatever Pi is talking about (one per scene). */
+function point(el){
+  let h=stage.querySelector('.mx-point');
+  if(!h){h=mk('mx-point','left:0;top:0;opacity:0','👉');loop(h,[{marginLeft:'0px'},{marginLeft:'-9px'}],550,{direction:'alternate'});}
+  /* stage position from offsets (not the screen rectangle, which is still shrunk while an element pops in) */
+  let l=0,t=0,e=el;while(e&&e!==stage){l+=e.offsetLeft;t+=e.offsetTop;e=e.offsetParent;}
+  const x=Math.max(0,l-50),y=t+Math.min(el.offsetHeight,60)/2-26;
+  an(h,[{opacity:1,transform:`translate(${x}px,${y}px)`}],{duration:550});return h;}
+/* Light up the first appearance of `word` inside a question card, so the student sees which words matter. */
+function mark(card,word){const q=card.querySelector('.q'),i=q.innerHTML.indexOf(word);if(i<0)return null;
+  q.innerHTML=q.innerHTML.slice(0,i)+'<span class="mx-key">'+word+'</span>'+q.innerHTML.slice(i+word.length);
+  const k=q.querySelectorAll('.mx-key');const el=k[k.length-1];
+  el.animate([{background:'#fff'},{background:'#ffd84d'},{background:'#ffe680'}],{duration:900});return el;}
+/* The whole routine for one worksheet question:
+   1. the question appears on its own (no answer) and Pi reads it out;
+   2. its key words light up one at a time and Pi says what each means (keys: [[word, spoken meaning]]);
+   3. `before` steps try the idea with a real number;
+   4. the student thinks, then taps "Show me";
+   5. `steps` build the answer one line at a time; 6. the answer is stamped and `why` explains it.
+   A step is {show (html line, optional), say (spoken), act (async animation, optional), try (true = blue "number" line)}. */
+async function teachQ(w,{src,q,read,keys=[],before=[],steps=[],answer,why,x=40,y=12,wd=880,workX,workY,
+    think:th=`Your turn to think. What is the answer? When you're ready, tap <b>Show me</b>.`}){
+  const c=mk('ws-card',`left:${x}px;top:${y}px;width:${wd}px;z-index:20`,`<div class="src">${src}</div><div class="q">${q}</div>`+
+    `<div class="stamp" style="visibility:hidden">✔ ${answer}</div>`);pop(c);
+  await w(60);point(c.querySelector('.q'));
+  say(`Here's the question. ${read||q}`);await w(1500);
+  for(const [word,means] of keys){const k=mark(c,word);if(k)point(k);say(means);await w(1800);}
+  const wx=workX??x+56,ww=x+wd-wx;let wy=workY??y+c.offsetHeight+14;
+  const line=async st=>{if(st.act)await st.act();
+    if(st.show){const e=mk('mx-step'+(st.try?' try':''),`left:${wx}px;top:${wy}px;max-width:${ww}px`,st.show);pop(e);await w(30);wy+=e.offsetHeight+10;point(e);}
+    if(st.say)say(st.say);await w(st.wait||1800);};
+  for(const st of before)await line(st);
+  say(th);let open=false;
+  const b=btn('ex-btn green',`left:${wx}px;top:${wy}px;width:220px;z-index:30`,'👀 Show me',()=>{open=true;});pop(b);point(b);
+  window.AUTOPLAY=()=>{open=true;};
+  await w.until(()=>open);window.AUTOPLAY=null;b.remove();
+  for(const st of steps)await line(st);
+  const sp=c.querySelector('.stamp');sp.style.visibility='visible';
+  an(sp,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-2deg)',opacity:1}],{duration:500,fill:'both',easing:'cubic-bezier(.5,1.6,.5,1)'});yay();point(sp);
+  say(`So the answer is <b>${answer}</b>.`);await w(1600);
+  if(why){const e=mk('mx-why',`left:${wx}px;top:${wy}px;width:${ww}px`,'💡 '+why);pop(e);point(e);say(why);await w(2200);}
+  return c;}

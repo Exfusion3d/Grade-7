@@ -109,7 +109,9 @@ import { Account } from "./src/account.js";
 
 /* Subjects and lessons come from subjects.js (window.SUBJECTS and window.LESSONS); only built lessons are listed. */
 const BUILT = SUBJECTS.filter((S) => !S.soon).map((S) => ({ S, ids: S.units.flatMap((U) => U.les).filter((l) => l[1]).map((l) => l[0]) })).filter((x) => x.ids.length);
-const MODES = [['u4','🦓 Unit 4'],['u5','⚗️ Unit 5'],['u9','⚡ Unit 9'],['boss','👑 Final Boss']]; // Science quiz levels
+/* Each subject's quiz and its levels, from subjects.js: [mode id, label] */
+const QUIZZES = SUBJECTS.filter((S) => S.quiz?.href && S.quiz.modes).map((S) => ({ S, modes: S.quiz.modes.map(([m, e, n]) => [m, `${e} ${n}`]) }));
+const MODES = QUIZZES.flatMap((x) => x.modes);
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const lessonName = (id) => LESSONS[id] ? `${LESSONS[id].subject.name} · Lesson ${LESSONS[id].num}: ${LESSONS[id].t}` : id;
@@ -121,10 +123,12 @@ function ago(t) {
   return d === 1 ? "yesterday" : `${d} days ago`;
 }
 
-/* Quiz question wording, read from quiz.html so the "questions to fix" list can show the question itself. */
+/* Quiz question wording, read from each quiz page so the "questions to fix" list can show the question itself.
+   Maths Quest writes fractions as ${frac(a,b)}: shown here as a/b. */
 let quizText = {};
-fetch("quiz.html").then((r) => r.text()).then((html) => {
-  for (const m of html.matchAll(/^\{id:'(u\d-\d\d)',[^\n]*?\bq:'((?:[^'\\]|\\.)*)'/gm)) quizText[m[1]] = m[2].replace(/\\'/g, "'");
+for (const { S } of QUIZZES) fetch(S.quiz.href).then((r) => r.text()).then((html) => {
+  for (const m of html.matchAll(/^\{id:'([a-z]\d+-\d\d)',[^\n]*?\bq:(['`])((?:(?!\2)[^\\]|\\.)*)\2/gm))
+    quizText[m[1]] = m[3].replace(/\$\{frac\(\s*'?([^,']*)'?\s*,\s*'?([^)']*)'?\s*\)\}/g, (_, n, d) => [n, d].map((x) => (/[ +−-]/.test(x) ? `(${x})` : x)).join("/")).replace(/\\(.)/g, "$1").replace(/<br>/g, " ").replace(/<[^>]*>/g, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 }).catch(() => {});
 /* Exam check wording, read from each lesson file the same way (questionId is "l05:Worksheet · Unit 5 · MCQ 1"). */
 const examText = {};
@@ -161,8 +165,7 @@ function renderStudents() {
     const fin = new Set(s.lessons.filter((l) => l.done).map((l) => l.lessonId));
     const bySubject = BUILT.map(({ S, ids }) => { const n = ids.filter((id) => fin.has(id)).length;
       return `${S.emoji} ${S.name}: <b>${n} of ${ids.length}</b> lessons finished<div class="bar"><i style="width:${(n / ids.length) * 100}%"></i></div>`; }).join("");
-    const quiz = MODES.filter(([m]) => s.quizBest[m]).map(([m, n]) => `${n} ${stars(s.quizBest[m].stars)}`).join(" · ") || "No quiz levels finished yet";
-    const quizLine = `🔬 Science quiz: ${quiz}`;
+    const quizLine = QUIZZES.map(({ S, modes }) => `${S.emoji} ${S.name} quiz: ${modes.filter(([m]) => s.quizBest[m]).map(([m, n]) => `${n} ${stars(s.quizBest[m].stars)}`).join(" · ") || "no levels finished yet"}`).join("<br>");
     const rev = s.revise.slice(0, 3).map((r) => `<span class="tag" title="${esc(lessonName(r.lessonId))}">${LESSONS[r.lessonId] ? LESSONS[r.lessonId].subject.emoji + " " : ""}Lesson ${+r.lessonId.slice(1)}: ${r.wrong} to fix</span>`).join("")
       + (s.revise.length > 3 ? `<span class="tag">+${s.revise.length - 3} more</span>` : "");
     return `<div class="st">
@@ -198,7 +201,7 @@ async function showDetail(id) {
       const st = p?.done ? "✅ finished" : p ? `▶ at scene ${p.lastScene}` : "– not started";
       return `<div class="lg ${cls}"><b>Lesson ${LESSONS[id].num}</b>${esc(LESSONS[id].t)}<div class="muted">${st}</div></div>`;
     }).join("")).join("");
-    $("dQuiz").innerHTML = `<p>${MODES.map(([m, n]) => `${n}: ${d.quizBest[m] ? `${stars(d.quizBest[m].stars)} best ${d.quizBest[m].right}/${d.quizBest[m].total} (${d.quizBest[m].pct}%)` : "not finished yet"}`).join("<br>")}</p>`
+    $("dQuiz").innerHTML = QUIZZES.map(({ S, modes }) => `<p><b>${S.emoji} ${S.name}</b><br>${modes.map(([m, n]) => `${n}: ${d.quizBest[m] ? `${stars(d.quizBest[m].stars)} best ${d.quizBest[m].right}/${d.quizBest[m].total} (${d.quizBest[m].pct}%)` : "not finished yet"}`).join("<br>")}</p>`).join("")
       + (d.recentRuns.length ? `<p class="muted">Recent levels: ${d.recentRuns.map((r) => `${(MODES.find(([m]) => m === r.mode) || [, "🔁 Mistakes practice"])[1]} ${r.right}/${r.total} (${ago(r.at)})`).join(" · ")}</p>` : "");
     $("dWrong").innerHTML = d.wrongQuestions.length
       ? `<table><tr><th>Lesson</th><th>Question</th><th>Missed</th></tr>${d.wrongQuestions.map((q) =>

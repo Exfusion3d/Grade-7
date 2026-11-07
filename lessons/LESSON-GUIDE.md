@@ -39,6 +39,12 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 - Maths only (`maths.js`): `frac(n,d)` draws a fraction (spoken "n over d"); `buildExpr(w,{q,tiles,answer})` lets the
   student tap tiles to build an expression and resolves to `{ok,built,y}`. In Maths lessons the voice reads × − + / &lt; &gt;
   as times, minus, plus, over, less than, greater than.
+- **Maths teaching pattern (required, approved after the first pilot was too fast):** teach every worksheet question with
+  `teachQ(w,{src,q,read,keys,before,steps,answer,why})` from `maths.js`, never with `wsCard`. It shows the question with no
+  answer and reads it aloud, lights up the key words (`keys: [[word, spoken meaning]]`), tries a real number first
+  (`before` steps with `try:true`), waits for the student to tap **Show me**, builds the working one line at a time
+  (`steps: [{show, say, act}]`, `act` runs an animation first), then stamps the answer and explains `why`.
+  `point(el)` glides a 👉 to whatever Pi is talking about. One question per screen (`clear()` between them).
 - `w(ms)` — wait at least ms AND until the voice finishes the current line. Always `await w(...)` after `say(...)`
   before the next `say` (typical 2500–4000 ms). Cancel-safe when the student changes scene.
 - `w.until(()=>cond)` — wait for an interactive condition (e.g. a button was tapped).
@@ -52,7 +58,8 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 - `sortGame(w,{bins, items:[[text,binIndex]], top, colors, intro})` → `{ok,total,wrong}` after the student presses Check.
 - `wsCard(css,{src,q,a},parent?)` — worksheet card: `src` label ('Worksheet · Unit 5 · MCQ 10'), the question `q`
   word for word, then the answer `a` ('✔ A) Hardness') stamped underneath. `css` gives left/top/width; height is automatic.
-- `ask(w,{q,o,a,why,src,top})`, `reveal(w,{q,model,src,top})`, `examCheck(w, list, {title})`.
+- `ask(w,{q,o,a,why,whyNot,src,top})`, `reveal(w,{q,model,src,top})`, `examCheck(w, list, {title})`. `ask` reads the question, then
+  shows and reads each choice; `whyNot: {index: text}` explains why a wrong choice is wrong (give one for every wrong option).
 - CSS helper classes: `stamp`, `card`, `panel`, `tag`, `chipk`, `clue`, `info`, `big-emoji`, `legend`.
 - Periodic-table helpers also exist (`makeTable`, `flyFrom`, `SYM`, `NAME`, `kind`) if useful.
 - Colours used in the pilot: purple #6a45d8, blue #2c66cf, green #18a058/#17935b, orange #e06a1b/#d66a0a,

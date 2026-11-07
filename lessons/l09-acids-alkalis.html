@@ -252,16 +252,16 @@ Lesson.start({
 /* 7 */ {t:'Exam check', run:async w=>{
   const CH='Chen\'s chart: lemon juice <b>2</b>, vinegar <b>4</b>, bath salts <b>9</b>, floor cleaner <b>12</b>, paint stripper <b>14</b>.<br>';
   await examCheck(w,[
-    {src:'Worksheet · Unit 5 · Short answer 17',q:'What colour does litmus change to in an acid?',o:['Blue litmus turns red','Red litmus turns blue','It turns green','It does not change'],a:0,
+    {src:'Worksheet · Unit 5 · Short answer 17',q:'What colour does litmus change to in an acid?',o:['Blue litmus turns red','Red litmus turns blue','It turns green','It does not change'],a:0,whyNot:{1:"red litmus turns blue in an alkali, not an acid.",2:"litmus only turns red or blue. Green is a Universal Indicator colour.",3:"litmus does change colour in an acid."},
       why:'In an acid, <b>blue litmus turns red</b>. (Red litmus turns blue in an alkali.)'},
     {src:'Worksheet · Unit 5 · Short answer 18',q:'Is water an acid, an alkali or neutral? Give the reason.',model:'Water is <b>neutral</b> because its <b>pH is 7</b>.'},
-    {src:'Worksheet · Unit 5 · Short answer 19',q:'A liquid has a pH of 1. What type of liquid is it?',o:['Strongly acidic','Weakly acidic','Neutral','Strongly alkaline'],a:0,
+    {src:'Worksheet · Unit 5 · Short answer 19',q:'A liquid has a pH of 1. What type of liquid is it?',o:['Strongly acidic','Weakly acidic','Neutral','Strongly alkaline'],a:0,whyNot:{1:"weak acids have a pH of about 4 to 6.",2:"neutral is pH 7.",3:"strong alkalis have a high pH, like 13 or 14."},
       why:'pH 1 is the <b>lowest</b> number, so it is a <b>strongly acidic</b> liquid.'},
     {src:'Worksheet · Unit 5 · Chen\'s pH chart (a)',q:CH+'(a) Write down the pH of vinegar.',model:'The pH of vinegar is <b>4</b>.'},
-    {src:'Worksheet · Unit 5 · Chen\'s pH chart (b)',q:CH+'(b) Paint stripper is tested with Universal Indicator. What colour is the indicator after the test?',o:['Red','Green','Yellow','Purple'],a:3,
+    {src:'Worksheet · Unit 5 · Chen\'s pH chart (b)',q:CH+'(b) Paint stripper is tested with Universal Indicator. What colour is the indicator after the test?',o:['Red','Green','Yellow','Purple'],a:3,whyNot:{0:"red is for strong acids, with a low pH.",1:"green is for neutral, pH 7.",2:"yellow is for weak acids."},
       why:'Paint stripper is <b>pH 14</b>, a strong alkali, so Universal Indicator turns <b>purple</b>.'},
     {src:'Worksheet · Unit 5 · Chen\'s pH chart (c)',q:'Pure water is neutral. Write down the pH of a neutral solution.',model:'A neutral solution has a pH of <b>7</b>.'},
-    {src:'Worksheet · Unit 5 · Chen\'s pH chart (d)',q:CH+'(d) Which chemical in the pH chart is the most acidic?',o:['Lemon juice','Vinegar','Bath salts','Paint stripper'],a:0,
+    {src:'Worksheet · Unit 5 · Chen\'s pH chart (d)',q:CH+'(d) Which chemical in the pH chart is the most acidic?',o:['Lemon juice','Vinegar','Bath salts','Paint stripper'],a:0,whyNot:{1:"vinegar is an acid, but its pH (4) is higher than lemon juice, so it is weaker.",2:"bath salts have a pH of 9, so they are alkaline.",3:"paint stripper has a pH of 14, a strong alkali."},
       why:'<b>Lemon juice</b> has the <b>lowest pH (2)</b>, so it is the most acidic.'},
   ]);
 }},

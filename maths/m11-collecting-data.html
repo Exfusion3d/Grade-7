@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Types of data, mode, median and mean</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.m11-wb{display:inline-block;margin-left:6px;padding:0 8px;border:2px solid #bcd2f7;border-radius:8px;background:#eef4ff;color:#1d4b9e}
+.m11-big{font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-weight:800;color:#7a2e00;text-align:center}
+.m11-chip{width:40px;height:40px;border-radius:10px;background:#fff;border:3px solid #bcd2f7;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:800;color:#1d4b9e}
+.m11-dot{width:30px;height:30px;border-radius:50%;background:#5d9cf5;border:3px solid #fff;box-shadow:0 0 0 2px #2c66cf;box-sizing:border-box}
+.m11-lab{text-align:right;font-size:20px;font-weight:800;color:#5a5f70}
+.m11-desc{font-size:17px;font-weight:700;line-height:1.35;color:#3a3f52;text-align:center}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 11 · Chapter 6 · Exercise 6.1 (Q1 1–3, Q2 a–e) and Chapter 6 Getting started (Q1 a, Q2, Q4 a–c)
+   Taught with teachQ: Ex 6.1 Q1 1), 2), 3); Getting started Q1 a), Q2, Q4 a), b), c).
+   Exam check: Ex 6.1 Q2 a)–e), plus Getting started Q1 a) and Q4 a)–c) again for practice. */
+const WS='Worksheet · Ex 6.1 · ',GS='Worksheet · Ch 6 Getting started · ';
+const STEM1='Choose the correct word to describe the following. <span class="m11-wb">discrete · continuous · categorical</span>';
+const READ1='Choose the correct word to describe the following: discrete, continuous or categorical.';
+const MARKS=[7,8,8,9,12,14,14,14,15,15,15,16,16,17,18,18,18,18,18,20];
+const STEM4='Here are 20 test marks<br>'+MARKS.join(' ');
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+/* the 20 marks as a row of chips */
+function chips(y){return MARKS.map((v,i)=>{const c=mk('m11-chip',`left:${40+i*44}px;top:${y}px`,v);pop(c,i*40);return c;});}
+/* how many students got each mark: one dot per student */
+function dotChart(x,y){const C=[[7,1],[8,2],[9,1],[12,1],[14,3],[15,3],[16,2],[17,1],[18,5],[20,1]],rows={};
+  mk('',`left:${x}px;top:${y}px;width:290px;font-size:14px;font-weight:800;letter-spacing:.05em;color:#8a78cc`,'MARK &nbsp; · &nbsp; ONE DOT PER STUDENT');
+  C.forEach(([m,n],i)=>{const ry=y+28+i*43;const l=mk('m11-lab',`left:${x}px;top:${ry+3}px;width:40px`,m);pop(l,i*120);
+    const D=[];for(let j=0;j<n;j++){const d=mk('m11-dot',`left:${x+56+j*38}px;top:${ry}px`,'');pop(d,i*120+j*60);D.push(d);}rows[m]={l,D,ry};});
+  return rows;}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m11', num:11, part:'Chapter 6', emoji:'📊', title:'Types of data, mode, median and mean',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's collect some data and find its averages. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'What is data?',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today's topic is <b>data</b>. Data is information we collect, like facts about people.`);
+  const k=mk('','left:50px;top:70px;font-size:120px','🧒');pop(k);await w(3000);
+  const F=[['Eye colour: <b>brown</b>',`Here's a fact about Sam. Eye colour: <b>brown</b>. That's a <b>word</b>.`,'categorical','#e06a1b'],
+    ['Number of pets: <b>2</b>',`Number of pets: <b>2</b>. We <b>count</b> pets: 1, 2, 3.`,'discrete','#2c66cf'],
+    ['Height: <b>152.4 cm</b>',`Height: <b>152.4 centimetres</b>. We <b>measure</b> height with a tape measure.`,'continuous','#18a058']];
+  const tags=[];
+  for(let i=0;i<3;i++){const e=mk('mx-step',`left:240px;top:${50+i*100}px`,F[i][0]);pop(e);point(e);say(F[i][1]);await w(2800);
+    tags.push(mk('tag',`left:660px;top:${62+i*100}px;font-size:22px;background:${F[i][3]};color:#fff;visibility:hidden`,F[i][2]));}
+  say(`Words, counting and measuring. These are the <b>three types of data</b>.`);
+  tags.forEach((t,i)=>{t.style.visibility='';pop(t,i*400);});point(tags[0]);
+  await w(3000);
+  say(`They are called <b>categorical</b>, <b>discrete</b> and <b>continuous</b>. Let's meet them one at a time.`);
+  await w(3000);}},
+
+/* 1 */ {t:'Three types of data',run:async w=>{
+  const P=[['🎨','Categorical','Words or groups, not numbers. Like colours or your favourite subject.',`<b>Categorical</b> data is <b>words</b> or groups, not numbers. Like colours, or your favourite subject.`],
+    ['🔢','Discrete','<b>Counted</b>. Only exact values like 0, 1, 2, 3. No in-betweens.',`<b>Discrete</b> data is <b>counted</b>. It can only be exact values, like 1, 2 or 3. You can't have two and a half pets!`],
+    ['📏','Continuous','<b>Measured</b>. It can be any value on a scale, like 152.4 cm.',`<b>Continuous</b> data is <b>measured</b>, like mass, height or time. It can be any value on a scale.`]];
+  for(let i=0;i<3;i++){const [e,n,d,s]=P[i];const x=13+i*317;
+    const p=panel(x,8,300,412,'','');pop(p);
+    mk('','left:0;top:16px;width:300px;text-align:center;font-size:54px',e,p);
+    mk('m11-big','left:0;top:90px;width:300px;font-size:28px',n,p);
+    mk('m11-desc','left:18px;top:136px;width:264px',d,p);
+    point(p);say(s);
+    if(i===0){['red','blue','green'].forEach((c,j)=>{const t=mk('tag',`left:${22+j*88}px;top:270px;width:80px;text-align:center;font-size:18px;background:${c};color:#fff`,c,p);pop(t,j*300);});}
+    if(i===1){mk('','left:30px;top:300px;width:240px;height:4px;background:#1f2433',null,p);
+      for(let j=0;j<4;j++){
+        mk('',`left:${12+j*80}px;top:312px;width:40px;text-align:center;font-weight:800;font-size:17px`,j,p);
+        const d=mk('m11-dot',`left:${17+j*80}px;top:255px`,'',p);pop(d,j*300);}
+      const x2=mk('m6no',`left:120px;top:214px;width:80px;text-align:center;font-size:17px;font-weight:800;color:#e04848`,'1.5 ✘',p);pop(x2,1400);}
+    if(i===2){const r=mk('','left:30px;top:300px;width:240px;height:26px;border-radius:6px;background:repeating-linear-gradient(90deg,#1f2433 0 2px,#fff6e8 2px 24px);border:2px solid #1f2433;box-sizing:border-box',null,p);
+      const m=mk('','left:30px;top:286px;width:4px;height:52px;background:#e04848',null,p);
+      const v=mk('m11-big','left:0;top:236px;width:300px;font-size:26px;color:#18a058','150.0 cm',p);
+      an(m,[{left:'30px'},{left:'266px'}],{duration:2600});
+      for(let j=0;j<=24;j++){v.textContent=(150+j*0.1).toFixed(1)+' cm';await w0(100);}}
+    await w(3600);}
+  const s=mk('mx-why','left:60px;top:436px;width:840px;text-align:center;font-size:20px','🎨 Words → <b>categorical</b> &nbsp;·&nbsp; 🔢 Count → <b>discrete</b> &nbsp;·&nbsp; 📏 Measure → <b>continuous</b>');pop(s);point(s);
+  say(`Memory trick: <b>words</b> are categorical. If you <b>count</b> it, it's discrete. If you <b>measure</b> it, it's continuous.`);
+  await w(3600);}},
+
+/* 2 */ {t:'Facts about a book',run:async w=>{
+  let V=[];const cl=()=>{V.forEach(e=>e.remove());V=[];};
+  await teachQ(w,{src:WS+'Q1 1)',q:STEM1+'<br>1) The mass of a book.',read:READ1+' The mass of a book.',x:24,wd:590,
+    keys:[['mass',`<b>Mass</b> is how heavy something is. We <b>measure</b> it on scales.`]],
+    before:[{act:async()=>{const b=mk('','left:720px;top:40px;font-size:90px','📕');const pl=mk('','left:660px;top:150px;width:220px;height:20px;border-radius:8px;background:#9aa3b5');
+        const sc=mk('','left:690px;top:170px;width:160px;height:80px;border-radius:14px;background:#3b4152');
+        const d=mk('m11-big','left:705px;top:188px;width:130px;height:44px;border-radius:8px;background:#c9f5d8;color:#0f5a30;font-size:26px;line-height:44px','0 g');
+        V=[b,pl,sc,d];V.forEach(e=>pop(e));point(d);for(const g of [96.3,231.8,355.2,412.6]){await w0(350);d.textContent=g+' g';beep(500,.04);}},
+      say:`Put the book on the scales. It might weigh <b>412.6 grams</b>. It could be any value, with decimals.`,wait:2600}],
+    steps:[{show:'Mass is <b>measured</b> on a scale <i>any value</i>',say:`Mass is <b>measured</b>, and it can be any value on the scale.`},
+      {show:'Measured → <b>continuous</b>',say:`Measured data is <b>continuous</b>.`}],
+    answer:'Continuous',why:'Anything you measure, like mass, height or time, is continuous data.'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS+'Q1 2)',q:STEM1+'<br>2) The colour of a book.',read:READ1+' The colour of a book.',x:24,wd:590,
+    keys:[['colour',`<b>Colour</b> is a <b>word</b>, like red, green or blue. It is not a number.`]],
+    before:[{act:async()=>{V=['📕 red','📗 green','📘 blue'].map((t,i)=>{const e=mk('mx-step',`left:690px;top:${40+i*72}px;width:200px;text-align:center`,t);pop(e,i*250);return e;});point(V[0]);},
+      say:`Books come in lots of colours: red, green, blue. They are <b>words</b>, and you can sort the books into groups by colour.`,wait:2600}],
+    steps:[{show:'red, green, blue … → <b>words</b> <i>not numbers</i>',say:`The answers are <b>words</b>, not numbers.`},
+      {show:'Words or groups → <b>categorical</b>',say:`Words or groups are <b>categorical</b> data.`}],
+    answer:'Categorical',why:'Data in words or groups (categories), like colour, is categorical.'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS+'Q1 3)',q:STEM1+'<br>3) The number of pages in a book.',read:READ1+' The number of pages in a book.',x:24,wd:590,
+    keys:[['number of pages',`<b>Number of pages</b>: we <b>count</b> pages. 1, 2, 3 and so on.`]],
+    before:[{act:async()=>{const b=mk('','left:720px;top:40px;font-size:90px','📖');const c=mk('m11-big','left:640px;top:160px;width:260px;font-size:30px','pages: 0');V=[b,c];pop(b);pop(c);point(c);
+        for(const n of [1,2,3,4,'…',250]){await w0(300);c.textContent='pages: '+n;beep(560,.04);}
+        const x=mk('m11-big','left:640px;top:214px;width:260px;font-size:22px;color:#e04848','250½ pages? ✘');pop(x);V.push(x);},
+      say:`Count the pages: 1, 2, 3, all the way to <b>250</b>. A book can't have two hundred and fifty and a half pages.`,wait:2800}],
+    steps:[{show:'Pages are <b>counted</b> <i>whole numbers only</i>',say:`Pages are <b>counted</b>, so only whole numbers are possible.`},
+      {show:'Counted → <b>discrete</b>',say:`Counted data is <b>discrete</b>.`}],
+    answer:'Discrete',why:'Anything you count, like pages, pets or goals, is discrete data.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Sort the data',run:async w=>{
+  const r=await sortGame(w,{bins:['🎨 Categorical','🔢 Discrete','📏 Continuous'],colors:['#f5a54a','#5d9cf5','#45c288'],top:190,
+    items:[['eye colour',0],['favourite food',0],['type of pet',0],['number of pets',1],['goals scored',1],['people in a family',1],['mass of a cat',2],['length of a pencil',2],['temperature',2]],
+    intro:`Sort the data! Is it words, counted or measured? Tap a card, then tap its box. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`Perfect! Every card is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's go through them.`);
+  await w(2600);
+  say(`Eye colour, favourite food and type of pet are <b>words</b>: categorical.`);await w(2600);
+  say(`Pets, goals and people are <b>counted</b>: discrete.`);await w(2400);
+  say(`Mass, length and temperature are <b>measured</b>: continuous.`);
+  await w(2800);}},
+
+/* 4 */ {t:'Questionnaires',run:async w=>{
+  let C;
+  const board=async()=>{C=mk('','left:648px;top:20px;width:290px;height:420px;border-radius:18px;background:#b07a45;box-shadow:0 6px 0 #7d5226');
+    mk('','left:105px;top:-8px;width:80px;height:26px;border-radius:8px;background:#9aa3b5;border:3px solid #6b7387',null,C);
+    const pp=mk('','left:14px;top:26px;width:262px;height:380px;border-radius:8px;background:#fff;padding:12px;box-sizing:border-box;font-size:15px;font-weight:700;line-height:1.5;color:#1f2433',
+      `<div style="font-size:17px;color:#7a2e00">📋 School survey</div><div style="margin-top:8px">1. How do you get to school?</div><div>☐ Walk &nbsp;☐ Car &nbsp;☐ Bus</div>`+
+      `<div style="margin-top:10px">2. How long does it take?</div><div>☐ under 10 min<br>☐ 10 to 20 min<br>☐ over 20 min</div>`+
+      `<div style="margin-top:10px">3. Do you like walking?</div><div>☐ Yes &nbsp;☐ No</div>`,C);pop(C);point(C);};
+  await teachQ(w,{src:GS+'Q1 a)',q:'a) What is a questionnaire?',read:'What is a questionnaire?',x:24,wd:580,
+    keys:[['questionnaire',`A <b>questionnaire</b> is a form full of questions, like this one.`]],
+    before:[{act:board,say:`Here's one. Lots of people answer the <b>same questions</b>. Asking lots of people is called a <b>survey</b>.`,wait:2800}],
+    steps:[{show:'a set of <b>questions</b>',say:`A questionnaire is a <b>set of questions</b>…`},
+      {show:'… used in a <b>survey</b>',say:`…that is used in a <b>survey</b>, to collect data from lots of people.`}],
+    answer:'A set of questions used in a survey.',why:'Everyone answers the same questions, so you can compare their answers.'});
+  await w(1400);clear([C]);
+  await teachQ(w,{src:GS+'Q2',q:'Why would you use a questionnaire?',read:'Why would you use a questionnaire?',x:24,wd:580,
+    keys:[['Why',`<b>Why</b> means: what is it for? What is the reason?`]],
+    before:[{show:'Question: <b>How do students get to school?</b>',say:`Imagine you want to know: how do students in my school get to school? That's a <b>statistical question</b>. You answer it by collecting data.`,try:true,wait:3000}],
+    steps:[{act:async()=>{const t=mk('','left:680px;top:120px;font-size:34px;z-index:5','✔️');pop(t);},show:'to <b>investigate</b> a statistical question',say:`A questionnaire helps you <b>investigate a statistical question</b>.`},
+      {act:async()=>{const t=mk('mx-step try','left:668px;top:366px;width:236px;font-size:18px;z-index:5','💭 I predict most students walk.');pop(t);point(t);},show:'or to <b>test a prediction</b>',say:`Or to <b>test a prediction</b>. You might predict that most students walk. The answers show if you were right.`,wait:2600}],
+    answer:'To investigate a statistical question or to test a prediction.',why:'The answers are data that help you answer your question or check your prediction.'});
+  await w(1500);}},
+
+/* 5 */ {t:'The mode: the most common',run:async w=>{
+  say(`An <b>average</b> is one number that sums up a set of data. There are three kinds: <b>mode</b>, <b>median</b> and <b>mean</b>. First, the mode.`);
+  await w(3200);
+  const kids=[2,1,2,0,2].map((n,i)=>{const e=mk('',`left:${150+i*140}px;top:60px;width:120px;text-align:center;font-size:70px`,'🧒');pop(e,i*150);
+    const t=mk('m11-big',`left:${150+i*140}px;top:150px;width:120px;font-size:44px`,n);pop(t,i*150+100);return t;});
+  say(`Five children say how many pets they have: 2, 1, 2, 0, 2.`);await w(2800);
+  kids.forEach((t,i)=>{if([0,2,4].includes(i)){t.style.color='#18a058';an(t,[{transform:'scale(1)'},{transform:'scale(1.4)'},{transform:'scale(1.15)'}],{duration:700,delay:i*150});}});
+  say(`The number that appears <b>most often</b> is 2. It comes up three times. So the <b>mode</b> is 2.`);await w(3000);
+  const m=mk('mx-why','left:180px;top:270px;width:600px;text-align:center;font-size:22px','🏆 <b>Mode</b> = the <b>most</b> common value. MOde, MOst!');pop(m);point(m);
+  say(`Memory trick: <b>MOde</b> sounds like <b>MOst</b>. The mode is the most common value.`);await w(3000);
+  clear();let R;
+  await teachQ(w,{src:GS+'Q4 a)',q:STEM4+'<br>a) Which mark is the mode?',read:'Here are 20 test marks. Which mark is the mode?',x:24,wd:580,
+    keys:[['mode',`The <b>mode</b> is the <b>most common</b> mark: the one that appears most often.`]],
+    think:`Look along the list. Which mark do you see most? Then tap <b>Show me</b>.`,
+    before:[{act:async()=>{R=dotChart(656,16);await w(1400);point(R[7].l);},say:`Let's count how many students got each mark. Each dot is one student.`,wait:2600}],
+    steps:[{act:async()=>{R[18].D.forEach((d,i)=>an(d,[{background:'#5d9cf5'},{background:'#18a058',transform:'scale(1.15)'}],{duration:500,delay:i*120}));R[18].l.style.color='#18a058';point(R[18].l);},
+        show:'18 appears <b>5 times</b> <i>the longest row</i>',say:`Look for the <b>longest row</b>. Mark 18 has five dots: five students got 18. No other mark appears that often.`,wait:2800},
+      {show:'Mode = <b>18</b>',say:`So the mode is <b>18</b>.`}],
+    answer:'18',why:'The mode is the mark that appears most often: 18 appears 5 times.'});
+  await w(1500);}},
+
+/* 6 */ {t:'The median: the middle',run:async w=>{
+  say(`The <b>median</b> is the <b>middle</b> value. But first, the numbers must be <b>in order</b>.`);
+  await w(2800);
+  const V=[7,3,9,4,5],E=V.map((v,i)=>{const e=mk('mx-tile',`left:${250+i*100}px;top:40px;width:80px;box-sizing:border-box;cursor:default`,v);pop(e,i*120);return e;});
+  say(`Here are five numbers: 7, 3, 9, 4, 5. Let's put them in order, smallest to biggest.`);await w(2800);
+  const S=[...V].sort((a,b)=>a-b);
+  await Promise.all(E.map((e,i)=>an(e,[{left:(250+S.indexOf(V[i])*100)+'px'}],{duration:900})));beep(600,.1);
+  say(`Now they read 3, 4, 5, 7, 9. The one in the middle is <b>5</b>. So the median is 5.`);
+  an(E[V.indexOf(5)],[{background:'#fff'},{background:'#e6f7ee',borderColor:'#18a058'}],{duration:500});point(E[V.indexOf(5)]);await w(3000);
+  const E2=[2,4,6,8].map((v,i)=>{const e=mk('mx-tile',`left:${300+i*100}px;top:160px;width:80px;box-sizing:border-box;cursor:default`,v);pop(e,i*120);return e;});
+  say(`With an <b>even</b> count, like 2, 4, 6, 8, there are <b>two</b> middle numbers: 4 and 6.`);
+  [1,2].forEach(i=>an(E2[i],[{background:'#fff'},{background:'#e6f7ee',borderColor:'#18a058'}],{duration:500}));point(E2[1]);await w(3000);
+  const h=mk('mx-step','left:250px;top:250px','(4 + 6) ÷ 2 = <b>5</b> <i>halfway between</i>');pop(h);point(h);
+  say(`Then the median is <b>halfway</b> between them. Add them and divide by 2: 4 + 6 is 10, and 10 ÷ 2 is 5.`);await w(3200);
+  clear();let C;
+  await teachQ(w,{src:GS+'Q4 b)',q:STEM4+'<br>b) Which mark is the median?',read:'Here are the 20 test marks again. Which mark is the median?',workY:252,
+    keys:[['median',`The <b>median</b> is the <b>middle</b> mark, when the marks are in order.`]],
+    think:`Where is the middle of 20 marks? Think, then tap <b>Show me</b>.`,
+    before:[{act:async()=>{C=chips(190);await w(1000);point(C[0]);},say:`Here are the 20 marks as cards.`,wait:2000}],
+    steps:[{act:async()=>{for(let i=0;i<20;i+=4){point(C[i]);await w0(120);}},show:'The marks are already <b>in order</b> ✔',say:`First, the marks must be in order, smallest to biggest. Look: they already are!`,wait:2400},
+      {act:async()=>{for(let k=0;k<9;k++){an(C[k],[{opacity:1},{opacity:.2}],{duration:300});an(C[19-k],[{opacity:1},{opacity:.2}],{duration:300});beep(400+k*30,.04);await w0(260);}
+          [9,10].forEach(i=>an(C[i],[{background:'#fff'},{background:'#e6f7ee',borderColor:'#18a058',transform:'scale(1.15)'}],{duration:500}));point(C[9]);},
+        show:'Middle two (10th and 11th): <b>15</b> and <b>15</b>',say:`Cross off one from each end, again and again. With 20 marks, <b>two</b> are left in the middle: the 10th and the 11th. Both are 15.`,wait:3000},
+      {show:'(15 + 15) ÷ 2 = 30 ÷ 2 = <b>15</b>',say:`Halfway between them: 15 + 15 is 30, and 30 ÷ 2 is <b>15</b>.`,wait:2400}],
+    answer:'15',why:'Sort the marks, then find the middle. With 20 marks, take halfway between the 10th and 11th.'});
+  await w(1500);}},
+
+/* 7 */ {t:'The mean: share it out',run:async w=>{
+  say(`The <b>mean</b> shares everything out <b>equally</b>. Three friends have 2, 4 and 6 sweets.`);
+  const cols=[2,4,6].map((n,i)=>{const c=[];for(let j=0;j<n;j++){const s=mk('',`left:${260+i*170}px;top:${300-j*40}px;font-size:34px`,'🍬');pop(s,j*60+i*200);c.push(s);}
+    mk('m11-big',`left:${235+i*170}px;top:350px;width:90px;font-size:26px`,n);return c;});
+  await w(3200);
+  say(`Put them all together: 2 + 4 + 6 = <b>12 sweets</b>. Then share them between the <b>3</b> friends.`);await w(3000);
+  /* move 2 sweets from the big pile to the small pile so each has 4 */
+  const mv=cols[2].slice(4);mv.forEach(s=>an(s,[{transform:'none'},{transform:'translate(-340px,80px)'}],{duration:900}));
+  await w(1200);
+  const t=mk('mx-step','left:200px;top:400px','12 ÷ 3 = <b>4</b> each &nbsp;= the <b>mean</b>');pop(t);point(t);
+  say(`Now everyone has <b>4</b>. 12 ÷ 3 = 4. So the <b>mean</b> is 4. Mean = total ÷ how many.`);await w(3200);
+  clear();let C,T;
+  await teachQ(w,{src:GS+'Q4 c)',q:STEM4+'<br>c) The sum of the marks is 290. Which mark is the mean?',read:'Here are the 20 test marks. The sum of the marks is 290. What is the mean?',workY:262,
+    keys:[['sum of the marks is 290',`The <b>sum</b> means the total. All 20 marks added up make <b>290</b>.`],['mean',`The <b>mean</b> is the total shared equally: <b>total ÷ how many</b>.`]],
+    think:`How many marks are there? Think, then tap <b>Show me</b>.`,
+    before:[{act:async()=>{C=chips(196);await w(1000);point(C[0]);},say:`There are 20 marks.`,wait:1800}],
+    steps:[{act:async()=>{await Promise.all(C.map((c,i)=>an(c,[{transform:'none',opacity:1},{transform:`translate(${440-(40+i*44)}px,0) scale(.4)`,opacity:0}],{duration:900,delay:i*30})));
+          T=mk('m11-big','left:330px;top:190px;width:300px;height:48px;line-height:48px;border-radius:14px;background:#fff1e6;border:3px solid #f5a54a;font-size:26px','Total: 290');pop(T);point(T);},
+        show:'Mean = total ÷ how many',say:`Put all the marks together into one total: <b>290</b>. Then share it between the <b>20</b> marks.`,wait:2600},
+      {show:'290 ÷ 20 = 29 ÷ 2 = <b>14.5</b>',say:`290 ÷ 20. That's the same as 29 ÷ 2, which is <b>14.5</b>.`,wait:2400}],
+    answer:'14.5',why:'Total ÷ how many: 290 ÷ 20 = 14.5. Check: 14.5 is between the lowest mark, 7, and the highest, 20 ✔'});
+  await w(1500);}},
+
+/* 8 */ {t:'Find the average',run:async w=>{
+  const D=[6,1,9,1,8];
+  const R=[['mode',['1','6','9','5'],0,`The <b>mode</b> is the most common: 1 appears twice.`,{2:`9 is just the middle of the list before sorting.`}],
+    ['median',['9','6','1','5'],1,`Sorted: 1, 1, 6, 8, 9. The middle one is <b>6</b>.`,{0:`9 is in the middle <b>before</b> sorting. Always sort first!`}],
+    ['mean',['25','6.25','5','6'],2,`Total: 6 + 1 + 9 + 1 + 8 = 25. Then 25 ÷ 5 = <b>5</b>.`,{0:`25 is the total. You still need to divide by how many: 5.`,1:`that divides by 4, but there are 5 numbers.`}]];
+  say(`Your turn! Here are 5 scores. Find each average. Tap your answer.`);await w(2400);
+  let right=0;
+  for(let i=0;i<3;i++){const [nm,o,a,why,wn]=R[i];stage.innerHTML='';
+    mk('ex-head','',`📊 Find the average · ${i+1} of 3`);
+    const row=mk('','left:0;top:50px;width:960px;display:flex;justify-content:center;gap:14px','');
+    D.forEach((v,j)=>{const e=mk('mx-tile','position:relative;cursor:default;border-color:#5d9cf5;color:#1d4b9e',v,row);pop(e,j*60);});
+    const q=mk('m11-big','left:0;top:140px;width:960px;font-size:30px',`What is the <b style="color:#e06a1b">${nm}</b>?`);pop(q);point(q);
+    say(`The scores are 6, 1, 9, 1, 8. What is the <b>${nm}</b>?`);await w(1400);
+    let pick=-1;
+    const T=o.map((t,j)=>{const b=btn('mx-tile',`left:${150+j*175}px;top:210px;width:150px;box-sizing:border-box`,t,()=>{if(pick<0)pick=j;});pop(b,j*80);return b;});
+    window.AUTOPLAY=()=>{if(pick<0)pick=a;};
+    await w.until(()=>pick>=0);window.AUTOPLAY=null;
+    T[a].style.background='#e6f7ee';T[a].style.borderColor='#18a058';
+    if(pick===a){right++;yay();}else{T[pick].style.background='#fdecec';T[pick].style.borderColor='#e04848';shake(T[pick]);boo();}
+    const nt=pick!==a&&wn[pick]?wn[pick]+' ':'';
+    const e=mk('mx-why','left:150px;top:320px;width:660px;font-size:20px',(pick===a?'✅ ':'❌ '+nt+'<br>')+'💡 '+why);pop(e);point(e);
+    say((pick===a?'Yes! ':`Not quite. ${nt}`)+why);await w(3200);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">📊</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You got ${right} of 3!</div>`);pop(s);
+  if(right===3){yay();confetti(100);}
+  say(right===3?`All 3 right! Mode, median and mean: done.`:`Good effort! Remember: mode is most, median is middle, mean is share.`);
+  await w(2600);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 6.1 · Q2 a)',q:'Here are some facts about a person. Write down the type of data for each fact.<br>a) age, in years',o:['Discrete','Continuous','Categorical'],a:0,cols:3,
+      why:'Age in years is <b>counted</b> in whole years: 11, 12, 13. It is <b>discrete</b>.',whyNot:{1:'age in years goes up in whole years; it is counted, not measured to any value.',2:'age is a number, not a word or group.'}},
+    {src:'Worksheet · Ex 6.1 · Q2 b)',q:'Here are some facts about a person. Write down the type of data for each fact.<br>b) shoe size',o:['Discrete','Continuous','Categorical'],a:0,cols:3,
+      why:'Shoe sizes come in <b>fixed steps</b> (4, 4½, 5…), with nothing in between. It is <b>discrete</b>.',whyNot:{1:'you cannot buy a size 5.37 shoe. Only set sizes exist.',2:'shoe size is a number, not a word or group.'}},
+    {src:'Worksheet · Ex 6.1 · Q2 c)',q:'Here are some facts about a person. Write down the type of data for each fact.<br>c) height',o:['Discrete','Continuous','Categorical'],a:1,cols:3,
+      why:'Height is <b>measured</b> and can be any value, like 152.4 cm. It is <b>continuous</b>.',whyNot:{0:'height is measured, not counted.',2:'height is a number, not a word or group.'}},
+    {src:'Worksheet · Ex 6.1 · Q2 d)',q:'Here are some facts about a person. Write down the type of data for each fact.<br>d) time to travel to school',o:['Discrete','Continuous','Categorical'],a:1,cols:3,
+      why:'Time is <b>measured</b> and can be any value, like 12.5 minutes. It is <b>continuous</b>.',whyNot:{0:'time is measured, not counted.',2:'time is a number, not a word or group.'}},
+    {src:'Worksheet · Ex 6.1 · Q2 e)',q:'Here are some facts about a person. Write down the type of data for each fact.<br>e) favourite subject',o:['Discrete','Continuous','Categorical'],a:2,cols:3,
+      why:'Subjects are <b>words</b>, like Maths or Art. It is <b>categorical</b>.',whyNot:{0:'subjects are words, not counted numbers.',1:'subjects are words, not measurements.'}},
+    {src:'Worksheet · Ch 6 Getting started · Q1 a)',q:'a) What is a questionnaire?',o:['A set of questions used in a survey','The answers to a maths test','A chart showing results','The average of some data'],a:0,
+      why:'A questionnaire is <b>a set of questions used in a survey</b>.',whyNot:{1:'a questionnaire asks questions; it is not a test.',2:'a chart shows results after you collect them.',3:'an average is worked out from the data.'}},
+    {src:'Worksheet · Ch 6 Getting started · Q4 a)',q:'Here are 20 test marks<br>7 8 8 9 12 14 14 14 15 15 15 16 16 17 18 18 18 18 18 20<br>a) Which mark is the mode?',o:['15','18','14.5','20'],a:1,
+      why:'The mode is the most common mark: <b>18</b> appears 5 times.',whyNot:{0:'15 is the median, the middle mark.',2:'14.5 is the mean.',3:'20 is the highest mark, but only one student got it.'}},
+    {src:'Worksheet · Ch 6 Getting started · Q4 b)',q:'Here are 20 test marks<br>7 8 8 9 12 14 14 14 15 15 15 16 16 17 18 18 18 18 18 20<br>b) Which mark is the median?',o:['10','15','18','14.5'],a:1,
+      why:'The middle two marks (10th and 11th) are 15 and 15, so the median is <b>15</b>.',whyNot:{0:'10 is half of 20. That is the position, not the mark.',2:'18 is the mode, the most common mark.',3:'14.5 is the mean.'}},
+    {src:'Worksheet · Ch 6 Getting started · Q4 c)',q:'Here are 20 test marks<br>7 8 8 9 12 14 14 14 15 15 15 16 16 17 18 18 18 18 18 20<br>c) The sum of the marks is 290. Which mark is the mean?',o:['29','14.5','145','15'],a:1,
+      why:'Mean = total ÷ how many: 290 ÷ 20 = <b>14.5</b>.',whyNot:{0:'that divides by 10, but there are 20 marks.',2:'that divides by 2, but there are 20 marks.',3:'15 is the median, not the mean.'}},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Types of data, mode, median and mean</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🎨','<b>Categorical</b>: words or groups<br>(colour, favourite subject)',`Categorical data is words or groups, like colour.`],
+    ['🔢','<b>Discrete</b>: counted<br>(pages, shoe size)',`Discrete data is counted, like pages or shoe size.`],
+    ['📏','<b>Continuous</b>: measured<br>(mass, height, time)',`Continuous data is measured, like mass, height or time.`],
+    ['📋','Questionnaire: a set of questions used in a <b>survey</b>',`A questionnaire is a set of questions used in a survey.`],
+    ['🤔','Why? To investigate a question or <b>test a prediction</b>',`We use one to investigate a statistical question, or to test a prediction.`],
+    ['🏆','<b>Mode</b> = most common<br>→ 18',`The mode is the most common value. For the test marks, 18.`],
+    ['📍','<b>Median</b> = middle<br>(sort first!) → 15',`The median is the middle value, after sorting. For the test marks, 15.`],
+    ['⚖️','<b>Mean</b> = total ÷ how many<br>290 ÷ 20 = 14.5',`The mean is the total divided by how many. 290 divided by 20 is 14.5.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can sort data into types and find the mode, median and mean.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

@@ -297,13 +297,13 @@ Lesson.start({
 
 /* 8 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
-    {src:'Worksheet · Unit 4 · MCQ 6',q:'What is a "dichotomous key" used for?',o:['Opening locked doors','Measuring the temperature of water','Identifying unknown organisms by choosing between pairs of features','Calculating the speed of an animal'],a:2,cols:1,optH:46,
+    {src:'Worksheet · Unit 4 · MCQ 6',q:'What is a "dichotomous key" used for?',o:['Opening locked doors','Measuring the temperature of water','Identifying unknown organisms by choosing between pairs of features','Calculating the speed of an animal'],a:2,whyNot:{0:"that is a door key, not a key for identifying living things.",1:"a thermometer measures temperature.",3:"a key does not measure speed."},cols:1,optH:46,
       why:'A dichotomous key asks yes/no questions about <b>pairs of features</b> to <b>identify unknown organisms</b>.'},
-    {src:'Worksheet · Unit 4 · MCQ 7',q:'What does the prefix "di-" mean in the word dichotomous?',o:['One','Two','Ten','Hundred'],a:1,
+    {src:'Worksheet · Unit 4 · MCQ 7',q:'What does the prefix "di-" mean in the word dichotomous?',o:['One','Two','Ten','Hundred'],a:1,whyNot:{0:"\"mono-\" means one.",2:"\"deca-\" means ten.",3:"\"cent-\" means hundred."},
       why:'<b>Di-</b> means <b>two</b>, like carbon <b>di</b>oxide (two oxygen atoms). Each question has two answers.'},
-    {src:'Worksheet · Unit 4 · MCQ 12',q:'Which feature is best used to separate birds from mammals in a key?',o:['Having eyes','Having feathers','Having a mouth','Needing water'],a:1,
+    {src:'Worksheet · Unit 4 · MCQ 12',q:'Which feature is best used to separate birds from mammals in a key?',o:['Having eyes','Having feathers','Having a mouth','Needing water'],a:1,whyNot:{0:"birds and mammals both have eyes, so it cannot tell them apart.",2:"birds and mammals both have mouths, so it cannot tell them apart.",3:"all living things need water, so it cannot tell them apart."},
       why:'Only birds have <b>feathers</b>. Every animal has eyes and a mouth and needs water, so those questions do not split them.'},
-    {src:'Worksheet · Unit 4 · MCQ 13',q:'If you find an animal with six legs and an exoskeleton, which major group does it likely belong to?',o:['Fish','Insects','Birds','Amphibians'],a:1,
+    {src:'Worksheet · Unit 4 · MCQ 13',q:'If you find an animal with six legs and an exoskeleton, which major group does it likely belong to?',o:['Fish','Insects','Birds','Amphibians'],a:1,whyNot:{0:"fish have fins, not legs.",2:"birds have two legs and feathers.",3:"amphibians, like frogs, have four legs and no exoskeleton."},
       why:'<b>Insects</b> have <b>six legs</b> and an <b>exoskeleton</b> (a hard outer skeleton).'},
   ]);}},
 

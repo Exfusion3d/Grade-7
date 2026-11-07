@@ -11,7 +11,7 @@ const pages = (dir) =>
     .map((name) => resolve(root, dir, name));
 // Vite doesn't pick these up: gate.js, subjects.js, engine.js and maths.js are classic scripts and the PDF is a
 // plain link, so they are copied into dist as they are.
-const copied = ["gate.js", "subjects.js", "lessons/engine.js", "maths/maths.js", "study-guide.pdf", "source"];
+const copied = ["gate.js", "subjects.js", "lessons/engine.js", "maths/maths.js", "study-guide.pdf", "maths-study-guide.pdf", "source"];
 
 export default defineConfig({
   root,

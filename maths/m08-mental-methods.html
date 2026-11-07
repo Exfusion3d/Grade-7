@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Mental methods with decimals</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 8 · Chapter 4 · Exercise 4.2 (Q1, Q4, Q6, Q7, Q15) and Exercise 4.3 (Q1, Q2)
+   Taught with teachQ: 4.2 Q1 b) d), Q4 a), Q6 a) d), Q7 a) c), Q15 a) d); 4.3 Q1 b), Q2 c) d).
+   Everything else is in the Exam check. (4.3 Q4, Q5 and Q8 are taught in Lessons 9 and 10.) */
+const WS2='Worksheet · Ex 4.2 · ',WS3='Worksheet · Ex 4.3 · ';
+const STEM1='Use a mental method to work out the answer to the following.';
+const STEM4=`Use Zara's method to mentally work out`;
+const STEM6='Use the method of rounding of the numbers to a whole number';
+const STEM7='Use a written method to work out following';
+const STEM31='Use a mental method to work out following.';
+/* question card on the left, a picture on the right */
+const LAY={x:24,wd:548,workX:40};
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* a number in a pill, split into its whole part and its decimal part (partitioning) */
+function pill(x,y,txt,col,wd=120,fs=30){const e=mk('mx',`left:${x}px;top:${y}px;width:${wd}px;height:54px;border-radius:27px;background:${col};color:#fff;font-size:${fs}px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,0,0,.15)`,txt);pop(e);return e;}
+async function splitNum(x,y,num,whole,dec){pill(x,y,num,'#7a6a9e');await w0(500);
+  mk('','left:0;top:0;width:960px;height:520px;pointer-events:none',`<svg width="960" height="520"><path d="M${x+40} ${y+54} L${x+28} ${y+82} M${x+80} ${y+54} L${x+92} ${y+82}" stroke="#9a8fb8" stroke-width="3"/></svg>`);
+  pill(x-6,y+82,whole,'#e06a1b',64,24);await w0(250);pill(x+62,y+82,dec,'#2c66cf',64,24);beep(600,.08);}
+/* tenths drawn as thin strips: n strips from (x,y) */
+function strips(x,y,n,col='#5d9cf5',gap=14){const S=[];for(let i=0;i<n;i++){const s=mk('',`left:${x+i*gap}px;top:${y}px;width:10px;height:56px;border-radius:3px;background:${col}`);pop(s,i*40);S.push(s);}return S;}
+function box(x,y,wd,h,label,col='#18a058'){const b=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:${h}px;border:3px dashed ${col};border-radius:10px`);pop(b);
+  const l=mk('',`left:${x}px;top:${y+h+4}px;width:${wd}px;text-align:center;font-size:15px;font-weight:800;color:${col}`,label);pop(l,200);return b;}
+
+/* a plain line with jumps drawn as arcs (not to scale) */
+function hline(x,y,wd){mk('',`left:${x}px;top:${y}px;width:${wd}px;height:4px;border-radius:2px;background:#1f2433`);}
+function tickAt(px,y,label,col='#1f2433',dy=0){mk('',`left:${px-1}px;top:${y-9}px;width:3px;height:22px;background:${col}`);
+  const l=mk('mx',`left:${px-40}px;top:${y+16+dy}px;width:80px;text-align:center;font-size:19px;color:${col}`,label);pop(l);return l;}
+async function arc(x1,x2,y,h,label,col,below=false){const my=below?y+4+h:y-h,d=`M${x1} ${below?y+4:y} Q${(x1+x2)/2} ${below?y+4+2*h:y-2*h} ${x2} ${below?y+4:y}`;
+  const s=mk('','left:0;top:0;width:960px;height:520px;pointer-events:none',`<svg width="960" height="520"><path d="${d}" stroke="${col}" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`);
+  const p=s.querySelector('path'),L=p.getTotalLength();p.style.strokeDasharray=L;
+  const t=mk('mx',`left:${(x1+x2)/2-50}px;top:${below?my+4:my-30}px;width:100px;text-align:center;font-size:21px;color:${col}`,label);
+  an(t,[{opacity:0},{opacity:1}],{duration:400});
+  await an(p,[{strokeDashoffset:L},{strokeDashoffset:0}],{duration:1100});
+  const dt=mk('',`left:${x2-8}px;top:${y-6}px;width:16px;height:16px;border-radius:50%;background:${col}`);pop(dt);beep(700,.08);}
+/* an evenly spaced number line from a to b (decimals), labelled every tick */
+function numLine(x,y,wd,a,b,step,fs=12){const n=Math.round((b-a)/step),dx=wd/n;
+  hline(x,y,wd);for(let i=0;i<=n;i++){mk('',`left:${x+i*dx-1}px;top:${y-7}px;width:2px;height:18px;background:#1f2433`);
+    mk('',`left:${x+i*dx-22}px;top:${y+14}px;width:44px;text-align:center;font-size:${fs}px;font-weight:800;color:#5a5f70`,String(+(a+i*step).toFixed(2)).replace('-','−'));}
+  return v=>x+(v-a)/step*dx;}
+
+/* A place-value table (ints whole-number columns, decs decimal columns); put(row,'0.012') slides the digits in. */
+function pvTable(x,y,{ints=1,decs=3,rows=2,cw=52}={}){
+  const IL=['Hundreds','Tens','Ones'].slice(3-ints),DL=[frac(1,10),frac(1,100),frac(1,1000)].slice(0,decs);
+  const cols=[...IL.map(l=>({l,w:cw})),{l:'',w:20,pt:1},...DL.map(l=>({l,w:cw}))];
+  let cx=8;cols.forEach(c=>{c.x=cx;cx+=c.w;});
+  const W=cx+8,H=50+rows*58+6;
+  const t=mk('',`left:${x}px;top:${y}px;width:${W}px;height:${H}px;background:#fff;border:3px solid #f7d3b5;border-radius:16px;box-shadow:0 4px 0 #f7d3b5`);
+  cols.forEach((c,i)=>{if(!c.pt)mk('',`left:${c.x}px;top:6px;width:${c.w}px;height:40px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:${i<ints?11:15}px;font-weight:800;color:#c4520e`,c.l,t);});
+  for(let r=0;r<rows;r++)mk('',`left:6px;top:${48+r*58}px;width:${W-12}px;height:2px;background:#f2e3d6`,'',t);
+  return{el:t,W,H,
+    put:async(r,s,col='#2c66cf')=>{const [a,b='']=s.split('.');const es=[];
+      [...a].forEach((d,k)=>es.push([ints-1-(a.length-1-k),d]));
+      if(s.includes('.'))es.push([ints,'.']);
+      [...b].forEach((d,k)=>es.push([ints+1+k,d]));
+      for(const [i,d] of es){const e=mk('mx',`left:${cols[i].x}px;top:${52+r*58}px;width:${cols[i].w}px;height:52px;display:flex;align-items:center;justify-content:center;font-size:34px;color:${col}`,d,t);
+        an(e,[{opacity:0,transform:'translateY(-40px)'},{opacity:1,transform:'none'}],{duration:450});beep(480+i*40,.05);await w0(160);}}};}
+
+/* Column (written) method grid: two rows, a line and the answer row; small carry / exchange digits above. */
+function colGrid(x,y,{ints=2,decs=2,cw=46}={}){
+  const cols=[];let cx=48;for(let i=0;i<ints;i++){cols.push({x:cx,w:cw});cx+=cw;}cols.push({x:cx,w:18});cx+=18;for(let i=0;i<decs;i++){cols.push({x:cx,w:cw});cx+=cw;}
+  const W=cx+14,RY=[30,84,150],H=212;
+  const g=mk('',`left:${x}px;top:${y}px;width:${W}px;height:${H}px;background:#fff;border:3px solid #f7d3b5;border-radius:16px;box-shadow:0 4px 0 #f7d3b5`);
+  const cells=[{},{},{}];let gl=null;
+  const cell=(r,i,t,col)=>mk('mx',`left:${cols[i].x}px;top:${RY[r]}px;width:${cols[i].w}px;height:52px;display:flex;align-items:center;justify-content:center;font-size:36px;color:${col}`,t,g);
+  const G={el:g,W,H,
+    put:async(r,s,col='#2c66cf')=>{const [a,b='']=s.split('.');const es=[];
+      [...a].forEach((d,k)=>es.push([ints-1-(a.length-1-k),d]));es.push([ints,'.']);[...b].forEach((d,k)=>es.push([ints+1+k,d]));
+      for(const [i,d] of es){const e=cell(r,i,d,col);cells[r][i]=e;an(e,[{opacity:0,transform:'translateY(-30px)'},{opacity:1,transform:'none'}],{duration:400});beep(480+i*40,.05);await w0(140);}},
+    pad:(r,n)=>{for(let i=ints+1;i<=ints+n;i++)if(!cells[r][i]){const e=cell(r,i,'0','#18a058');cells[r][i]=e;pop(e);}beep(820,.08);},
+    op:(s,r=1,col='#1f2433')=>{const e=mk('mx',`left:8px;top:${RY[r]}px;width:36px;height:52px;display:flex;align-items:center;justify-content:center;font-size:36px;color:${col}`,s,g);pop(e);return e;},
+    line:()=>{const e=mk('',`left:40px;top:143px;width:${W-56}px;height:4px;border-radius:2px;background:#1f2433;transform-origin:0 50%`,'',g);an(e,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:500});},
+    ans:(i,d)=>{const e=cell(2,i,d,'#18a058');pop(e);beep(760,.08);return e;},
+    carry:(i,d)=>{const e=mk('mx',`left:${cols[i].x}px;top:4px;width:${cols[i].w}px;text-align:center;font-size:19px;color:#e04848`,d,g);pop(e);beep(900,.05);return e;},
+    cross:(i,d)=>{const c=cells[0][i];if(c){c.style.color='#b8bfcc';c.innerHTML=`<s>${c.textContent}</s>`;}return G.carry(i,d);},
+    glow:i=>{if(gl)gl.remove();gl=mk('',`left:${cols[i].x}px;top:2px;width:${cols[i].w}px;height:${H-10}px;border-radius:10px;background:#ffd84d;opacity:.45`,'');g.insertBefore(gl,g.firstChild);pop(gl);return gl;},
+    unglow:()=>{if(gl)gl.remove();gl=null;}};
+  return G;}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m08', num:8, part:'Chapter 4', emoji:'🧠', title:'Mental methods with decimals',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's add, subtract and multiply decimals in our heads. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Maths in your head',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn quick ways to work with decimals <b>in your head</b>, and a written way too.`);
+  await w(2800);
+  say(`Here's <b>2.3</b>. The orange squares are <b>wholes</b>. The thin blue strips are <b>tenths</b>: ten of them make one whole.`);
+  const sq=(x,y)=>{const e=mk('',`left:${x}px;top:${y}px;width:56px;height:56px;border-radius:6px;background:#f5a54a;border:3px solid #c4520e`);pop(e);return e;};
+  const A=[sq(80,120),sq(146,120),...strips(214,120,3)];
+  const la=mk('mx','left:80px;top:60px;width:200px;font-size:34px','2.3');pop(la);point(la);
+  await w(3400);
+  const pl=mk('mx','left:310px;top:124px;font-size:44px','+');pop(pl);
+  const B=[sq(380,120),...strips(448,120,4)];
+  const lb=mk('mx','left:380px;top:60px;width:200px;font-size:34px','1.4');pop(lb);point(lb);
+  say(`And here's <b>1.4</b>: one whole and 4 tenths. Let's add them by putting the <b>wholes together</b> and the <b>tenths together</b>.`);
+  await w(3200);
+  const moveTo=(e,x,y)=>an(e,[{transform:'none'},{transform:`translate(${x-e.offsetLeft}px,${y-e.offsetTop}px)`}],{duration:900});
+  [A[0],A[1],B[0]].forEach((e,i)=>moveTo(e,180+i*66,300));
+  await w0(300);[...A.slice(2),...B.slice(1)].forEach((e,i)=>moveTo(e,420+i*14,300));
+  await w(1400);
+  const r1=mk('mx-step','left:150px;top:390px','Wholes: 2 + 1 = <b>3</b>');pop(r1);point(r1);
+  say(`Wholes: 2 + 1 = <b>3</b>.`);await w(2200);
+  const r2=mk('mx-step','left:470px;top:390px','Tenths: 0.3 + 0.4 = <b>0.7</b>');pop(r2);point(r2);
+  say(`Tenths: 3 tenths plus 4 tenths is 7 tenths, which is <b>0.7</b>.`);await w(2600);
+  const r3=mk('mx','left:150px;top:452px;width:660px;text-align:center;font-size:36px;color:#18a058','2.3 + 1.4 = 3.7');pop(r3);point(r3);yay();
+  say(`Together: <b>3.7</b>. Splitting numbers into wholes and decimals like this is called <b>partitioning</b>.`);
+  await w(3000);
+  say(`Today's big tip: <b>split</b> the numbers, or <b>round</b> them to easy whole numbers, then fix it at the end.`);
+  await w(3000);}},
+
+/* 1 */ {t:'Split it up',run:async w=>{
+  await teachQ(w,{...LAY,src:WS2+'Q1 b)',q:STEM1+'<br>b) 12.7 + 4.5',read:'Use a mental method to work out 12.7 + 4.5.',
+    keys:[['mental method',`A <b>mental method</b> means working it out in your <b>head</b>, in easy steps.`]],
+    before:[{show:'Remember: 2.3 + 1.4 → 3 and 0.7 → 3.7',say:`Remember the blocks: 2.3 + 1.4. The wholes made 3, the tenths made 0.7. Together, 3.7.`,try:true,wait:2600}],
+    steps:[{act:async()=>{await splitNum(610,30,'12.7','12','0.7');await w(300);await splitNum(800,30,'4.5','4','0.5');},
+        show:'12 + 4 = <b>16</b> <i>add the wholes</i>',say:`Split each number into <b>wholes</b> and <b>decimals</b>. Add the wholes: 12 + 4 = <b>16</b>.`,wait:2600},
+      {act:async()=>{strips(640,240,7);await w(600);strips(738,240,5,'#f5a54a');await w(900);box(634,234,144,68,'10 tenths = 1 whole');},
+        show:'0.7 + 0.5 = <b>1.2</b> <i>10 tenths make 1</i>',say:`Now the decimals: 7 tenths plus 5 tenths is 12 tenths. <b>Ten tenths make one whole</b>, so that's <b>1.2</b>.`,wait:3000},
+      {show:'16 + 1.2 = <b>17.2</b>',say:`Put the parts back together: 16 + 1.2 = <b>17.2</b>.`}],
+    answer:'17.2',why:'Check by rounding: 13 + 4.5 = 17.5, which is close to 17.2. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{...LAY,src:WS2+'Q1 d)',q:STEM1+'<br>d) 14.6 − 6.6',read:'Use a mental method to work out 14.6 − 6.6.',
+    keys:[['mental method',`Work it out in your <b>head</b>. Split the numbers again.`]],
+    before:[{show:'Try 4.6 − 2.6 → 2 and 0 → 2',say:`Try a small one first: 4.6 − 2.6. Wholes: 4 − 2 = 2. Decimals: 0.6 − 0.6 = 0. So the answer is <b>2</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{await splitNum(610,30,'14.6','14','0.6');await w(300);await splitNum(800,30,'6.6','6','0.6');},
+        show:'14 − 6 = <b>8</b> <i>take away the wholes</i>',say:`Split both numbers. Take away the wholes: 14 − 6 = <b>8</b>.`,wait:2600},
+      {show:'0.6 − 0.6 = <b>0</b> <i>the decimals cancel</i>',say:`Take away the decimals: 0.6 − 0.6 = <b>0</b>. They cancel out!`},
+      {show:'8 + 0 = <b>8</b>',say:`So the answer is just <b>8</b>. You can write it as 8 or 8.0.`}],
+    answer:'8 (or 8.0)',why:'Check by adding back: 8 + 6.6 = 14.6. ✔'});
+  await w(1500);}},
+
+/* 2 */ {t:'Zara\'s method',run:async w=>{
+  say(`<b>Zara's method</b> for subtracting: take away the <b>wholes</b>, take away the <b>decimals</b>, then put them together. Sometimes the decimal part goes <b>below zero</b>!`);
+  await w(3400);
+  let f;
+  await teachQ(w,{...LAY,src:WS2+'Q4 a)',q:STEM4+'<br>a) 7.4 − 2.6',read:`Use Zara's method to mentally work out 7.4 − 2.6.`,
+    keys:[[`Zara's method`,`<b>Zara's method</b>: wholes first, then decimals, then put the two answers together.`]],
+    before:[{show:'Try 5.8 − 2.3 → 3 and 0.5 → 3.5',say:`Try an easy one: 5.8 − 2.3. Wholes: 5 − 2 = 3. Decimals: 0.8 − 0.3 = 0.5. Together: <b>3.5</b>.`,try:true,wait:2800}],
+    steps:[{show:'7 − 2 = <b>5</b> <i>wholes</i>',say:`Now 7.4 − 2.6. Wholes: 7 − 2 = <b>5</b>.`},
+      {act:async()=>{f=numLine(600,200,330,-0.5,0.5,0.1);await w(900);const z=mk('',`left:${f(0)-2}px;top:186px;width:5px;height:32px;background:#e04848`);pop(z);
+          const d0=mk('',`left:${f(0.4)-8}px;top:194px;width:16px;height:16px;border-radius:50%;background:#2c66cf`);pop(d0);await w(400);await arc(f(0.4),f(-0.2),200,50,'− 0.6','#e06a1b');},
+        show:'0.4 − 0.6 = <b>−0.2</b> <i>below zero!</i>',say:`Decimals: 0.4 − 0.6. Start at 0.4 and go back 0.6. We go past zero and land on <b>minus 0.2</b>.`,wait:3000},
+      {show:'5 − 0.2 = <b>4.8</b> <i>take the 0.2 off</i>',say:`So we have 5, but we still owe 0.2. Take it off: 5 − 0.2 = <b>4.8</b>.`,wait:2600}],
+    answer:'4.8',why:'Check by adding back: 4.8 + 2.6 = 7.4. ✔'});
+  await w(1500);}},
+
+/* 3 */ {t:'Round it, then fix it',run:async w=>{
+  say(`Another trick: <b>round</b> a number to a whole number, do the easy sum, then <b>fix</b> the answer. It's like paying with a 10 and getting change.`);
+  await w(3200);
+  await teachQ(w,{...LAY,src:WS2+'Q6 a)',q:STEM6+'<br>a) 4.3 + 7.9',read:'Use the method of rounding the numbers to a whole number: 4.3 + 7.9.',
+    keys:[['rounding',`<b>Rounding</b>: change 7.9 into a nice <b>whole number</b>, 8. Then fix it at the end.`]],
+    before:[{show:'Try 25 + 9 → 25 + 10 − 1 = 34',say:`Try whole numbers first. 25 + 9: add 10 instead, that's 35. Then take back the extra 1: <b>34</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{hline(600,200,330);tickAt(610,200,'4.3','#2c66cf');},show:'7.9 → <b>8</b> <i>8 is 0.1 too much</i>',say:`7.9 is very close to <b>8</b>. But 8 is <b>0.1 more</b> than 7.9. Remember that!`,wait:2600},
+      {act:async()=>{await arc(610,910,200,55,'+ 8','#18a058');tickAt(910,200,'12.3','#18a058');},show:'4.3 + 8 = <b>12.3</b>',say:`Add 8 instead: 4.3 + 8 = <b>12.3</b>.`},
+      {act:async()=>{await arc(910,800,200,34,'− 0.1','#e04848',true);tickAt(800,200,'12.2','#e04848');},show:'12.3 − 0.1 = <b>12.2</b> <i>take back the extra</i>',say:`We added 0.1 too much, so take it back: 12.3 − 0.1 = <b>12.2</b>.`,wait:2600}],
+    answer:'12.2',why:'Check: 4 + 8 = 12, which is close to 12.2. ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'Round it when you subtract',run:async w=>{
+  say(`Rounding works for <b>take away</b> too. But be careful which way you fix it!`);
+  await w(2600);
+  await teachQ(w,{...LAY,src:WS2+'Q6 d)',q:STEM6+'<br>d) 5.4 − 1.9',read:'Use the method of rounding the numbers to a whole number: 5.4 − 1.9.',
+    keys:[['rounding',`Round 1.9 to the whole number <b>2</b>. Taking away 2 is easy.`]],
+    before:[{show:'Try 50 − 9 → 50 − 10 + 1 = 41',say:`Try whole numbers. 50 − 9: take away 10, that's 40. You took away 1 too many, so <b>add it back</b>: 41.`,try:true,wait:3000}],
+    steps:[{act:async()=>{hline(600,200,330);tickAt(900,200,'5.4','#2c66cf');},show:'1.9 → <b>2</b> <i>2 is 0.1 too much</i>',say:`1.9 is very close to <b>2</b>. 2 is 0.1 more than 1.9.`},
+      {act:async()=>{await arc(900,640,200,55,'− 2','#e06a1b');tickAt(640,200,'3.4','#e06a1b');},show:'5.4 − 2 = <b>3.4</b>',say:`Take away 2: 5.4 − 2 = <b>3.4</b>. But we took away <b>0.1 too much</b>.`},
+      {act:async()=>{await arc(640,760,200,34,'+ 0.1','#18a058',true);tickAt(760,200,'3.5','#18a058');},show:'3.4 + 0.1 = <b>3.5</b> <i>give back the extra</i>',say:`So give it back: 3.4 + 0.1 = <b>3.5</b>.`,wait:2400}],
+    answer:'3.5',why:'Took away too much? Add the extra back. Check: 3.5 + 1.9 = 5.4. ✔'});
+  await w(1500);}},
+
+/* 5 */ {t:'Quick-fire mental maths',run:async w=>{
+  const R=[['2.6 + 3.3',['5.9','5.3','6.9'],0,'Split: 2 + 3 = 5 and 0.6 + 0.3 = 0.9. So 5.9.'],
+    ['6.8 + 2.9',['8.7','9.7','9.6'],1,'Round: 6.8 + 3 = 9.8, then take back 0.1. So 9.7.'],
+    ['9.2 − 3.9',['5.3','5.7','6.3'],0,'Round: 9.2 − 4 = 5.2, then add back 0.1. So 5.3.'],
+    ['5.3 − 1.8',['4.5','3.6','3.5'],2,`Zara's way: 5 − 1 = 4 and 0.3 − 0.8 = −0.5. Then 4 − 0.5 = 3.5.`]];
+  say(`Quick-fire time! Work out each one <b>in your head</b>, then tap the right answer.`);
+  await w(2600);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,o,a,why]=R[i];
+    mk('ex-head','',`⚡ Quick-fire · ${i+1} of ${R.length}`);
+    const qe=mk('mx','left:0;top:60px;width:960px;text-align:center;font-size:64px',q);pop(qe);
+    say(`What is <b>${q}</b>?`);await w(1400);
+    let picked=-1;const B=o.map((t,k)=>{const b=btn('mx-tile',`left:${150+k*240}px;top:180px;width:180px;height:100px;font-size:44px;border-radius:22px`,t,()=>{if(picked<0)picked=k;});pop(b,k*120);return b;});
+    window.AUTOPLAY=()=>{if(picked<0)picked=i%2?a:(a+1)%3;};
+    await w.until(()=>picked>=0);window.AUTOPLAY=null;
+    const ok=picked===a;if(ok){right++;yay();confetti(30);}else{boo();shake(B[picked]);}
+    B[a].style.borderColor='#18a058';B[a].style.background='#e6f7ee';if(!ok){B[picked].style.borderColor='#e04848';B[picked].style.background='#fdecec';}
+    const e=mk('mx-why','left:110px;top:320px;width:740px','💡 '+why);pop(e);point(e);
+    say((ok?'Yes! ':'Not quite. ')+why);await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">⚡</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You got ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! Your brain is a calculator.`:`Good effort! Press Replay to try again.`);
+  await w(2500);}},
+
+/* 6 */ {t:'The written method',run:async w=>{
+  say(`For harder numbers we use a <b>written method</b>: columns, like normal adding. The golden rule: <b>line up the decimal points</b>.`);
+  await w(3000);
+  let G;
+  await teachQ(w,{...LAY,src:WS2+'Q7 a)',q:STEM7+'<br>a) 25.81 + 8.4',read:'Use a written method to work out 25.81 + 8.4.',
+    keys:[['written method',`A <b>written method</b> means setting it out in <b>columns</b>, one under the other.`]],
+    before:[{show:'Points in a line · fill gaps with 0',say:`Remember: the decimal points go in a straight line, and we can fill any gaps with <b>zeros</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{G=colGrid(610,30);pop(G.el);await w(400);await G.put(0,'25.81');await G.put(1,'8.4','#e06a1b');G.op('+');G.line();await w(500);G.pad(1,2);point(G.el);},
+        show:'8.4 → 8.4<b>0</b> <i>points in a line</i>',say:`Write 8.4 under 25.81 with the points lined up. Fill the gap with a zero: <b>8.40</b>.`,wait:2800},
+      {act:async()=>{G.glow(4);await w(500);G.ans(4,'1');},say:`Start on the <b>right</b>. Hundredths: 1 + 0 = <b>1</b>.`,wait:2200},
+      {act:async()=>{G.glow(3);await w(500);G.ans(3,'2');G.carry(1,'1');},say:`Tenths: 8 + 4 = 12. Write <b>2</b> and carry the 1 into the ones.`,wait:2600},
+      {act:async()=>{G.ans(2,'.');G.glow(1);await w(500);G.ans(1,'4');G.carry(0,'1');},say:`The point drops straight down. Ones: 5 + 8 + 1 = 14. Write <b>4</b>, carry 1.`,wait:2600},
+      {act:async()=>{G.glow(0);await w(500);G.ans(0,'3');G.unglow();},show:'25.81 + 8.4 = <b>34.21</b>',say:`Tens: 2 + 1 = <b>3</b>. So the answer is <b>34.21</b>.`}],
+    answer:'34.21',why:'Check by rounding: 26 + 8 = 34. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{...LAY,src:WS2+'Q7 c)',q:STEM7+'<br>c) 38.91 − 9.78',read:'Use a written method to work out 38.91 − 9.78.',
+    keys:[['written method',`Columns again, with the points lined up. This time we <b>take away</b>.`]],
+    before:[{show:'Too small? <b>Exchange</b> 1 from the left',say:`If a top digit is too small, we <b>exchange</b>: borrow 1 from the column on the left. It becomes 10 in this column.`,try:true,wait:2800}],
+    steps:[{act:async()=>{G=colGrid(610,30);pop(G.el);await w(400);await G.put(0,'38.91');await G.put(1,'9.78','#e06a1b');G.op('−');G.line();point(G.el);},
+        show:'Points in a line',say:`Write 9.78 under 38.91 with the points lined up.`},
+      {act:async()=>{G.glow(4);await w(500);G.cross(3,'8');G.cross(4,'11');await w(500);G.ans(4,'3');},
+        say:`Hundredths: 1 − 8? Too small. Exchange 1 tenth: the 9 becomes 8, and the 1 becomes <b>11</b>. 11 − 8 = <b>3</b>.`,wait:3200},
+      {act:async()=>{G.glow(3);await w(500);G.ans(3,'1');},say:`Tenths: 8 − 7 = <b>1</b>.`,wait:2000},
+      {act:async()=>{G.ans(2,'.');G.glow(1);await w(500);G.cross(0,'2');G.cross(1,'18');await w(500);G.ans(1,'9');},
+        say:`Point straight down. Ones: 8 − 9? Too small. Exchange 1 ten: the 3 becomes 2, and the 8 becomes <b>18</b>. 18 − 9 = <b>9</b>.`,wait:3200},
+      {act:async()=>{G.glow(0);await w(500);G.ans(0,'2');G.unglow();},show:'38.91 − 9.78 = <b>29.13</b>',say:`Tens: 2 − 0 = <b>2</b>. The answer is <b>29.13</b>.`}],
+    answer:'29.13',why:'Check by adding back: 29.13 + 9.78 = 38.91. ✔'});
+  await w(1500);}},
+
+/* 7 */ {t:'Negative decimals',run:async w=>{
+  say(`Now some numbers <b>below zero</b>. Think of a negative number as money you <b>owe</b>.`);
+  await w(2600);
+  let G;
+  await teachQ(w,{...LAY,src:WS2+'Q15 a)',q:STEM7+'<br>a) −5.43 − 9.57',read:'Use a written method to work out minus 5.43 minus 9.57.',
+    keys:[['−5.43',`This number is <b>negative</b>: it is below zero.`],['− 9.57',`Then we <b>take away</b> 9.57, so we go even further down.`]],
+    before:[{act:async()=>{hline(600,330,330);tickAt(910,330,'0');tickAt(800,330,'−5','#2c66cf');await w(400);await arc(800,620,330,45,'− 9','#e04848');tickAt(620,330,'−14','#e04848');},
+      show:'Try −5 − 9 = <b>−14</b>',say:`Try whole numbers first. Start at minus 5 and go down 9 more. You land on <b>minus 14</b>.`,try:true,wait:2800}],
+    steps:[{show:'Both go down: add <b>5.43 + 9.57</b>',say:`Both parts take us further <b>below zero</b>. So add the sizes, 5.43 + 9.57, and the answer will be negative.`,wait:2800},
+      {act:async()=>{G=colGrid(610,30);pop(G.el);await w(400);await G.put(0,'5.43');await G.put(1,'9.57','#e06a1b');G.op('+');G.line();point(G.el);
+          G.glow(4);await w(500);G.ans(4,'0');G.carry(3,'1');G.glow(3);await w(500);G.ans(3,'0');G.carry(1,'1');},
+        say:`Hundredths: 3 + 7 = 10. Write 0, carry 1. Tenths: 4 + 5 + 1 = 10. Write 0, carry 1.`,wait:3000},
+      {act:async()=>{G.ans(2,'.');G.glow(1);await w(500);G.ans(1,'5');G.ans(0,'1');G.unglow();},show:'5.43 + 9.57 = <b>15.00</b>',say:`Ones: 5 + 9 + 1 = 15. So 5.43 + 9.57 = <b>15.00</b>.`},
+      {act:async()=>{G.op('−',2,'#e04848');},show:'So −5.43 − 9.57 = <b>−15.00</b>',say:`We are 15 <b>below zero</b>, so the answer is <b>minus 15</b>.`}],
+    answer:'−15.00 (= −15)',why:'Like owing $5.43, then spending $9.57 more: now you owe $15. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{...LAY,src:WS2+'Q15 d)',q:STEM7+'<br>d) −8.12 − −15.4',read:'Use a written method to work out minus 8.12, minus minus 15.4.',
+    keys:[['− −15.4',`Look: two minus signs together! Taking away a negative is the same as <b>adding</b>.`]],
+    before:[{show:'Try 3 − −2 = 3 + 2 = <b>5</b>',say:`Try whole numbers. 3 minus minus 2: the two minus signs make a plus. So it's 3 + 2, which is <b>5</b>.`,try:true,wait:2800}],
+    steps:[{show:'= −8.12 + 15.4 <i>two minuses make a plus</i>',say:`So change the two minus signs into a <b>plus</b>: minus 8.12 plus 15.4.`},
+      {show:'= 15.4 − 8.12 <i>same sum, easier order</i>',say:`Adding works in any order. Minus 8.12 plus 15.4 is the same as <b>15.4 − 8.12</b>.`,wait:2600},
+      {act:async()=>{G=colGrid(610,30);pop(G.el);await w(400);await G.put(0,'15.4');G.pad(0,2);await G.put(1,'8.12','#e06a1b');G.op('−');G.line();point(G.el);
+          G.glow(4);await w(500);G.cross(3,'3');G.cross(4,'10');G.ans(4,'8');G.glow(3);await w(500);G.ans(3,'2');},
+        say:`Columns: 15.4 becomes <b>15.40</b>. Hundredths: 0 − 2? Exchange: 10 − 2 = 8. Tenths: 3 − 1 = 2.`,wait:3200},
+      {act:async()=>{G.ans(2,'.');G.glow(1);await w(500);G.cross(0,'0');G.cross(1,'15');G.ans(1,'7');G.unglow();},show:'15.40 − 8.12 = <b>7.28</b>',say:`Ones: 5 − 8? Exchange the ten: 15 − 8 = 7. The answer is <b>7.28</b>.`,wait:2800}],
+    answer:'7.28',why:'Check by adding back: 7.28 + 8.12 = 15.4. ✔'});
+  await w(1500);}},
+
+/* 8 */ {t:'Multiplying tenths',run:async w=>{
+  say(`Now <b>multiplying</b>. The trick: think of a decimal as a number of <b>tenths</b>, <b>hundredths</b> or <b>thousandths</b>.`);
+  await w(3000);
+  let T;
+  await teachQ(w,{...LAY,src:WS3+'Q1 b)',q:STEM31+'<br>b) 0.5 × 5',read:'Use a mental method to work out 0.5 times 5.',
+    keys:[['mental method',`In your head! Think of 0.5 as a number of <b>tenths</b>.`]],
+    before:[{show:'Easy fact: 5 × 5 = <b>25</b>',say:`First an easy fact: 5 × 5 = <b>25</b>.`,try:true}],
+    steps:[{act:async()=>{for(let g=0;g<5;g++){strips(604+g*68,60,5,'#5d9cf5',12);mk('mx',`left:${600+g*68}px;top:24px;width:60px;text-align:center;font-size:17px;color:#2c66cf`,'0.5');await w(250);}},
+        show:'0.5 = <b>5 tenths</b>',say:`0.5 is <b>5 tenths</b>. So 0.5 × 5 means 5 lots of 5 tenths.`,wait:2600},
+      {act:async()=>{box(598,52,130,72,'1 whole');await w(500);box(734,52,130,72,'1 whole');},show:'5 × 5 tenths = <b>25 tenths</b>',say:`5 × 5 tenths is <b>25 tenths</b>. Every 10 tenths make one whole.`,wait:2600},
+      {show:'25 tenths = <b>2.5</b>',say:`25 tenths is 2 wholes and 5 tenths left over: <b>2.5</b>.`}],
+    answer:'2.5',why:'Check: 0.5 is a half, and half of 5 is 2.5. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{...LAY,src:WS3+'Q2 c)',q:'c) 3 × 0.004',read:'Work out 3 times 0.004.',
+    keys:[['0.004',`0.004 is <b>4 thousandths</b>.`]],
+    before:[{show:'Easy fact: 3 × 4 = <b>12</b>',say:`First the easy fact: 3 × 4 = <b>12</b>.`,try:true}],
+    steps:[{show:'3 × 0.004 = <b>12 thousandths</b>',say:`So 3 × 4 thousandths is <b>12 thousandths</b>.`},
+      {act:async()=>{T=pvTable(600,24,{ints:1,decs:3});pop(T.el);await w(400);await T.put(0,'0.004','#e06a1b');await w(600);await T.put(1,'0.012','#18a058');point(T.el);},
+        show:'12 thousandths = <b>0.012</b>',say:`12 thousandths: the 2 goes in the <b>thousandths</b> column and the 1 in the hundredths. Zeros fill the empty places: <b>0.012</b>.`,wait:3200}],
+    answer:'0.012',why:'Check: 0.004 is tiny, so 3 lots of it is still tiny. 0.012 makes sense. ✔'});
+  await w(1500);}},
+
+/* 9 */ {t:'Times 0.1 means divide by 10',run:async w=>{
+  say(`What happens when you multiply by <b>0.1</b>? Let's find out.`);
+  await w(2400);
+  let T;
+  await teachQ(w,{...LAY,src:WS3+'Q2 d)',q:'d) 120 × 0.1',read:'Work out 120 times 0.1.',
+    keys:[['0.1',`0.1 is <b>one tenth</b>. So 120 × 0.1 means <b>a tenth of 120</b>.`]],
+    before:[{show:'Try 10 × 0.1 = <b>1</b> <i>10 tenths make 1</i>',say:`Try a small one: 10 × 0.1 is 10 tenths, which makes <b>1</b>. That's 10 divided by 10!`,try:true,wait:2600}],
+    steps:[{show:'× 0.1 is the same as <b>÷ 10</b>',say:`So multiplying by 0.1 is the same as <b>dividing by 10</b>.`},
+      {act:async()=>{T=pvTable(600,24,{ints:3,decs:1});pop(T.el);await w(400);await T.put(0,'120');await w(700);await T.put(1,'12','#18a058');
+          const a=mk('',`left:600px;top:${24+T.H+10}px;width:${T.W}px;text-align:center;font-size:16px;font-weight:800;color:#18a058`,'every digit moves 1 place right ➡');pop(a);point(T.el);},
+        show:'120 ÷ 10 = <b>12</b> <i>digits move right</i>',say:`Dividing by 10 moves every digit <b>one place to the right</b>. 120 becomes <b>12</b>.`,wait:2800}],
+    answer:'12',why:'Check: 12 lots of 10 make 120, so a tenth of 120 is 12. ✔'});
+  await w(1500);}},
+
+/* 10 */ {t:'Sort the answers',run:async w=>{
+  const r=await sortGame(w,{bins:['= 1.2','= 0.12','= 0.012'],colors:['#45c288','#5d9cf5','#f5a54a'],top:200,
+    items:[['4 × 0.3',0],['0.6 × 2',0],['12 × 0.1',0],['4 × 0.03',1],['2 × 0.06',1],['1.2 × 0.1',1],['4 × 0.003',2],['2 × 0.006',2],['0.12 × 0.1',2]],
+    intro:`Work out each card in your head. Tap a card, then tap the box with its answer. Press <b>Check</b> when you're done.`});
+  say(r.ok===r.total?`Perfect! Every card is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's go through them.`);
+  await w(2600);
+  say(`4 × 3 is 12. So 4 × 3 <b>tenths</b> is 1.2, 4 × 3 <b>hundredths</b> is 0.12, and 4 × 3 <b>thousandths</b> is 0.012.`);await w(3400);
+  say(`And times 0.1 means divide by 10: 12 becomes 1.2, 1.2 becomes 0.12, and 0.12 becomes <b>0.012</b>.`);
+  await w(3200);}},
+
+/* 11 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Work it out in your head first, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 4.2 · Q1 a)',q:'Use a mental method to work out the answer to the following.<br>a) 3.5 + 4.2',o:['7.07','7.7','8.7','6.7'],a:1,
+      why:'Wholes: 3 + 4 = 7. Tenths: 0.5 + 0.2 = 0.7. So <b>7.7</b>.',whyNot:{0:'5 tenths plus 2 tenths is 7 tenths, so the 7 goes straight after the point.',2:'3 + 4 is 7, and nothing carries here.',3:'3 + 4 makes 7 wholes, not 6.'}},
+    {src:'Worksheet · Ex 4.2 · Q1 c)',q:'Use a mental method to work out the answer to the following.<br>c) 4.9 − 1.5',o:['3.6','6.4','3.4','3.14'],a:2,
+      why:'Wholes: 4 − 1 = 3. Tenths: 0.9 − 0.5 = 0.4. So <b>3.4</b>.',whyNot:{0:'0.9 − 0.5 is 0.4, not 0.6.',1:'that adds the numbers; we need to take away.',3:'0.9 − 0.5 is 4 tenths, so the answer is 3.4.'}},
+    {src:'Worksheet · Ex 4.2 · Q4 b)',q:`Use Zara's method to mentally work out<br>b) 8.3 − 2.9`,o:['6.6','5.4','5.6','6.4'],a:1,
+      why:'Wholes: 8 − 2 = 6. Decimals: 0.3 − 0.9 = −0.6. Then 6 − 0.6 = <b>5.4</b>.',whyNot:{0:'0.3 − 0.9 is minus 0.6, so take 0.6 away from 6, not add it.',2:'6 − 0.6 is 5.4, not 5.6.',3:'the decimal part is negative, so the answer must be less than 6.'}},
+    {src:'Worksheet · Ex 4.2 · Q4 c)',q:`Use Zara's method to mentally work out<br>c) 12.5 − 9.8`,o:['3.3','2.7','2.3','3.7'],a:1,
+      why:'Wholes: 12 − 9 = 3. Decimals: 0.5 − 0.8 = −0.3. Then 3 − 0.3 = <b>2.7</b>.',whyNot:{0:'0.5 − 0.8 is minus 0.3, so take 0.3 away from 3.',2:'3 − 0.3 is 2.7, not 2.3.',3:'the decimal part is negative, so the answer must be less than 3.'}},
+    {src:'Worksheet · Ex 4.2 · Q4 d)',q:`Use Zara's method to mentally work out<br>d) 15.1 − 5.7`,o:['10.6','9.6','9.4','10.4'],a:2,
+      why:'Wholes: 15 − 5 = 10. Decimals: 0.1 − 0.7 = −0.6. Then 10 − 0.6 = <b>9.4</b>.',whyNot:{0:'0.1 − 0.7 is minus 0.6, so take it away from 10, not add it.',1:'10 − 0.6 is 9.4, not 9.6.',3:'the decimal part is negative, so the answer must be less than 10.'}},
+    {src:'Worksheet · Ex 4.2 · Q6 b)',q:'Use the method of rounding of the numbers to a whole number<br>b) 8.9 + 9.6',o:['18.7','18.5','17.5','18.6'],a:1,
+      why:'Round 8.9 to 9: 9 + 9.6 = 18.6. We added 0.1 too much, so 18.6 − 0.1 = <b>18.5</b>.',whyNot:{0:'we added 0.1 too much, so take it away, not add it.',2:'8.9 + 9.6 is about 9 + 10 = 19, so 17.5 is too small.',3:'that forgets to take back the extra 0.1.'}},
+    {src:'Worksheet · Ex 4.2 · Q6 c)',q:'Use the method of rounding of the numbers to a whole number<br>c) 22.8 + 3.3',o:['26.5','26.3','25.1','26.1'],a:3,
+      why:'Round 22.8 to 23: 23 + 3.3 = 26.3. We added 0.2 too much, so 26.3 − 0.2 = <b>26.1</b>.',whyNot:{0:'we added 0.2 too much, so take it away, not add it.',1:'that forgets to take back the extra 0.2.',2:'22.8 + 3.3 is about 23 + 3 = 26, so 25.1 is too small.'}},
+    {src:'Worksheet · Ex 4.2 · Q6 e)',q:'Use the method of rounding of the numbers to a whole number<br>e) 14.9 − 4.4',o:['10.7','10.6','10.5','9.5'],a:2,
+      why:'Round 14.9 to 15: 15 − 4.4 = 10.6. We started 0.1 too high, so 10.6 − 0.1 = <b>10.5</b>.',whyNot:{0:'15 is 0.1 too big, so take 0.1 away from 10.6, not add it.',1:'that forgets to take away the extra 0.1.',3:'14.9 − 4.4 is about 15 − 4 = 11, so 9.5 is too small.'}},
+    {src:'Worksheet · Ex 4.2 · Q6 f)',q:'Use the method of rounding of the numbers to a whole number<br>f) 21.1 − 6.7',o:['13.8','14.1','14.4','15.4'],a:2,
+      why:'Round 6.7 to 7: 21.1 − 7 = 14.1. We took away 0.3 too much, so 14.1 + 0.3 = <b>14.4</b>.',whyNot:{0:'we took away 0.3 too much, so add it back, not take more away.',1:'that forgets to add back the extra 0.3.',3:'21.1 − 6.7 is about 21 − 7 = 14, so 15.4 is too big.'}},
+    {src:'Worksheet · Ex 4.2 · Q7 b)',q:'Use a written method to work out following<br>b) 8.76 − 4.1',o:['4.75','8.35','4.66','4.65'],a:2,
+      why:'Line up the points: 8.76 − 4.10. Hundredths 6 − 0 = 6, tenths 7 − 1 = 6, ones 8 − 4 = 4. So <b>4.66</b>.',whyNot:{0:'that puts the 1 under the 6. Line up the points: 4.1 is 4.10.',1:'that lines up the right-hand ends instead of the points.',3:'hundredths: 6 − 0 is 6, not 5.'}},
+    {src:'Worksheet · Ex 4.2 · Q15 b)',q:'Use a written method to work out following<br>b) −8.12 − 15.4',o:['7.28','−23.52','−7.28','23.52'],a:1,
+      why:'Both parts go below zero, so add the sizes: 8.12 + 15.40 = 23.52. The answer is <b>−23.52</b>.',whyNot:{0:'that is 15.4 − 8.12. Here both parts go down, below zero.',2:'the sizes add up: 8.12 + 15.4 is 23.52, not a difference.',3:'both parts take you below zero, so the answer is negative.'}},
+    {src:'Worksheet · Ex 4.3 · Q1 a)',q:'Use a mental method to work out following.<br>a) 0.1 × 8',o:['8.1','0.08','0.8','80'],a:2,
+      why:'8 lots of 1 tenth is 8 tenths: <b>0.8</b>.',whyNot:{0:'that adds instead of multiplying.',1:'8 lots of 1 tenth is 8 tenths, not 8 hundredths.',3:'multiplying by 0.1 makes 8 smaller, not bigger.'}},
+    {src:'Worksheet · Ex 4.3 · Q1 c)',q:'Use a mental method to work out following.<br>c) 0.9 × 2',o:['0.18','1.8','18','2.9'],a:1,
+      why:'2 lots of 9 tenths is 18 tenths, which is <b>1.8</b>.',whyNot:{0:'18 tenths is 1.8, not 18 hundredths.',2:'0.9 is less than 1, so the answer must be less than 2.',3:'that adds instead of multiplying.'}},
+    {src:'Worksheet · Ex 4.3 · Q2 a)',q:'a) 6 × 0.02',o:['1.2','0.012','0.12','6.02'],a:2,
+      why:'6 × 2 hundredths is 12 hundredths, which is <b>0.12</b>.',whyNot:{0:'12 hundredths is 0.12, not 12 tenths.',1:'0.02 is hundredths, not thousandths.',3:'that adds instead of multiplying.'}},
+    {src:'Worksheet · Ex 4.3 · Q2 b)',q:'b) 4 × 0.3',o:['0.12','12','1.2','4.3'],a:2,
+      why:'4 × 3 tenths is 12 tenths, which is <b>1.2</b>.',whyNot:{0:'4 × 3 tenths is 12 tenths, which is 1.2, not 12 hundredths.',1:'0.3 is less than 1, so the answer must be less than 4.',3:'that just joins the numbers together.'}},
+  ]);}},
+
+/* 12 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Mental methods with decimals</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['✂️','<b>Split</b> it:<br>wholes, then decimals.',`Split the numbers: add the wholes, then the decimals.`],
+    ['🔟','<b>10 tenths</b> make 1 whole.',`Ten tenths make one whole.`],
+    ['➖',`<b>Zara's method</b>:<br>0.4 − 0.6 = −0.2`,`Zara's method: if the decimal part goes below zero, take it off at the end.`],
+    ['🎯','<b>Round</b>, then <b>fix</b>:<br>+ 8, then − 0.1',`Round to a whole number, do the easy sum, then fix it.`],
+    ['📏','Written method:<br><b>line up the points</b>.',`In the written method, line up the decimal points.`],
+    ['🔄','Two minuses<br>make a <b>plus</b>.',`Taking away a negative is the same as adding.`],
+    ['✖️','0.5 × 5 = 25 tenths<br>= <b>2.5</b>',`Think in tenths: 0.5 times 5 is 25 tenths, which is 2.5.`],
+    ['➗','× 0.1 = <b>÷ 10</b>',`Multiplying by 0.1 is the same as dividing by 10.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 Your brain is now a decimal calculator. Next up: <b>multiplying decimals</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

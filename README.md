@@ -30,3 +30,9 @@ To rebuild the PDF after editing `source/study-guide-source.html`:
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer --virtual-time-budget=5000 --print-to-pdf=study-guide.pdf "file://$PWD/source/study-guide-source.html"
 ```
+
+The Maths guide (`maths-study-guide.pdf`) is printed the same way from `source/maths/study-guide-source.html`:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer --virtual-time-budget=5000 --print-to-pdf=maths-study-guide.pdf "file://$PWD/source/maths/study-guide-source.html"
+```

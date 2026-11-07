@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Inequalities</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.m6-big{font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-weight:800;color:#7a2e00;text-align:center}
+.m6-ok{color:#18a058}.m6-no{color:#e04848}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 6 · Chapter 2 · Exercise 2.6 (Q1 a–d, Q2 a–d, Q6 a–c)
+   Taught with teachQ: Q1 a), Q1 c), Q2 a), Q2 c), Q6 a), Q6 b), Q6 c). Q1 b), d) and Q2 b), d) are in the Exam check
+   (with Q6 b)(i) and c)(ii) again for practice). The voice reads &lt; and &gt; as "is less than" / "is greater than". */
+const WS='Worksheet · Ex 2.6 · ';
+const STEM1='Write in words what each of these inequalities means.';
+const STEM2='Write these statements as inequalities.';
+const STEM6=p=>`For each of these inequalities: &nbsp;<b>${p}</b><br>(i) Write down the smallest integer that y could be.<br>(ii) Write a list of the integer values that y could be.`;
+const READ6=v=>`For the inequality y ${v}: part i, write down the smallest integer that y could be. Part ii, write a list of the integer values that y could be.`;
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+const neg=v=>String(v).replace('-','−');
+
+/* A number line from lo to hi (whole-number ticks). circle(v) = open circle; ray(v,±1) = arrow over all the numbers
+   bigger (+1) or smaller (−1); yes(v) = green dot above the line; no(v) = red cross above the line. */
+function iLine(y,lo,hi){const L=60,W=840,px=v=>L+(v-lo)*W/(hi-lo);
+  mk('',`left:${L-14}px;top:${y}px;width:${W+28}px;height:5px;border-radius:3px;background:#1f2433`);
+  for(let v=lo;v<=hi;v++){mk('',`left:${px(v)-1.5}px;top:${y-8}px;width:3px;height:21px;background:#1f2433`);
+    mk('',`left:${px(v)-25}px;top:${y+16}px;width:50px;text-align:center;font-size:16px;font-weight:800;color:${v===0?'#1f2433':'#5a5f70'}`,neg(v));}
+  const S=[];
+  return{px,S,
+    circle(v,col='#e06a1b'){const c=mk('',`left:${px(v)-14}px;top:${y-12}px;width:29px;height:29px;border-radius:50%;background:#fff;border:5px solid ${col};box-sizing:border-box;z-index:3`);pop(c);beep(600,.08);return c;},
+    async ray(v,dir,col='#e06a1b'){const x0=px(v),x1=dir>0?L+W+14:L-14,left=Math.min(x0,x1),wd=Math.abs(x1-x0);
+      const r=mk('',`left:${left}px;top:${y-4}px;width:${wd}px;height:13px;border-radius:7px;background:${col};opacity:.85;transform-origin:${dir>0?'0%':'100%'} 50%;z-index:2`);
+      await an(r,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:1000});
+      const h=mk('',`left:${dir>0?x1-2:x1-20}px;top:${y-12}px;width:0;height:0;border-top:14px solid transparent;border-bottom:14px solid transparent;${dir>0?'border-left':'border-right'}:22px solid ${col};z-index:2`);pop(h);return r;},
+    yes(v){const d=mk('',`left:${px(v)-11}px;top:${y-40}px;width:22px;height:22px;border-radius:50%;background:#18a058;border:3px solid #fff;box-shadow:0 0 0 2px #18a058;z-index:4`);pop(d);beep(700,.06);S.push(d);return d;},
+    no(v){const d=mk('m6-no',`left:${px(v)-15}px;top:${y-50}px;width:30px;text-align:center;font-size:28px;font-weight:900;z-index:4`,'✘');pop(d);beep(250,.08);S.push(d);return d;}};}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m06', num:6, part:'Chapter 2', emoji:'↔️', title:'Inequalities',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's learn the signs for bigger and smaller. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Less than, greater than',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today: <b>inequalities</b>. They tell us when one number is <b>bigger</b> or <b>smaller</b> than another.`);
+  await w(3000);
+  const a=mk('m6-big','left:150px;top:60px;width:160px;font-size:120px','3');pop(a);
+  const b=mk('m6-big','left:650px;top:60px;width:160px;font-size:120px','8');pop(b,200);
+  say(`Which is bigger, 3 or 8? It's <b>8</b>, of course.`);await w(2400);
+  const s=mk('m6-big','left:400px;top:50px;width:160px;font-size:140px;color:#e06a1b','&lt;');pop(s);point(s);
+  say(`We put this sign between them: <b>3 &lt; 8</b>. Say it like this: 3 <b>is less than</b> 8.`);await w(3200);
+  const c=mk('','left:430px;top:230px;width:100px;text-align:center;font-size:80px','🐊');pop(c);
+  loop(s,[{transform:'scale(1)'},{transform:'scale(1.12)'}],600,{direction:'alternate'});
+  say(`Memory trick: the sign is a hungry <b>crocodile's mouth</b>. It always opens towards the <b>bigger</b> number. It wants to eat more!`);await w(3400);
+  await Promise.all([an(a,[{left:'150px'},{left:'650px'}],{duration:900}),an(b,[{left:'650px'},{left:'150px'}],{duration:900})]);
+  s.innerHTML='&gt;';beep(600,.1);
+  say(`Swap them round: <b>8 &gt; 3</b>. Say it like this: 8 <b>is greater than</b> 3. The mouth still opens towards the 8.`);await w(3400);
+  const t1=mk('mx-step','left:120px;top:360px',`&lt; &nbsp;means <span class="m6-ok">is less than</span>`);pop(t1);point(t1);
+  say(`So this sign, pointing left, means <b>is less than</b>.`);await w(2400);
+  const t2=mk('mx-step','left:520px;top:360px',`&gt; &nbsp;means <span class="m6-ok">is greater than</span>`);pop(t2);point(t2);
+  say(`And this sign, opening on the left, means <b>is greater than</b>. The small point always faces the <b>smaller</b> number.`);
+  await w(3400);}},
+
+/* 1 */ {t:'Lots of answers',run:async w=>{
+  say(`With a letter, an inequality has <b>lots of answers</b>. Look at <b>x &gt; 3</b>. x is greater than 3.`);
+  const e=mk('m6-big','left:0;top:24px;width:960px;font-size:60px','x &gt; 3');pop(e);point(e);
+  await w(3000);
+  const L=iLine(250,0,10);await w(400);
+  const T=[[5,true,`Could x be <b>5</b>? Is 5 greater than 3? Yes! ✔`],[8,true,`Could x be <b>8</b>? Yes, 8 is greater than 3.`],
+    [3.5,true,`What about <b>3.5</b>? It's a bit more than 3, so yes. Decimals count too.`],[2,false,`Could x be <b>2</b>? No. 2 is <b>less</b> than 3.`],
+    [3,false,`Could x be <b>3</b> itself? No! 3 is not greater than 3. It's <b>equal</b>.`]];
+  for(const [v,ok,line] of T){const d=ok?L.yes(v):L.no(v);point(d);say(line);await w(2400);}
+  L.S.forEach(d=>d.remove());
+  const c=L.circle(3);point(c);
+  say(`So we draw an <b>open circle</b> at 3. Open, because 3 itself is <b>not</b> allowed.`);await w(2800);
+  await L.ray(3,1);
+  say(`Then an arrow to the right. Every number bigger than 3 works, going on forever.`);await w(2600);
+  const k=mk('mx-why','left:120px;top:340px;width:720px;text-align:center;font-size:20px','⭕ open circle: that number is <b>not</b> allowed &nbsp;·&nbsp; ➡️ arrow: all the numbers that work');pop(k);point(k);
+  say(`Open circle: not allowed. The arrow: all the numbers that work.`);
+  await w(3000);}},
+
+/* 2 */ {t:'Reading inequalities',run:async w=>{
+  let L;
+  await teachQ(w,{src:WS+'Q1 a)',q:STEM1+'<br>a) x &lt; 10',read:'Write in words what this inequality means. x &lt; 10.',workY:250,
+    keys:[['&lt;',`This sign is a mouth opening towards 10, so 10 is bigger. It means <b>is less than</b>.`]],
+    before:[{act:async()=>{L=iLine(196,0,14);await w(300);L.circle(10);await L.ray(10,-1);[9,5,0].forEach(v=>L.yes(v));point(L.S[0]);},
+      say:`On a number line, x could be 9, or 5, or 0. Any number to the <b>left</b> of 10.`,wait:2600}],
+    steps:[{show:'x &nbsp;&lt;&nbsp; 10 <i>read it left to right</i>',say:`Read it from left to right, like a sentence: first x, then the sign, then 10.`},
+      {show:'x <span class="m6-ok">is less than</span> 10',say:`The sign means <b>is less than</b>. So: x is less than 10.`}],
+    answer:'x is less than 10',why:'The point of the sign faces x, the smaller side. Check: x could be 9, and 9 &lt; 10 ✔'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS+'Q1 c)',q:STEM1+'<br>c) x &lt; −4',read:'Write in words what this inequality means. x &lt; −4.',workY:250,
+    keys:[['−4',`<b>Minus 4</b> is a negative number. It is 4 steps <b>below zero</b>.`]],
+    before:[{act:async()=>{L=iLine(196,-10,4);await w(300);L.circle(-4);await L.ray(-4,-1);[-5,-8].forEach(v=>L.yes(v));point(L.S[0]);},
+      say:`Less than minus 4 means further <b>left</b> on the number line: minus 5, minus 8, and so on.`,wait:2600}],
+    steps:[{show:'x &nbsp;&lt;&nbsp; −4 <i>read it left to right</i>',say:`Read it left to right: x, then the sign, then minus 4.`},
+      {show:'x <span class="m6-ok">is less than</span> −4',say:`So: x <b>is less than</b> minus 4.`}],
+    answer:'x is less than −4',why:'x is further left than −4, like −5 or −8. Careful: 0 is not less than −4.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Writing inequalities',run:async w=>{
+  say(`Now the other way round: turn the <b>words</b> into an inequality with a sign.`);
+  await w(2600);clear();let L;
+  await teachQ(w,{src:WS+'Q2 a)',q:STEM2+'<br>a) y is greater than 8',read:'Write this statement as an inequality. y is greater than 8.',workY:250,
+    keys:[['greater than',`<b>Greater than</b> means bigger than. y is the bigger one.`]],
+    before:[{act:async()=>{L=iLine(196,0,14);await w(300);L.circle(8);await L.ray(8,1);[9,12].forEach(v=>L.yes(v));point(L.S[0]);},
+      say:`y could be 9, or 12. Any number to the <b>right</b> of 8.`,wait:2400}],
+    steps:[{show:'y &nbsp;▢&nbsp; 8 <i>same order as the words</i>',say:`Write y first, then the sign, then 8, in the same order as the words.`},
+      {show:'y &gt; 8 <i>the mouth opens towards y</i>',say:`y is bigger, so the mouth opens towards y. y is greater than 8.`}],
+    answer:'y &gt; 8',why:'The open side faces y, the bigger number. Check: y could be 9, and 9 &gt; 8 ✔'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS+'Q2 c)',q:STEM2+'<br>c) P is less than zero.',read:'Write this statement as an inequality. P is less than zero.',workY:250,
+    keys:[['less than',`<b>Less than</b> means smaller than. P is the smaller one.`],['zero',`<b>Zero</b> is written as the number <b>0</b>.`]],
+    before:[{act:async()=>{L=iLine(196,-7,7);await w(300);L.circle(0);await L.ray(0,-1);[-1,-5].forEach(v=>L.yes(v));point(L.S[0]);},
+      say:`P could be minus 1, or minus 5. Any number to the left of zero: P is <b>negative</b>.`,wait:2600}],
+    steps:[{show:'P &nbsp;▢&nbsp; 0 <i>zero is written 0</i>',say:`Write P, then the sign, then zero as the number 0.`},
+      {show:'P &lt; 0 <i>the point faces P</i>',say:`P is smaller, so the point faces P. P is less than 0.`}],
+    answer:'P &lt; 0',why:'The point faces P, the smaller side. Check: P could be −3, and −3 &lt; 0 ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'Which is greater?',run:async w=>{
+  say(`Negative numbers can be tricky. Your turn: tap the <b>greater</b> number each time. Think of a thermometer!`);
+  await w(2800);
+  const R=[[-2,-1],[-7,-6],[0,-3],[2.5,3],[-4,4]];let right=0;
+  for(let i=0;i<R.length;i++){const [p,q]=R[i],g=Math.max(p,q);stage.innerHTML='';
+    mk('ex-head','',`🌡️ Which is greater? · ${i+1} of ${R.length}`);
+    say(`Which is greater: <b>${neg(p)}</b> or <b>${neg(q)}</b>?`);
+    let pick=null;
+    const B=[p,q].map((v,j)=>{const b=btn('mx-tile',`left:${240+j*300}px;top:70px;width:180px;height:90px;font-size:44px;box-sizing:border-box`,neg(v),()=>{if(pick===null)pick=v;});pop(b,j*100);return b;});
+    point(B[0]);
+    window.AUTOPLAY=()=>{if(pick===null)pick=g;};
+    await w.until(()=>pick!==null);window.AUTOPLAY=null;
+    const bi=[p,q].indexOf(g),wi=1-bi;
+    B[bi].style.background='#e6f7ee';B[bi].style.borderColor='#18a058';
+    if(pick===g){right++;yay();}else{B[wi].style.background='#fdecec';B[wi].style.borderColor='#e04848';shake(B[wi]);boo();}
+    const L=iLine(290,-8,4);await w(300);
+    const dl=mk('m6-big',`left:${L.px(Math.min(p,q))-40}px;top:226px;width:80px;font-size:22px;color:#e04848`,neg(Math.min(p,q))+' ⬇');pop(dl);
+    const dg=mk('m6-big',`left:${L.px(g)-40}px;top:226px;width:80px;font-size:22px;color:#18a058`,neg(g)+' ⬇');pop(dg,300);point(dg);
+    const why=g<0?`${neg(g)} is closer to zero, so it's further right. Like ${neg(g)} degrees is warmer than ${neg(Math.min(p,q))} degrees.`:
+      `${neg(g)} is further right on the number line, so it's greater.`;
+    say((pick===g?'Yes! ':`Not quite. It's <b>${neg(g)}</b>. `)+why);
+    const k=mk('mx-why','left:150px;top:380px;width:660px;text-align:center;font-size:20px',`➡️ Further <b>right</b> on the number line = <b>greater</b>`);pop(k,500);
+    await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🌡️</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You got ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! Further right always means greater.`:`Good effort! Remember: further <b>right</b> on the number line means <b>greater</b>.`);
+  await w(2600);}},
+
+/* 5 */ {t:'The smallest integer',run:async w=>{
+  say(`The next worksheet question uses the word <b>integer</b>. An integer is a <b>whole number</b>. It can be negative, zero or positive.`);
+  const r=mk('','left:60px;top:60px;width:840px;display:flex;justify-content:center;gap:12px','');
+  ['−3','−2','−1','0','1','2','3'].forEach((t,i)=>{const e=mk('mx-tile','position:relative;cursor:default',t,r);pop(e,i*90);});
+  await w(3200);
+  const n=mk('','left:60px;top:150px;width:840px;display:flex;justify-content:center;gap:12px','');
+  ['2.5','½','0.1'].forEach((t,i)=>{const e=mk('mx-tile','position:relative;cursor:default;border-color:#e04848;color:#b02a2a;text-decoration:line-through',t,n);pop(e,i*90);});
+  say(`Decimals and fractions, like 2.5 or a half, are <b>not</b> integers.`);await w(2800);
+  clear();let L;
+  await teachQ(w,{src:WS+'Q6 a)',q:STEM6('a) y &gt; 4'),read:READ6('&gt; 4'),workY:272,
+    keys:[['smallest integer',`<b>Smallest integer</b>: the lowest whole number that y is allowed to be.`],['y &gt; 4',`y is greater than 4. Is <b>4</b> itself allowed? Let's see.`]],
+    before:[{act:async()=>{L=iLine(222,0,10);await w(300);L.circle(4);await L.ray(4,1);point(L.S[0]||stage.lastChild);},
+      say:`On the number line: an open circle at 4, and an arrow to the right.`,wait:2400}],
+    steps:[{act:async()=>{point(L.no(4));},show:'4 &gt; 4? ✘ <i>4 is equal, not greater</i>',say:`Is 4 allowed? No. 4 is not greater than 4, it's equal. That's why the circle is open.`,wait:2600},
+      {act:async()=>{point(L.yes(5));},show:'(i) smallest integer: <b>5</b>',say:`The next whole number up is <b>5</b>. 5 is greater than 4, so the smallest integer is 5.`,wait:2600},
+      {act:async()=>{[6,7,8,9,10].forEach((v,i)=>setTimeout(()=>L.yes(v),i*200));},show:'(ii) 5, 6, 7, … <i>… means "and so on"</i>',say:`y could be 5, 6, 7, and so on forever. The three dots mean <b>and so on</b>.`,wait:2800}],
+    answer:'(i) 5 &nbsp; (ii) 5, 6, 7, …',why:'4 is not allowed, so start at the next integer up: 5.'});
+  await w(1500);}},
+
+/* 6 */ {t:'Negatives and decimals',run:async w=>{
+  say(`Same question, with a <b>negative</b> number and then a <b>decimal</b>. Watch out for the traps!`);
+  await w(2600);clear();let L;
+  await teachQ(w,{src:WS+'Q6 b)',q:STEM6('b) y &gt; −7'),read:READ6('&gt; −7'),workY:272,
+    keys:[['y &gt; −7',`y is greater than minus 7. Greater means further <b>right</b> on the number line.`]],
+    before:[{act:async()=>{L=iLine(222,-10,2);await w(300);L.circle(-7);await L.ray(-7,1);},
+      say:`Open circle at minus 7, and the arrow goes <b>right</b>, towards zero.`,wait:2400}],
+    steps:[{act:async()=>{point(L.no(-7));L.no(-8);},show:'−7 ✘ &nbsp; −8 ✘ <i>−8 is less than −7</i>',say:`Minus 7 is not allowed. And <b>minus 8</b> is a trap: it's further left, so it is <b>less</b> than minus 7.`,wait:2800},
+      {act:async()=>{point(L.yes(-6));},show:'(i) smallest integer: <b>−6</b>',say:`One step to the <b>right</b> of minus 7 is <b>minus 6</b>. So the smallest integer is minus 6.`,wait:2600},
+      {act:async()=>{[-5,-4,-3,-2].forEach((v,i)=>setTimeout(()=>L.yes(v),i*200));},show:'(ii) −6, −5, −4, …',say:`Then minus 5, minus 4, and so on.`}],
+    answer:'(i) −6 &nbsp; (ii) −6, −5, −4, …',why:'Greater means further right. Check: −6 is warmer than −7, so −6 &gt; −7 ✔'});
+  await w(1400);clear();
+  await teachQ(w,{src:WS+'Q6 c)',q:STEM6('c) y &gt; 2.5'),read:READ6('&gt; 2.5'),workY:272,
+    keys:[['y &gt; 2.5',`y is greater than 2.5. But 2.5 is <b>not</b> an integer, it's a decimal.`]],
+    before:[{act:async()=>{L=iLine(222,0,10);await w(300);L.circle(2.5);await L.ray(2.5,1);},
+      say:`The open circle is <b>halfway between 2 and 3</b>. The arrow goes right.`,wait:2400}],
+    steps:[{act:async()=>{point(L.no(2));},show:'2 ✘ <i>2 is less than 2.5</i>',say:`Is 2 allowed? No. 2 is <b>less</b> than 2.5.`},
+      {act:async()=>{point(L.yes(3));},show:'(i) smallest integer: <b>3</b>',say:`The first whole number to the right of 2.5 is <b>3</b>. So the smallest integer is 3.`,wait:2400},
+      {act:async()=>{[4,5,6,7].forEach((v,i)=>setTimeout(()=>L.yes(v),i*200));},show:'(ii) 3, 4, 5, …',say:`Then 4, 5, and so on.`}],
+    answer:'(i) 3 &nbsp; (ii) 3, 4, 5, …',why:'2.5 is not a whole number, so go up to the next integer: 3. Check: 3 &gt; 2.5 ✔'});
+  await w(1500);}},
+
+/* 7 */ {t:'Sort the numbers',run:async w=>{
+  const r=await sortGame(w,{bins:['Less than 3 (x &lt; 3)','Greater than 3 (x &gt; 3)','Exactly 3: neither!'],colors:['#5d9cf5','#45c288','#f5a54a'],top:170,
+    items:[['1',0],['0',0],['−5',0],['2.5',0],['4',1],['10',1],['3.5',1],['3',2]],
+    intro:`Sort the numbers! Is each one <b>less than 3</b>, <b>greater than 3</b>, or neither? Tap a card, then tap its box.`});
+  say(r.ok===r.total?`Perfect! Every number is in the right box.`:`You got ${r.ok} of ${r.total}. The red cards are in the wrong box. Let's check.`);
+  await w(2600);
+  say(`<b>Minus 5</b> and <b>0</b> are less than 3: they are further left.`);await w(2600);
+  say(`<b>3.5</b> is greater than 3, but 2.5 is less than 3.`);await w(2600);
+  say(`And <b>3</b> itself is neither. It's <b>equal</b> to 3. That's the open circle!`);
+  await w(3000);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 2.6 · Q1 b)',q:'Write in words what each of these inequalities means.<br>b) x &gt; 10',o:['x is less than 10','x is greater than 10','x is equal to 10','10 is greater than x'],a:1,
+      why:'The mouth opens towards x, so x is the bigger one: <b>x is greater than 10</b>.',whyNot:{0:'that is the other sign. Here the open side faces x, so x is bigger.',2:'equal would need an equals sign.',3:'that means x is smaller than 10, the opposite.'}},
+    {src:'Worksheet · Ex 2.6 · Q1 d)',q:'Write in words what each of these inequalities means.<br>d) x &gt; −4',o:['x is greater than −4','x is less than −4','x is greater than 4','x is less than 4'],a:0,
+      why:'Read it left to right: <b>x is greater than −4</b>. x could be −3, 0 or 10.',whyNot:{1:'the open side faces x, so x is the bigger one.',2:'the minus sign is missing. It is minus 4, not 4.',3:'wrong sign, and the minus sign is missing.'}},
+    {src:'Worksheet · Ex 2.6 · Q2 b)',q:'Write these statements as inequalities.<br>b) n is greater than −1',o:['n &lt; −1','n &gt; 1','n &gt; −1','−1 &gt; n'],a:2,
+      why:'n first, then the sign opening towards n, then −1: <b>n &gt; −1</b>.',whyNot:{0:'that says n is less than −1.',1:'the minus sign is missing. It must be −1.',3:'that says −1 is bigger, so n would be smaller.'}},
+    {src:'Worksheet · Ex 2.6 · Q2 d)',q:'Write these statements as inequalities.<br>d) q is less than −2.',o:['q &gt; −2','q &lt; −2','q &lt; 2','−2 &lt; q'],a:1,
+      why:'q first, then the sign pointing at q, then −2: <b>q &lt; −2</b>.',whyNot:{0:'that says q is greater than −2.',2:'the minus sign is missing. It must be −2.',3:'that says −2 is smaller, so q would be bigger.'}},
+    {src:'Worksheet · Ex 2.6 · Q6 b) (i)',q:'For each of these inequalities: b) y &gt; −7<br>(i) Write down the smallest integer that y could be.',o:['−8','−7','−6','7'],a:2,
+      why:'One step to the right of −7 is <b>−6</b>, and −6 &gt; −7.',whyNot:{0:'−8 is further left, so it is less than −7.',1:'−7 is equal to −7, not greater. The circle is open.',3:'7 works, but it is not the smallest. −6 is smaller.'}},
+    {src:'Worksheet · Ex 2.6 · Q6 c) (ii)',q:'For each of these inequalities: c) y &gt; 2.5<br>(ii) Write a list of the integer values that y could be.',o:['2.5, 3, 3.5, …','3, 4, 5, …','2, 3, 4, …','2.6, 2.7, 2.8, …'],a:1,
+      why:'The integers greater than 2.5 start at 3: <b>3, 4, 5, …</b>',whyNot:{0:'2.5 is not allowed, and 2.5 and 3.5 are not integers.',2:'2 is less than 2.5, so it is not allowed.',3:'those are decimals, not integers.'}},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Inequalities</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🐊','The mouth opens towards the <b>bigger</b> number.',`The crocodile's mouth opens towards the bigger number.`],
+    ['⬅️','x &lt; 10<br>x <b>is less than</b> 10',`x, then this sign, then 10, means x is less than 10.`],
+    ['➡️','y is greater than 8<br><b>y &gt; 8</b>',`y is greater than 8 is written y, then the sign opening towards y, then 8.`],
+    ['⭕','Open circle: that number is <b>not</b> allowed.',`An open circle means that number is not allowed.`],
+    ['🌡️','−1 is greater<br>than −2<br>(further <b>right</b>)',`Minus 1 is greater than minus 2, because it is further right.`],
+    ['🔢','<b>Integers</b>: whole numbers<br>… −1, 0, 1, 2 …',`Integers are whole numbers, including negatives and zero.`],
+    ['5️⃣','y &gt; 4<br>smallest integer: <b>5</b>',`If y is greater than 4, the smallest integer is 5.`],
+    ['🎯','y &gt; −7<br>smallest integer: <b>−6</b>, not −8!',`If y is greater than minus 7, the smallest integer is minus 6, not minus 8.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now read and write inequalities. Well done!`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

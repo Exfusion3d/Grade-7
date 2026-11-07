@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#e06a1b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Expanding brackets</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.pk{width:184px;height:118px;border-radius:14px;background:#f7c98b;border:3px solid #c4520e;box-shadow:0 5px 0 #c4520e;box-sizing:border-box}
+.pk:before{content:'';position:absolute;left:78px;top:-3px;width:22px;height:118px;background:#e9a65e}
+.pk-c{width:62px;height:52px;border-radius:12px;background:#fff;border:3px solid;display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:800;box-sizing:border-box;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif}
+.ex .o,.ex .t{border-radius:10px;padding:0 4px;font-weight:800}
+.ex .o{color:#e06a1b}
+.ar{box-sizing:border-box;background:#fff;border:3px solid;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800}
+.lab{font-size:24px;text-align:center;white-space:nowrap}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="maths.js"></script>
+<script>
+/* Maths Lesson 4 · Chapter 2 · Exercise 2.4 (Q3, Q5, Q9)
+   Every worksheet question type is taught with teachQ (maths.js): question first and read aloud, key words lit up,
+   a try with a real number, the student taps "Show me", then the working one line at a time, the answer and why.
+   Q3 e), Q5 g) and Q5 j) are built in "Build it!"; the rest are in the Exam check. */
+const WS='Worksheet · Ex 2.4 · ';
+const STEM3='Expand the brackets.';
+const STEM5='Multiply out the brackets.';
+const STEM9='The diagram shows a rectangle. The width of the rectangle is 8cm. The length of the rectangle is 3y + 4 cm. Write an expression, in its simplest form, for the:';
+const w0=ms=>new Promise(r=>setTimeout(r,ms));
+const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});
+
+/* A big expression with arrows from the number outside the bracket to each term inside.
+   html marks the outside number with class "o" and each term (with its sign) with class "t". */
+let AID=0;
+function expander(x,y,html,fs=46){
+  const box=mk('mx ex',`left:${x}px;top:${y}px;font-size:${fs}px;line-height:1.1;white-space:nowrap;z-index:6`,html);pop(box);
+  const id='ah'+(++AID),NS='http://www.w3.org/2000/svg';
+  const hold=mk('',`left:${x}px;top:${y-70}px;width:420px;height:72px;pointer-events:none;z-index:5`,
+    `<svg width="420" height="72" style="overflow:visible"><defs><marker id="${id}" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#e06a1b"/></marker></defs></svg>`);
+  const svg=hold.querySelector('svg'),o=box.querySelector('.o'),T=[...box.querySelectorAll('.t')];
+  const cx=e=>e.offsetLeft+e.offsetWidth/2;
+  const glow=(e,c)=>e.animate([{background:'transparent'},{background:c},{background:'transparent'}],{duration:1100});
+  return{box,hop:async(i,lab,col='#18a058')=>{const t=T[i],x1=cx(o),x2=cx(t),h=24+i*15;
+      const p=document.createElementNS(NS,'path');
+      p.setAttribute('d',`M${x1},68 Q${(x1+x2)/2},${68-2*h} ${x2},66`);
+      p.setAttribute('fill','none');p.setAttribute('stroke','#e06a1b');p.setAttribute('stroke-width','4');p.setAttribute('stroke-linecap','round');
+      svg.appendChild(p);const L=p.getTotalLength();p.style.strokeDasharray=L;
+      glow(o,'#ffe680');beep(520,.06);
+      await an(p,[{strokeDashoffset:L},{strokeDashoffset:0}],{duration:800});
+      p.setAttribute('marker-end',`url(#${id})`);glow(t,'#ffe680');beep(760,.08);
+      if(lab){const l=mk('mx lab',`left:${x+cx(t)-70}px;top:${y+fs*1.1+8}px;width:140px;color:${col}`,lab);pop(l);point(l);return l;}
+      point(t);}};}
+
+/* An area rectangle: height labelled `out`, its length split into parts [[label, width px, colour]].
+   fill(i, text) colours one part and writes its area inside. */
+function areaRect(x,y,h,out,parts){
+  const side=mk('mx',`left:${x-64}px;top:${y+h/2-22}px;width:54px;text-align:right;font-size:32px;color:#e06a1b`,out);pop(side);
+  let cx=x;const P=parts.map(([lab,wd,col],i)=>{const r=mk('ar',`left:${cx}px;top:${y}px;width:${wd+(i?0:3)}px;height:${h}px;border-color:${col};color:${col}`,'');
+    const l=mk('mx lab',`left:${cx}px;top:${y-40}px;width:${wd}px;font-size:30px;color:${col}`,lab);pop(r,i*150);pop(l,i*150);cx+=wd;return{r,l,col};});
+  return{side,P,fill:async(i,txt)=>{const p=P[i];
+    p.l.animate([{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:700});
+    side.animate([{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:700});beep(520,.06);await w0(600);
+    p.r.style.background=p.col+'26';p.r.innerHTML=txt;
+    await an(p.r,[{boxShadow:'0 0 0 0 '+p.col},{boxShadow:'0 0 0 10px transparent'}],{duration:700});beep(780,.08);point(p.r);}};}
+
+Lesson.start(Object.assign({}, MATHS, {
+  id:'m04', num:4, part:'Chapter 2', emoji:'📦', title:'Expanding brackets',
+  intro:`Hi! I'm <b>Pi the Robot</b> 🤖 Let's open up some brackets. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Brackets are packages',run:async w=>{
+  say(`Hi! I'm <b>Pi the Robot</b>. Today you'll learn to <b>expand brackets</b>. That means writing an expression without its brackets.`);
+  await w(3000);
+  const ex=mk('mx','left:690px;top:70px;font-size:50px;white-space:nowrap','3(10 + 2)');pop(ex);point(ex);
+  say(`Look at <b>3(10 + 2)</b>. A number right in front of a bracket means <b>times</b>. So this is 3 lots of the bracket.`);
+  await w(3200);
+  const box=i=>{const b=mk('pk',`left:${40+i*206}px;top:40px`,'');pop(b,i*200);
+    const a=mk('pk-c',`left:12px;top:30px;border-color:#2c66cf;color:#2c66cf`,'10',b),c=mk('pk-c',`left:108px;top:30px;border-color:#18a058;color:#18a058`,'2',b);return{b,a,c};};
+  let B=[0,1,2].map(box);
+  say(`Think of it as <b>3 packages</b>. Each package holds a 10 and a 2.`);
+  await w(2800);
+  const L1=mk('mx-step try','left:60px;top:200px','Bracket first: &nbsp;3 × 12 = 36');pop(L1);point(L1);
+  say(`One way: work out the bracket first. 10 + 2 is 12, and 3 lots of 12 is <b>36</b>.`);
+  await w(3000);
+  for(const k of B)k.a.animate([{background:'#fff'},{background:'#cfe0ff'},{background:'#fff'}],{duration:900});beep(500,.08);point(B[2].a);
+  say(`Another way: open the packages. There are three 10s. That makes <b>30</b>.`);
+  await w(2600);
+  for(const k of B)k.c.animate([{background:'#fff'},{background:'#c9f0da'},{background:'#fff'}],{duration:900});beep(650,.08);point(B[2].c);
+  say(`And there are three 2s. That makes <b>6</b>.`);
+  await w(2200);
+  const L2=mk('mx-step try','left:60px;top:262px','Open it up: &nbsp;3 × 10 + 3 × 2 = 30 + 6 = 36');pop(L2);point(L2);
+  say(`30 + 6 is <b>36</b> too. The same answer! Multiply <b>each thing</b> inside by 3, then add.`);
+  await w(3200);yay();
+  /* now with a letter */
+  ex.innerHTML='3(y + 6)';pop(ex);
+  B.forEach(k=>{k.a.innerHTML='y';k.c.innerHTML='6';k.a.style.fontFamily='Georgia,serif';k.a.style.fontStyle='italic';pop(k.a);pop(k.c);});point(ex);
+  say(`Now with a letter: <b>3(y + 6)</b>. Each package holds a <b>y</b> and a <b>6</b>.`);
+  await w(3000);
+  for(const k of B)k.a.animate([{background:'#fff'},{background:'#cfe0ff'},{background:'#fff'}],{duration:900});beep(500,.08);
+  const L3=mk('mx-step','left:60px;top:336px','three y\'s = 3y &nbsp;&nbsp; three 6s = 18');pop(L3);point(L3);
+  say(`Three y's make <b>3y</b>. Three 6s make <b>18</b>.`);
+  await w(2600);
+  const L4=mk('mx-step','left:60px;top:402px;border-color:#18a058;color:#0f7a40','3(y + 6) = <b>3y + 18</b>');pop(L4);point(L4);yay();
+  say(`So 3(y + 6) is <b>3y + 18</b>. We can't add those, because 3y and 18 are not like terms.`);
+  await w(3200);
+  const rule=mk('tag','left:520px;top:412px;background:#ffe6cf;color:#7a2e00;font-size:19px;white-space:nowrap','Multiply <b>every</b> term inside!');pop(rule);point(rule);
+  say(`Today's big rule: multiply <b>every term</b> inside the bracket by the number outside.`);
+  await w(3000);}},
+
+/* 1 */ {t:'Multiply every term',run:async w=>{
+  say(`Let's do the worksheet questions, <b>one at a time</b>. Watch the rectangle.`);
+  await w(2400);
+  let R,E;
+  await teachQ(w,{src:WS+'Q3 a)',q:STEM3+'<br>a) 3(y + 6)',read:'Expand the brackets: 3, bracket y + 6.',
+    keys:[['Expand',`<b>Expand</b> means multiply out, so the answer has <b>no brackets</b>.`],['3(y + 6)',`The 3 is outside the bracket. It must multiply <b>both</b> the y and the 6.`]],
+    before:[{show:'Try y = 10: &nbsp;3(10 + 6) = 3 × 16 = 48',say:`Try a number first. If y is 10, the bracket is 16, and 3 × 16 is <b>48</b>. Remember 48.`,try:true,wait:2800}],
+    steps:[{act:async()=>{R=areaRect(660,190,96,'3',[['y',150,'#2c66cf'],['6',100,'#18a058']]);await w0(900);},
+        show:'3(y + 6) <i>a 3 by (y + 6) rectangle</i>',say:`Here's a rectangle. It is 3 tall, and y + 6 long. Its area is 3(y + 6).`,wait:2600},
+      {act:()=>R.fill(0,'3y'),show:'3 × y = 3y',say:`The blue part is 3 by y. Its area is 3 × y, which is <b>3y</b>.`},
+      {act:()=>R.fill(1,'18'),show:'3 × 6 = 18',say:`The green part is 3 by 6. Its area is <b>18</b>.`},
+      {show:'= 3y + 18 <i>add the parts</i>',say:`Add the two parts together: <b>3y + 18</b>.`}],
+    answer:'3y + 18',why:'The 3 multiplies both terms. Check with y = 10: 3y + 18 = 30 + 18 = 48, the same as before. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q3 g)',q:STEM3+'<br>g) 6(2 + f)',read:'Expand the brackets: 6, bracket 2 + f.',
+    keys:[['6(2 + f)',`This time the <b>number</b> comes first inside the bracket. That's fine: we still multiply each term by 6.`]],
+    before:[{show:'Try f = 10: &nbsp;6(2 + 10) = 6 × 12 = 72',say:`Try f = 10. The bracket is 12, and 6 × 12 is <b>72</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{E=expander(640,290,'<span class="o">6</span>(<span class="t">2</span> + <span class="t">f</span>)');await w0(700);},
+        show:'6(2 + f) <i>one arrow to each term</i>',say:`Draw an arrow from the 6 to each term inside.`},
+      {act:()=>E.hop(0,'12'),show:'6 × 2 = 12',say:`First arrow: 6 × 2 is <b>12</b>.`},
+      {act:()=>E.hop(1,'+ 6f'),show:'6 × f = 6f',say:`Second arrow: 6 × f is <b>6f</b>.`},
+      {show:'= 12 + 6f <i>keep the order</i>',say:`So the answer is <b>12 + 6f</b>. Keep the terms in the same order as the bracket.`}],
+    answer:'12 + 6f',why:'Check with f = 10: 12 + 6f = 12 + 60 = 72. ✔ Writing 6f + 12 is also right.'});
+  await w(1500);}},
+
+/* 2 */ {t:'A minus inside',run:async w=>{
+  say(`Now a <b>minus</b> inside the bracket. The sign in front of a term <b>travels with it</b>, just like when we simplified.`);
+  await w(3200);
+  let E;
+  await teachQ(w,{src:WS+'Q3 d)',q:STEM3+'<br>d) 3(b − 1)',read:'Expand the brackets: 3, bracket b − 1.',
+    keys:[['− 1',`The 1 has a <b>minus</b> in front. That minus stays with it.`]],
+    before:[{show:'Try b = 10: &nbsp;3(10 − 1) = 3 × 9 = 27',say:`Try b = 10. The bracket is 9, and 3 × 9 is <b>27</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{E=expander(650,290,'<span class="o">3</span>(<span class="t">b</span> <span class="t">− 1</span>)');await w0(700);},
+        show:'3(b − 1)',say:`Two terms inside: <b>b</b>, and <b>minus 1</b>.`},
+      {act:()=>E.hop(0,'3b'),show:'3 × b = 3b',say:`3 × b is <b>3b</b>.`},
+      {act:()=>E.hop(1,'− 3','#e04848'),show:'3 × 1 = 3 <i>the minus stays</i>',say:`3 × 1 is 3, and the minus stays in front: <b>minus 3</b>.`,wait:2400},
+      {show:'= 3b − 3',say:`So the answer is <b>3b − 3</b>.`}],
+    answer:'3b − 3',why:'Check with b = 10: 3b − 3 = 30 − 3 = 27. ✔ The minus inside stays a minus.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q3 j)',q:STEM3+'<br>j) 6(2 − x)',read:'Expand the brackets: 6, bracket 2 − x.',
+    keys:[['− x',`Here the <b>letter</b> has the minus. So we take away the x term.`]],
+    before:[{show:'Try x = 1: &nbsp;6(2 − 1) = 6 × 1 = 6',say:`Try x = 1. The bracket is 1, and 6 × 1 is <b>6</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{E=expander(650,290,'<span class="o">6</span>(<span class="t">2</span> <span class="t">− x</span>)');await w0(700);},
+        show:'6(2 − x)',say:`Two terms inside: <b>2</b>, and <b>minus x</b>.`},
+      {act:()=>E.hop(0,'12'),show:'6 × 2 = 12',say:`6 × 2 is <b>12</b>.`},
+      {act:()=>E.hop(1,'− 6x','#e04848'),show:'6 × x = 6x <i>the minus stays</i>',say:`6 × x is 6x, and the minus stays: <b>minus 6x</b>.`,wait:2400},
+      {show:'= 12 − 6x',say:`So the answer is <b>12 − 6x</b>.`}],
+    answer:'12 − 6x',why:'Check with x = 1: 12 − 6x = 12 − 6 = 6. ✔ The minus belongs to the x, so it stays in front of 6x.'});
+  await w(1500);}},
+
+/* 3 */ {t:'Two letters',run:async w=>{
+  say(`What if there are <b>two letters</b> inside? Same rule: one arrow to each term.`);
+  await w(2600);
+  let E;
+  await teachQ(w,{src:WS+'Q3 h)',q:STEM3+'<br>h) 2(l + g)',read:'Expand the brackets: 2, bracket l + g.',
+    keys:[['l + g',`Two different letters, <b>l</b> and <b>g</b>. They are unlike terms, so they stay apart.`]],
+    before:[{show:'Try l = 3, g = 4: &nbsp;2(3 + 4) = 2 × 7 = 14',say:`Try l = 3 and g = 4. The bracket is 7, and 2 × 7 is <b>14</b>.`,try:true,wait:2600}],
+    steps:[{act:async()=>{E=expander(660,290,'<span class="o">2</span>(<span class="t">l</span> + <span class="t">g</span>)');await w0(700);},
+        show:'2(l + g)',say:`Two terms inside: <b>l</b> and <b>g</b>.`},
+      {act:()=>E.hop(0,'2l'),show:'2 × l = 2l',say:`2 × l is <b>2l</b>.`},
+      {act:()=>E.hop(1,'+ 2g'),show:'2 × g = 2g',say:`2 × g is <b>2g</b>.`},
+      {show:'= 2l + 2g',say:`So the answer is <b>2l + 2g</b>.`}],
+    answer:'2l + 2g',why:'Check with l = 3, g = 4: 2l + 2g = 6 + 8 = 14. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q5 k)',q:STEM5+'<br>k) 7(6c − 7h)',read:'Multiply out the brackets: 7, bracket 6c − 7h.',
+    keys:[['Multiply out',`<b>Multiply out</b> means the same as expand.`],['6c − 7h',`Each term has a number <b>and</b> a letter. Multiply the numbers; the letter stays.`]],
+    before:[{show:'Try c = 2, h = 1: &nbsp;7(12 − 7) = 7 × 5 = 35',say:`Try c = 2 and h = 1. 6c is 12 and 7h is 7. The bracket is 5, and 7 × 5 is <b>35</b>.`,try:true,wait:3000}],
+    steps:[{act:async()=>{E=expander(630,290,'<span class="o">7</span>(<span class="t">6c</span> <span class="t">− 7h</span>)');await w0(700);},
+        show:'7(6c − 7h)',say:`Two terms: <b>6c</b>, and <b>minus 7h</b>.`},
+      {act:()=>E.hop(0,'42c'),show:'7 × 6c = 42c <i>7 × 6 = 42</i>',say:`7 × 6c: multiply the numbers, 7 × 6 is 42. So <b>42c</b>.`,wait:2400},
+      {act:()=>E.hop(1,'− 49h','#e04848'),show:'7 × 7h = 49h <i>the minus stays</i>',say:`7 × 7h is 49h, and the minus stays: <b>minus 49h</b>.`,wait:2400},
+      {show:'= 42c − 49h',say:`So the answer is <b>42c − 49h</b>.`}],
+    answer:'42c − 49h',why:'Check with c = 2, h = 1: 42c − 49h = 84 − 49 = 35. ✔'});
+  await w(1500);}},
+
+/* 4 */ {t:'A number and a letter',run:async w=>{
+  say(`Now the terms inside have a <b>number in front</b>, like 2x. Multiply the numbers, and keep the letter.`);
+  await w(3000);
+  let E;
+  await teachQ(w,{src:WS+'Q5 a)',q:STEM5+'<br>a) 3(2x + 1)',read:'Multiply out the brackets: 3, bracket 2x + 1.',
+    keys:[['2x',`<b>2x</b> means 2 × x. So 3 × 2x is 3 × 2 × x.`]],
+    before:[{show:'Try x = 10: &nbsp;3(20 + 1) = 3 × 21 = 63',say:`Try x = 10. 2x is 20, so the bracket is 21. 3 × 21 is <b>63</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{E=expander(650,290,'<span class="o">3</span>(<span class="t">2x</span> + <span class="t">1</span>)');await w0(700);},
+        show:'3(2x + 1)',say:`Two terms inside: <b>2x</b> and <b>1</b>.`},
+      {act:()=>E.hop(0,'6x'),show:'3 × 2x = 6x <i>3 × 2 = 6</i>',say:`3 × 2x: 3 × 2 is 6, and the x stays. So <b>6x</b>.`,wait:2400},
+      {act:()=>E.hop(1,'+ 3'),show:'3 × 1 = 3',say:`3 × 1 is <b>3</b>. Don't forget this one!`},
+      {show:'= 6x + 3',say:`So the answer is <b>6x + 3</b>.`}],
+    answer:'6x + 3',why:'Check with x = 10: 6x + 3 = 60 + 3 = 63. ✔ Not 6x + 1: the 1 must be multiplied too.'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q5 e)',q:STEM5+'<br>e) 2(3b − 4)',read:'Multiply out the brackets: 2, bracket 3b − 4.',
+    keys:[['− 4',`Watch the <b>minus</b> in front of the 4. It stays with the 4.`]],
+    before:[{show:'Try b = 2: &nbsp;2(6 − 4) = 2 × 2 = 4',say:`Try b = 2. 3b is 6, so the bracket is 6 − 4, which is 2. And 2 × 2 is <b>4</b>.`,try:true,wait:3000}],
+    steps:[{act:async()=>{E=expander(650,290,'<span class="o">2</span>(<span class="t">3b</span> <span class="t">− 4</span>)');await w0(700);},
+        show:'2(3b − 4)',say:`Two terms: <b>3b</b>, and <b>minus 4</b>.`},
+      {act:()=>E.hop(0,'6b'),show:'2 × 3b = 6b <i>2 × 3 = 6</i>',say:`2 × 3b: 2 × 3 is 6, so <b>6b</b>.`},
+      {act:()=>E.hop(1,'− 8','#e04848'),show:'2 × 4 = 8 <i>the minus stays</i>',say:`2 × 4 is 8, and the minus stays: <b>minus 8</b>.`,wait:2400},
+      {show:'= 6b − 8',say:`So the answer is <b>6b − 8</b>.`}],
+    answer:'6b − 8',why:'Check with b = 2: 6b − 8 = 12 − 8 = 4. ✔ The minus inside the bracket stays a minus.'});
+  await w(1500);}},
+
+/* 5 */ {t:'Three terms',run:async w=>{
+  say(`Some brackets hold <b>three terms</b>. Then you need <b>three arrows</b>. Don't miss any!`);
+  await w(2600);
+  let E;
+  await teachQ(w,{src:WS+'Q5 d)',q:STEM5+'<br>d) 6(4z + 7v + 9)',read:'Multiply out the brackets: 6, bracket 4z + 7v + 9.',
+    keys:[['4z + 7v + 9',`Three terms: <b>4z</b>, <b>7v</b> and <b>9</b>. All three get multiplied by 6.`]],
+    before:[{show:'Try z = 1, v = 1: &nbsp;6(4 + 7 + 9) = 6 × 20 = 120',say:`Try z = 1 and v = 1. The bracket is 4 + 7 + 9, which is 20. 6 × 20 is <b>120</b>.`,try:true,wait:3000}],
+    steps:[{act:async()=>{E=expander(560,290,'<span class="o">6</span>(<span class="t">4z</span> + <span class="t">7v</span> + <span class="t">9</span>)',38);await w0(700);},
+       say:`Three terms, so three arrows.`},
+      {act:()=>E.hop(0,'24z'),show:'6 × 4z = 24z',say:`6 × 4z is <b>24z</b>.`},
+      {act:()=>E.hop(1,'+ 42v'),show:'6 × 7v = 42v',say:`6 × 7v is <b>42v</b>.`},
+      {act:()=>E.hop(2,'+ 54'),show:'6 × 9 = 54',say:`6 × 9 is <b>54</b>.`},
+      {show:'= 24z + 42v + 54',say:`So the answer is <b>24z + 42v + 54</b>.`}],
+    answer:'24z + 42v + 54',why:'Check with z = 1, v = 1: 24 + 42 + 54 = 120. ✔'});
+  await w(1200);clear();
+  await teachQ(w,{src:WS+'Q5 l)',q:STEM5+'<br>l) 9(5 + 3h − 4i)',read:'Multiply out the brackets: 9, bracket 5 + 3h − 4i.',
+    keys:[['5 + 3h − 4i',`Three terms again. The last one, <b>4i</b>, has a minus in front.`]],
+    before:[{show:'Try h = 1, i = 1: &nbsp;9(5 + 3 − 4) = 9 × 4 = 36',say:`Try h = 1 and i = 1. The bracket is 5 + 3 − 4, which is 4. 9 × 4 is <b>36</b>.`,try:true,wait:3000}],
+    steps:[{act:async()=>{E=expander(560,290,'<span class="o">9</span>(<span class="t">5</span> + <span class="t">3h</span> <span class="t">− 4i</span>)',38);await w0(700);},
+       say:`Three terms, so three arrows.`},
+      {act:()=>E.hop(0,'45'),show:'9 × 5 = 45',say:`9 × 5 is <b>45</b>.`},
+      {act:()=>E.hop(1,'+ 27h'),show:'9 × 3h = 27h',say:`9 × 3h is <b>27h</b>.`},
+      {act:()=>E.hop(2,'− 36i','#e04848'),show:'9 × 4i = 36i <i>the minus stays</i>',say:`9 × 4i is 36i, and the minus stays: <b>minus 36i</b>.`,wait:2400},
+      {show:'= 45 + 27h − 36i',say:`So the answer is <b>45 + 27h − 36i</b>.`}],
+    answer:'45 + 27h − 36i',why:'Check with h = 1, i = 1: 45 + 27 − 36 = 36. ✔'});
+  await w(1500);}},
+
+/* 6 */ {t:'A minus outside',run:async w=>{
+  say(`A bonus: what if the number <b>outside</b> has a minus? This catches lots of people out, so let's go slowly.`);
+  await w(3000);
+  const r1=mk('mx-step try','left:96px;top:40px','−2 × 3 = −6 <i>minus × plus = minus</i>');pop(r1);point(r1);
+  say(`First, a number fact. Minus 2 times 3 is <b>minus 6</b>.`);
+  await w(2600);
+  const r2=mk('mx-step try','left:96px;top:104px','−2 × −3 = +6 <i>minus × minus = plus</i>');pop(r2);point(r2);
+  say(`But minus 2 times minus 3 is <b>plus 6</b>. Two minuses multiplied make a <b>plus</b>.`);
+  await w(3000);
+  clear();
+  let E;
+  await teachQ(w,{src:'Bonus · A minus outside',q:'Expand the brackets.<br>−2(x − 3)',read:'Expand the brackets: minus 2, bracket x − 3.',
+    keys:[['−2',`The number outside is <b>minus 2</b>. Its minus sign gets multiplied too.`],['− 3',`And the 3 inside has a minus in front.`]],
+    before:[{show:'Try x = 5: &nbsp;−2(5 − 3) = −2 × 2 = −4',say:`Try x = 5. The bracket is 2, and minus 2 times 2 is <b>minus 4</b>.`,try:true,wait:2800}],
+    steps:[{act:async()=>{E=expander(650,290,'<span class="o">−2</span>(<span class="t">x</span> <span class="t">− 3</span>)');await w0(700);},
+        show:'−2(x − 3)',say:`Two terms inside: <b>x</b>, and <b>minus 3</b>.`},
+      {act:()=>E.hop(0,'−2x','#e04848'),show:'−2 × x = −2x',say:`Minus 2 times x is <b>minus 2x</b>.`},
+      {act:()=>E.hop(1,'+ 6'),show:'−2 × −3 = +6 <i>minus × minus = plus</i>',say:`Minus 2 times minus 3. Two minuses make a plus: <b>plus 6</b>.`,wait:2600},
+      {show:'= −2x + 6',say:`So the answer is <b>minus 2x + 6</b>.`}],
+    answer:'−2x + 6',why:'Check with x = 5: −2x + 6 = −10 + 6 = −4. ✔ The wrong answer −2x − 6 gives −16.'});
+  await w(1500);}},
+
+/* 7 */ {t:'Build it!',run:async w=>{
+  const R=[[WS+'Q3 e)',STEM3+'<br>e) 6(d − 9)','Expand the brackets: 6, bracket d − 9.',['6d','d','−','+','54','9','15'],[['6d','−','54']],'6d − 54',`6 × d is 6d. 6 × 9 is 54, and the minus stays.`],
+    [WS+'Q5 g)',STEM5+'<br>g) 6(5d − 1)','Multiply out the brackets: 6, bracket 5d − 1.',['30d','11d','5d','−','+','6','1'],[['30d','−','6']],'30d − 6',`6 × 5d is 30d. 6 × 1 is 6, and the minus stays.`],
+    [WS+'Q5 j)',STEM5+'<br>j) 5(3b + 4g)','Multiply out the brackets: 5, bracket 3b + 4g.',['15b','8b','4g','20g','+','−','35bg'],[['15b','+','20g'],['20g','+','15b']],'15b + 20g',`5 × 3b is 15b, and 5 × 4g is 20g. b and g can't join.`]];
+  say(`Your turn to build! Expand each one, then tap the tiles <b>in order</b>. Press <b>Check</b> when you're done.`);
+  await w(3200);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [src,q,read,tiles,answer,model,why]=R[i];
+    mk('ex-head','',`🧩 Build it · ${i+1} of ${R.length}`);
+    say(read);
+    const r=await buildExpr(w,{q,src,tiles,answer,top:44});
+    if(r.ok){right++;say(`Yes! <b>${model}</b> is right. ${why}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+model);pop(s);point(s);say(`Not quite. ${why}`);}
+    await w(3200);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">📦</div><div style="font-size:30px;font-weight:800;color:#7a2e00;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! You're an expanding star.`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 8 */ {t:'The rectangle',run:async w=>{
+  say(`Last worksheet question: a <b>rectangle</b> with a bracket hiding in it.`);
+  await w(2400);
+  const pic=()=>{const r=mk('',`left:690px;top:230px;width:220px;height:110px;border:4px solid #1f2433;background:#fff8ef;box-sizing:border-box`);pop(r);
+    const h=mk('mx lab',`left:620px;top:270px;width:64px;color:#1f2433;font-size:22px`,'8cm');pop(h);
+    const l=mk('mx lab',`left:690px;top:348px;width:220px;color:#1f2433;font-size:22px`,'3y + 4 cm');pop(l);return{r,h,l};};
+  let D=pic(),R;
+  await teachQ(w,{src:WS+'Q9 a)',q:STEM9+'<br>a) area of the rectangle.',
+    read:'The width of the rectangle is 8 centimetres. The length is 3y + 4 centimetres. Write an expression, in its simplest form, for the area of the rectangle.',
+    keys:[['area',`<b>Area</b> of a rectangle is <b>length × width</b>.`],['simplest form',`<b>Simplest form</b> means expand the bracket and collect any like terms.`]],
+    before:[{show:'Try y = 2: &nbsp;8 × 10 = 80',say:`Try y = 2. The length is 3 × 2 + 4, which is 10. The area is 8 × 10, which is <b>80</b>.`,try:true,wait:3200}],
+    steps:[{show:'A = 8 × (3y + 4) <i>width × length</i>',say:`Area is width times length: 8 × (3y + 4). The bracket keeps the whole length together.`,wait:2800},
+      {act:async()=>{D.r.remove();D.l.remove();R=areaRect(690,230,110,'',[['3y',145,'#2c66cf'],['4',75,'#18a058']]);R.side.remove();await w0(800);},
+        say:`Split the rectangle into a 3y part and a 4 part.`,wait:2000},
+      {act:()=>R.fill(0,'24y'),show:'8 × 3y = 24y',say:`8 × 3y is <b>24y</b>.`},
+      {act:()=>R.fill(1,'32'),show:'8 × 4 = 32',say:`8 × 4 is <b>32</b>.`},
+      {show:'A = 24y + 32 cm²',say:`Add the parts: the area is <b>24y + 32</b> centimetres squared.`}],
+    answer:'24y + 32 cm²',why:'Check with y = 2: 48 + 32 = 80. ✔ Area is in cm², square centimetres.'});
+  await w(1200);clear();
+  D=pic();
+  await teachQ(w,{src:WS+'Q9 b)',q:STEM9+'<br>b) Perimeter of rectangle.',
+    read:'Now write an expression, in its simplest form, for the perimeter of the rectangle.',
+    keys:[['Perimeter',`<b>Perimeter</b> is the distance all the way round. P = 2(width + length).`]],
+    before:[{show:'Try y = 2: &nbsp;P = 8 + 10 + 8 + 10 = 36',say:`Try y = 2. The length is 10, so all the way round is 8 + 10 + 8 + 10, which is <b>36</b>.`,try:true,wait:3200}],
+    steps:[{act:async()=>{for(const [k,c] of [['borderLeftColor','#e06a1b'],['borderBottomColor','#2c66cf']])D.r.style[k]=c;pop(D.h);pop(D.l);await w0(700);},
+        show:'P = 2(8 + 3y + 4) <i>2(width + length)</i>',say:`Put the width and length into the formula: 2(8 + 3y + 4).`,wait:2600},
+      {show:'P = 2(3y + 12) <i>8 + 4 = 12</i>',say:`Simplify inside first. 8 and 4 are like terms: 8 + 4 is 12. So 2(3y + 12).`,wait:2800},
+      {show:'P = 6y + 24 cm <i>2 × 3y, 2 × 12</i>',say:`Now expand. 2 × 3y is 6y, and 2 × 12 is 24. So <b>6y + 24</b> centimetres.`,wait:2800}],
+    answer:'6y + 24 cm',why:'Check with y = 2: 12 + 24 = 36. ✔ Perimeter is a length, so it is in cm.'});
+  await w(1500);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Take your time, then tap your answer.`);
+  await w(2800);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Ex 2.4 · Q3 b)',q:'Expand the brackets.<br>b) 4(w + 2)',o:['4w + 2','4w + 8','w + 8','12w'],a:1,
+      why:'4 × w = 4w and 4 × 2 = 8: <b>4w + 8</b>.',whyNot:{0:'only the w was multiplied. The 2 must be multiplied by 4 too.',2:'the w must be multiplied by 4 too.',3:'4w and 8 are unlike terms, so they cannot be joined.'}},
+    {src:'Worksheet · Ex 2.4 · Q3 c)',q:'Expand the brackets.<br>c) 5(z + 5)',o:['5z + 5','10z','5z + 25','z + 25'],a:2,
+      why:'5 × z = 5z and 5 × 5 = 25: <b>5z + 25</b>.',whyNot:{0:'only the z was multiplied. The 5 inside must be multiplied too.',1:'5z and 25 are unlike terms, so they cannot be joined.',3:'the z must be multiplied by 5 too.'}},
+    {src:'Worksheet · Ex 2.4 · Q3 f)',q:'Expand the brackets.<br>f) 2(e − 8)',o:['2e − 16','2e + 16','2e − 8','2e − 10'],a:0,
+      why:'2 × e = 2e and 2 × 8 = 16, and the minus stays: <b>2e − 16</b>.',whyNot:{1:'the 8 has a minus in front, so the answer has minus 16.',2:'only the e was multiplied. The 8 must be multiplied too.',3:'2 × 8 is 16, not 10. That added.'}},
+    {src:'Worksheet · Ex 2.4 · Q3 i)',q:'Expand the brackets.<br>i) 9(3 + i)',o:['27 + i','12 + 9i','27 + 9i','36i'],a:2,
+      why:'9 × 3 = 27 and 9 × i = 9i: <b>27 + 9i</b>.',whyNot:{0:'the i must be multiplied by 9 too.',1:'9 × 3 is 27, not 12. That added.',3:'27 and 9i are unlike terms, so they cannot be joined.'}},
+    {src:'Worksheet · Ex 2.4 · Q3 k)',q:'Expand the brackets.<br>k) 2(1 − y)',o:['2 − y','2 + 2y','2y − 2','2 − 2y'],a:3,
+      why:'2 × 1 = 2 and 2 × y = 2y, and the minus stays: <b>2 − 2y</b>.',whyNot:{0:'the y must be multiplied by 2 too.',1:'the y has a minus in front, so the answer has minus 2y.',2:'the terms have swapped signs: it is 2 take away 2y.'}},
+    {src:'Worksheet · Ex 2.4 · Q3 l)',q:'Expand the brackets.<br>l) 5(7 − p)',o:['35 − 5p','35 − p','12 − 5p','35 + 5p'],a:0,
+      why:'5 × 7 = 35 and 5 × p = 5p, and the minus stays: <b>35 − 5p</b>.',whyNot:{1:'the p must be multiplied by 5 too.',2:'5 × 7 is 35, not 12. That added.',3:'the p has a minus in front, so the answer has minus 5p.'}},
+    {src:'Worksheet · Ex 2.4 · Q5 b)',q:'Multiply out the brackets.<br>b) 4(3y + 5)',o:['12y + 5','7y + 9','12y + 20','12y + 9'],a:2,
+      why:'4 × 3y = 12y and 4 × 5 = 20: <b>12y + 20</b>.',whyNot:{0:'only the first term was multiplied. The 5 must be multiplied too.',1:'that adds 4 to each number. Multiply instead.',3:'4 × 5 is 20, not 9. That added.'}},
+    {src:'Worksheet · Ex 2.4 · Q5 c)',q:'Multiply out the brackets.<br>c) 5(2w + 3)',o:['10w + 3','10w + 15','7w + 8','25w'],a:1,
+      why:'5 × 2w = 10w and 5 × 3 = 15: <b>10w + 15</b>.',whyNot:{0:'only the first term was multiplied. The 3 must be multiplied too.',2:'that adds 5 to each number. Multiply instead.',3:'10w and 15 are unlike terms, so they cannot be joined.'}},
+    {src:'Worksheet · Ex 2.4 · Q5 f)',q:'Multiply out the brackets.<br>f) 4(2c − 3)',o:['8c − 3','8c + 12','8c − 12','6c − 7'],a:2,
+      why:'4 × 2c = 8c and 4 × 3 = 12, and the minus stays: <b>8c − 12</b>.',whyNot:{0:'only the first term was multiplied. The 3 must be multiplied too.',1:'the 3 has a minus in front, so the answer has minus 12.',3:'that adds 4 to each number. Multiply instead.'}},
+    {src:'Worksheet · Ex 2.4 · Q5 h)',q:'Multiply out the brackets.<br>h) 8(3e − 6 + 2f)',o:['24e − 6 + 2f','24e + 48 + 16f','24e − 48 + 2f','24e − 48 + 16f'],a:3,
+      why:'8 × 3e = 24e, 8 × 6 = 48 with its minus, and 8 × 2f = 16f: <b>24e − 48 + 16f</b>.',whyNot:{0:'only the first term was multiplied. All three terms must be.',1:'the 6 has a minus in front, so the answer has minus 48.',2:'the 2f must be multiplied by 8 too.'}},
+    {src:'Worksheet · Ex 2.4 · Q5 i)',q:'Multiply out the brackets.<br>i) 3(a + 2f)',o:['3a + 2f','3a + 5f','3a + 6f','9af'],a:2,
+      why:'3 × a = 3a and 3 × 2f = 6f: <b>3a + 6f</b>.',whyNot:{0:'the 2f must be multiplied by 3 too.',1:'3 × 2 is 6, not 5. That added.',3:'a and f are unlike terms, so they cannot be joined.'}},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  say(`🎉 You finished <b>Expanding brackets</b>! Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['📦','Multiply <b>every</b> term inside',`Multiply every term inside the bracket by the number outside.`],
+    ['🏹','3(y + 6) = <b>3y + 18</b>',`One arrow to each term. 3 bracket y plus 6 is 3y plus 18.`],
+    ['➖','The minus <b>stays</b><br>3(b − 1) = 3b − 3',`A minus inside the bracket stays a minus. 3 bracket b minus 1 is 3b minus 3.`],
+    ['✖️','2 × 3b = 6b<br>2(3b − 4) = <b>6b − 8</b>',`Multiply the numbers, keep the letter. 2 bracket 3b minus 4 is 6b minus 8.`],
+    ['3️⃣','Three terms → <b>three arrows</b>',`Three terms inside means three arrows. Don't miss any.`],
+    ['🔁','−2(x − 3)<br>= <b>−2x + 6</b><br>− × − = +',`With a minus outside, two minuses make a plus. Minus 2 bracket x minus 3 is minus 2x plus 6.`],
+    ['🟧','Area 8(3y + 4)<br>= <b>24y + 32</b> cm²',`Area of a rectangle: 8 times 3y plus 4 is 24y plus 32 centimetres squared.`],
+    ['✅','Check with a <b>number</b>',`Check your answer: put a number in, before and after. Both should match.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px;box-sizing:border-box`,`<span class="e">${B[i][0]}</span><div>${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.mx-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#e06a1b,#f5a54a);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the Maths lessons ➜');f.onclick=()=>{location.href='../maths.html';};pop(f);
+  say(`Brilliant work! 🧠 You can now expand brackets. Next up: <b>solving equations</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>
