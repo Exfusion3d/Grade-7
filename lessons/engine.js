@@ -47,14 +47,33 @@ const HAS_TTS='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
 let voiceOn=true,voice=null,rate=1,speakUntil=0,speakId=0,lastSay='';
 try{voiceOn=localStorage.getItem('pta_voice')!=='0';rate=+(localStorage.getItem('pta_rate')||1);}catch(e){}
 const NOVELTY=/Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Ralph|Kathy|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley/;
-function voices(){return HAS_TTS?speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang)&&!NOVELTY.test(v.name)):[];}
-function pickVoice(){const vs=voices();if(!vs.length)return;let saved='';try{saved=localStorage.getItem('pta_vname')||'';}catch(e){}
-  let v=vs.find(x=>x.name===saved);
-  if(!v){const pref=[/Enhanced|Premium|Natural|Neural/i,/Google UK English Female/,/Serena|Stephanie|Kate|Martha/,/Daniel|Arthur|Oliver/,/Google UK English Male/,/Microsoft (Sonia|Libby|Hazel|Ryan)/,/Samantha|Karen|Moira|Tessa/,/Google US English/,/Microsoft (Aria|Jenny|Zira)/];
-    const gb=vs.filter(x=>/en[-_]GB/i.test(x.lang));for(const r of pref){v=gb.find(x=>r.test(x.name))||vs.find(x=>r.test(x.name));if(v)break;}}
-  voice=v||vs.find(x=>/en[-_]GB/i.test(x.lang))||vs[0];
-  const sel=document.getElementById('vsel');if(sel){sel.innerHTML=vs.map(x=>`<option ${x===voice?'selected':''}>${x.name}</option>`).join('');}}
-if(HAS_TTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+/* Voice quality. Apple names a downloaded Premium/Enhanced voice exactly like the basic one ("Daniel"); only its
+   voiceURI (e.g. com.apple.voice.premium.en-GB.Daniel) tells them apart, so voices are told apart by voiceURI. */
+const vq=v=>/premium/i.test(v.voiceURI+' '+v.name)?2:/enhanced|neural|natural/i.test(v.voiceURI+' '+v.name)?1:0;
+const vbase=v=>v.name.replace(/\s*\((Premium|Enhanced)\)/i,'').trim();
+const vlabel=v=>vbase(v)+[' ',' (Enhanced)',' (Premium)'][vq(v)].trimEnd()+(/en[-_]GB/i.test(v.lang)?' · UK':/en[-_]US/i.test(v.lang)?' · US':'');
+const VPREF=[/Serena|Stephanie|Kate|Martha|Jamie/,/Daniel|Arthur|Oliver/,/Google UK English/,/Microsoft (Sonia|Libby|Hazel|Ryan)/,/Samantha|Karen|Moira|Tessa/,/Google US English/,/Microsoft (Aria|Jenny|Zira)/];
+/* best first: Premium, then Enhanced, then British, then the preferred names */
+const vscore=v=>vq(v)*100+(/en[-_]GB/i.test(v.lang)?50:0)+Math.max(0,...VPREF.map((r,i)=>r.test(v.name)?VPREF.length-i:0));
+function voices(){return HAS_TTS?speechSynthesis.getVoices().filter(v=>/^en[-_]/i.test(v.lang)&&!NOVELTY.test(v.name)).sort((a,b)=>vscore(b)-vscore(a)||vlabel(a).localeCompare(vlabel(b))):[];}
+/* "Device voice": no voice is set on the utterance, so the device speaks with the voice chosen in its own settings
+   (iPhone/iPad: Settings → Accessibility → Spoken Content → Voices). iOS Safari often leaves downloaded Premium/Enhanced
+   voices out of getVoices(), so this is the only way to use them; it is the default on iPhone and iPad. */
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const DEVICE='device';
+function savedVoice(){try{const u=localStorage.getItem('pta_vuri');if(u)return u;
+  /* older versions saved a voice name (pta_vname); on iPhone/iPad that usually meant a basic voice, so use the device voice */
+  return IOS?DEVICE:(localStorage.getItem('pta_vname')||'');}catch(e){return IOS?DEVICE:'';}}
+function pickVoice(){const vs=voices();const saved=savedVoice();
+  let v=null;
+  if(saved!==DEVICE&&vs.length){v=vs.find(x=>x.voiceURI===saved)||null;
+    if(!v&&saved)v=vs.find(x=>vbase(x)===saved.replace(/\s*\((Premium|Enhanced)\)/i,''))||null; /* saved by name */
+    if(!v)v=vs[0];}
+  voice=v;
+  const sel=document.getElementById('vsel');
+  if(sel)sel.innerHTML=`<option value="${DEVICE}" ${voice?'':'selected'}>${IOS?'📱 iPhone/iPad voice (from Settings)':'💻 Device voice (from Settings)'}</option>`+
+    vs.map(x=>`<option value="${x.voiceURI.replace(/"/g,'&quot;')}" ${x===voice?'selected':''}>${vlabel(x)}</option>`).join('');}
+if(HAS_TTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;[300,1000,3000].forEach(t=>setTimeout(pickVoice,t));} /* iOS fills the voice list late */
 function cleanSpeech(html){let t=html.replace(/<br\s*\/?>/gi,'. ').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,' and ');
   t=t.replace(/\((?:[A-Z][a-z]?)\)/g,'').replace(/÷/g,' divided by ').replace(/≈/g,' about ').replace(/[→➡]/g,', ').replace(/=/g,' equals ').replace(/%/g,' percent').replace(/°C/g,' degrees Celsius')
      .replace(/\bB\)/g,'B,').replace(/\bvs\b/g,'versus').replace(/\be\.g\./g,'for example');
@@ -68,7 +87,7 @@ function cleanSpeech(html){let t=html.replace(/<br\s*\/?>/gi,'. ').replace(/<[^>
 function talk(on){$('#mascot').classList.toggle('talking',on);}
 function speak(html){if(!HAS_TTS)return;speechSynthesis.cancel();speakUntil=0;talk(false);if(!voiceOn)return;
   const t=cleanSpeech(html);if(!t)return;const my=++speakId;
-  const u=new SpeechSynthesisUtterance(t);if(voice){u.voice=voice;u.lang=voice.lang;}else u.lang='en-GB';u.rate=rate;u.pitch=1.05;
+  const u=new SpeechSynthesisUtterance(t);if(voice){u.voice=voice;u.lang=voice.lang;} /* no voice: the device's own chosen voice for the page language */u.rate=rate;u.pitch=1.05;
   speakUntil=Date.now()+(t.split(' ').length/(2.4*rate))*1000+2500; /* safety cap if 'end' never fires */
   u.onstart=()=>{if(my===speakId)talk(true);};u.onend=u.onerror=()=>{if(my===speakId){speakUntil=0;talk(false);}};
   if(!speechSynthesis.speaking&&!speechSynthesis.pending)speechSynthesis.speak(u); /* direct call keeps iPad/iPhone happy */
@@ -271,7 +290,7 @@ function vUI(){const b=$('#vbtn');b.textContent=voiceOn?'🗣️ Tutor voice: on
   $('#vsel').style.display=$('#vrate').style.display=voiceOn&&HAS_TTS?'':'none';$('#vrate').value=String(rate);
   if(!HAS_TTS){b.textContent='🗣️ Voice not supported';b.disabled=true;}}
 $('#vbtn').onclick=()=>{voiceOn=!voiceOn;try{localStorage.setItem('pta_voice',voiceOn?'1':'0');}catch(e){}vUI();if(voiceOn)speak(lastSay);else stopVoice();};
-$('#vsel').onchange=e=>{voice=voices().find(v=>v.name===e.target.value)||voice;try{localStorage.setItem('pta_vname',voice.name);}catch(_){}speak(lastSay);};
+$('#vsel').onchange=e=>{const val=e.target.value;voice=val===DEVICE?null:(voices().find(v=>v.voiceURI===val)||voice);try{localStorage.setItem('pta_vuri',voice?voice.voiceURI:DEVICE);}catch(_){}speak(lastSay);};
 $('#vrate').onchange=e=>{rate=+e.target.value;try{localStorage.setItem('pta_rate',rate);}catch(_){}speak(lastSay);};
 $('#bubble').onclick=()=>{if(lastSay){if(!voiceOn){voiceOn=true;vUI();}speak(lastSay);}};
 vUI();if(HAS_TTS)pickVoice();
@@ -280,7 +299,7 @@ addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='Arr
    narration and buttons in a right-hand panel. Portrait screens keep the stacked layout. */
 function fit(){const side=innerWidth>innerHeight;document.body.classList.toggle('side',side);if(!side)document.body.classList.remove('vopen');
   const W=side?1286:980,H=side?536:760,s=Math.min(innerWidth/W,innerHeight/H);const a=$('#app'),h=$('#holder');a.style.transform=`scale(${s})`;h.style.width=W*s+'px';h.style.height=H*s+'px';h.style.marginTop=side?Math.max(0,(innerHeight-H*s)/2)+'px':'';}
-$('#vset').onclick=()=>document.body.classList.toggle('vopen');
+$('#vset').onclick=()=>{document.body.classList.toggle('vopen');if(HAS_TTS)pickVoice();};
 addEventListener('resize',fit);fit();
 addEventListener('scroll',()=>{if(scrollX||scrollY)scrollTo(0,0);});$('#holder').addEventListener('scroll',e=>{e.target.scrollLeft=0;e.target.scrollTop=0;});
 /* Finishing the last scene marks the lesson done in the student's account. (Before logins this was a device-wide
