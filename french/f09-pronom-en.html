@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Le pronom « en »</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 9 · Grammaire et expressions · The pronoun "en".
+   Covers Page 5 "Tu réponds en utilisant le pronom en" Q1–5 and Page 4 "Tu choisis" Q10–11.
+   Every worksheet question is taught with teachFR (french.js): question first, key words lit, "Show me", steps, stamp, why. */
+const P5='Worksheet · Page 5 · Pronom en ',P4='Worksheet · Page 4 · Tu choisis ';
+const STEM=fr('Tu réponds en utilisant le pronom « en » :','Answer using the pronoun "en":');
+/* a phrase chip that flies into the "en" bubble and disappears */
+async function swallow(chip,bub){const cx=chip.offsetLeft+chip.offsetWidth/2,cy=chip.offsetTop+chip.offsetHeight/2,bx=bub.offsetLeft+bub.offsetWidth/2,by=bub.offsetTop+bub.offsetHeight/2;
+  await an(chip,[{transform:'none',opacity:1},{transform:`translate(${bx-cx}px,${by-cy}px) scale(.2)`,opacity:0}],{duration:1000,easing:'ease-in'});
+  an(bub,[{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:400});beep(820,.1);}
+const enBubble=(x,y,s=120)=>{const b=mk('',`left:${x}px;top:${y}px;width:${s}px;height:${s}px;border-radius:50%;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:${s*.42}px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 0 #4a2ea6`,'en');pop(b);return b;};
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f09', num:9, part:'Grammaire et expressions', emoji:'🍬', title:'Le pronom « en »',
+  intro:`Bonjour! I'm <b>Coco the Parrot</b> 🦜 Today: a tiny word that saves lots of words. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Tu veux un bonbon ?',run:async w=>{
+  const jar=mk('','left:90px;top:60px;width:220px;height:260px;border-radius:30px 30px 50px 50px;background:rgba(93,156,245,.15);border:5px solid #5d9cf5;display:flex;flex-wrap:wrap;align-content:flex-end;justify-content:center;padding:14px;font-size:44px','🍬🍭🍬🍬🍭🍬🍬🍭🍬');pop(jar);
+  loop(jar,[{transform:'rotate(-2deg)'},{transform:'rotate(2deg)'}],900,{direction:'alternate'});
+  const q=mk('fq-step','left:380px;top:70px;width:520px;font-size:30px',fr('Tu veux un bonbon ?','Do you want a sweet?'));pop(q);point(q);
+  say(`Your friend offers you a sweet: ${fr('Tu veux un bonbon ?','Do you want a sweet?')}`);
+  await w(3000);
+  const a=mk('fq-step','left:380px;top:170px;width:520px;font-size:30px',fr('Oui, je veux un bonbon.','Yes, I want a sweet.'));pop(a);point(a);
+  say(`You could say ${fr('Oui, je veux un bonbon.','Yes, I want a sweet.')} But saying ${fw('un bonbon')} again is boring!`);
+  await w(3400);
+  const b=mk('fq-step','left:380px;top:270px;width:520px;font-size:34px;border-color:#6a45d8',fr("Oui, j'<b style=\"color:#6a45d8\">en</b> veux.",'Yes, I want <b style="color:#6a45d8">one</b>.'));pop(b);point(b);
+  say(`French people say ${fr("Oui, j'en veux.","Yes, I want one.")} The little word ${fw('en')} replaces ${fw('un bonbon')}.`);
+  await w(3600);
+  stage.querySelector('.fq-point')?.remove();
+  const t=mk('fq-why','left:380px;top:380px;width:520px','💡 '+fw('en')+' = <b>some</b>, <b>one</b>, <b>of it</b> or <b>of them</b>. It saves repeating words!');pop(t);
+  say(`${fw('en')} means <b>some</b>, <b>one</b>, <b>of it</b> or <b>of them</b>. It saves you repeating words.`);
+  await w(3400);}},
+
+/* 1 */ {t:'Que remplace « en » ?',run:async w=>{
+  say(`So what can ${fw('en')} replace? Words that come after ${fw('un')}, ${fw('une')}, ${fw('du')}, ${fw('de la')}, ${fw('des')}, a <b>number</b> or ${fw('de')}.`);
+  await w(3600);
+  const bub=enBubble(420,360);
+  const C=[['un bonbon','a sweet'],['de la glace','some ice cream'],['deux stylos','two pens'],['un kilo de riz','a kilo of rice'],['de sa fête','about his party']];
+  for(let i=0;i<C.length;i++){const c=mk('fq-chip',`left:${40+(i%3)*300}px;top:${40+Math.floor(i/3)*110}px;font-size:26px`,fr(C[i][0],C[i][1]));pop(c);point(c);
+    say(fr(C[i][0],C[i][1]));await w(1400);}
+  stage.querySelector('.fq-point')?.remove();
+  say(`All of these can turn into ${fw('en')}. Watch them disappear!`);await w(1600);
+  for(const c of [...stage.querySelectorAll('.fq-chip')])await swallow(c,bub);
+  const t=mk('fq-why','left:180px;top:250px;width:600px;text-align:center','💡 '+fw('en')+' replaces a thing after <b>un, une, du, de la, des, de</b> or a <b>number</b>.');pop(t);
+  say(`${fw('en')} replaces the thing. It's like a hungry little word that eats the phrase!`);
+  await w(3400);}},
+
+/* 2 */ {t:'Où va « en » ?',run:async w=>{
+  say(`Where does ${fw('en')} go? Always <b>before</b> the verb. That's different from English.`);
+  await w(3000);
+  const l1=mk('fq-step','left:120px;top:40px;width:720px;font-size:30px',fr('Elle <b style="color:#2c66cf">mange</b> de la glace.','She <b style="color:#2c66cf">eats</b> some ice cream.'));pop(l1);point(l1);
+  say(fr('Elle mange de la glace.','She eats some ice cream.'));await w(2400);
+  const l2=mk('fq-step','left:120px;top:130px;width:720px;font-size:30px',fr('Elle <b style="color:#6a45d8">en</b> <b style="color:#2c66cf">mange</b>.','She eats <b style="color:#6a45d8">some</b>.'));pop(l2);point(l2);
+  say(`${fr('Elle en mange.','She eats some.')} ${fw('en')} jumps <b>in front of</b> the verb ${fw('mange')}.`);await w(3400);
+  const arrow=mk('','left:260px;top:220px;font-size:46px','⬆️');loop(arrow,[{transform:'translateY(0)'},{transform:'translateY(-12px)'}],500,{direction:'alternate'});
+  await w(1200);arrow.remove();
+  say(`And with ${fw('je')}? ${fw('je')} and ${fw('en')} squeeze together: ${fw("j'en")}. Just like ${fw("j'ai")} and ${fw("j'aime")}.`);
+  const j=mk('','left:180px;top:250px;width:600px;display:flex;justify-content:center;align-items:center;gap:16px',
+    `<span class="fq-chip" style="font-size:32px">je</span><span class="fq" style="font-size:34px">+</span><span class="fq-chip" style="font-size:32px;border-color:#6a45d8;color:#6a45d8">en</span><span class="fq" style="font-size:34px">=</span><span class="fq-chip" style="font-size:36px;background:#e6f7ee;border-color:#18a058;color:#0f7a40">j'en</span>`);pop(j);point(j);
+  await w(3600);
+  const ex=mk('fq-step','left:120px;top:360px;width:720px;font-size:30px',fr("J'en veux. &nbsp; J'en ai deux. &nbsp; J'en achète un kilo.","I want one. &nbsp; I've got two. &nbsp; I'm buying a kilo."));pop(ex);point(ex);
+  say(`Like this: ${fr("J'en veux. J'en ai deux. J'en achète un kilo.","I want one. I've got two. I'm buying a kilo.")}`);
+  await w(4000);}},
+
+/* 3 */ {t:'Tu réponds (1)',run:async w=>{
+  say(`Now the worksheet: ${fr('<b>Tu réponds en utilisant le pronom « en »</b>','<b>Answer using the pronoun "en"</b>')}. Every answer starts with ${fr('oui','yes')}.`);
+  await w(3000);
+  await teachFR(w,{src:P5+'Q1',q:STEM+'<br>'+fr('<b>Tu veux un bonbon ?</b> &nbsp; Oui, ……………','<b>Do you want a sweet?</b> &nbsp; Yes, ……………'),
+    read:fr('Tu veux un bonbon ?','Do you want a sweet?'),
+    keys:[['un bonbon',`${fw('un bonbon')} is the thing. ${fw('en')} will replace it.`,'a sweet'],['Tu veux',`${fr('Tu veux','You want')}. In the answer, <b>you</b> becomes <b>I</b>: ${fw('je veux')}.`,'Do you want']],
+    steps:[{show:fr('je veux <s>un bonbon</s>','I want <s>a sweet</s>'),say:`Start with ${fr('je veux un bonbon','I want a sweet')}, and take away ${fw('un bonbon')}.`},
+      {show:fr('je + en → <b>j\'en</b> veux','I + one → I want <b>one</b>'),say:`Put ${fw('en')} before the verb. ${fw('je')} plus ${fw('en')} makes ${fw("j'en")}.`},
+      {show:fr("Oui, j'en veux.","Yes, I want one."),say:fr("Oui, j'en veux.","Yes, I want one."),wait:2000}],
+    answer:fr("Oui, j'en veux.","Yes, I want one."),why:`${fw('en')} replaces ${fw('un bonbon')} and goes before ${fw('veux')}.`});
+  await w(1200);clear();
+  await teachFR(w,{src:P5+'Q2',q:STEM+'<br>'+fr('<b>Elle mange de la glace ?</b> &nbsp; Oui, ……………','<b>Is she eating ice cream?</b> &nbsp; Yes, ……………'),
+    read:fr('Elle mange de la glace ?','Is she eating ice cream?'),
+    keys:[['de la glace',`${fw('de la glace')} means <b>some ice cream</b>. That's what ${fw('en')} replaces.`,'ice cream'],['Elle',`${fw('Elle')} means <b>she</b>. She stays she.`,'she']],
+    steps:[{show:fr('elle mange <s>de la glace</s>','she eats <s>some ice cream</s>'),say:`Take away ${fw('de la glace')}.`},
+      {show:fr('elle <b>en</b> mange','she eats <b>some</b>'),say:`Put ${fw('en')} in front of ${fw('mange')}.`},
+      {show:fr('Oui, elle en mange.','Yes, she is eating some.'),say:fr('Oui, elle en mange.','Yes, she is eating some.'),wait:2000}],
+    answer:fr('Oui, elle en mange.','Yes, she is eating some.'),why:`${fw('de la')} + a thing → ${fw('en')}, before the verb.`});
+  await w(1500);}},
+
+/* 4 */ {t:'Tu réponds (2)',run:async w=>{
+  say(`When there's a <b>number</b> or an <b>amount</b>, ${fw('en')} replaces the thing, but we <b>keep the amount</b> at the end.`);
+  await w(3200);
+  await teachFR(w,{src:P5+'Q3',q:STEM+'<br>'+fr('<b>Tu as deux stylos ?</b> &nbsp; Oui, ……………','<b>Have you got two pens?</b> &nbsp; Yes, ……………'),
+    read:fr('Tu as deux stylos ?','Have you got two pens?'),
+    keys:[['deux',`${fw('deux')} means <b>two</b>. It's a number, so we keep it!`,'two'],['Tu as',`${fr('Tu as','You have')} becomes ${fr("j'ai",'I have')} in the answer.`,'Have you']],
+    steps:[{show:fr("j'ai deux <s>stylos</s>","I have two <s>pens</s>"),say:`${fw('en')} replaces ${fw('stylos')}, the pens.`},
+      {show:fr("j'<b>en</b> ai <b>deux</b>","I have <b>two</b> (of them)"),say:`${fw('en')} goes before ${fw('ai')}, and ${fw('deux')} stays at the end.`},
+      {show:fr("Oui, j'en ai deux.","Yes, I've got two."),say:fr("Oui, j'en ai deux.","Yes, I've got two."),wait:2000}],
+    answer:fr("Oui, j'en ai deux.","Yes, I've got two."),why:`Keep the number at the end: ${fr("j'en ai deux","I've got two of them")}.`});
+  await w(1200);clear();
+  await teachFR(w,{src:P5+'Q4',q:STEM+'<br>'+fr('<b>Tu achètes un kilo de riz ?</b> &nbsp; Oui, ……………','<b>Are you buying a kilo of rice?</b> &nbsp; Yes, ……………'),
+    read:fr('Tu achètes un kilo de riz ?','Are you buying a kilo of rice?'),
+    keys:[['un kilo',`${fw('un kilo')} is an <b>amount</b>. We keep it.`,'a kilo'],['de riz',`${fw('de riz')} means <b>of rice</b>. ${fw('en')} replaces this part.`,'of rice']],
+    steps:[{show:fr("j'achète un kilo <s>de riz</s>","I'm buying a kilo <s>of rice</s>"),say:`Take away ${fw('de riz')}.`},
+      {show:fr("j'<b>en</b> achète <b>un kilo</b>","I'm buying <b>a kilo</b> (of it)"),say:`${fw('en')} goes before ${fw('achète')}, and ${fw('un kilo')} stays at the end.`},
+      {show:fr("Oui, j'en achète un kilo.","Yes, I'm buying a kilo."),say:fr("Oui, j'en achète un kilo.","Yes, I'm buying a kilo."),wait:2000}],
+    answer:fr("Oui, j'en achète un kilo.","Yes, I'm buying a kilo."),why:`Don't forget the accent: ${fw('achète')}.`});
+  await w(1500);}},
+
+/* 5 */ {t:'Parler de…',run:async w=>{
+  await teachFR(w,{src:P5+'Q5',q:STEM+'<br>'+fr("<b>Il parle de sa fête d'anniversaire ?</b> &nbsp; Oui, ……………","<b>Is he talking about his birthday party?</b> &nbsp; Yes, ……………"),
+    read:fr("Il parle de sa fête d'anniversaire ?","Is he talking about his birthday party?"),
+    keys:[['parle de',`${fw('parler de')} means <b>to talk about</b>.`,'talking about'],["de sa fête d'anniversaire",`${fw('en')} can replace ${fw('de')} plus a thing: the whole birthday party!`,'his birthday party']],
+    before:[{act:async()=>{const c=mk('','left:760px;top:260px;font-size:80px','🎂');pop(c);loop(c,[{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'}],500,{direction:'alternate'});},
+      show:'Hint: '+fw('de')+' + a thing → '+fw('en'),say:`Hint: ${fw('de')} plus a thing can become ${fw('en')}.`,try:true}],
+    steps:[{show:fr("il parle <s>de sa fête d'anniversaire</s>","he talks <s>about his birthday party</s>"),say:`Take away ${fw("de sa fête d'anniversaire")}.`},
+      {show:fr('il <b>en</b> parle','he talks <b>about it</b>'),say:`Put ${fw('en')} before ${fw('parle')}.`},
+      {show:fr('Oui, il en parle.',"Yes, he's talking about it."),say:fr('Oui, il en parle.',"Yes, he's talking about it."),wait:2000}],
+    answer:fr('Oui, il en parle.',"Yes, he's talking about it."),why:`Here ${fw('en')} means <b>about it</b>. It replaces ${fw('de')} + the thing.`});
+  await w(1500);}},
+
+/* 6 */ {t:'en, la ou les ?',run:async w=>{
+  say(`Two choice questions from page 4. Be careful: ${fw('la')} and ${fw('les')} are <b>not</b> right when there's a quantity.`);
+  await w(3000);
+  await teachFR(w,{src:P4+'Q10',q:fr("Tu veux un gâteau ? &nbsp; Oui, j'…… veux.","Do you want a cake? &nbsp; Yes, I want …… .")+`<div style="margin-top:6px;font-size:19px">a- ${fr('en','one / some')} &nbsp;&nbsp;&nbsp; b- ${fr('la','it / her')}</div>`,
+    read:fr("Tu veux un gâteau ? Oui, j'…… veux.","Do you want a cake? Yes, I want one."),
+    keys:[['un gâteau',`${fw('un gâteau')}: after ${fw('un')}, so ${fw('en')} is the one we need.`,'a cake']],
+    steps:[{show:fr('un gâteau → <b>en</b>','a cake → <b>one</b>'),say:`${fw('un')} plus a thing becomes ${fw('en')}.`},
+      {show:fr("Oui, j'en veux.","Yes, I want one."),say:`Also, ${fw("j'")} needs a word starting with a vowel. ${fr("J'en veux.","I want one.")}`}],
+    answer:fr('a- en','a- one'),why:`${fw('la')} would replace ${fw('la')} + a thing, like ${fw('la glace')}, not ${fw('un gâteau')}.`});
+  await w(1200);clear();
+  await teachFR(w,{src:P4+'Q11',q:fr("Il prend deux cahiers ? &nbsp; Oui, il …… prend.","Is he taking two exercise books? &nbsp; Yes, he takes …… .")+`<div style="margin-top:6px;font-size:19px">a- ${fr('les','them')} &nbsp;&nbsp;&nbsp; b- ${fr('en','(two) of them')}</div>`,
+    read:fr("Il prend deux cahiers ? Oui, il …… prend.","Is he taking two exercise books? Yes, he takes two of them."),
+    keys:[['deux',`${fw('deux')} is a <b>number</b>. With a number we use ${fw('en')}.`,'two']],
+    steps:[{show:fr('deux cahiers → <b>en</b>','two exercise books → <b>of them</b>'),say:`A number plus a thing becomes ${fw('en')}.`},
+      {show:fr('Oui, il en prend (deux).','Yes, he takes two (of them).'),say:fr('Oui, il en prend.','Yes, he takes some.')}],
+    answer:fr('b- en','b- of them'),why:`${fw('les')} means <b>them</b>, all of something specific. With a number or amount, use ${fw('en')}.`});
+  await w(1500);}},
+
+/* 7 */ {t:'Construis la phrase',run:async w=>{
+  const R=[[fr('Réponds avec « en » : <b>Tu veux un bonbon ?</b>','Answer with "en": <b>Do you want a sweet?</b>'),['Oui,',"j'",'en','la','veux','un'],[['Oui,',"j'",'en','veux']],"Oui, j'en veux.","Yes, I want one."],
+    [fr('Réponds avec « en » : <b>Tu as deux stylos ?</b>','Answer with "en": <b>Have you got two pens?</b>'),['Oui,',"j'",'en','ai','deux','stylos','les'],[['Oui,',"j'",'en','ai','deux']],"Oui, j'en ai deux.","Yes, I've got two."],
+    [fr('Réponds avec « en » : <b>Elle mange de la glace ?</b>','Answer with "en": <b>Is she eating ice cream?</b>'),['Oui,','elle','en','mange','la','glace'],[['Oui,','elle','en','mange']],'Oui, elle en mange.','Yes, she is eating some.']];
+  say(`Your turn to build! Tap the words <b>in order</b>. Remember: ${fw('en')} goes before the verb.`);
+  await w(3000);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,mEn]=R[i];
+    mk('ex-head','',`🧩 ${fr('Construis la phrase','Build the sentence')} · ${i+1} / ${R.length}`);
+    say(q);
+    const r=await buildSentence(w,{q,tiles,answer,top:44});
+    if(r.ok){right++;say(`${fr('Oui !','Yes!')} ${fr(model,mEn)}`);}
+    else{const s=mk('stamp',`left:280px;top:${r.y+20}px`,'✔ '+fr(model,mEn));pop(s);point(s);say(`Not quite. The answer is ${fr(model,mEn)}`);}
+    await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🍬</div><div style="font-size:30px;font-weight:800;color:#1d3f8a;margin-top:6px">${right} / ${R.length}</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`${fr('Bravo !','Well done!')} All ${R.length} right!`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question. For the written ones, say your answer first, then reveal it.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 4 · Tu choisis Q10',q:"Tu veux un gâteau ? Oui, j'…… veux.",en:'Do you want a cake? Yes, I want …… .',o:['en','la'],oe:['one / some','it / her'],a:0,
+      why:`${fw('un gâteau')} becomes ${fw('en')}: ${fr("Oui, j'en veux.","Yes, I want one.")}`,whyNot:{1:`${fw('la')} doesn't replace ${fw('un')} + a thing.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q11',q:"Il prend deux cahiers ? Oui, il …… prend.",en:'Is he taking two exercise books? Yes, he takes …… .',o:['les','en'],oe:['them','(two) of them'],a:1,
+      why:`A number plus a thing becomes ${fw('en')}: ${fr('Oui, il en prend.','Yes, he takes some.')}`,whyNot:{0:`${fw('les')} is not used with a number like ${fw('deux')}.`}},
+    {src:'Worksheet · Page 5 · Pronom en Q1',q:"Tu réponds en utilisant le pronom « en » : Tu veux un bonbon ? Oui, ……",en:'Answer using the pronoun "en": Do you want a sweet? Yes, ……',model:"Oui, j'en veux.",men:'Yes, I want one.'},
+    {src:'Worksheet · Page 5 · Pronom en Q2',q:"Tu réponds en utilisant le pronom « en » : Elle mange de la glace ? Oui, ……",en:'Answer using the pronoun "en": Is she eating ice cream? Yes, ……',model:'Oui, elle en mange.',men:'Yes, she is eating some.'},
+    {src:'Worksheet · Page 5 · Pronom en Q3',q:"Tu réponds en utilisant le pronom « en » : Tu as deux stylos ? Oui, ……",en:'Answer using the pronoun "en": Have you got two pens? Yes, ……',model:"Oui, j'en ai deux.",men:"Yes, I've got two."},
+    {src:'Worksheet · Page 5 · Pronom en Q4',q:"Tu réponds en utilisant le pronom « en » : Tu achètes un kilo de riz ? Oui, ……",en:'Answer using the pronoun "en": Are you buying a kilo of rice? Yes, ……',model:"Oui, j'en achète un kilo.",men:"Yes, I'm buying a kilo."},
+    {src:'Worksheet · Page 5 · Pronom en Q5',q:"Tu réponds en utilisant le pronom « en » : Il parle de sa fête d'anniversaire ? Oui, ……",en:'Answer using the pronoun "en": Is he talking about his birthday party? Yes, ……',model:'Oui, il en parle.',men:"Yes, he's talking about it."},
+  ]);}},
+
+/* 9 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Le pronom « en »</b>','<b>The pronoun "en"</b>')}. Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🍬',fr("Oui, j'en veux.","Yes, I want one."),`${fw('en')} replaces the thing, so we don't repeat it.`],
+    ['📦',fr('un, une, du, de la, des, de','a, some, of'),`It replaces a thing after these little words.`],
+    ['⬅️',fr('en + verbe','en + verb'),`${fw('en')} goes <b>before</b> the verb.`],
+    ['🤝',fr("je + en = j'en","I + en = j'en"),`${fw('je')} and ${fw('en')} squeeze into ${fw("j'en")}.`],
+    ['🍨',fr('Oui, elle en mange.','Yes, she is eating some.'),`${fw('de la glace')} becomes ${fw('en')}.`],
+    ['✌️',fr("Oui, j'en ai deux.","Yes, I've got two."),`Keep the number at the end.`],
+    ['🍚',fr("Oui, j'en achète un kilo.","Yes, I'm buying a kilo."),`Keep the amount at the end too.`],
+    ['🎂',fr('Oui, il en parle.',"Yes, he's talking about it."),`${fw('parler de')} something becomes ${fw('en parler')}.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:18px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: saying <b>yes</b> to an invitation at the French Institute.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

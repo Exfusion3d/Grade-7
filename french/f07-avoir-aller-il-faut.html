@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Avoir, aller et « il faut »</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 7 · Les verbes au présent · avoir, aller, il faut, bon/bonne, très.
+   Tu choisis Page 3 Q4, Q5 and Page 4 Q6–Q9, and Page 6 "Donnez 5 conseils pour vivre sans stress".
+   Every worksheet question is taught with teachFR (french.js), then asked again in the Exam check. */
+
+/* one "Tu choisis" question, d = [page, number, French, English, [a, b], [a in English, b in English], answer index] */
+async function choose(w,{d:[p,n,q,en,o,oe,a],keys,steps,why}){
+  await teachFR(w,{src:`Worksheet · Page ${p} · Tu choisis Q${n}`,
+    q:fr(`Tu choisis :<br>${q}<br>a- ${o[0]} &nbsp;&nbsp;&nbsp; b- ${o[1]}`,`Choose:<br>${en}<br>a- ${oe[0]} &nbsp;&nbsp;&nbsp; b- ${oe[1]}`),
+    read:fr(`${q} a : ${o[0]}. b : ${o[1]}.`,`${en} a: ${oe[0]}. b: ${oe[1]}.`),
+    keys,steps,answer:fr(`${'ab'[a]}) ${o[a]}`,`${'ab'[a]}) ${oe[a]}`),why});}
+/* show a whole verb table, reading each row aloud */
+async function showTable(w,x,y,wd,verb,en,rows){const C=conjCard(x,y,wd,{verb,en,rows});await w(300);for(let i=0;i<6;i++)await C.show(i,w);return C;}
+const AVOIR=[["j'",'ai','','I have'],['tu','as','','you have'],['il / elle','a','','he / she has'],['nous','avons','','we have'],['vous','avez','','you have'],['ils / elles','ont','','they have']];
+const ALLER=[['je','vais','','I go'],['tu','vas','','you go'],['il / elle','va','','he / she goes'],['nous','allons','','we go'],['vous','allez','','you go'],['ils / elles','vont','','they go']];
+const TIPS=[['🏃','Il faut faire du sport.','You must do sport.'],['📖','Il faut lire le Coran.',"You must read the Qur'an."],['🥗','Il faut bien manger.','You must eat well.'],
+  ['😴','Il faut bien dormir.','You must sleep well.'],['🤲','Il faut faire la prière.','You must pray.']];
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f07', num:7, part:'Les verbes au présent', emoji:'🎒', title:'Avoir, aller et « il faut »',
+  intro:`${fr('Bonjour !','Hello!')} I'm <b>Coco the Parrot</b> 🦜 Today: the super-useful verbs ${fw('avoir')} and ${fw('aller')}. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Two super verbs',run:async w=>{
+  say(`${fr('Bonjour !','Hello!')} Two verbs you'll use every day: ${fr('<b>avoir</b>','<b>to have</b>')} and ${fr('<b>aller</b>','<b>to go</b>')}.`);
+  const a=mk('fq-card','left:90px;top:40px;width:330px;height:210px;text-align:center',`<div style="font-size:72px">🎒</div><div style="font-size:34px;font-weight:800;color:#1d3f8a">${fr('avoir','to have')}</div>`);pop(a);
+  const b=mk('fq-card','left:540px;top:40px;width:330px;height:210px;text-align:center',`<div style="font-size:72px">🚶</div><div style="font-size:34px;font-weight:800;color:#1d3f8a">${fr('aller','to go')}</div>`);pop(b,300);
+  loop(b.firstChild,[{transform:'translateX(-30px)'},{transform:'translateX(30px)'}],1100,{direction:'alternate'});
+  await w(3400);
+  say(`They are <b>irregular</b>: they don't follow any pattern, so we learn them by heart. Parrots are great at that! 🦜`);
+  await w(3000);
+  say(`We'll also meet ${fr('<b>il faut</b>','<b>you must</b>')}, which is perfect for giving advice.`);
+  const c=mk('fq-step','left:250px;top:300px;width:460px;text-align:center;font-size:30px',fr('Il faut bien dormir. 😴','You must sleep well. 😴'));pop(c);point(c);
+  await w(3400);}},
+
+/* 1 */ {t:'Avoir',run:async w=>{
+  say(`Here's ${fr('<b>avoir</b>','<b>to have</b>')}. Listen to each line and repeat it, like a parrot!`);
+  await w(2200);
+  await showTable(w,40,14,440,'avoir','to have',AVOIR);
+  stage.querySelector('.fq-point')?.remove();
+  const n1=mk('fq-why','left:510px;top:30px;width:420px',`💡 ${fw("j'ai")}: ${fw('je')} becomes ${fw("j'")} because ${fw('ai')} starts with a vowel.`);pop(n1);
+  say(`Notice ${fr("j'ai","I have")}. ${fw('Ai')} starts with a vowel, so ${fw('je')} shortens to ${fw("j'")}.`);
+  await w(3000);
+  const n2=mk('fq-why','left:510px;top:150px;width:420px',`💡 ${fw('tu as')} has an <b>s</b>, ${fw('il a')} is just one letter!`);pop(n2);
+  say(`${fr('Tu as','You have')} has an s, and ${fr('il a','he has')} is just the letter <b>a</b>.`);
+  await w(3000);
+  const n3=mk('fq-why','left:510px;top:270px;width:420px',`💡 ${fw('ils ont')}: they have. Don't mix it up with ${fw('ils sont')}, they are.`);pop(n3);
+  say(`${fr('Ils ont','They have')} is short and sweet. 🎒`);
+  await w(2600);}},
+
+/* 2 */ {t:"J'ai math",run:async w=>{
+  await choose(w,{d:[4,8,"J'…… math.",'I …… maths.',['as','ai'],['have (tu form)','have'],1],
+    keys:[["J'",`${fw("J'")} is ${fw('je')}, <b>I</b>.`,'I'],['math',`${fw('math')} means <b>maths</b>. "I have maths" means maths is on my timetable.`,'maths']],
+    steps:[{show:`${fw("j'")} = ${fw('je')} → ${fw('ai')}`,say:`The ${fw('je')} form of ${fw('avoir')} is ${fw('ai')}.`},
+      {show:fr("<b>J'ai</b> math.","<b>I have</b> maths."),say:`${fr("J'ai math.","I have maths.")} We saw it in the school text too!`,wait:2600}],
+    why:`${fw('As')} goes with ${fw('tu')}: ${fr('tu as','you have')}. ${fw('Je')} → ${fw("j'ai")}.`});
+  await w(1500);}},
+
+/* 3 */ {t:'Aller',run:async w=>{
+  say(`Now ${fr('<b>aller</b>','<b>to go</b>')}. Even stranger: it starts with v, then changes to all!`);
+  await w(2400);
+  await showTable(w,40,14,440,'aller','to go',ALLER);
+  stage.querySelector('.fq-point')?.remove();
+  const n1=mk('fq-why','left:510px;top:30px;width:420px',`💡 ${fw('je vais, tu vas, il va')}: they start with <b>v</b>.`);pop(n1);
+  say(`${fr('Je vais, tu vas, il va','I go, you go, he goes')}: all start with <b>v</b>.`);
+  await w(2800);
+  const n2=mk('fq-why','left:510px;top:140px;width:420px',`💡 ${fw('nous allons, vous allez')}: back to <b>all-</b>.`);pop(n2);
+  say(`${fr('Nous allons, vous allez','we go, you go')}: back to <b>all</b>, like ${fw('aller')}.`);
+  await w(2800);
+  const n3=mk('fq-why','left:510px;top:250px;width:420px',`💡 ${fw('ils vont')}: they go.`);pop(n3);
+  say(`And ${fr('ils vont','they go')}. 🚶`);
+  await w(2400);}},
+
+/* 4 */ {t:'Je vais, il va',run:async w=>{
+  await choose(w,{d:[4,9,"Je …… à l'école à 7 heures.","I …… to school at 7 o'clock.",['vais','va'],['go','goes'],0],
+    keys:[['Je',`${fw('Je')} means <b>I</b>.`,'I'],["à l'école",`${fw("à l'école")} means <b>to school</b>.`,'to school']],
+    steps:[{show:`${fw('je')} → ${fw('vais')}`,say:`The ${fw('je')} form of ${fw('aller')} is ${fw('vais')}.`},
+      {show:fr("Je <b>vais</b> à l'école à 7 heures.","I <b>go</b> to school at 7 o'clock."),say:`${fr("Je vais à l'école à 7 heures.","I go to school at 7 o'clock.")}`,wait:2600}],
+    why:`${fw('Va')} goes with ${fw('il')} or ${fw('elle')}. ${fw('Je')} → ${fw('vais')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[3,4,'Il …… parler au secrétaire.','He …… to speak to the secretary.',['vont','va'],['are going','is going'],1],
+    keys:[['Il',`${fw('Il')} means <b>he</b>: one person.`,'He'],['parler',`${fw('parler')} means <b>to speak</b>. It's still in the -er form.`,'to speak']],
+    steps:[{show:`${fw('il')} → ${fw('va')}`,say:`${fw('Il')} takes ${fw('va')}. ${fw('Vont')} is for ${fw('ils')}, several people.`},
+      {show:`${fw('va')} + ${fw('parler')} = <b>is going to</b> speak`,say:`${fw('Va')} plus a verb in -er means <b>is going to</b>: ${fr('Il va parler au secrétaire.','He is going to speak to the secretary.')}`,wait:3000}],
+    why:`${fw('Aller')} + infinitive talks about the future: ${fr('il va parler','he is going to speak')}.`});
+  await w(1500);}},
+
+/* 5 */ {t:'Il faut + verb',run:async w=>{
+  say(`${fr('<b>Il faut</b>','<b>You must</b>')} means <b>you must</b> or <b>you need to</b>. It never changes: it's always ${fw('il faut')}.`);
+  const big=mk('fq','left:0;top:40px;width:960px;text-align:center;font-size:56px',`${fw('il faut')} + <span style="color:#e04848">verb in -er / -re / -ir</span>`);pop(big);
+  await w(3400);
+  say(`After ${fw('il faut')}, the next verb stays in the <b>infinitive</b>, the dictionary form: ${fr('il faut avoir, il faut manger','you must have, you must eat')}.`);
+  ['avoir','manger','dormir'].forEach((v,i)=>{const c=mk('fq-chip',`left:${150+i*230}px;top:150px`,fr('il faut '+v,['you must have','you must eat','you must sleep'][i]));pop(c,i*300);});
+  await w(3600);
+  clear();
+  await choose(w,{d:[4,6,'Il faut …… un bon niveau.','You need …… a good level.',['avons','avoir'],['have (nous form)','to have'],1],
+    keys:[['Il faut',`${fw('Il faut')} means <b>you need</b>. The next verb stays in the infinitive.`,'You need']],
+    steps:[{show:`${fw('il faut')} + infinitive`,say:`After ${fw('il faut')}, the verb keeps its dictionary form.`},
+      {show:fr('Il faut <b>avoir</b> un bon niveau.','You need <b>to have</b> a good level.'),say:`So: ${fr('Il faut avoir un bon niveau.','You need to have a good level.')}`,wait:2800}],
+    why:`${fw('Avons')} goes only with ${fw('nous')}. After ${fw('il faut')}: ${fw('avoir')}.`});
+  await w(1500);}},
+
+/* 6 */ {t:'Bon et très',run:async w=>{
+  await choose(w,{d:[3,5,'Il faut avoir un …… niveau.','You need to have a …… level.',['bon','bonne'],['good (masculine)','good (feminine)'],0],
+    keys:[['un',`${fw('Un')} tells us ${fw('niveau')} is a <b>masculine</b> word.`,'a'],['niveau',`${fw('niveau')} means <b>level</b>.`,'level']],
+    steps:[{show:`${fw('un niveau')} → masculine`,say:`${fw('Un')} goes with masculine words. ${fw('Une')} goes with feminine ones.`},
+      {show:`masculine: ${fw('bon')} · feminine: ${fw('bonne')}`,say:`For a masculine word, <b>good</b> is ${fw('bon')}. ${fw('Bonne')} is for feminine words, like ${fr('une bonne idée','a good idea')}.`,wait:3000},
+      {show:fr('un <b>bon</b> niveau','a <b>good</b> level'),say:`${fr('Il faut avoir un bon niveau.','You need to have a good level.')}`,wait:2400}],
+    why:`${fw('un')} → ${fw('bon')}; ${fw('une')} → ${fw('bonne')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[4,7,"C'est …… facile.","It's …… easy.",['beaucoup','très'],['a lot','very'],1],
+    keys:[['facile',`${fw('facile')} means <b>easy</b>. It's a describing word.`,'easy']],
+    steps:[{show:`${fw('très')} = <b>very</b> + describing word`,say:`${fw('Très')} means <b>very</b>. It goes before a describing word: ${fr('très facile','very easy')}.`},
+      {show:`${fw('beaucoup')} = <b>a lot</b> + verb`,say:`${fw('Beaucoup')} means <b>a lot</b>, after a verb: ${fr("je l'aime beaucoup","I like it a lot")}.`,wait:2800},
+      {show:fr("C'est <b>très</b> facile.","It's <b>very</b> easy."),say:`${fr("C'est très facile.","It's very easy.")}`,wait:2200}],
+    why:`${fw('très')} + adjective (${fw('très facile')}); verb + ${fw('beaucoup')} (${fw('aimer beaucoup')}).`});
+  await w(1500);}},
+
+/* 7 */ {t:'5 conseils',run:async w=>{
+  let pics=[];
+  await teachFR(w,{src:'Worksheet · Page 6 · 5 conseils',q:fr('Donnez 5 conseils pour vivre sans stress ?','Give 5 tips for living without stress?'),
+    keys:[['conseils',`${fw('Des conseils')} are <b>tips</b> or <b>advice</b>.`,'tips'],['sans stress',`${fw('sans stress')} means <b>without stress</b>.`,'without stress']],
+    before:[{show:`Tip: start every answer with ${fw('Il faut')} + a verb`,say:`Hint: advice in French often starts with ${fw('Il faut')}, you must, plus a verb in the infinitive.`,try:true,wait:2600}],
+    steps:TIPS.map(([e,f,en],i)=>({act:async()=>{const p=mk('',`left:${820}px;top:${120+i*76}px;font-size:52px`,e);pop(p);pics.push(p);},
+      show:fr(`${i+1}- ${f}`,`${i+1}- ${en}`),say:fr(f,en),wait:1700})),
+    workX:96,answer:fr('Il faut faire du sport, lire le Coran, bien manger, bien dormir, faire la prière.',"You must do sport, read the Qur'an, eat well, sleep well, pray."),
+    why:`Each tip is ${fw('il faut')} + an infinitive: ${fw('faire, lire, manger, dormir')}. 😌`,x:20,wd:920});
+  await w(1500);}},
+
+/* 8 */ {t:'Build a tip',run:async w=>{
+  const R=[[['Il','faut','bien','dormir'],['dort','Il','faut','bien','dormir','vais'],'Il faut bien dormir.','You must sleep well.'],
+    [['Il','faut','faire','du','sport'],['fait','Il','faut','faire','du','sport','fais'],'Il faut faire du sport.','You must do sport.'],
+    [["J'",'ai','math'],["J'",'ai','as','math','vais'],"J'ai math.",'I have maths.']];
+  say(`Your turn to build! I'll give you the English. Tap the French words <b>in order</b>. Watch out for the wrong verb forms!`);
+  await w(2800);let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [ans,tiles,f,en]=R[i];
+    mk('ex-head','',`🧩 Build it · ${i+1} of ${R.length}`);
+    const r=await buildSentence(w,{q:`Build the French for: <b>${en}</b>`,tiles,answer:[ans],top:44});
+    if(r.ok){right++;say(`${fr('Oui !','Yes!')} ${fr(f,en)}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+12}px`,'✔ '+fr(f,en));pop(s);say(`Not quite. The answer is ${fr(f,en)}`);}
+    await w(2600);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🧩</div><div style="font-size:30px;font-weight:800;color:#1d3f8a;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`${fr('Parfait !','Perfect!')} All ${R.length} right.`:`Good effort! Press Replay to build them again.`);
+  await w(2400);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! These are the worksheet's questions. Tap 🇬🇧 English if you need help.`);
+  await w(2400);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 3 · Tu choisis Q4',q:'Il …… parler au secrétaire.',en:'He …… to speak to the secretary.',o:['vont','va'],oe:['are going','is going'],a:1,
+      why:`${fw('Il')} → ${fw('va')}: ${fw('il va parler')}, he is going to speak.`,whyNot:{0:`${fw('vont')} is for ${fw('ils')}, several people.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q5',q:'Il faut avoir un …… niveau.',en:'You need to have a …… level.',o:['bon','bonne'],oe:['good (masculine)','good (feminine)'],a:0,
+      why:`${fw('Un niveau')} is masculine, so ${fw('bon')}.`,whyNot:{1:`${fw('bonne')} is for feminine words with ${fw('une')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q6',q:'Il faut …… un bon niveau.',en:'You need …… a good level.',o:['avons','avoir'],oe:['have (nous form)','to have'],a:1,
+      why:`After ${fw('il faut')} the verb stays in the infinitive: ${fw('avoir')}.`,whyNot:{0:`${fw('avons')} only goes with ${fw('nous')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q7',q:"C'est …… facile.",en:"It's …… easy.",o:['beaucoup','très'],oe:['a lot','very'],a:1,
+      why:`${fw('Très')} + a describing word: ${fw('très facile')}.`,whyNot:{0:`${fw('beaucoup')} means a lot and goes after a verb.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q8',q:"J'…… math.",en:'I …… maths.',o:['as','ai'],oe:['have (tu form)','have'],a:1,
+      why:`${fw('Je')} → ${fw("j'ai")}.`,whyNot:{0:`${fw('as')} goes with ${fw('tu')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q9',q:"Je …… à l'école à 7 heures.",en:"I …… to school at 7 o'clock.",o:['vais','va'],oe:['go','goes'],a:0,
+      why:`${fw('Je')} → ${fw('vais')}.`,whyNot:{1:`${fw('va')} goes with ${fw('il')} or ${fw('elle')}.`}},
+    {src:'Worksheet · Page 6 · 5 conseils',q:'Donnez 5 conseils pour vivre sans stress ?',en:'Give 5 tips for living without stress?',
+      model:'Il faut faire du sport. Il faut lire le Coran. Il faut bien manger. Il faut bien dormir. Il faut faire la prière.',men:"You must do sport. You must read the Qur'an. You must eat well. You must sleep well. You must pray."},
+  ]);}},
+
+/* 10 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Avoir, aller et il faut</b>','<b>To have, to go and you must</b>')}. Let's look back.`);
+  await w(2600);
+  const B=[['🎒',fr("j'ai · tu as · il a","I have · you have · he has"),`${fw("J'ai, tu as, il a")}.`],
+    ['👥',fr('nous avons · ils ont','we have · they have'),`${fw('Nous avons, vous avez, ils ont')}.`],
+    ['🚶',fr('je vais · tu vas · il va','I go · you go · he goes'),`${fw('Je vais, tu vas, il va')}.`],
+    ['🚌',fr('nous allons · ils vont','we go · they go'),`${fw('Nous allons, vous allez, ils vont')}.`],
+    ['🔮',fr('il va parler','he is going to speak'),`${fw('Aller')} + infinitive means going to.`],
+    ['☝️',fr('il faut + infinitif','you must + verb'),`After ${fw('il faut')}, the verb keeps its -er, -re or -ir.`],
+    ['👍',fr('un bon niveau','a good level'),`${fw('Un')} → ${fw('bon')}, ${fw('une')} → ${fw('bonne')}.`],
+    ['✨',fr('très facile','very easy'),`${fw('Très')} means very.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:20px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: talking about the future with ${fw('le futur proche')}.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

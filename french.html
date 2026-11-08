@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grade 7 French: Exam Review</title>
+<meta name="description" content="Grade 7 French exam review: animated lessons with a talking tutor, Coco the Parrot, and an English translate button.">
+<meta name="apple-mobile-web-app-title" content="Grade 7 French">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="stylesheet" href="site.css">
+<script src="subjects.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero french">
+    <div class="atom">🦜</div>
+    <div class="who"><a class="back" href="index.html">← All subjects</a><span style="flex:1"></span>👋 Hi, <b data-nickname></b> <a href="#" data-signout>Sign out</a></div>
+    <small>Grade 7 · French · Revision sheet</small>
+    <h1>Français 🇫🇷</h1>
+    <p>Animated lessons with Coco the Parrot for every question on your French revision sheet.</p>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="progtxt" id="ptxt"></div>
+  </div>
+
+  <div id="revise" hidden></div>
+  <div id="units"></div>
+
+  <h2 class="sec">🎯 Practise</h2>
+  <div class="cards" id="practise"></div>
+
+  <div class="tip">
+    🔊 <b>Turn the sound on</b> (flip off silent mode): Coco explains in English and says every French word with a French voice.<br>
+    🇬🇧 <b>Stuck?</b> Tap <b>English</b> at the top of any lesson or quiz to turn all the French into English, then tap <b>Français</b> to switch back and compare.<br>
+    👆 <b>Tap any blue French words</b> in a lesson to hear them again, and say them out loud with Coco.<br>
+    ↔️ Lessons work best with the phone <b>sideways</b>. A ✅ appears when you finish a lesson.
+  </div>
+  <footer>Bonne chance pour l'examen ! (Good luck in the exam!) 🍀</footer>
+</div>
+<script>
+renderSubject('french',cachedOverview());
+</script>
+<script type="module">
+import { Account } from "./src/account.js";
+const load = () => Account.overview().then((ov) => { if (ov) renderSubject("french", ov); });
+load();
+addEventListener("g7-synced", load);
+</script>
+</body>
+</html>

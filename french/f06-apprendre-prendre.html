@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Apprendre et prendre</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 6 · Les verbes au présent · apprendre (Page 2) and prendre (Page 7),
+   Tu choisis Page 3 Q6, Q7, Q10, Q11, Q13, Page 4 Q2, Q4, Q5 and Page 8 Q1–10.
+   Every worksheet question is taught with teachFR (french.js), then asked again in the two Exam checks. */
+
+/* one "Tu choisis" question, d = [page, number, French, English, [a, b], [a in English, b in English], answer index] */
+async function choose(w,{d:[p,n,q,en,o,oe,a],keys,steps,why}){
+  await teachFR(w,{src:`Worksheet · Page ${p} · Tu choisis Q${n}`,
+    q:fr(`Tu choisis :<br>${q}<br>a- ${o[0]} &nbsp;&nbsp;&nbsp; b- ${o[1]}`,`Choose:<br>${en}<br>a- ${oe[0]} &nbsp;&nbsp;&nbsp; b- ${oe[1]}`),
+    read:fr(`${q} a : ${o[0]}. b : ${o[1]}.`,`${en} a: ${oe[0]}. b: ${oe[1]}.`),
+    keys,steps,answer:fr(`${'ab'[a]}) ${o[a]}`,`${'ab'[a]}) ${oe[a]}`),why});}
+/* one "Tu conjugues" table: the question on the left, the conjugation card fills in on the right */
+async function table(w,{src,verb,en,rows,steps,why}){let C;
+  await teachFR(w,{src,q:fr(`Tu conjugues au présent le verbe :<br><b>${verb}</b>`,`Conjugate the verb in the present:<br><b>${en}</b>`),
+    read:fr(`Tu conjugues au présent le verbe ${verb}.`,`Conjugate the verb ${en} in the present.`),
+    keys:[[verb,`${fw(verb)} means <b>${en}</b>.`,en]],x:20,wd:440,workX:36,
+    steps:[{act:async()=>{C=conjCard(486,10,456,{verb,en,rows});await w(300);for(let i=0;i<6;i++)await C.show(i,w);},...steps[0]},...steps.slice(1)],
+    answer:fr(`${rows[0][0]}${/'$/.test(rows[0][0])?'':' '}${rows[0][1]} … ${rows[5][0].split(' / ')[0]} ${rows[5][1]}`,`${rows[0][3]} … ${rows[5][3]}`),why});}
+/* the person behind a subject: 'one' → prend, etc. Short reusable explanations */
+const ONE=s=>`${fw(s)} is one person, like ${fw('il')} or ${fw('elle')}`;
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f06', num:6, part:'Les verbes au présent', emoji:'📖', title:'Apprendre et prendre',
+  intro:`${fr('Bonjour !','Hello!')} I'm <b>Coco the Parrot</b> 🦜 Today: two tricky verbs that are cousins. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Two cousins',run:async w=>{
+  say(`${fr('Bonjour !','Hello!')} Today's verbs end in <b>-re</b>, not -er. Meet ${fr('<b>prendre</b>','<b>to take</b>')} and ${fr('<b>apprendre</b>','<b>to learn</b>')}.`);
+  const a=mk('fq-card','left:90px;top:40px;width:330px;height:200px;text-align:center',`<div style="font-size:70px">🚌</div><div style="font-size:34px;font-weight:800;color:#1d3f8a">${fr('prendre','to take')}</div>`);pop(a);
+  const b=mk('fq-card','left:540px;top:40px;width:330px;height:200px;text-align:center',`<div style="font-size:70px">📖</div><div style="font-size:34px;font-weight:800;color:#1d3f8a">${fr('apprendre','to learn')}</div>`);pop(b,300);
+  loop(a.firstChild,[{transform:'translateX(-20px)'},{transform:'translateX(20px)'}],900,{direction:'alternate'});
+  await w(3600);
+  say(`Look closely: ${fw('apprendre')} is just ${fw('ap')} + ${fw('prendre')}! So if you know one, you know the other.`);
+  const eq=mk('fq','left:0;top:280px;width:960px;text-align:center;font-size:52px',`<span style="color:#e04848">ap</span> + <span class="fq-stem">prendre</span> = ${fw('apprendre')}`);pop(eq);point(eq);
+  await w(3600);
+  say(`${fw('Prendre')} means <b>to take</b>, like taking the bus. With food or drink it means <b>to have</b>: ${fr('je prends un café','I have a coffee')}.`);
+  const ex=mk('','left:0;top:390px;width:960px;display:flex;justify-content:center;gap:20px','');
+  [['🚕',fr('prendre un taxi','to take a taxi')],['☕',fr('prendre un café','to have a coffee')],['🍗',fr('prendre du poulet','to have some chicken')]].forEach(([e,t],i)=>{
+    const c=mk('fq-chip','position:relative',`${e} ${t}`,ex);pop(c,i*300);});
+  await w(4200);
+  stage.querySelector('.fq-point')?.remove();
+  say(`These are <b>irregular</b> verbs: they don't follow the -er pattern. Let's learn their own pattern. 🧠`);
+  await w(2800);}},
+
+/* 1 */ {t:'Prendre',run:async w=>{
+  const rows=[['je','prends','s','I take'],['tu','prends','s','you take'],['il / elle','prend','d','he / she takes'],['nous','prenons','ons','we take'],['vous','prenez','ez','you take'],['ils / elles','prennent','nent','they take']];
+  await table(w,{src:'Worksheet · Page 7 · prendre',verb:'prendre',en:'to take',rows,
+    steps:[{show:`${fw('je')}, ${fw('tu')} → ${fw('prend<b style="color:#e04848">s</b>')}`,say:`${fw('Je')} and ${fw('tu')} both add an <b>s</b>: ${fr('je prends, tu prends','I take, you take')}.`,wait:1000},
+      {show:`${fw('il')} → ${fw('prend')}: <b>d</b>, no s!`,say:`With ${fw('il')} and ${fw('elle')} there's <b>no s</b>. It ends in <b>d</b>: ${fr('il prend','he takes')}.`,wait:2600},
+      {show:`${fw('nous')}, ${fw('vous')} drop the d: ${fw('pren-')}`,say:`${fw('Nous')} and ${fw('vous')} drop the d: ${fr('nous prenons, vous prenez','we take, you take')}.`,wait:2600},
+      {show:`${fw('ils')} → ${fw('pre<b style="color:#e04848">nn</b>ent')}: double <b>n</b>`,say:`And ${fw('ils')} has a <b>double n</b>: ${fr('ils prennent','they take')}.`,wait:2600}],
+    why:`Pattern: <b>s, s, d, ons, ez, nent</b>. ${fw('Il prend')} never has an s.`});
+  await w(1500);}},
+
+/* 2 */ {t:'Apprendre',run:async w=>{
+  const rows=[["j'",'apprends','s','I learn'],['tu','apprends','s','you learn'],['il / elle','apprend','d','he / she learns'],['nous','apprenons','ons','we learn'],['vous','apprenez','ez','you learn'],['ils / elles','apprennent','nent','they learn']];
+  await table(w,{src:'Worksheet · Page 2 · apprendre',verb:'apprendre',en:'to learn',rows,
+    steps:[{show:`${fw('ap')} + ${fw('prendre')}: same pattern!`,say:`Just put ${fw('ap')} in front of every form of ${fw('prendre')}.`,wait:1000},
+      {show:`${fw("j'apprends")}: ${fw("j'")} before a vowel`,say:`${fw('Apprends')} starts with a vowel, so ${fw('je')} becomes ${fw("j'")}: ${fr("j'apprends","I learn")}.`,wait:2600},
+      {show:`${fw('il apprend')} (d) · ${fw('ils apprennent')} (nn)`,say:`Same traps: ${fr('il apprend','he learns')} ends in d, and ${fr('ils apprennent','they learn')} has a double n.`,wait:2800}],
+    why:`${fw('apprendre')} = ${fw('ap')} + ${fw('prendre')}: <b>s, s, d, ons, ez, nent</b>.`});
+  await w(1500);}},
+
+/* 3 */ {t:'Tu choisis : apprendre (1)',run:async w=>{
+  say(`Now the worksheet's <b>Tu choisis</b> questions. Find <b>who</b> is doing it, then pick the right form.`);
+  await w(2400);clear();
+  await choose(w,{d:[3,6,"J'…… une nouvelle langue.",'I …… a new language.',['apprend','apprends'],['learns','learn'],1],
+    keys:[["J'",`${fw("J'")} is ${fw('je')}, <b>I</b>, shortened before a vowel.`,'I'],['nouvelle langue',`${fw('une nouvelle langue')} means <b>a new language</b>.`,'new language']],
+    steps:[{show:`${fw("j'")} = ${fw('je')} → ending <b>s</b>`,say:`${fw('Je')} takes an <b>s</b>.`},
+      {show:fr("J'<b>apprends</b> une nouvelle langue.","I <b>learn</b> a new language."),say:`${fr("J'apprends une nouvelle langue.","I learn a new language.")}`,wait:2600}],
+    why:`${fw('apprend')} with a d is for ${fw('il')} / ${fw('elle')}. ${fw('Je')} needs the s.`});
+  await w(1200);clear();
+  await choose(w,{d:[3,7,'Ali …… une nouvelle langue.','Ali …… a new language.',['apprend','apprends'],['learns','learn'],0],
+    keys:[['Ali',`${fw('Ali')} is a boy's name: that's ${fw('il')}, he.`,'Ali']],
+    steps:[{show:`${fw('Ali')} = ${fw('il')} → ends in <b>d</b>`,say:`${ONE('Ali')}. So it ends in <b>d</b>, no s.`},
+      {show:fr('Ali <b>apprend</b> une nouvelle langue.','Ali <b>learns</b> a new language.'),say:`${fr('Ali apprend une nouvelle langue.','Ali learns a new language.')}`,wait:2600}],
+    why:`${fw('Il apprend')}: never an s after ${fw('il')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[3,11,'Tu …… le français.','You …… French.',['apprend','apprends'],['learns','learn'],1],
+    keys:[['Tu ……',`${fw('Tu')} means <b>you</b>.`,'You ……']],
+    steps:[{show:`${fw('tu')} → ending <b>s</b>`,say:`${fw('Tu')} takes an <b>s</b>, just like ${fw('je')}.`},
+      {show:fr('Tu <b>apprends</b> le français.','You <b>learn</b> French.'),say:`${fr('Tu apprends le français.','You learn French.')}`,wait:2600}],
+    why:`${fw('Je')} and ${fw('tu')}: <b>apprends</b> with s. ${fw('Il')}: apprend with d.`});
+  await w(1200);clear();
+  await choose(w,{d:[3,13,'Elle …… la leçon.','She …… the lesson.',['apprend','apprends'],['learns','learn'],0],
+    keys:[['Elle',`${fw('Elle')} means <b>she</b>.`,'She']],
+    steps:[{show:`${fw('elle')} → ends in <b>d</b>`,say:`${fw('Elle')} works like ${fw('il')}: it ends in <b>d</b>.`},
+      {show:fr('Elle <b>apprend</b> la leçon.','She <b>learns</b> the lesson.'),say:`${fr('Elle apprend la leçon.','She learns the lesson.')}`,wait:2600}],
+    why:`${fw('Il')} and ${fw('elle')} share the same form: ${fw('apprend')}.`});
+  await w(1500);}},
+
+/* 4 */ {t:'Tu choisis : apprendre (2)',run:async w=>{
+  await choose(w,{d:[3,10,'Nous …… à lire.','We …… to read.',['apprenons','apprenez'],['learn (nous form)','learn (vous form)'],0],
+    keys:[['Nous',`${fw('Nous')} means <b>we</b>.`,'We'],['à lire',`${fw('apprendre à lire')} means <b>to learn to read</b>.`,'to read']],
+    steps:[{show:`${fw('nous')} → <b>-ons</b>`,say:`${fw('Nous')} always ends in <b>-ons</b>.`},
+      {show:fr('Nous <b>apprenons</b> à lire.','We <b>learn</b> to read.'),say:`${fr('Nous apprenons à lire.','We learn to read.')}`,wait:2600}],
+    why:`${fw('-ez')} is for ${fw('vous')}. ${fw('Nous')} → ${fw('apprenons')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[4,2,'Les amies …… le vocabulaire.','The friends …… the vocabulary.',['apprenez','apprennent'],['learn (vous form)','learn (ils form)'],1],
+    keys:[['Les amies',`${fw('Les amies')} means <b>the friends</b>: more than one person, so ${fw('elles')}, they.`,'The friends']],
+    steps:[{show:`${fw('les amies')} = ${fw('elles')} → <b>-nent</b>`,say:`Several people is ${fw('ils')} or ${fw('elles')}: the ending is <b>-ent</b>, with a double n.`},
+      {show:fr('Les amies <b>apprennent</b> le vocabulaire.','The friends <b>learn</b> the vocabulary.'),say:`${fr('Les amies apprennent le vocabulaire.','The friends learn the vocabulary.')}`,wait:2800}],
+    why:`${fw('Apprenez')} goes with ${fw('vous')}. ${fw('Les amies')} are "they": ${fw('apprennent')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[4,4,'Nous …… la géographie.','We …… geography.',['apprenons','apprends'],['learn (nous form)','learn (je / tu form)'],0],
+    keys:[['Nous',`${fw('Nous')} means <b>we</b>.`,'We']],
+    steps:[{show:`${fw('nous')} → <b>-ons</b>`,say:`${fw('Nous')} → <b>-ons</b>: ${fr('Nous apprenons la géographie.','We learn geography.')}`,wait:2800}],
+    why:`${fw('Apprends')} is for ${fw('je')} or ${fw('tu')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[4,5,'Vous …… à parler anglais.','You …… to speak English.',['apprenons','apprenez'],['learn (nous form)','learn (vous form)'],1],
+    keys:[['Vous',`${fw('Vous')} means <b>you</b>: several people, or one person politely.`,'You']],
+    steps:[{show:`${fw('vous')} → <b>-ez</b>`,say:`${fw('Vous')} always ends in <b>-ez</b>.`},
+      {show:fr('Vous <b>apprenez</b> à parler anglais.','You <b>learn</b> to speak English.'),say:`${fr('Vous apprenez à parler anglais.','You learn to speak English.')}`,wait:2800}],
+    why:`${fw('-ons')} is for ${fw('nous')}. ${fw('Vous')} → ${fw('apprenez')}.`});
+  await w(1500);}},
+
+/* 5 */ {t:'Tu choisis : prendre (1)',run:async w=>{
+  say(`Now page 8: lots of ${fw('prendre')}. Same pattern: <b>s, s, d, ons, ez, nent</b>.`);
+  await w(2400);clear();
+  const Q=[
+    {d:[8,1,'Je …… du poulet.','I …… (some) chicken.',['prend','prends'],['has','have'],1],k:['Je','I',`${fw('Je')} means <b>I</b>.`],
+      s:`${fw('je')} → <b>s</b>`,f:fr('Je <b>prends</b> du poulet.','I <b>have</b> some chicken.'),why:`${fw('Je prends')}: je always takes the s.`},
+    {d:[8,2,'Il …… du café.','He …… (some) coffee.',['prends','prend'],['have','has'],1],k:['Il','He',`${fw('Il')} means <b>he</b>.`],
+      s:`${fw('il')} → <b>d</b>, no s`,f:fr('Il <b>prend</b> du café.','He <b>has</b> some coffee.'),why:`${fw('Il prend')} ends in d. The s is for ${fw('je')} and ${fw('tu')}.`},
+    {d:[8,3,'Je …… un taxi.','I …… a taxi.',['prends','prenons'],['take','take (nous form)'],0],k:['Je','I',`${fw('Je')} means <b>I</b>.`],
+      s:`${fw('je')} → <b>s</b>`,f:fr('Je <b>prends</b> un taxi.','I <b>take</b> a taxi.'),why:`${fw('Prenons')} only goes with ${fw('nous')}.`},
+    {d:[8,4,'Tu …… quoi ?','You …… what?',['prend','prends'],['has','have'],1],k:['Tu ……','You ……',`${fw('Tu')} means <b>you</b>.`],
+      s:`${fw('tu')} → <b>s</b>`,f:fr('Tu <b>prends</b> quoi ?','What are you <b>having</b>?'),why:`${fw('Tu')} always takes the s: ${fw('tu prends')}.`},
+    {d:[8,5,'Ils …… du poulet.','They …… (some) chicken.',['prenez','prennent'],['have (vous form)','have'],1],k:['Ils','They',`${fw('Ils')} means <b>they</b>.`],
+      s:`${fw('ils')} → <b>-nent</b> (double n)`,f:fr('Ils <b>prennent</b> du poulet.','They <b>have</b> some chicken.'),why:`${fw('Prenez')} is for ${fw('vous')}. ${fw('Ils')} → ${fw('prennent')}.`}];
+  for(let i=0;i<Q.length;i++){const P=Q[i];if(i)clear();
+    await choose(w,{d:P.d,keys:[[P.k[0],P.k[2],P.k[1]]],steps:[{show:P.s,say:`${P.s}.`},{show:P.f,say:P.f,wait:2400}],why:P.why});
+    await w(1200);}
+  }},
+
+/* 6 */ {t:'Tu choisis : prendre (2)',run:async w=>{
+  const Q=[
+    {d:[8,6,'Mona …… du café.','Mona …… (some) coffee.',['prend','prends'],['has','have'],0],k:['Mona','Mona',`${fw('Mona')} is a girl: that's ${fw('elle')}.`],
+      s:`${fw('Mona')} = ${fw('elle')} → <b>d</b>`,f:fr('Mona <b>prend</b> du café.','Mona <b>has</b> some coffee.'),why:`${ONE('Mona')}: ${fw('prend')}.`},
+    {d:[8,7,'Ali …… le bus.','Ali …… the bus.',['prend','prends'],['takes','take'],0],k:['Ali','Ali',`${fw('Ali')} is a boy: that's ${fw('il')}.`],
+      s:`${fw('Ali')} = ${fw('il')} → <b>d</b>`,f:fr('Ali <b>prend</b> le bus.','Ali <b>takes</b> the bus.'),why:`${ONE('Ali')}: ${fw('prend')}.`},
+    {d:[8,8,'Nous …… le bus.','We …… the bus.',['prenez','prenons'],['take (vous form)','take (nous form)'],1],k:['Nous','We',`${fw('Nous')} means <b>we</b>.`],
+      s:`${fw('nous')} → <b>-ons</b>`,f:fr('Nous <b>prenons</b> le bus.','We <b>take</b> the bus.'),why:`${fw('Prenez')} is for ${fw('vous')}. ${fw('Nous')} → ${fw('prenons')}.`},
+    {d:[8,9,'Mon ami …… du café.','My friend …… (some) coffee.',['prend','prennent'],['has','have (ils form)'],0],k:['Mon ami','My friend',`${fw('Mon ami')} means <b>my friend</b>: one boy, so ${fw('il')}.`],
+      s:`${fw('mon ami')} = ${fw('il')} → <b>d</b>`,f:fr('Mon ami <b>prend</b> du café.','My friend <b>has</b> some coffee.'),why:`One friend = ${fw('il')}. ${fw('Prennent')} is for several people.`},
+    {d:[8,10,'Mon amie …… du poulet.','My friend …… (some) chicken.',['prenez','prend'],['have (vous form)','has'],1],k:['Mon amie','My friend',`${fw('Mon amie')} with an e is <b>my friend</b>, a girl: ${fw('elle')}.`],
+      s:`${fw('mon amie')} = ${fw('elle')} → <b>d</b>`,f:fr('Mon amie <b>prend</b> du poulet.','My friend <b>has</b> some chicken.'),why:`One friend = ${fw('elle')}: ${fw('prend')}. ${fw('Prenez')} is for ${fw('vous')}.`}];
+  for(let i=0;i<Q.length;i++){const P=Q[i];if(i)clear();
+    await choose(w,{d:P.d,keys:[[P.k[0],P.k[2],P.k[1]]],steps:[{show:P.s,say:`${P.s}.`},{show:P.f,say:P.f,wait:2400}],why:P.why});
+    await w(1200);}
+  }},
+
+/* 7 */ {t:'Who is it?',run:async w=>{
+  const r=await sortGame(w,{bins:[fr('je / tu → prends','I / you → take'),fr('il / elle → prend','he / she → takes'),fr('nous → prenons','we → take'),fr('ils / elles → prennent','they → take')],colors:['#5d9cf5','#45c288','#f5a54a','#c9b6f4'],top:170,
+    items:[[fr('je','I'),0],[fr('tu','you'),0],[fr('Ali','Ali'),1],[fr('Mona','Mona'),1],[fr('mon ami','my friend'),1],[fr('mon amie','my friend (girl)'),1],
+      [fr('nous','we'),2],[fr('Ali et moi','Ali and me'),2],[fr('ils','they'),3],[fr('les amies','the friends'),3],[fr('mes sœurs','my sisters'),3]],
+    intro:`Who takes which form? Tap a word, then tap its box. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} You can spot the person every time.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`One name or one friend is like ${fw('il')} or ${fw('elle')}. "${fr('Ali et moi','Ali and me')}" is ${fw('nous')}, and several people are ${fw('ils')} or ${fw('elles')}.`);
+  await w(3800);}},
+
+/* 8 */ {t:'Exam check: apprendre',run:async w=>{
+  say(`Exam check! These are the worksheet's ${fw('apprendre')} questions.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 3 · Tu choisis Q6',q:"J'…… une nouvelle langue.",en:'I …… a new language.',o:['apprend','apprends'],oe:['learns','learn'],a:1,
+      why:`${fw('Je')} takes an s: ${fw("j'apprends")}.`,whyNot:{0:`${fw('apprend')} (with d) is for ${fw('il')} / ${fw('elle')}.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q7',q:'Ali …… une nouvelle langue.',en:'Ali …… a new language.',o:['apprend','apprends'],oe:['learns','learn'],a:0,
+      why:`${fw('Ali')} = ${fw('il')}: ${fw('apprend')}, no s.`,whyNot:{1:`the s is only for ${fw('je')} and ${fw('tu')}.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q10',q:'Nous …… à lire.',en:'We …… to read.',o:['apprenons','apprenez'],oe:['learn (nous form)','learn (vous form)'],a:0,
+      why:`${fw('Nous')} → <b>-ons</b>: ${fw('apprenons')}.`,whyNot:{1:`<b>-ez</b> is for ${fw('vous')}.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q11',q:'Tu …… le français.',en:'You …… French.',o:['apprend','apprends'],oe:['learns','learn'],a:1,
+      why:`${fw('Tu')} takes an s: ${fw('tu apprends')}.`,whyNot:{0:`${fw('apprend')} (with d) is for ${fw('il')} / ${fw('elle')}.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q13',q:'Elle …… la leçon.',en:'She …… the lesson.',o:['apprend','apprends'],oe:['learns','learn'],a:0,
+      why:`${fw('Elle')} → ${fw('apprend')}, ending in d.`,whyNot:{1:`the s is only for ${fw('je')} and ${fw('tu')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q2',q:'Les amies …… le vocabulaire.',en:'The friends …… the vocabulary.',o:['apprenez','apprennent'],oe:['learn (vous form)','learn (ils form)'],a:1,
+      why:`${fw('Les amies')} = ${fw('elles')}: ${fw('apprennent')}, double n.`,whyNot:{0:`${fw('apprenez')} goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q4',q:'Nous …… la géographie.',en:'We …… geography.',o:['apprenons','apprends'],oe:['learn (nous form)','learn (je / tu form)'],a:0,
+      why:`${fw('Nous')} → ${fw('apprenons')}.`,whyNot:{1:`${fw('apprends')} is for ${fw('je')} or ${fw('tu')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q5',q:'Vous …… à parler anglais.',en:'You …… to speak English.',o:['apprenons','apprenez'],oe:['learn (nous form)','learn (vous form)'],a:1,
+      why:`${fw('Vous')} → <b>-ez</b>: ${fw('apprenez')}.`,whyNot:{0:`<b>-ons</b> is for ${fw('nous')}.`}},
+    {src:'Worksheet · Page 2 · apprendre',q:'Tu conjugues au présent le verbe : apprendre',en:'Conjugate the verb in the present: to learn',
+      model:"j'apprends, tu apprends, il apprend, nous apprenons, vous apprenez, ils apprennent",men:'I learn, you learn, he learns, we learn, you learn, they learn'},
+  ],{title:'Exam check 1'});}},
+
+/* 9 */ {t:'Exam check: prendre',run:async w=>{
+  say(`Exam check 2: all the ${fw('prendre')} questions from page 8.`);
+  await w(2200);
+  await examCheck(w,[
+    {src:'Worksheet · Page 8 · Tu choisis Q1',q:'Je …… du poulet.',en:'I …… (some) chicken.',o:['prend','prends'],oe:['has','have'],a:1,
+      why:`${fw('Je')} → ${fw('prends')}, with s.`,whyNot:{0:`${fw('prend')} (with d) is for ${fw('il')} / ${fw('elle')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q2',q:'Il …… du café.',en:'He …… (some) coffee.',o:['prends','prend'],oe:['have','has'],a:1,
+      why:`${fw('Il')} → ${fw('prend')}, no s.`,whyNot:{0:`the s is only for ${fw('je')} and ${fw('tu')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q3',q:'Je …… un taxi.',en:'I …… a taxi.',o:['prends','prenons'],oe:['take','take (nous form)'],a:0,
+      why:`${fw('Je')} → ${fw('prends')}.`,whyNot:{1:`${fw('prenons')} goes with ${fw('nous')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q4',q:'Tu …… quoi ?',en:'You …… what?',o:['prend','prends'],oe:['has','have'],a:1,
+      why:`${fw('Tu')} → ${fw('prends')}, with s.`,whyNot:{0:`${fw('prend')} is for ${fw('il')} / ${fw('elle')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q5',q:'Ils …… du poulet.',en:'They …… (some) chicken.',o:['prenez','prennent'],oe:['have (vous form)','have'],a:1,
+      why:`${fw('Ils')} → ${fw('prennent')}, double n.`,whyNot:{0:`${fw('prenez')} goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q6',q:'Mona …… du café.',en:'Mona …… (some) coffee.',o:['prend','prends'],oe:['has','have'],a:0,
+      why:`${fw('Mona')} = ${fw('elle')} → ${fw('prend')}.`,whyNot:{1:`the s is only for ${fw('je')} and ${fw('tu')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q7',q:'Ali …… le bus.',en:'Ali …… the bus.',o:['prend','prends'],oe:['takes','take'],a:0,
+      why:`${fw('Ali')} = ${fw('il')} → ${fw('prend')}.`,whyNot:{1:`the s is only for ${fw('je')} and ${fw('tu')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q8',q:'Nous …… le bus.',en:'We …… the bus.',o:['prenez','prenons'],oe:['take (vous form)','take (nous form)'],a:1,
+      why:`${fw('Nous')} → ${fw('prenons')}.`,whyNot:{0:`${fw('prenez')} goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q9',q:'Mon ami …… du café.',en:'My friend …… (some) coffee.',o:['prend','prennent'],oe:['has','have (ils form)'],a:0,
+      why:`One friend = ${fw('il')} → ${fw('prend')}.`,whyNot:{1:`${fw('prennent')} is for several people (${fw('ils')}).`}},
+    {src:'Worksheet · Page 8 · Tu choisis Q10',q:'Mon amie …… du poulet.',en:'My friend …… (some) chicken.',o:['prenez','prend'],oe:['have (vous form)','has'],a:1,
+      why:`One friend = ${fw('elle')} → ${fw('prend')}.`,whyNot:{0:`${fw('prenez')} goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 7 · prendre',q:'Tu conjugues au présent le verbe : prendre',en:'Conjugate the verb in the present: to take',
+      model:'je prends, tu prends, il prend, nous prenons, vous prenez, ils prennent',men:'I take, you take, he takes, we take, you take, they take'},
+  ],{title:'Exam check 2'});}},
+
+/* 10 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Apprendre et prendre</b>','<b>To learn and to take</b>')}. Let's look back.`);
+  await w(2600);
+  const B=[['➕',fr('ap + prendre = apprendre','ap + to take = to learn'),`${fw('Apprendre')} is ${fw('ap')} plus ${fw('prendre')}.`],
+    ['🔤',fr('s, s, d, ons, ez, nent','the endings'),`The pattern: s, s, d, ons, ez, nent.`],
+    ['🙋',fr('je prends · tu prends','I take · you take'),`${fw('Je')} and ${fw('tu')} take an s.`],
+    ['🚌',fr('il prend le bus','he takes the bus'),`${fw('Il prend')}: d, never an s.`],
+    ['👥',fr('nous prenons · vous prenez','we take · you take'),`${fw('Nous')} and ${fw('vous')} drop the d.`],
+    ['🔁',fr('ils prennent','they take'),`${fw('Ils prennent')} has a double n.`],
+    ['☕',fr('prendre un café','to have a coffee'),`With food and drink, ${fw('prendre')} means to have.`],
+    ['🧑',fr('Ali · mon amie = il / elle','Ali · my friend = he / she'),`One name or one friend works like ${fw('il')} or ${fw('elle')}.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:20px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: ${fw('avoir')}, ${fw('aller')} and ${fw('il faut')}.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

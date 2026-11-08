@@ -5,6 +5,7 @@ Maths lessons live in `maths/` and also load `maths/maths.js` (copy `maths/m01-w
 guide applies to every subject; for Maths read "Pi the Robot" for "Professor Atom", and the questions are in
 `../source/maths/worksheet-transcript.md` (teach the correct answer where the sheet's `[CHECK]` says it is wrong,
 without mentioning the sheet). Once a lesson passes the tester, set its `href` in `subjects.js` so it appears on the site.
+French lessons live in `french/` and load `french/french.js` (copy `french/f01-ma-journee.html`); see "French" below.
 The style reference is `l05-metals-nonmetals.html` (the approved pilot): read its scenes to match tone, pacing, colours and animation richness.
 The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
 
@@ -45,6 +46,15 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
   (`before` steps with `try:true`), waits for the student to tap **Show me**, builds the working one line at a time
   (`steps: [{show, say, act}]`, `act` runs an animation first), then stamps the answer and explains `why`.
   `point(el)` glides a 👉 to whatever Pi is talking about. One question per screen (`clear()` between them).
+- **French (`french.js`, tutor Coco the Parrot 🦜):** write every French string as `fr(french, english)`: it is spoken with
+  a French voice, tapping it on the stage says it again, and the **🇬🇧 English** button (header; key `T`) swaps every
+  `fr()` on the page to its English. When Coco explains a French word in English, use `fw('mot')` (stays French in both
+  modes): `${fw('Lieu')} means place`. Teach every worksheet question with `teachFR(w,{src,q,read,keys,before,steps,answer,why})`
+  (the same pattern as Maths' `teachQ`; `keys: [[French word, spoken meaning, English word]]`). Exam check items add
+  `en` (the question in English), `oe` (each choice in English) and, for written questions, `men`; `src`/`q` stay
+  literal strings. Also: `conjCard(x,y,wd,{verb,en,rows:[[pronoun,form,ending,english]]})` (rows appear with
+  `show(i,w)`), `buildSentence(w,{q,tiles,answer})` (tap words in order), `endF(form,ending)` (ending in red),
+  `clear(keep)`. Test French lessons in both modes: `QS=en=1` runs the tester with English on (shots end in `-en`).
 - `w(ms)` — wait at least ms AND until the voice finishes the current line. Always `await w(...)` after `say(...)`
   before the next `say` (typical 2500–4000 ms). Cancel-safe when the student changes scene.
 - `w.until(()=>cond)` — wait for an interactive condition (e.g. a button was tapped).

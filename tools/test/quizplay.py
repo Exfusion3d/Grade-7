@@ -1,11 +1,12 @@
 """Plays a whole Maths Quest level in headless Chrome at iPhone size and reports every answer.
 usage: CHROME=... quizplay.py <level e.g. c2> <screenshot dir>   (run from the repo root)
+French Quest: QUIZ=french-quiz.html DRIVER=frquizdriver.js quizplay.py f1 <dir>   (EN=1 to play with 🇬🇧 English on)
 About every fifth question is answered wrongly (with a listed common mistake when there is one) to test the feedback;
 a screenshot is saved for the first question of each type, the mistakes and the results screen."""
 import sys, json, time, subprocess, base64, urllib.request, os, tempfile, socket
 import websocket
 root=os.getcwd(); level=sys.argv[1]; outdir=sys.argv[2]; os.makedirs(outdir,exist_ok=True)
-src=open(os.path.join(root,'maths-quiz.html')).read()
+src=open(os.path.join(root,os.environ.get('QUIZ','maths-quiz.html'))).read()
 src='\n'.join(l for l in src.split('\n') if 'data-account' not in l)
 src=src.replace('<head>','<head><script>window.__errs=[];addEventListener("error",e=>__errs.push(e.message));window.AudioContext=undefined;window.webkitAudioContext=undefined;window.confirm=()=>true;</script>',1)
 tmp=os.path.join(root,'.mqplay_%d.html'%os.getpid());open(tmp,'w').write(src)
@@ -34,7 +35,8 @@ try:
   cmd('Emulation.setDeviceMetricsOverride',width=390,height=844,deviceScaleFactor=1,mobile=True)
   cmd('Page.enable');cmd('Page.navigate',url='file://'+tmp);time.sleep(1.5)
   shot('00-menu')
-  js(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'quizdriver.js')).read())
+  js(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),os.environ.get('DRIVER','quizdriver.js'))).read())
+  if os.environ.get('EN'): js('setEN(true)')
   js(f"start({json.dumps(level)},MODES.find(m=>m.id==={json.dumps(level)}).pick())")
   total=js('S.qs.length');seen=set();log=[]
   for i in range(total):
@@ -42,6 +44,7 @@ try:
     bad=i%5==4
     w=None
     if bad: w=q['mist'] or ('0' if q['type']=='type' else 'swap' if q['type']=='match' else 'wrongdir' if q['type']=='line' else 'wrong')
+    if bad and os.environ.get('DRIVER')=='frquizdriver.js' and q['type']=='type' and not q['mist']: w='zzz'
     js(f"answer({json.dumps(w)});check()");time.sleep(.35)
     res=js("({ok:!!document.querySelector('.fb.ok'),fb:(document.querySelector('.fb')||{}).innerText||''})")
     good=res['ok']!=bad

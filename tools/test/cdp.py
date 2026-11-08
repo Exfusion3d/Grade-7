@@ -1,5 +1,6 @@
 """Real-time headless Chrome driver for one lesson scene (used by runall.py).
 usage: cdp.py <html file> <scene> <out.png> [wait_seconds] [--fast]
+Set QS="en=1" to add to the page address (French lessons: start in English, as if 🇬🇧 English was tapped).
 Loads the page (with the fast patch if --fast), waits, prints JSON {errs, ready, scene}, saves screenshot."""
 import sys, json, time, subprocess, base64, urllib.request, os, tempfile, socket
 import websocket
@@ -33,7 +34,7 @@ try:
         while True:
             r = json.loads(ws.recv())
             if r.get('id') == mid[0]: return r.get('result', {})
-    cmd('Page.enable'); cmd('Page.navigate', url=f"file://{tmp}?scene={scene}")
+    cmd('Page.enable'); cmd('Page.navigate', url=f"file://{tmp}?scene={scene}" + ("&" + os.environ["QS"] if os.environ.get("QS") else ""))
     time.sleep(wait)
     r = cmd('Runtime.evaluate', expression="JSON.stringify({n:(typeof SC!=='undefined'?SC.length:0),errs:window.__errs,ready:!!document.querySelector('#next.ready,#next.end'),text:(document.querySelector('#text')||{}).innerText})", returnByValue=True)
     print(r['result'].get('value'))

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Ma journée à l'école</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 1 · Lecture et vocabulaire · Page 1 of the sheet: the reading text, the table and "les matières".
+   Every worksheet question is taught with teachFR (french.js): question first and read aloud, key words lit up,
+   the student taps "Show me", then the answer is found in the text step by step, stamped and explained. */
+const WS='Worksheet · Page 1 · ';
+/* the reading text, sentence by sentence: [French, English, picture] */
+const TXT=[
+  ["Aujourd'hui c'est <b>lundi</b>, ma journée préférée.","Today is <b>Monday</b>, my favourite day.",'📅'],
+  ["Je vais <b>à l'école</b> à <b>7 heures et demie</b>.","I go <b>to school</b> at <b>half past seven</b>.",'🏫'],
+  ["J'ai <b>français</b> de 8 heures à 9 heures,","I have <b>French</b> from 8 o'clock to 9 o'clock,",'🇫🇷'],
+  ["puis de 9 heures et quart à 10 heures j'ai <b>math</b>.","then from quarter past 9 to 10 o'clock I have <b>maths</b>.",'➗'],
+  ["Après la pause, on va étudier <b>l'arabe</b>, <b>la biologie</b> et <b>l'informatique</b>.","After the break, we are going to study <b>Arabic</b>, <b>biology</b> and <b>computing</b>.",'🧬'],
+  ["Le dernier cours c'est le cours de <b>sport</b>.","The last lesson is the <b>sport</b> lesson.",'⚽'],
+  ["Je l'aime beaucoup parce qu'on joue au foot avec les amis.","I like it a lot because we play football with friends.",'❤️'],
+  ["Enfin, je termine à <b>14 heures</b>, je rentre à la maison <b>en voiture</b> avec papa.","Finally, I finish at <b>2 pm (14:00)</b>, I go back home <b>by car</b> with Dad.",'🚗']];
+const S=i=>fr(TXT[i][0],TXT[i][1]);
+/* a clock face whose hands turn to h:m */
+function clock(x,y,r){const c=mk('',`left:${x}px;top:${y}px;width:${2*r}px;height:${2*r}px;border-radius:50%;background:#fff;border:6px solid #2c66cf;box-shadow:0 6px 0 #c6d8f6`);
+  for(let i=1;i<=12;i++){const a=i*Math.PI/6;mk('',`left:${r-14+Math.sin(a)*(r-24)}px;top:${r-14-Math.cos(a)*(r-24)}px;width:28px;text-align:center;font-size:${r/5}px;font-weight:800;color:#1d3f8a`,i,c);}
+  const hand=(len,wd,col)=>mk('',`left:${r-wd/2}px;top:${r-len}px;width:${wd}px;height:${len}px;border-radius:${wd}px;background:${col};transform-origin:50% 100%`,'',c);
+  const H=hand(r*.5,9,'#1f2433'),M=hand(r*.78,6,'#e04848');mk('',`left:${r-8}px;top:${r-8}px;width:16px;height:16px;border-radius:50%;background:#1f2433`,'',c);
+  pop(c);let cur=[0,0];
+  return{el:c,set:async(h,m,dur=1400)=>{const ha=(h%12)*30+m/2,ma=m*6;const [h0,m0]=cur;cur=[ha+Math.floor(h0/360)*360,ma+Math.floor(m0/360)*360];
+    an(H,[{transform:`rotate(${h0}deg)`},{transform:`rotate(${cur[0]<h0?cur[0]+360:cur[0]}deg)`}],{duration:dur});
+    await an(M,[{transform:`rotate(${m0}deg)`},{transform:`rotate(${cur[1]<m0?cur[1]+360:cur[1]}deg)`}],{duration:dur});beep(700,.08);}};}
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f01', num:1, part:'Lecture et vocabulaire', emoji:'🏫', title:"Ma journée à l'école",
+  intro:`Bonjour! I'm <b>Coco the Parrot</b> 🦜 Today we'll read about a school day in French. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Bonjour, Coco!',run:async w=>{
+  const hi=mk('fq','left:0;top:40px;width:960px;text-align:center;font-size:84px;color:#2c66cf',fr('Bonjour !','Hello!'));pop(hi);
+  say(`${fr('Bonjour !','Hello!')} I'm <b>Coco the Parrot</b>. Parrots are great at repeating words, so I'll help you <b>say</b> and <b>understand</b> French.`);
+  await w(3200);
+  const fl=mk('','left:380px;top:160px;width:200px;height:130px;border-radius:12px;background:linear-gradient(90deg,#2c66cf 33.3%,#fff 33.3% 66.6%,#e04848 66.6%);box-shadow:0 0 0 3px #d6dbe8,0 8px 0 #c6d8f6;transform-origin:0 50%');
+  pop(fl);loop(fl,[{transform:'skewY(0deg) scaleX(1)'},{transform:'skewY(-3deg) scaleX(.97)'}],700,{direction:'alternate'});
+  say(`When I say a <b>French</b> word, I'll say it with a French voice. <b>Tap any blue French words</b> on the screen to hear them again.`);
+  await w(3400);
+  const tb=mk('','left:250px;top:320px;width:460px;padding:12px 18px;border-radius:18px;background:#e6f7ee;border:3px solid #18a058;font-size:21px;font-weight:800;color:#0f7a40;text-align:center',
+    'Stuck? Tap <span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🇬🇧 English</span> at the top<br>to see everything in English.');pop(tb);point(tb);
+  say(`Stuck on a word? Tap the <b>English</b> button at the top. Everything in French turns into <b>English</b>, so you can compare. Tap it again to go back to French.`);
+  await w(3800);
+  stage.querySelector('.fq-point')?.remove();
+  const ex=mk('fq-step','left:250px;top:430px;width:460px;text-align:center',fr("Aujourd'hui c'est lundi.","Today is Monday."));pop(ex);
+  say(`Today we'll read a short French text about a <b>school day</b>, and answer the worksheet's questions about it. ${fr("Allons-y !","Let's go!")}`);
+  await w(3200);}},
+
+/* 1 */ {t:'Les jours de la semaine',run:async w=>{
+  say(`The text starts with a <b>day</b>. In French, a day is ${fr('<b>un jour</b>','<b>a day</b>')}. Here are the seven days of the week.`);
+  await w(3000);
+  const D=[['lundi','Monday'],['mardi','Tuesday'],['mercredi','Wednesday'],['jeudi','Thursday'],['vendredi','Friday'],['samedi','Saturday'],['dimanche','Sunday']];
+  const els=D.map(([f,e],i)=>{const d=mk('fq-card',`left:${18+i*134}px;top:40px;width:122px;height:150px;text-align:center;padding:10px 4px`,
+      `<div style="font-size:42px">${['🌙','🔥','💧','🌳','💖','🪐','☀️'][i]}</div><div style="font-size:20px;font-weight:800;color:#1d3f8a;margin-top:10px">${fr(f,e)}</div>`);return d;});
+  for(let i=0;i<7;i++){pop(els[i]);beep(500+i*50,.06);point(els[i]);say(fr(D[i][0],D[i][1]));await w(900);}
+  stage.querySelector('.fq-point')?.remove();
+  const n=mk('fq-why','left:120px;top:226px;width:720px','💡 In French, days start with a <b>small letter</b>: '+fr('lundi','Monday')+', not Lundi (unless it starts a sentence).');pop(n);
+  say(`Notice: in French, the days start with a <b>small letter</b>. We write ${fr('lundi','Monday')} with a small l.`);
+  await w(3200);
+  an(els[0],[{transform:'translateY(0)'},{transform:'translateY(270px) scale(1.5)'}],{duration:900});beep(800,.1);
+  const t=mk('fq-step','left:330px;top:440px;width:560px',fr("Aujourd'hui c'est <b>lundi</b>.","Today is <b>Monday</b>."));pop(t,600);
+  say(`In our text, the day is ${fr('<b>lundi</b>','<b>Monday</b>')}. ${fr("Aujourd'hui c'est lundi.","Today is Monday.")} That means <b>today is Monday</b>.`);
+  await w(3400);}},
+
+/* 2 */ {t:"Quelle heure est-il ?",run:async w=>{
+  say(`The text also tells the <b>time</b>. In French, o'clock is ${fr('<b>heures</b>','<b>o\'clock</b>')}. Watch the clock.`);
+  await w(2800);
+  const C=clock(60,40,190);await C.set(7,0,10);
+  const T=[[7,30,"7 heures et demie","half past seven",`${fw('<b>Et demie</b>')} means <b>half past</b>. So this is <b>half past seven</b>.`],
+    [9,15,"9 heures et quart","quarter past nine",`${fw('<b>Et quart</b>')} means <b>quarter past</b>. So this is <b>quarter past nine</b>.`],
+    [8,0,"8 heures","8 o'clock",`Just ${fr('<b>heures</b>','<b>o\'clock</b>')} on its own means <b>o'clock</b>: <b>8 o'clock</b>.`],
+    [14,0,"14 heures","2 pm (14:00)",`French timetables use the <b>24-hour clock</b>. ${fr('14 heures','14:00')} is <b>2 o'clock in the afternoon</b>.`]];
+  let lab=null;
+  for(const [h,m,f,e,line] of T){if(lab)lab.remove();
+    await C.set(h,m);
+    lab=mk('fq-step',`left:500px;top:120px;width:420px;font-size:32px;text-align:center`,fr(f,e)+`<div style="font-size:20px;color:#6b7590;margin-top:4px">${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}</div>`);pop(lab);point(lab);
+    say(`${fr(f,e)}. ${line}`);await w(3400);}
+  lab.remove();stage.querySelector('.fq-point')?.remove();
+  const sum=mk('','left:500px;top:60px;width:420px','');
+  [['et demie','and a half','half past'],['et quart','and a quarter','quarter past'],['14 heures','14:00','2 pm']].forEach(([f,e,m],i)=>{
+    mk('fq-step',`left:0;top:${i*92}px;width:420px`,`${fr(f,e)} <i>= ${m}</i>`,sum);});
+  pop(sum);say(`Remember: ${fr('et demie','and a half')} is half past, ${fr('et quart','and a quarter')} is quarter past, and ${fr('14 heures','14:00')} is 2 pm.`);
+  await w(3800);}},
+
+/* 3 */ {t:'Lisez le texte (1)',run:async w=>{
+  say(`The worksheet says ${fr('<b>Lisez le texte suivant</b>','<b>Read the following text</b>')}. Let's read it together, one sentence at a time.`);
+  await w(3000);
+  const pan=mk('fq-card','left:13px;top:10px;width:600px;height:500px','<h4>'+fr('Lisez le texte suivant','Read the following text')+'</h4>');pop(pan);
+  const pic=mk('','left:660px;top:120px;width:260px;height:260px;border-radius:50%;background:#eef4ff;border:4px solid #c6d8f6;display:flex;align-items:center;justify-content:center;font-size:130px','');pop(pic);
+  const lines=[`Listen: ${S(0)} That's <b>today is Monday, my favourite day</b>.`,
+    `${S(1)} <b>I go to school at half past seven</b>.`,
+    `${S(2)} <b>I have French from 8 to 9</b>.`,
+    `${S(3)} <b>Then from quarter past 9 to 10, I have maths</b>.`];
+  for(let i=0;i<4;i++){const p=mk('',`position:relative;font-size:21px;font-weight:700;line-height:1.4;margin:0 0 12px`,S(i),pan);p.style.position='relative';pop(p);point(p);
+    pic.textContent=TXT[i][2];pic.animate([{transform:'scale(.4) rotate(-20deg)'},{transform:'none'}],{duration:500});
+    say(lines[i]);await w(4200);}
+  say(`Remember: <b>tap a blue sentence</b> to hear it again in French.`);await w(2400);}},
+
+/* 4 */ {t:'Lisez le texte (2)',run:async w=>{
+  const pan=mk('fq-card','left:13px;top:10px;width:600px;height:500px','<h4>'+fr('Lisez le texte suivant (suite)','Read the following text (continued)')+'</h4>');pop(pan);
+  const pic=mk('','left:660px;top:120px;width:260px;height:260px;border-radius:50%;background:#eef4ff;border:4px solid #c6d8f6;display:flex;align-items:center;justify-content:center;font-size:130px','');pop(pic);
+  const lines=[`${S(4)} <b>After the break, we study Arabic, biology and computing</b>.`,
+    `${S(5)} <b>The last lesson is sport</b>.`,
+    `${S(6)} <b>I like it a lot because we play football with friends</b>.`,
+    `${S(7)} <b>Finally, I finish at 2 pm and go home by car with Dad</b>.`];
+  for(let i=0;i<4;i++){const p=mk('',`position:relative;font-size:21px;font-weight:700;line-height:1.4;margin:0 0 12px`,S(i+4),pan);pop(p);point(p);
+    pic.textContent=TXT[i+4][2];pic.animate([{transform:'scale(.4) rotate(-20deg)'},{transform:'none'}],{duration:500});
+    say(lines[i]);await w(4400);}
+  stage.querySelector('.fq-point')?.remove();
+  const tip=mk('fq-why','left:640px;top:410px;width:300px',`💡 ${fw('parce que')} = because<br>${fw('enfin')} = finally`);pop(tip);
+  say(`Two useful words: ${fw('parce que')} means <b>because</b>, and ${fw('enfin')} means <b>finally</b>.`);await w(3400);}},
+
+/* 5 */ {t:'Complétez le tableau (1)',run:async w=>{
+  say(`Now the worksheet asks us to ${fr('<b>complétez le tableau</b>','<b>complete the table</b>')}. Each row asks for one fact from the text.`);
+  await w(2800);
+  await teachFR(w,{src:WS+'Complétez le tableau · Jour',q:fr('Complétez le tableau suivant :<br><b>Jour</b> ……………','Complete the following table:<br><b>Day</b> ……………'),
+    read:`${fr('Complétez le tableau suivant. Jour.','Complete the following table. Day.')}`,
+    keys:[['Jour',`${fw('Jour')} means <b>day</b>. Which day is it in the text?`]],
+    steps:[{show:S(0),say:`Look at the first sentence: ${S(0)} The day is ${fr('<b>lundi</b>','<b>Monday</b>')}.`,wait:2800}],
+    answer:fr('lundi','Monday'),why:`${fw('Jour')} = day. The text says ${fr("Aujourd'hui c'est lundi","Today is Monday")}.`});
+  await w(1200);clear();
+  await teachFR(w,{src:WS+'Complétez le tableau · Lieu',q:fr('Complétez le tableau suivant :<br><b>Lieu</b> ……………','Complete the following table:<br><b>Place</b> ……………'),
+    read:`${fr('Lieu.','Place.')}`,
+    keys:[['Lieu',`${fw('Lieu')} means <b>place</b>: where does the writer go?`]],
+    steps:[{show:S(1),say:`The second sentence says: ${S(1)} The place is ${fr("<b>à l'école</b>","<b>at school</b>")}.`,wait:2800}],
+    answer:fr("à l'école","at school"),why:`${fw('Lieu')} = place. ${fr("Je vais à l'école","I go to school")}: the place is the school.`});
+  await w(1200);clear();
+  await teachFR(w,{src:WS+'Complétez le tableau · Matière',q:fr('Complétez le tableau suivant :<br><b>Matière</b> ……………','Complete the following table:<br><b>Subject</b> ……………'),
+    read:`${fr('Matière.','Subject.')}`,
+    keys:[['Matière',`${fw('Matière')} means a <b>school subject</b>. The first lesson of the day is the one the sheet wants.`]],
+    steps:[{show:S(2),say:`${S(2)} The first subject is ${fr('<b>français</b>','<b>French</b>')}.`,wait:2800}],
+    answer:fr('français','French'),why:`${fw('Matière')} = school subject. The day starts with ${fr('français','French')}. Subjects have a small letter too.`});
+  await w(1500);}},
+
+/* 6 */ {t:'Complétez le tableau (2)',run:async w=>{
+  await teachFR(w,{src:WS+'Complétez le tableau · Heure de retour à la maison',q:fr('Complétez le tableau suivant :<br><b>Heure de retour à la maison</b> ……………','Complete the following table:<br><b>Time back home</b> ……………'),
+    read:`${fr('Heure de retour à la maison.','Time back home.')}`,
+    keys:[['Heure',`${fw('Heure')} means <b>time</b> or hour.`],['retour à la maison',`${fw('Retour à la maison')} means <b>going back home</b>.`]],
+    steps:[{show:S(7),say:`The last sentence: ${S(7)} The writer finishes at ${fr('14 heures','14:00')} and goes home.`,wait:3200}],
+    answer:fr('14 heures','14:00 (2 pm)'),why:`${fr('Je termine à 14 heures, je rentre à la maison','I finish at 14:00, I go back home')}. 14 heures is 2 o'clock in the afternoon.`});
+  await w(1200);clear();
+  const car=mk('','left:-120px;top:400px;font-size:90px','🚗');
+  await teachFR(w,{src:WS+'Complétez le tableau · Moyen de transport',q:fr('Complétez le tableau suivant :<br><b>Moyen de transport</b> ……………','Complete the following table:<br><b>Means of transport</b> ……………'),
+    read:`${fr('Moyen de transport.','Means of transport.')}`,
+    keys:[['transport',`${fw('Moyen de transport')} means <b>how</b> the writer travels.`]],
+    steps:[{act:async()=>{an(car,[{transform:'translateX(0)'},{transform:'translateX(1150px)'}],{duration:2400,easing:'ease-in'});beep(300,.2,'square',.05);},
+        show:fr("je rentre à la maison <b>en voiture</b> avec papa","I go back home <b>by car</b> with Dad"),say:`The text says ${fr('je rentre à la maison en voiture avec papa','I go back home by car with Dad')}. ${fw('En voiture')} means <b>by car</b>.`,wait:3000}],
+    answer:fr('en voiture','by car'),why:`Transport uses ${fr('en','by')}: ${fr('en voiture','by car')}, ${fr('en bus','by bus')}, ${fr('en taxi','by taxi')}.`});
+  await w(1500);}},
+
+/* 7 */ {t:'Les matières comme…',run:async w=>{
+  await teachFR(w,{src:WS+'Tu complètes : les matières comme',q:fr('Tu complètes :<br>les matières comme : 1- …… 2- …… 3- …… 4- …… 5- ……','Complete:<br>school subjects such as: 1- …… 2- …… 3- …… 4- …… 5- ……'),
+    read:fr('Tu complètes : les matières comme…','Complete: school subjects such as…'),
+    keys:[['les matières',`${fr('Les matières','The subjects')} are the <b>school subjects</b>. We need to write <b>five</b>.`]],
+    before:[{show:'Hint: the text names lots of subjects!',say:`Hint: the reading text names lots of subjects. Can you find five?`,try:true}],
+    steps:[{show:fr('français · math · l\'arabe · la biologie · l\'informatique · le sport','French · maths · Arabic · biology · computing · sport'),say:`The text has ${fr('français, math, l\'arabe, la biologie, l\'informatique et le sport','French, maths, Arabic, biology, computing and sport')}.`,wait:3200},
+      {show:fr('anglais · art · géographie · histoire','English · art · geography · history'),say:`Other subjects are fine too, like ${fr('anglais','English')} and ${fr('art','art')}.`,wait:2600}],
+    answer:fr('français, maths, anglais, biologie, art','French, maths, English, biology, art'),why:`Any five school subjects are right. On the worksheet: ${fr('français, maths, anglais, biologie, art','French, maths, English, biology, art')}.`,y:8});
+  await w(1500);}},
+
+/* 8 */ {t:'Sort the facts',run:async w=>{
+  const r=await sortGame(w,{bins:[fr('Jour','Day'),fr('Lieu','Place'),fr('Matière','Subject'),fr('Transport','Transport')],colors:['#5d9cf5','#45c288','#f5a54a','#c9b6f4'],top:170,
+    items:[[fr('lundi','Monday'),0],[fr('mardi','Tuesday'),0],[fr('dimanche','Sunday'),0],[fr("à l'école","at school"),1],[fr('à la maison','at home'),1],
+      [fr('français','French'),2],[fr('biologie','biology'),2],[fr('informatique','computing'),2],[fr('en voiture','by car'),3],[fr('en bus','by bus'),3]],
+    intro:`Tap a word, then tap the column it belongs in. ${fr('Jour','Day')}, ${fr('Lieu','Place')}, ${fr('Matière','Subject')} or ${fr('Transport','Transport')}. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} Every word is in the right column.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong column.`);
+  await w(2600);
+  say(`Days like ${fr('lundi','Monday')}, places like ${fr("à l'école","at school")}, subjects like ${fr('français','French')}, and transport with ${fr('en','by')}: ${fr('en voiture','by car')}.`);
+  await w(3800);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each question and its choices. Tap 🇬🇧 English if you need help.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 1 · Table: Jour',q:"Complétez le tableau suivant : Jour ……",en:'Complete the following table: Day ……',o:['mardi','lundi','dimanche'],oe:['Tuesday','Monday','Sunday'],a:1,cols:3,
+      why:`The text says ${fr("Aujourd'hui c'est lundi","Today is Monday")}.`,whyNot:{0:`${fr('mardi','Tuesday')} is Tuesday.`,2:`${fr('dimanche','Sunday')} is Sunday.`}},
+    {src:'Worksheet · Page 1 · Table: Lieu',q:"Complétez le tableau suivant : Lieu ……",en:'Complete the following table: Place ……',o:["à la maison","à l'école","au cinéma"],oe:['at home','at school','at the cinema'],a:1,cols:3,
+      why:`${fr("Je vais à l'école","I go to school")}: the place is the school.`,whyNot:{0:'the writer goes home only at the end; the text is about the school day.',2:'the text never mentions the cinema.'}},
+    {src:'Worksheet · Page 1 · Table: Matière',q:"Complétez le tableau suivant : Matière ……",en:'Complete the following table: Subject ……',o:['français','voiture','pause'],oe:['French','car','break'],a:0,cols:3,
+      why:`${fr("J'ai français de 8 heures à 9 heures","I have French from 8 to 9")}. Français is a school subject.`,whyNot:{1:`${fr('voiture','car')} is a car, not a subject.`,2:`${fr('la pause','the break')} is the break, not a subject.`}},
+    {src:'Worksheet · Page 1 · Table: Heure de retour à la maison',q:"Complétez le tableau suivant : Heure de retour à la maison ……",en:'Complete the following table: Time back home ……',o:['7 heures et demie','9 heures et quart','14 heures'],oe:['half past seven','quarter past nine','14:00 (2 pm)'],a:2,cols:3,
+      why:`${fr('Je termine à 14 heures, je rentre à la maison','I finish at 14:00, I go back home')}.`,whyNot:{0:'that is when the writer goes <b>to</b> school.',1:'that is when maths starts.'}},
+    {src:'Worksheet · Page 1 · Table: Moyen de transport',q:"Complétez le tableau suivant : Moyen de transport ……",en:'Complete the following table: Means of transport ……',o:['en bus','en voiture','à pied'],oe:['by bus','by car','on foot'],a:1,cols:3,
+      why:`${fr('je rentre à la maison en voiture avec papa','I go back home by car with Dad')}.`,whyNot:{0:'the text does not mention a bus.',2:`${fw('à pied')} means walking; the writer goes by car.`}},
+    {src:'Worksheet · Page 1 · Les matières',q:"Tu complètes : les matières comme : 1- …… 2- …… 3- …… 4- …… 5- ……",en:'Complete: school subjects such as: 1- …… 2- …… 3- …… 4- …… 5- ……',
+      model:'français, maths, anglais, biologie, art',men:'French, maths, English, biology, art'},
+  ]);}},
+
+/* 10 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr("<b>Ma journée à l'école</b>","<b>My school day</b>")}. Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['📅',fr('lundi','Monday'),`Days have a small letter: ${fr('lundi','Monday')}.`],
+    ['🕢',fr('7 heures et demie','half past seven'),`${fw('Et demie')} means half past.`],
+    ['🕘',fr('9 heures et quart','quarter past nine'),`${fw('Et quart')} means quarter past.`],
+    ['🕑',fr('14 heures','14:00 = 2 pm'),`${fr('14 heures','14:00')} is 2 pm.`],
+    ['🏫',fr("Lieu : à l'école","Place: at school"),`${fw('Lieu')} means place.`],
+    ['📚',fr('Matière : français','Subject: French'),`${fw('Matière')} means school subject.`],
+    ['🚗',fr('en voiture','by car'),`Transport uses ${fr('en','by')}: ${fr('en voiture','by car')}.`],
+    ['🇬🇧',fr('parce que = because','parce que = because'),`And ${fw('parce que')} means because.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:20px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: <b>school subjects</b> and finding the <b>odd one out</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

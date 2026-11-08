@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="French Quest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+
+<title>French Quest: Grade 7 Exam Quiz</title>
+<style>
+:root{
+  --ink:#1f2433; --muted:#626a80; --line:#e3e6ef; --bg:#f4f2ff;
+  --p:#2c66cf; --pl:#e5eefc; --pd:#1d4b9e; --ok:#18a058; --okl:#e3f7ec; --bad:#e04848; --badl:#fde8e8; --y:#ffd84d;
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif; color:var(--ink); background:var(--bg); min-height:100vh;
+  background-image:radial-gradient(circle at 10% 10%,#e3dcff 0,transparent 35%),radial-gradient(circle at 90% 80%,#d9ecff 0,transparent 40%)}
+button{font:inherit; color:inherit; cursor:pointer}
+.wrap{max-width:780px; margin:0 auto; padding:18px 16px 60px}
+.hidden{display:none!important}
+
+/* ---------- menu ---------- */
+.hero{background:linear-gradient(135deg,#1d3f8a,#2c66cf 55%,#5d9cf5); color:#fff; border-radius:26px; padding:26px 26px 22px; position:relative; overflow:hidden}
+.hero h1{margin:0; font-size:clamp(30px,6vw,46px); font-weight:800; letter-spacing:-.01em}
+.hero p{margin:6px 0 0; opacity:.92; font-size:17px}
+.hero .atom{position:absolute; right:-10px; top:-10px; font-size:120px; opacity:.14; transform:rotate(15deg)}
+.modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:18px}
+.mode{border:none; text-align:left; border-radius:20px; padding:18px; color:#fff; box-shadow:0 6px 0 rgba(0,0,0,.15); transition:transform .12s, box-shadow .12s; position:relative}
+.mode:hover{transform:translateY(-3px); box-shadow:0 9px 0 rgba(0,0,0,.15)}
+.mode:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.mode .lv{font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.9}
+.mode h3{margin:4px 0 4px; font-size:21px; padding-right:38px}
+.mode .meta{font-size:14px; opacity:.95}
+.mode .best{margin-top:10px; font-size:13px; font-weight:700; background:rgba(255,255,255,.22); display:inline-block; padding:3px 10px; border-radius:20px}
+.mode .emo{position:absolute; right:14px; top:12px; font-size:34px}
+.mode.soon{opacity:.5;cursor:default;filter:grayscale(.3)} .mode.soon:hover{transform:none}
+.l1c{background:linear-gradient(140deg,#2c66cf,#5aa0f0)} .l2c{background:linear-gradient(140deg,#6a45d8,#9b7cf0)} .l3c{background:linear-gradient(140deg,#17935b,#45c288)}
+.l4c{background:linear-gradient(140deg,#e04848,#f08a6a)} .fbc{background:linear-gradient(140deg,#1d3f8a,#b0207a)}
+.menu-foot{display:flex; justify-content:space-between; align-items:center; margin-top:16px; color:var(--muted); font-size:14px; flex-wrap:wrap; gap:10px}
+.resume{margin-top:16px;background:#fff;border-radius:20px;padding:12px 16px 6px;box-shadow:0 6px 18px rgba(80,50,180,.08)}
+.resume h3{margin:0 0 6px;font-size:17px;color:#4a2ea6}
+.rrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:2px solid var(--line)}
+.rrow .rt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.rrow .rt span{font-size:13.5px;color:var(--muted);font-weight:700}
+.rrow .go{width:auto;margin:0;padding:10px 16px;font-size:16px;flex:none}
+.rx{border:2px solid var(--line);background:#fff;border-radius:12px;width:40px;height:40px;font-weight:800;color:var(--muted);flex:none}
+.pill{border:2px solid var(--line); background:#fff; border-radius:30px; padding:7px 14px; font-weight:700; font-size:14px}
+.trb.on{background:#e6f7ee;border-color:#18a058;color:#0f7a40}
+
+/* ---------- HUD ---------- */
+.hud{display:flex; align-items:center; gap:8px; margin-bottom:12px}
+.hud .home{background:#fff; border:2px solid var(--line); border-radius:14px; padding:6px 10px; font-weight:800}
+.bar{flex:1; height:16px; background:#fff; border-radius:20px; overflow:hidden; border:2px solid var(--line)}
+.bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#2c66cf,#5d9cf5); border-radius:20px; transition:width .4s}
+.stat{background:#fff; border:2px solid var(--line); border-radius:14px; padding:5px 10px; font-weight:800; font-size:15px; white-space:nowrap}
+.hud .trb{border-radius:14px;padding:5px 9px;font-size:14px;white-space:nowrap}
+.streak.hot{background:#fff3d6; border-color:#f2b200; animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@media(max-width:420px){.hud{gap:5px}.stat{padding:5px 7px;font-size:14px}}
+
+/* ---------- card ---------- */
+.card{background:#fff; border-radius:24px; padding:20px 20px 18px; box-shadow:0 10px 30px rgba(60,40,140,.10); position:relative}
+.qtop{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
+.tag{font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px}
+.tl1{background:#e5eefc;color:#2c66cf} .tl2{background:#efe9ff;color:#6a45d8} .tl3{background:#e4f6ec;color:#17935b} .tl4{background:#fde8e8;color:#c53030}
+.tt{background:var(--pl); color:var(--p)}
+.qnum{margin-left:auto; color:var(--muted); font-weight:700; font-size:14px}
+.prompt{font-size:21px; font-weight:700; line-height:1.35; margin:4px 0 6px}
+.hear{border:2px solid #bcd2f7;background:#eef4ff;border-radius:12px;padding:2px 9px;font-size:17px;margin-left:6px;vertical-align:middle}
+.hint{color:var(--muted); font-size:14.5px; margin-bottom:12px}
+.passage{background:#f5f9ff;border:2.5px solid #c6d8f6;border-radius:16px;padding:10px 14px;margin:0 0 12px;font-size:15.5px;line-height:1.5}
+.passage summary{cursor:pointer;font-weight:800;color:var(--p)}
+.passage p{margin:6px 0 0}
+.fx.en{background:#dff5e8;border-radius:6px;box-shadow:0 0 0 2px #dff5e8;color:#0d5c33}
+
+/* options */
+.opts{display:grid; gap:10px}
+.opts.grid2{grid-template-columns:1fr 1fr}
+@media(max-width:560px){.opts.grid2.text{grid-template-columns:1fr}}
+.opt{display:flex; align-items:center; gap:12px; text-align:left; background:#fff; border:2.5px solid var(--line); border-radius:16px; padding:12px 14px; font-size:17px; font-weight:600; transition:transform .1s, border-color .15s, background .15s; box-shadow:0 3px 0 var(--line)}
+.opt:hover:not(:disabled){border-color:#9fbdf0; transform:translateY(-1px)}
+.opt .k{flex:none; width:32px; height:32px; border-radius:10px; background:var(--pl); color:var(--p); display:flex; align-items:center; justify-content:center; font-weight:800}
+.opt.ok{border-color:var(--ok); background:var(--okl); box-shadow:0 3px 0 #9fdcbb}
+.opt.ok .k{background:var(--ok); color:#fff}
+.opt.bad{border-color:var(--bad); background:var(--badl); box-shadow:0 3px 0 #f2b0b0; animation:shake .35s}
+.opt.bad .k{background:var(--bad); color:#fff}
+.opt:disabled{cursor:default}
+.tf .opt{justify-content:center; font-size:22px; padding:18px}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* match */
+.match{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px}
+.mcol{display:flex; flex-direction:column; gap:9px}
+.mi{border:2.5px solid var(--line); background:#fff; border-radius:14px; padding:10px 12px; font-size:15.5px; font-weight:600; text-align:left; min-height:48px; display:flex; align-items:center; gap:8px; box-shadow:0 3px 0 var(--line)}
+.mi.sel{border-color:var(--p); background:var(--pl)}
+.mi .dot{flex:none; width:14px; height:14px; border-radius:50%; background:var(--line)}
+.mi.ok{border-color:var(--ok); background:var(--okl)} .mi.bad{border-color:var(--bad); background:var(--badl)}
+.mi .fix{display:block; font-size:12.5px; color:var(--ok); font-weight:700}
+
+/* footer / feedback */
+.actions{display:flex; justify-content:flex-end; margin-top:16px; gap:10px}
+.go{border:none; border-radius:16px; padding:13px 26px; font-size:18px; font-weight:800; color:#fff; background:var(--p); box-shadow:0 5px 0 var(--pd); transition:transform .1s}
+.go:active{transform:translateY(3px); box-shadow:0 2px 0 var(--pd)}
+.go:disabled{background:#c9c3df; box-shadow:0 5px 0 #aea7c9; cursor:not-allowed}
+.go.green{background:var(--ok); box-shadow:0 5px 0 #0f7a41}
+.fb{margin-top:14px; border-radius:18px; padding:14px 16px; animation:pop .3s}
+.fb.ok{background:var(--okl); border:2.5px solid #9fdcbb}
+.fb.bad{background:#fff4e5; border:2.5px solid #f6c37a}
+.fb h3{margin:0 0 4px; font-size:20px}
+.fb.ok h3{color:var(--ok)} .fb.bad h3{color:#c26a00}
+.fb p{margin:0; font-size:16px; line-height:1.45}
+.fb .not{margin:0 0 6px;font-weight:700}
+.fw{color:#1d4b9e;font-weight:800}
+.plus{position:absolute; right:22px; top:16px; font-weight:800; color:var(--ok); font-size:22px; animation:float 1.1s forwards}
+@keyframes float{to{transform:translateY(-40px); opacity:0}}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+
+/* end */
+.end{text-align:center}
+.stars{font-size:64px; letter-spacing:8px; margin:6px 0}
+.stars span{display:inline-block; animation:pop .5s backwards; filter:grayscale(1); opacity:.35}
+.stars span.on{filter:none; opacity:1}
+.bigscore{font-size:46px; font-weight:800; color:var(--p)}
+.endgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0}
+.endgrid div{background:#f7f6fd; border-radius:16px; padding:10px; font-weight:700; color:var(--muted); font-size:14px}
+.endgrid b{display:block; font-size:26px; color:var(--ink)}
+.endbtns{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.revise{background:#f7f6fd; border-radius:16px; padding:12px 14px; margin:0 0 16px; text-align:left}
+.revise h4{margin:0 0 8px; font-size:16px}
+.revise a{display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--line); border-radius:12px; padding:9px 12px; margin-top:6px; color:var(--ink); text-decoration:none; font-weight:700; font-size:15px}
+.revise .n{flex:none; background:var(--pl); color:var(--pd); border-radius:8px; padding:2px 8px; font-size:13px; font-weight:800}
+.revise .c{margin-left:auto; flex:none; color:var(--muted); font-size:13px}
+.ghostbtn{border:2.5px solid var(--line); background:#fff; border-radius:16px; padding:12px 20px; font-size:17px; font-weight:800; box-shadow:0 4px 0 var(--line)}
+canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:100}
+
+/* typed answer with accent keys */
+.tin{width:100%;font:inherit;font-size:24px;font-weight:800;color:var(--pd);border:3px dashed #5d9cf5;border-radius:16px;background:#f5f9ff;padding:12px 16px;outline:none}
+.tin:focus{border-style:solid}
+.tin.ok{border-style:solid;border-color:var(--ok);background:var(--okl);color:#0f7a40} .tin.bad{border-style:solid;border-color:var(--bad);background:var(--badl);color:#b02a2a}
+.acc{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px}
+.acc button{min-width:42px;height:42px;border:2.5px solid #bcd2f7;border-radius:12px;background:#fff;font-size:20px;font-weight:800;color:var(--pd);box-shadow:0 3px 0 #dbe6fa;touch-action:manipulation}
+.acc button:active{transform:translateY(2px);box-shadow:0 1px 0 #dbe6fa}
+.acc button:disabled{opacity:.5}
+.correct{margin-top:8px;font-weight:800;color:#0f7a40}
+.nudge{margin-top:10px;background:#fff8e6;border:2.5px solid #f2c200;border-radius:14px;padding:10px 14px;font-weight:700;font-size:15.5px;animation:pop .3s}
+/* build the sentence (tiles) */
+.slot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;min-height:66px;border:3px dashed #5d9cf5;border-radius:16px;background:#f5f9ff;padding:8px;margin-bottom:12px;font-size:25px;font-weight:800;color:var(--pd)}
+.slot i{font-size:15px;font-style:normal;color:#8a9ab5;font-weight:700}
+.slot.ok{border-style:solid;border-color:var(--ok);background:var(--okl)} .slot.bad{border-style:solid;border-color:var(--bad);background:var(--badl)}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tile{min-width:54px;height:52px;padding:0 14px;border:3px solid var(--p);border-radius:14px;background:#fff;font-size:21px;font-weight:800;color:var(--pd);box-shadow:0 4px 0 #c6d8f6}
+.tile:disabled{opacity:.35}
+/* put in order */
+.ord{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.ord .row{display:flex;align-items:center;gap:10px;min-height:48px;border:2.5px dashed var(--line);border-radius:14px;padding:6px 12px;font-size:19px;font-weight:800}
+.ord .row .n{flex:none;width:28px;height:28px;border-radius:8px;background:var(--pl);color:var(--pd);display:flex;align-items:center;justify-content:center;font-size:15px}
+.ord .row.ok{border-style:solid;border-color:var(--ok);background:var(--okl)} .ord .row.bad{border-style:solid;border-color:var(--bad);background:var(--badl)}
+/* conjugate (fill a verb table) */
+.conj{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.cr{display:flex;align-items:center;gap:12px;border:2.5px solid var(--line);border-radius:14px;padding:6px 12px;min-height:50px;background:#fff;font-size:19px;font-weight:800;text-align:left}
+.cr .p{flex:none;width:96px;color:#6a45d8;text-align:right}
+.cr .v{flex:1;color:var(--pd)}
+.cr.ap{gap:0}.cr.ap .v{padding-left:0}
+.cr .v i{font-style:normal;color:#b9c3d6;font-weight:700;font-size:15px}
+.cr.sel{border-color:var(--p);background:var(--pl)}
+.cr.ok{border-color:var(--ok);background:var(--okl)} .cr.bad{border-color:var(--bad);background:var(--badl)}
+.cr .fix{font-size:15px;color:#0f7a40}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+
+  <!-- MENU -->
+  <section id="menu">
+    <div class="hero">
+      <div class="atom">🦜</div>
+      <h1>French Quest 🇫🇷</h1>
+      <p>Grade 7 French revision. Pick a level, answer in French, build streaks and collect stars! Stuck? Tap <b>🇬🇧 English</b>.</p>
+    </div>
+    <div class="resume" id="resume"></div>
+    <div class="modes" id="modes"></div>
+    <div class="menu-foot">
+      <a class="pill" href="french.html" style="text-decoration:none;color:inherit">🏠 French lessons</a>
+      <button class="pill trb" id="trMenu">🇬🇧 English</button>
+      <button class="pill" id="soundBtn">🔊 Sound: on</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="hidden">
+    <div class="hud">
+      <button class="home" id="homeBtn" title="Back to menu">✕</button>
+      <div class="bar"><i id="prog"></i></div>
+      <button class="stat trb" id="trHud" title="Show the French in English">🇬🇧</button>
+      <div class="stat streak" id="streak">🔥 0</div>
+      <div class="stat" id="score">⭐ 0</div>
+    </div>
+    <div class="card" id="card"></div>
+  </section>
+
+  <!-- END -->
+  <section id="end" class="hidden">
+    <div class="card end" id="endCard"></div>
+  </section>
+</div>
+
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+/* ================= French with its English (the 🇬🇧 button swaps every .fx) ================= */
+const escA=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const T=(fr,en)=>en==null?fr:`<span class="fx" data-en="${escA(en)}">${fr}</span>`;
+let EN=false;
+function applyEN(root){if(!root||root.nodeType!==1)return;
+  [...(root.matches('.fx')?[root]:[]),...root.querySelectorAll('.fx')].forEach(e=>{if(e.dataset.fr==null)e.dataset.fr=e.innerHTML;const want=EN?e.dataset.en:e.dataset.fr;if(e.innerHTML!==want)e.innerHTML=want;e.classList.toggle('en',EN);});}
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(EN&&n.nodeType===1)applyEN(n);}))).observe(document.body,{childList:true,subtree:true});
+function trUI(){$('#trMenu').textContent=EN?'🇫🇷 Français':'🇬🇧 English';$('#trHud').textContent=EN?'🇫🇷':'🇬🇧';
+  $('#trHud').title=EN?'Back to French':'Show the French in English';document.querySelectorAll('.trb').forEach(b=>b.classList.toggle('on',EN));}
+function setEN(on){EN=on;trUI();applyEN(document.body);}
+$('#trMenu').onclick=$('#trHud').onclick=()=>{sfx.tap();setEN(!EN);};
+
+/* ================= hear it in French ================= */
+const HAS_TTS='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+function frVoice(){if(!HAS_TTS)return null;const sc=v=>(/premium/i.test(v.voiceURI+v.name)?200:/enhanced/i.test(v.voiceURI+v.name)?100:0)+(/fr[-_]FR/i.test(v.lang)?50:0)+(/Thomas|Amélie|Amelie|Audrey|Google français/i.test(v.name)?10:0);
+  return speechSynthesis.getVoices().filter(v=>/^fr[-_]/i.test(v.lang)).sort((a,b)=>sc(b)-sc(a))[0]||null;}
+function hearFR(html){if(!HAS_TTS)return;const d=el('div','',html);const t=d.textContent.replace(/[.…]{2,}|_{2,}/g,', ').replace(/\s\/\s/g,', ').replace(/[«»]/g,'').replace(/\s+/g,' ').trim();if(!t)return;
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=frVoice();if(v){u.voice=v;u.lang=v.lang;}else u.lang='fr-FR';u.rate=.9;speechSynthesis.speak(u);}
+if(HAS_TTS){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{};}
+
+/* ================= sound ================= */
+let soundOn=store.get('sq_sound',true), actx=null;
+function tone(f,t0,dur,type='sine',vol=.18){if(!soundOn)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+  const t=actx.currentTime+t0;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.start(t);o.stop(t+dur);}catch(e){}}
+const sfx={ok(){tone(660,0,.12,'triangle');tone(990,.1,.22,'triangle');},bad(){tone(200,0,.25,'sawtooth',.08);tone(150,.12,.3,'sawtooth',.08);},
+  tap(){tone(520,0,.05,'sine',.08);},win(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,'triangle'));}};
+
+/* ================= confetti ================= */
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];
+function resize(){cv.width=innerWidth;cv.height=innerHeight;}addEventListener('resize',resize);resize();
+function confetti(n=80,x=innerWidth/2,y=innerHeight/3){const cols=['#2c66cf','#ffffff','#e04848','#5d9cf5','#ffd84d','#6a45d8'];
+  for(let i=0;i<n;i++)parts.push({x,y,vx:(Math.random()-.5)*12,vy:Math.random()*-11-3,r:Math.random()*6+4,c:cols[i%cols.length],a:Math.random()*6,va:(Math.random()-.5)*.3,life:120});
+  if(parts.length===n)requestAnimationFrame(loop);}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;p.life--;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.globalAlpha=Math.max(0,Math.min(1,p.life/40));cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cx.restore();});
+  parts=parts.filter(p=>p.life>0&&p.y<cv.height+40);if(parts.length)requestAnimationFrame(loop);else cx.clearRect(0,0,cv.width,cv.height);}
+
+/* ================= typed answers ================= */
+/* A typed answer counts if it matches an accepted answer, ignoring capitals, extra spaces, curly apostrophes and a final . ! or ?.
+   If only the accents are wrong, the student gets a nudge first (the question stays open); pressing Check again marks it. */
+const normFR=s=>s.toLowerCase().replace(/[’`´]/g,"'").replace(/\s+/g,' ').replace(/'\s+/g,"'").replace(/\s*([?!.])+\s*$/,'').trim();
+const noAcc=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'');
+/* "build the sentence": words joined as French is written (j' + en → j'en) */
+const joinFR=a=>a.join(' ').replace(/' /g,"'");
+
+/* ================= the reading text (Page 1 of the sheet) ================= */
+const TEXT=[["Aujourd'hui c'est lundi, ma journée préférée.","Today is Monday, my favourite day."],
+  ["Je vais à l'école à 7 heures et demie.","I go to school at half past seven."],
+  ["J'ai français de 8 heures à 9 heures, puis de 9 heures et quart à 10 heures j'ai math.","I have French from 8 to 9 o'clock, then from quarter past 9 to 10 o'clock I have maths."],
+  ["Après la pause, on va étudier l'arabe, la biologie et l'informatique.","After the break, we are going to study Arabic, biology and computing."],
+  ["Le dernier cours c'est le cours de sport. Je l'aime beaucoup parce qu'on joue au foot avec les amis.","The last lesson is sport. I like it a lot because we play football with friends."],
+  ["Enfin, je termine à 14 heures, je rentre à la maison en voiture avec papa.","Finally, I finish at 2 pm (14:00), I go back home by car with Dad."]];
+
+/* ================= question bank =================
+   Every question has a permanent id (f1-01 …): progress is saved against it, so never renumber; add new ones at the end of their level.
+   Keep q: on the same line as id: (the parent page reads the wording from this file), quoted with backticks.
+   lv: level 1–4; l: the lesson that teaches it (for "Lessons to revise"); src: 'Worksheet …' for the worksheet's own questions.
+   q: the question in French, en: its English (the 🇬🇧 button). why: the explanation (English, French words in <span class="fw">).
+   mcq/tf: o, oe (English of each choice, optional), a, whyNot = {option: why it is wrong}.
+   type: ans = accepted answers, mist = {typed answer: why it is wrong}. tiles: tiles, answers (word lists), model.
+   match: pairs [French, English]. order: items in the right order, ie (English). conj: verb, ven (English), forms (je…ils), extra (wrong forms in the bank).
+   pass:1 shows the reading text above the question. */
+const W=s=>`<span class="fw">${s}</span>`;
+const BANK=[
+/* ---------- Level 1 · Vocabulaire (f01–f03) ---------- */
+{id:'f1-01',lv:1,l:'f01',src:'Worksheet · Page 1 · Table: Jour',pass:1,type:'mcq',q:`Complétez le tableau : <b>Jour</b> ……`,en:'Complete the table: <b>Day</b> ……',
+  o:['mardi','lundi','dimanche'],oe:['Tuesday','Monday','Sunday'],a:1,whyNot:{0:`${W('mardi')} is Tuesday.`,2:`${W('dimanche')} is Sunday.`},
+  why:`The text starts: ${W("Aujourd'hui c'est lundi")} (today is Monday).`},
+{id:'f1-02',lv:1,l:'f01',src:'Worksheet · Page 1 · Table: Lieu',pass:1,type:'mcq',q:`Complétez le tableau : <b>Lieu</b> ……`,en:'Complete the table: <b>Place</b> ……',
+  o:['à la maison',"à l'école",'au cinéma'],oe:['at home','at school','at the cinema'],a:1,whyNot:{0:'the writer only goes home at the end; the text is about the school day.',2:'the text never mentions the cinema.'},
+  why:`${W("Je vais à l'école")}: I go to school. ${W('Lieu')} means place.`},
+{id:'f1-03',lv:1,l:'f01',src:'Worksheet · Page 1 · Table: Matière',pass:1,type:'mcq',q:`Complétez le tableau : <b>Matière</b> ……`,en:'Complete the table: <b>Subject</b> ……',
+  o:['français','voiture','pause'],oe:['French','car','break'],a:0,whyNot:{1:`${W('voiture')} is a car, not a school subject.`,2:`${W('la pause')} is the break, not a subject.`},
+  why:`${W('Matière')} means school subject. The day starts with ${W('français')}.`},
+{id:'f1-04',lv:1,l:'f01',src:'Worksheet · Page 1 · Table: Heure de retour à la maison',pass:1,type:'mcq',q:`Complétez le tableau : <b>Heure de retour à la maison</b> ……`,en:'Complete the table: <b>Time back home</b> ……',
+  o:['7 heures et demie','9 heures et quart','14 heures'],oe:['half past seven','quarter past nine','14:00 (2 pm)'],a:2,whyNot:{0:'that is when the writer goes <b>to</b> school.',1:'that is when maths starts.'},
+  why:`${W('Je termine à 14 heures, je rentre à la maison')}: I finish at 2 pm and go home.`},
+{id:'f1-05',lv:1,l:'f01',src:'Worksheet · Page 1 · Table: Moyen de transport',pass:1,type:'mcq',q:`Complétez le tableau : <b>Moyen de transport</b> ……`,en:'Complete the table: <b>Means of transport</b> ……',
+  o:['en bus','en voiture','à pied'],oe:['by bus','by car','on foot'],a:1,whyNot:{0:'the text does not mention a bus.',2:`${W('à pied')} means walking.`},
+  why:`${W('je rentre à la maison en voiture avec papa')}: by car with Dad.`},
+{id:'f1-06',lv:1,l:'f01',type:'mcq',q:`« 7 heures et demie », c'est quelle heure ?`,en:'"7 heures et demie": what time is it?',
+  o:['7:30','7:15','7:45','6:30'],a:0,whyNot:{1:`7:15 is ${W('7 heures et quart')}.`,2:`7:45 is ${W('8 heures moins le quart')}.`,3:'the hour is 7, not 6.'},
+  why:`${W('Et demie')} means half past: 7 heures et demie = <b>7:30</b>.`},
+{id:'f1-07',lv:1,l:'f01',type:'mcq',q:`« 9 heures et quart », c'est quelle heure ?`,en:'"9 heures et quart": what time is it?',
+  o:['9:30','9:15','9:45','8:15'],a:1,whyNot:{0:`9:30 is ${W('9 heures et demie')}.`,2:`9:45 is three quarters past, not ${W('et quart')}.`,3:'the hour is 9, not 8.'},
+  why:`${W('Et quart')} means quarter past: 9 heures et quart = <b>9:15</b>.`},
+{id:'f1-08',lv:1,l:'f01',type:'mcq',q:`« Je termine à 14 heures. » 14 heures, c'est…`,en:'"I finish at 14:00." 14:00 is…',
+  o:['2 am','2 pm','4 pm','14 minutes'],a:1,whyNot:{0:'2 am is the middle of the night: that would be 2 heures.',2:'4 pm is 16 heures.',3:`${W('heures')} means hours (o'clock), not minutes.`},
+  why:'French timetables use the 24-hour clock: 14 heures = 14:00 = <b>2 pm</b>.'},
+{id:'f1-09',lv:1,l:'f01',type:'order',q:`Mettez les jours de la semaine en ordre.`,en:'Put the days of the week in order.',
+  items:['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],ie:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+  why:'The French week starts on Monday: lundi, mardi, mercredi, jeudi, vendredi, samedi, dimanche.'},
+{id:'f1-10',lv:1,l:'f02',type:'match',q:`Reliez chaque matière à son nom en anglais.`,en:'Match each school subject to its English name.',
+  pairs:[['français','French'],['anglais','English'],['arabe','Arabic'],['biologie','biology'],['informatique','computing'],['géographie','geography']],
+  why:`${W('Matière')} = school subject. ${W('Informatique')} is computing, and ${W('anglais')} is English.`},
+{id:'f1-11',lv:1,l:'f01',src:'Worksheet · Page 1 · Les matières',type:'mcq',q:`Tu complètes : les matières comme : français, maths, anglais, biologie, ……`,en:'Complete: school subjects such as: French, maths, English, biology, ……',
+  o:['art','voiture','lundi','papa'],oe:['art','car','Monday','Dad'],a:0,whyNot:{1:'a car is not a school subject.',2:'Monday is a day.',3:'Dad is a person.'},
+  why:`${W('Art')} is a school subject, like ${W('français')}, ${W('maths')}, ${W('anglais')} and ${W('biologie')}.`},
+{id:'f1-12',lv:1,l:'f02',src:'Worksheet · Page 2 · Mot insolite Q1',type:'mcq',q:`Trouvez le mot insolite : TCF / DELF / EPS / DALF`,en:'Find the odd one out: TCF / DELF / EPS / DALF',
+  o:['TCF','DELF','EPS','DALF'],a:2,whyNot:{0:'TCF is a French language test.',1:'DELF is a French language diploma.',3:'DALF is a French language diploma.'},
+  why:`TCF, DELF and DALF are all <b>French language exams</b>. ${W('EPS')} is PE (sport) at school.`},
+{id:'f1-13',lv:1,l:'f02',src:'Worksheet · Page 2 · Mot insolite Q2',type:'mcq',q:`Trouvez le mot insolite : France / géo / art / maths`,en:'Find the odd one out: France / geography / art / maths',
+  o:['France','géo','art','maths'],oe:['France','geography','art','maths'],a:0,whyNot:{1:`${W('géo')} (geography) is a school subject.`,2:'art is a school subject.',3:'maths is a school subject.'},
+  why:`${W('France')} is a <b>country</b>. The others are school subjects.`},
+{id:'f1-14',lv:1,l:'f02',src:'Worksheet · Page 2 · Mot insolite Q3',type:'mcq',q:`Trouvez le mot insolite : anglais / oncle / arabe / italien`,en:'Find the odd one out: English / uncle / Arabic / Italian',
+  o:['anglais','oncle','arabe','italien'],oe:['English','uncle','Arabic','Italian'],a:1,whyNot:{0:'English is a language.',2:'Arabic is a language.',3:'Italian is a language.'},
+  why:`${W('Oncle')} means uncle, a <b>family member</b>. The others are languages.`},
+{id:'f1-15',lv:1,l:'f02',src:'Worksheet · Page 2 · Mot insolite Q4',type:'mcq',q:`Trouvez le mot insolite : étudiant / professeur / école / plat`,en:'Find the odd one out: student / teacher / school / dish',
+  o:['étudiant','professeur','école','plat'],oe:['student','teacher','school','dish'],a:3,whyNot:{0:'a student belongs at school.',1:'a teacher belongs at school.',2:'school is where the others are.'},
+  why:`${W('Plat')} means a dish (food). The others are all about school.`},
+{id:'f1-16',lv:1,l:'f02',src:'Worksheet · Page 2 · Mot insolite Q5',type:'mcq',q:`Trouvez le mot insolite : tableau / matière / météo / devoir`,en:'Find the odd one out: board / subject / weather forecast / homework',
+  o:['tableau','matière','météo','devoir'],oe:['board','subject','weather forecast','homework'],a:2,whyNot:{0:'the board is in the classroom.',1:'a subject is a school word.',3:'homework is a school word.'},
+  why:`${W('Météo')} is the weather forecast. The others are school words.`},
+{id:'f1-17',lv:1,l:'f02',src:'Worksheet · Page 2 · Mot insolite Q6',type:'mcq',q:`Trouvez le mot insolite : café / test / étude / cours`,en:'Find the odd one out: coffee / test / study / lesson',
+  o:['café','test','étude','cours'],oe:['coffee','test','study','lesson'],a:0,whyNot:{1:'a test is a school word.',2:'study is a school word.',3:`${W('cours')} means lesson.`},
+  why:`${W('Café')} is coffee (or a café). The others are school words.`},
+{id:'f1-18',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: facile",type:'type',q:`Donnez l'opposé du mot : <b>facile</b>`,en:'Give the opposite of the word: <b>easy</b>',
+  ans:['difficile'],mist:{'dificile':'difficile has two f\'s and one c: d-i-f-f-i-c-i-l-e.'},why:`${W('Facile')} = easy, so the opposite is ${W('difficile')} = difficult.`},
+{id:'f1-19',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: facilement",type:'mcq',q:`Donnez l'opposé du mot : <b>facilement</b>`,en:'Give the opposite of the word: <b>easily</b>',
+  o:['difficilement','rapidement','facile','tard'],oe:['with difficulty','quickly','easy','late'],a:0,whyNot:{1:'quickly is not the opposite of easily.',2:`${W('facile')} is the adjective (easy), not the opposite.`,3:`${W('tard')} (late) is the opposite of ${W('tôt')}.`},
+  why:`facile → difficile, so facil<b>ement</b> → difficil<b>ement</b>. Both keep the -ment ending.`},
+{id:'f1-20',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: d'abord",type:'mcq',q:`Donnez l'opposé du mot : <b>d'abord</b>`,en:'Give the opposite of the word: <b>first</b>',
+  o:['enfin','tôt','le matin'],oe:['finally','early','the morning'],a:0,whyNot:{1:`${W('tôt')} means early.`,2:`${W('le matin')} means the morning.`},
+  why:`${W("D'abord")} (first) starts a story; ${W('enfin')} (finally) ends it.`},
+{id:'f1-21',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: tôt",type:'type',q:`Donnez l'opposé du mot : <b>tôt</b>`,en:'Give the opposite of the word: <b>early</b>',
+  ans:['tard'],mist:{'tot':`That is the same word. The opposite of early is late: ${W('tard')}.`},why:`${W('Tôt')} = early, ${W('tard')} = late.`},
+{id:'f1-22',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: midi",type:'mcq',q:`Donnez l'opposé du mot : <b>midi</b>`,en:'Give the opposite of the word: <b>midday</b>',
+  o:['minuit','le matin','le soir','après-midi'],oe:['midnight','the morning','the evening','afternoon'],a:0,whyNot:{1:'the morning comes before midday.',2:'the evening comes after the afternoon.',3:'the afternoon comes after midday.'},
+  why:`${W('Midi')} is 12 in the day (midday) and ${W('minuit')} is 12 at night (midnight).`},
+{id:'f1-23',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: le matin",type:'mcq',q:`Donnez l'opposé du mot : <b>le matin</b>`,en:'Give the opposite of the word: <b>the morning</b>',
+  o:['le soir','midi','tôt'],oe:['the evening','midday','early'],a:0,whyNot:{1:'midday is the middle of the day.',2:'early is not a part of the day.'},
+  why:`${W('Le matin')} (the morning) is the start of the day; ${W('le soir')} (the evening) is the end.`},
+{id:'f1-24',lv:1,l:'f03',src:"Worksheet · Page 2 · Opposé: avant",type:'type',q:`Donnez l'opposé du mot : <b>avant</b>`,en:'Give the opposite of the word: <b>before</b>',
+  ans:['après'],why:`${W('Avant')} = before, ${W('après')} = after (with a grave accent: è).`},
+{id:'f1-25',lv:1,l:'f03',type:'match',q:`Reliez chaque mot à son contraire.`,en:'Match each word to its opposite.',
+  pairs:[['facile','difficile'],['tôt','tard'],['avant','après'],['midi','minuit'],['le matin','le soir'],["d'abord",'enfin']],
+  pe:[['easy','difficult'],['early','late'],['before','after'],['midday','midnight'],['the morning','the evening'],['first','finally']],
+  why:'facile ↔ difficile, tôt ↔ tard, avant ↔ après, midi ↔ minuit, le matin ↔ le soir, d\'abord ↔ enfin.'},
+{id:'f1-26',lv:1,l:'f03',src:'Worksheet · Page 6 · Les moments de la journée',type:'order',q:`Mettez en ordre les moments de la journée.`,en:'Put the times of day in order.',
+  items:['matin','midi','après-midi','soir','minuit'],ie:['morning','midday','afternoon','evening','midnight'],
+  why:'The day goes: matin (morning) → midi (midday) → après-midi (afternoon) → soir (evening) → minuit (midnight).'},
+{id:'f1-27',lv:1,l:'f03',type:'mcq',q:`Quel moment vient après midi ?`,en:'Which time of day comes after midday?',
+  o:["l'après-midi",'le matin','minuit'],oe:['the afternoon','the morning','midnight'],a:0,whyNot:{1:'the morning comes before midday.',2:'midnight is at the very end of the day.'},
+  why:`${W('Après-midi')} literally means "after midday": the afternoon.`},
+{id:'f1-28',lv:1,l:'f03',type:'tf',q:`Vrai ou faux ? Le soir vient avant l'après-midi.`,en:'True or false? The evening comes before the afternoon.',
+  o:['Vrai','Faux'],oe:['True','False'],a:1,whyNot:{0:'the afternoon comes first, then the evening.'},
+  why:`Faux (false): ${W("l'après-midi")} comes before ${W('le soir')}.`},
+
+/* ---------- Level 2 · Verbes en -er (f04, f05) ---------- */
+{id:'f2-01',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q8',type:'mcq',q:`Je …… français.`,en:'I …… French.',o:['parle','parles'],a:0,whyNot:{1:`-es is the ending for ${W('tu')}.`},
+  why:`${W('je')} → ending -e: ${W('je parle')} (I speak).`},
+{id:'f2-02',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q9',type:'mcq',q:`Ali …… arabe.`,en:'Ali …… Arabic.',o:['parles','parle'],a:1,whyNot:{0:`-es is only for ${W('tu')}. Ali is ${W('il')}.`},
+  why:`Ali = ${W('il')} → ending -e: ${W('Ali parle')}.`},
+{id:'f2-03',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q10',type:'mcq',q:`Nous …… arabe.`,en:'We …… Arabic.',o:['parlons','parles'],a:0,whyNot:{1:`-es is for ${W('tu')}.`},
+  why:`${W('nous')} → ending -ons: ${W('nous parlons')}.`},
+{id:'f2-04',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q11',type:'mcq',q:`Tu …… arabe.`,en:'You …… Arabic.',o:['parle','parles'],a:1,whyNot:{0:`-e is for ${W('je')} and ${W('il')}; ${W('tu')} needs an s.`},
+  why:`${W('tu')} → ending -es: ${W('tu parles')}. The s is silent but must be written.`},
+{id:'f2-05',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q12',type:'mcq',q:`Vous …… anglais.`,en:'You …… English.',o:['parlez','parles'],a:0,whyNot:{1:`-es is for ${W('tu')}.`},
+  why:`${W('vous')} → ending -ez: ${W('vous parlez')}.`},
+{id:'f2-06',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q13',type:'mcq',q:`Mona …… anglais.`,en:'Mona …… English.',o:['parlent','parle'],a:1,whyNot:{0:`-ent is for ${W('ils')} / ${W('elles')} (several people). Mona is one person.`},
+  why:`Mona = ${W('elle')} → ending -e: ${W('Mona parle')}.`},
+{id:'f2-07',lv:2,l:'f04',src:'Worksheet · Page 5 · Tu choisis Q14',type:'mcq',q:`Il …… arabe.`,en:'He …… Arabic.',o:['parle','parles'],a:0,whyNot:{1:`-es is for ${W('tu')}.`},
+  why:`${W('il')} → ending -e: ${W('il parle')}.`},
+{id:'f2-08',lv:2,l:'f05',src:'Worksheet · Page 3 · Tu choisis Q3',type:'mcq',q:`Hassan pense …… dans une université française.`,en:'Hassan is thinking of …… at a French university.',o:['étudie','étudier'],a:1,whyNot:{0:`after a first verb (${W('pense')}), the second verb stays in the infinitive.`},
+  why:`Two verbs together: the first changes (${W('pense')}), the second stays as it is: ${W('étudier')}.`},
+{id:'f2-09',lv:2,l:'f05',src:'Worksheet · Page 3 · Tu choisis Q8',type:'mcq',q:`Nous …… le français.`,en:'We …… French.',o:['étudier','étudions'],a:1,whyNot:{0:`${W('étudier')} is the infinitive (to study). After ${W('nous')} the verb needs -ons.`},
+  why:`${W('nous')} → -ons: ${W('nous étudions')}.`},
+{id:'f2-10',lv:2,l:'f05',src:'Worksheet · Page 3 · Tu choisis Q9',type:'mcq',q:`Il …… le français.`,en:'He …… French.',o:['étudies','étudie'],a:1,whyNot:{0:`-es is for ${W('tu')}.`},
+  why:`${W('il')} → -e: ${W('il étudie')}.`},
+{id:'f2-11',lv:2,l:'f05',src:'Worksheet · Page 3 · Tu choisis Q12',type:'mcq',q:`Mona …… l'arabe.`,en:'Mona …… Arabic.',o:['étudies','étudie'],a:1,whyNot:{0:`-es is for ${W('tu')}. Mona is ${W('elle')}.`},
+  why:`Mona = ${W('elle')} → -e: ${W('Mona étudie')}.`},
+{id:'f2-12',lv:2,l:'f05',src:'Worksheet · Page 4 · Tu choisis Q1',type:'mcq',q:`Marie …… la biologie tous les mardis.`,en:'Marie …… biology every Tuesday.',o:['étudie','étudions'],a:0,whyNot:{1:`-ons is only for ${W('nous')}.`},
+  why:`Marie = ${W('elle')} → -e: ${W('Marie étudie')}.`},
+{id:'f2-13',lv:2,l:'f05',src:'Worksheet · Page 4 · Tu choisis Q3',type:'mcq',q:`Tu …… pour les examens.`,en:'You …… for the exams.',o:['étudies','étudiez'],a:0,whyNot:{1:`-ez is for ${W('vous')}.`},
+  why:`${W('tu')} → -es: ${W('tu étudies')}.`},
+{id:'f2-14',lv:2,l:'f05',src:'Worksheet · Page 4 · Tu choisis Q12',type:'mcq',q:`Elle …… de la glace.`,en:'She …… (some) ice cream.',o:['mangent','mange'],a:1,whyNot:{0:`-ent is for ${W('ils')} / ${W('elles')}.`},
+  why:`${W('elle')} → -e: ${W('elle mange')}.`},
+{id:'f2-15',lv:2,l:'f05',src:'Worksheet · Page 4 · Tu choisis Q13',type:'mcq',q:`Nous …… de la glace.`,en:'We …… (some) ice cream.',o:['mangez','mangeons'],a:1,whyNot:{0:`-ez is for ${W('vous')}.`},
+  why:`${W('nous')} → -ons, and manger keeps an e to keep the g soft: ${W('nous mangeons')}.`},
+{id:'f2-16',lv:2,l:'f05',src:'Worksheet · Page 4 · Tu choisis Q14',type:'mcq',q:`Tu …… quoi ?`,en:'You …… what?',o:['manges','mange'],a:0,whyNot:{1:`-e is for ${W('je')} / ${W('il')}; ${W('tu')} needs -es.`},
+  why:`${W('tu')} → -es: ${W('tu manges')}.`},
+{id:'f2-17',lv:2,l:'f05',src:'Worksheet · Page 4 · Tu choisis Q15',type:'mcq',q:`Il …… de la glace.`,en:'He …… (some) ice cream.',o:['mange','mangent'],a:0,whyNot:{1:`-ent is for ${W('ils')}.`},
+  why:`${W('il')} → -e: ${W('il mange')}.`},
+{id:'f2-18',lv:2,l:'f04',src:'Worksheet · Page 7 · parler',type:'conj',q:`Tu conjugues au présent : <b>parler</b>`,en:'Conjugate in the present: <b>to speak</b>',verb:'parler',
+  forms:['parle','parles','parle','parlons','parlez','parlent'],extra:['parlont'],why:'-er verbs: parl + e, es, e, ons, ez, ent.'},
+{id:'f2-19',lv:2,l:'f04',src:'Worksheet · Page 7 · donner',type:'conj',q:`Tu conjugues au présent : <b>donner</b>`,en:'Conjugate in the present: <b>to give</b>',verb:'donner',
+  forms:['donne','donnes','donne','donnons','donnez','donnent'],extra:['donnont'],why:'donn + e, es, e, ons, ez, ent.'},
+{id:'f2-20',lv:2,l:'f04',src:'Worksheet · Page 7 · aimer',type:'conj',q:`Tu conjugues au présent : <b>aimer</b>`,en:'Conjugate in the present: <b>to like / to love</b>',verb:'aimer',
+  forms:['aime','aimes','aime','aimons','aimez','aiment'],extra:['aimont'],why:`aim + e, es, e, ons, ez, ent. Before a vowel, ${W('je')} becomes ${W("j'")}: ${W("j'aime")}.`},
+{id:'f2-21',lv:2,l:'f04',src:'Worksheet · Page 7 · penser',type:'conj',q:`Tu conjugues au présent : <b>penser</b>`,en:'Conjugate in the present: <b>to think</b>',verb:'penser',
+  forms:['pense','penses','pense','pensons','pensez','pensent'],extra:['pensont'],why:'pens + e, es, e, ons, ez, ent.'},
+{id:'f2-22',lv:2,l:'f05',src:'Worksheet · Page 7 · accepter',type:'conj',q:`Tu conjugues au présent : <b>accepter</b>`,en:'Conjugate in the present: <b>to accept</b>',verb:'accepter',
+  forms:['accepte','acceptes','accepte','acceptons','acceptez','acceptent'],extra:['acceptont'],why:`accept + e, es, e, ons, ez, ent, with ${W("j'accepte")}.`},
+{id:'f2-23',lv:2,l:'f05',src:'Worksheet · Page 7 · refuser',type:'conj',q:`Tu conjugues au présent : <b>refuser</b>`,en:'Conjugate in the present: <b>to refuse</b>',verb:'refuser',
+  forms:['refuse','refuses','refuse','refusons','refusez','refusent'],extra:['refusont'],why:'refus + e, es, e, ons, ez, ent.'},
+{id:'f2-24',lv:2,l:'f05',src:'Worksheet · Page 7 · manger',type:'conj',q:`Tu conjugues au présent : <b>manger</b>`,en:'Conjugate in the present: <b>to eat</b>',verb:'manger',
+  forms:['mange','manges','mange','mangeons','mangez','mangent'],extra:['mangons'],why:`mang + e, es, e, ons, ez, ent, but ${W('nous mangeons')} keeps an e so the g still sounds soft.`},
+{id:'f2-25',lv:2,l:'f05',src:'Worksheet · Page 2 · étudier',type:'conj',q:`Tu conjugues au présent : <b>étudier</b>`,en:'Conjugate in the present: <b>to study</b>',verb:'étudier',
+  forms:['étudie','étudies','étudie','étudions','étudiez','étudient'],extra:['étudons'],why:`étudi + e, es, e, ons, ez, ent. Keep the i: ${W('nous étudions')}. And ${W("j'étudie")}.`},
+{id:'f2-26',lv:2,l:'f05',type:'type',q:`Nous …… de la glace. (manger)`,en:'We …… (some) ice cream. (to eat)',ans:['mangeons'],
+  mist:{'mangons':`Keep the e after the g: ${W('mangeons')}. Without it, the g would sound hard.`,'mangez':`-ez is for ${W('vous')}. ${W('nous')} needs -ons.`},
+  why:`${W('nous')} → -ons, and manger keeps its e: ${W('nous mangeons')}.`},
+{id:'f2-27',lv:2,l:'f04',type:'type',q:`Vous …… anglais. (parler)`,en:'You …… English. (to speak)',ans:['parlez'],mist:{'parles':`-es is for ${W('tu')}.`,'parler':`${W('parler')} is the infinitive. ${W('vous')} needs -ez.`},
+  why:`${W('vous')} → -ez: ${W('vous parlez')}.`},
+{id:'f2-28',lv:2,l:'f05',type:'type',q:`Ils …… le français. (étudier)`,en:'They …… French. (to study)',ans:['étudient'],mist:{'étudie':`${W('ils')} is more than one person: add -nt: ${W('étudient')}.`,'étudies':`-es is for ${W('tu')}.`},
+  why:`${W('ils')} → -ent: ${W('ils étudient')}. The -ent is silent.`},
+{id:'f2-29',lv:2,l:'f04',type:'type',q:`J'…… le sport. (aimer)`,en:'I …… sport. (to like)',ans:['aime'],mist:{'aimes':`-es is for ${W('tu')}. ${W("j'")} needs -e.`},
+  why:`${W('je')} → -e, and je becomes ${W("j'")} before a vowel: ${W("j'aime")}.`},
+{id:'f2-30',lv:2,l:'f04',type:'match',q:`Les verbes en -er : reliez chaque pronom à sa terminaison.`,en:'-er verbs: match each pronoun to its ending.',
+  pairs:[['je','-e'],['tu','-es'],['nous','-ons'],['vous','-ez'],['ils / elles','-ent']],
+  why:'je -e, tu -es, il/elle -e, nous -ons, vous -ez, ils/elles -ent.'},
+
+/* ---------- Level 3 · Apprendre, prendre, avoir, aller, il faut (f06, f07) ---------- */
+{id:'f3-01',lv:3,l:'f06',src:'Worksheet · Page 3 · Tu choisis Q6',type:'mcq',q:`J'…… une nouvelle langue.`,en:'I …… a new language.',o:['apprend','apprends'],a:1,whyNot:{0:`no s is for ${W('il')} / ${W('elle')}. ${W("j'")} needs -s.`},
+  why:`${W("j'apprends")}: je and tu end in -s.`},
+{id:'f3-02',lv:3,l:'f06',src:'Worksheet · Page 3 · Tu choisis Q7',type:'mcq',q:`Ali …… une nouvelle langue.`,en:'Ali …… a new language.',o:['apprend','apprends'],a:0,whyNot:{1:`-s is for ${W('je')} and ${W('tu')}. Ali is ${W('il')}.`},
+  why:`Ali = ${W('il')} → ${W('il apprend')}: it ends in d, no s.`},
+{id:'f3-03',lv:3,l:'f06',src:'Worksheet · Page 3 · Tu choisis Q10',type:'mcq',q:`Nous …… à lire.`,en:'We …… to read.',o:['apprenons','apprenez'],a:0,whyNot:{1:`-ez is for ${W('vous')}.`},
+  why:`${W('nous')} → -ons: ${W('nous apprenons')} (no d).`},
+{id:'f3-04',lv:3,l:'f06',src:'Worksheet · Page 3 · Tu choisis Q11',type:'mcq',q:`Tu …… le français.`,en:'You …… French.',o:['apprend','apprends'],a:1,whyNot:{0:`no s is for ${W('il')}; ${W('tu')} needs -s.`},
+  why:`${W('tu apprends')}: tu always ends in -s.`},
+{id:'f3-05',lv:3,l:'f06',src:'Worksheet · Page 3 · Tu choisis Q13',type:'mcq',q:`Elle …… la leçon.`,en:'She …… the lesson.',o:['apprend','apprends'],a:0,whyNot:{1:`-s is for ${W('je')} and ${W('tu')}.`},
+  why:`${W('elle apprend')}: il / elle ends in d.`},
+{id:'f3-06',lv:3,l:'f06',src:'Worksheet · Page 4 · Tu choisis Q2',type:'mcq',q:`Les amies …… le vocabulaire.`,en:'The friends …… the vocabulary.',o:['apprenez','apprennent'],a:1,whyNot:{0:`-ez is for ${W('vous')}. Les amies = ${W('elles')}.`},
+  why:`Les amies = ${W('elles')} → ${W('elles apprennent')}, with a double n.`},
+{id:'f3-07',lv:3,l:'f06',src:'Worksheet · Page 4 · Tu choisis Q4',type:'mcq',q:`Nous …… la géographie.`,en:'We …… geography.',o:['apprenons','apprends'],a:0,whyNot:{1:`${W('apprends')} is for je / tu.`},
+  why:`${W('nous apprenons')}.`},
+{id:'f3-08',lv:3,l:'f06',src:'Worksheet · Page 4 · Tu choisis Q5',type:'mcq',q:`Vous …… à parler anglais.`,en:'You …… to speak English.',o:['apprenons','apprenez'],a:1,whyNot:{0:`-ons is for ${W('nous')}.`},
+  why:`${W('vous')} → -ez: ${W('vous apprenez')}.`},
+{id:'f3-09',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q1',type:'mcq',q:`Je …… du poulet.`,en:'I …… (some) chicken.',o:['prend','prends'],a:1,whyNot:{0:`no s is for ${W('il')}.`},why:`${W('je prends')}: je ends in -s.`},
+{id:'f3-10',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q2',type:'mcq',q:`Il …… du café.`,en:'He …… (some) coffee.',o:['prends','prend'],a:1,whyNot:{0:`-s is for ${W('je')} / ${W('tu')}.`},why:`${W('il prend')}: ends in d.`},
+{id:'f3-11',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q3',type:'mcq',q:`Je …… un taxi.`,en:'I …… a taxi.',o:['prends','prenons'],a:0,whyNot:{1:`-ons is for ${W('nous')}.`},why:`${W('je prends un taxi')}: I take a taxi.`},
+{id:'f3-12',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q4',type:'mcq',q:`Tu …… quoi ?`,en:'You …… what?',o:['prend','prends'],a:1,whyNot:{0:`no s is for ${W('il')}.`},why:`${W('tu prends')}: tu ends in -s.`},
+{id:'f3-13',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q5',type:'mcq',q:`Ils …… du poulet.`,en:'They …… (some) chicken.',o:['prenez','prennent'],a:1,whyNot:{0:`-ez is for ${W('vous')}.`},why:`${W('ils prennent')}: double n, then -ent.`},
+{id:'f3-14',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q6',type:'mcq',q:`Mona …… du café.`,en:'Mona …… (some) coffee.',o:['prend','prends'],a:0,whyNot:{1:`-s is for je / tu. Mona = ${W('elle')}.`},why:`Mona = elle → ${W('elle prend')}.`},
+{id:'f3-15',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q7',type:'mcq',q:`Ali …… le bus.`,en:'Ali …… the bus.',o:['prend','prends'],a:0,whyNot:{1:`-s is for je / tu. Ali = ${W('il')}.`},why:`Ali = il → ${W('il prend le bus')}.`},
+{id:'f3-16',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q8',type:'mcq',q:`Nous …… le bus.`,en:'We …… the bus.',o:['prenez','prenons'],a:1,whyNot:{0:`-ez is for ${W('vous')}.`},why:`${W('nous prenons')}.`},
+{id:'f3-17',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q9',type:'mcq',q:`Mon ami …… du café.`,en:'My friend …… (some) coffee.',o:['prend','prennent'],a:0,whyNot:{1:`-ent is for several people. Mon ami is one person (il).`},why:`mon ami = il → ${W('prend')}.`},
+{id:'f3-18',lv:3,l:'f06',src:'Worksheet · Page 8 · Tu choisis Q10',type:'mcq',q:`Mon amie …… du poulet.`,en:'My friend (a girl) …… (some) chicken.',o:['prenez','prend'],a:1,whyNot:{0:`-ez is for ${W('vous')}.`},why:`mon amie = elle → ${W('prend')}.`},
+{id:'f3-19',lv:3,l:'f07',src:'Worksheet · Page 3 · Tu choisis Q4',type:'mcq',q:`Il …… parler au secrétaire.`,en:'He is …… to speak to the secretary.',o:['vont','va'],a:1,whyNot:{0:`${W('vont')} is for ${W('ils')} (they).`},
+  why:`aller: ${W('il va')}. ${W('Il va parler')} = he is going to speak.`},
+{id:'f3-20',lv:3,l:'f07',src:'Worksheet · Page 3 · Tu choisis Q5',type:'mcq',q:`Il faut avoir un …… niveau.`,en:'You need to have a …… level.',o:['bon','bonne'],a:0,whyNot:{1:`${W('bonne')} is for feminine words. ${W('un niveau')} is masculine.`},
+  why:`${W('un niveau')} is masculine (un), so ${W('bon')}: ${W('un bon niveau')}.`},
+{id:'f3-21',lv:3,l:'f07',src:'Worksheet · Page 4 · Tu choisis Q6',type:'mcq',q:`Il faut …… un bon niveau.`,en:'You need …… a good level.',o:['avons','avoir'],a:1,whyNot:{0:`${W('avons')} goes with ${W('nous')}. After ${W('il faut')} the verb stays in the infinitive.`},
+  why:`${W('Il faut')} + infinitive: ${W('il faut avoir')}.`},
+{id:'f3-22',lv:3,l:'f07',src:'Worksheet · Page 4 · Tu choisis Q7',type:'mcq',q:`C'est …… facile.`,en:"It's …… easy.",o:['beaucoup','très'],a:1,whyNot:{0:`${W('beaucoup')} (a lot) goes with verbs: ${W("j'aime beaucoup")}.`},
+  why:`${W('Très')} (very) goes before an adjective: ${W("c'est très facile")}.`},
+{id:'f3-23',lv:3,l:'f07',src:'Worksheet · Page 4 · Tu choisis Q8',type:'mcq',q:`J'…… math.`,en:'I …… maths.',o:['as','ai'],a:1,whyNot:{0:`${W('as')} goes with ${W('tu')}: ${W('tu as')}.`},
+  why:`avoir: ${W("j'ai")} (I have).`},
+{id:'f3-24',lv:3,l:'f07',src:'Worksheet · Page 4 · Tu choisis Q9',type:'mcq',q:`Je …… à l'école à 7 heures.`,en:'I …… to school at 7 o\'clock.',o:['vais','va'],a:0,whyNot:{1:`${W('va')} goes with ${W('il')} / ${W('elle')}.`},
+  why:`aller: ${W('je vais')} (I go).`},
+{id:'f3-25',lv:3,l:'f06',src:'Worksheet · Page 2 · apprendre',type:'conj',q:`Tu conjugues au présent : <b>apprendre</b>`,en:'Conjugate in the present: <b>to learn</b>',verb:'apprendre',
+  forms:['apprends','apprends','apprend','apprenons','apprenez','apprennent'],extra:['apprendons','apprendent'],why:`apprends, apprends, apprend, apprenons, apprenez, apprennent. Use ${W("j'apprends")} before the vowel.`},
+{id:'f3-26',lv:3,l:'f06',src:'Worksheet · Page 7 · prendre',type:'conj',q:`Tu conjugues au présent : <b>prendre</b>`,en:'Conjugate in the present: <b>to take</b>',verb:'prendre',
+  forms:['prends','prends','prend','prenons','prenez','prennent'],extra:['prendons','prendent'],why:'prends, prends, prend, prenons, prenez, prennent: the d goes away for nous/vous/ils, and ils has nn.'},
+{id:'f3-27',lv:3,l:'f07',type:'conj',q:`Tu conjugues au présent : <b>avoir</b>`,en:'Conjugate in the present: <b>to have</b>',verb:'avoir',
+  forms:['ai','as','a','avons','avez','ont'],extra:['avont'],why:`${W("j'ai, tu as, il a, nous avons, vous avez, ils ont")}.`},
+{id:'f3-28',lv:3,l:'f07',type:'conj',q:`Tu conjugues au présent : <b>aller</b>`,en:'Conjugate in the present: <b>to go</b>',verb:'aller',
+  forms:['vais','vas','va','allons','allez','vont'],extra:['allent'],why:`${W('je vais, tu vas, il va, nous allons, vous allez, ils vont')}.`},
+{id:'f3-29',lv:3,l:'f07',src:'Worksheet · Page 6 · 5 conseils',type:'mcq',q:`Donnez un conseil pour vivre sans stress : Il faut ……`,en:'Give a tip for living without stress: You must ……',
+  o:['faire du sport','rester stressé','ne pas dormir'],oe:['do sport','stay stressed','not sleep'],a:0,whyNot:{1:'staying stressed is the opposite of the goal!',2:'sleep helps you live without stress.'},
+  why:`${W('Il faut faire du sport')}: one of the sheet's five tips, with ${W('bien manger')}, ${W('bien dormir')}, ${W('lire le Coran')} and ${W('faire la prière')}.`},
+{id:'f3-30',lv:3,l:'f07',src:'Worksheet · Page 6 · 5 conseils',type:'tiles',q:`Construisez le conseil : « You must eat well. »`,en:'Build the tip: "You must eat well."',
+  tiles:['Il','faut','bien','manger','mange','très'],answers:[['Il','faut','bien','manger']],model:'Il faut bien manger.',
+  why:`${W('Il faut')} + infinitive: ${W('Il faut bien manger')}.`},
+{id:'f3-31',lv:3,l:'f07',type:'type',q:`Il faut …… du sport. (faire)`,en:'You must …… sport. (to do)',ans:['faire'],mist:{'fait':`After ${W('il faut')} the verb stays in the infinitive: ${W('faire')}.`},
+  why:`${W('Il faut')} + infinitive: ${W('il faut faire du sport')}.`},
+
+/* ---------- Level 4 · Futur proche, en, dire oui (f08–f10) ---------- */
+{id:'f4-01',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q1',type:'mcq',q:`Les étudiants …… apprendre le français.`,en:'The students are …… to learn French.',o:['allez','vont'],a:1,whyNot:{0:`${W('allez')} goes with ${W('vous')}.`},
+  why:`Les étudiants = ${W('ils')} → ${W('ils vont')} + infinitive.`},
+{id:'f4-02',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q2',type:'mcq',q:`Demain nous …… voir un film au cinéma.`,en:'Tomorrow we are …… to see a film at the cinema.',o:['allons','va'],a:0,whyNot:{1:`${W('va')} goes with ${W('il')} / ${W('elle')}.`},
+  why:`${W('nous allons voir')}: we are going to see.`},
+{id:'f4-03',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q3',type:'mcq',q:`Demain Ali …… voir un film.`,en:'Tomorrow Ali is …… to see a film.',o:['vas','va'],a:1,whyNot:{0:`${W('vas')} goes with ${W('tu')}.`},
+  why:`Ali = il → ${W('il va voir')}.`},
+{id:'f4-04',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q4',type:'mcq',q:`Mona va …… un film.`,en:'Mona is going to …… a film.',o:['voir','vont'],a:0,whyNot:{1:`${W('va')} is already the aller part; next comes an infinitive.`},
+  why:`aller + infinitive: ${W('Mona va voir')}.`},
+{id:'f4-05',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q5',type:'mcq',q:`Ali va …… 20 ans.`,en:'Ali is going to …… 20 (years old).',o:['avoir','ont'],a:0,whyNot:{1:`${W('ont')} is a conjugated form (ils ont). After ${W('va')} we need the infinitive.`},
+  why:`French says "have" an age: ${W('Ali va avoir 20 ans')} = Ali is going to be 20.`},
+{id:'f4-06',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q6',type:'mcq',q:`Mes sœurs vont …… à la maison.`,en:'My sisters are going to …… at home.',o:['rester','restes'],a:0,whyNot:{1:`${W('restes')} is the tu form. After ${W('vont')} we need the infinitive.`},
+  why:`aller + infinitive: ${W('elles vont rester')}.`},
+{id:'f4-07',lv:4,l:'f08',src:'Worksheet · Page 5 · Tu choisis Q7',type:'mcq',q:`Je vais …… au chalet.`,en:"I'm going to …… to the chalet.",o:['vas','aller'],a:1,whyNot:{0:`${W('vas')} is the tu form of aller. After ${W('je vais')} we need the infinitive.`},
+  why:`${W('Je vais aller')}: I am going to go. Yes, aller can follow aller!`},
+{id:'f4-08',lv:4,l:'f08',src:'Worksheet · Page 6 · Futur proche Q1',type:'tiles',q:`Transformez au futur proche : Je parle à Ali.`,en:'Change into the near future: I speak to Ali.',
+  tiles:['Je','vais','parler','parle','à','Ali','va'],answers:[['Je','vais','parler','à','Ali']],model:'Je vais parler à Ali.',
+  why:`je → ${W('je vais')}, then the infinitive ${W('parler')}.`},
+{id:'f4-09',lv:4,l:'f08',src:'Worksheet · Page 6 · Futur proche Q2',type:'tiles',q:`Transformez au futur proche : Je prends un café.`,en:'Change into the near future: I have a coffee.',
+  tiles:['Je','vais','prendre','prends','un','café','va'],answers:[['Je','vais','prendre','un','café']],model:'Je vais prendre un café.',
+  why:`${W('je vais')} + ${W('prendre')} (infinitive).`},
+{id:'f4-10',lv:4,l:'f08',src:'Worksheet · Page 6 · Futur proche Q3',type:'type',q:`Transformez au futur proche : Il mange du poulet.`,en:'Change into the near future: He eats chicken.',
+  ans:['il va manger du poulet'],mist:{'il va mange du poulet':`After ${W('va')} use the infinitive: ${W('manger')}.`,'il vas manger du poulet':`${W('vas')} is for tu. il → ${W('va')}.`},
+  why:`il → ${W('il va')} + ${W('manger')}: ${W('Il va manger du poulet.')}`},
+{id:'f4-11',lv:4,l:'f08',src:'Worksheet · Page 6 · Futur proche Q4',type:'tiles',q:`Transformez au futur proche : Il fait le devoir.`,en:'Change into the near future: He does the homework.',
+  tiles:['Il','va','faire','fait','le','devoir','vont'],answers:[['Il','va','faire','le','devoir']],model:'Il va faire le devoir.',
+  why:`${W('il va')} + ${W('faire')} (infinitive).`},
+{id:'f4-12',lv:4,l:'f08',src:'Worksheet · Page 6 · Futur proche Q5',type:'type',q:`Transformez au futur proche : Tu fais le devoir ?`,en:'Change into the near future: Do you do the homework?',
+  ans:['tu vas faire le devoir ?'],mist:{'tu va faire le devoir':`tu → ${W('vas')}, with an s.`,'tu vas fais le devoir':`After ${W('vas')} use the infinitive: ${W('faire')}.`},
+  why:`tu → ${W('tu vas')} + ${W('faire')}: ${W('Tu vas faire le devoir ?')}`},
+{id:'f4-13',lv:4,l:'f09',src:'Worksheet · Page 5 · Pronom en Q1',type:'tiles',q:`Répondez avec « en » : Tu veux un bonbon ? Oui, ……`,en:'Answer with "en": Do you want a sweet? Yes, ……',
+  tiles:["j'",'en','veux','le','un'],answers:[["j'",'en','veux']],model:"Oui, j'en veux.",
+  why:`${W('en')} replaces "un bonbon" and goes <b>before</b> the verb. je + en = ${W("j'en")}.`},
+{id:'f4-14',lv:4,l:'f09',src:'Worksheet · Page 5 · Pronom en Q2',type:'mcq',q:`Elle mange de la glace ? Oui, ……`,en:'Is she eating (some) ice cream? Yes, ……',
+  o:['elle en mange','elle mange en','elle la mange'],oe:['she eats some','(wrong order)','she eats it (the whole thing)'],a:0,whyNot:{1:`${W('en')} goes <b>before</b> the verb.`,2:`after ${W('de la')} (some) we use ${W('en')}, not la.`},
+  why:`${W('de la glace')} → ${W('en')}, before the verb: ${W('elle en mange')}.`},
+{id:'f4-15',lv:4,l:'f09',src:'Worksheet · Page 5 · Pronom en Q3',type:'mcq',q:`Tu as deux stylos ? Oui, ……`,en:'Have you got two pens? Yes, ……',
+  o:["j'en ai deux","j'ai en deux",'je les ai deux'],oe:["I've got two (of them)",'(wrong order)','(wrong pronoun)'],a:0,whyNot:{1:`${W('en')} goes before the verb.`,2:`with a number we use ${W('en')} and keep the number at the end.`},
+  why:`${W('en')} replaces "stylos", the number stays at the end: ${W("j'en ai deux")}.`},
+{id:'f4-16',lv:4,l:'f09',src:'Worksheet · Page 5 · Pronom en Q4',type:'tiles',q:`Répondez avec « en » : Tu achètes un kilo de riz ? Oui, ……`,en:'Answer with "en": Are you buying a kilo of rice? Yes, ……',
+  tiles:["j'",'en','achète','un','kilo','riz','de'],answers:[["j'",'en','achète','un','kilo']],model:"Oui, j'en achète un kilo.",
+  why:`${W('en')} replaces "de riz"; the quantity (un kilo) stays at the end: ${W("j'en achète un kilo")}.`},
+{id:'f4-17',lv:4,l:'f09',src:'Worksheet · Page 5 · Pronom en Q5',type:'mcq',q:`Il parle de sa fête d'anniversaire ? Oui, ……`,en:'Is he talking about his birthday party? Yes, ……',
+  o:['il en parle','il parle en','il la parle'],oe:["he's talking about it",'(wrong order)','(wrong pronoun)'],a:0,whyNot:{1:`${W('en')} goes before the verb.`,2:`${W('parler de')} + thing → ${W('en')}.`},
+  why:`${W('de')} + thing → ${W('en')}: ${W('il en parle')}.`},
+{id:'f4-18',lv:4,l:'f09',src:'Worksheet · Page 4 · Tu choisis Q10',type:'mcq',q:`Tu veux un gâteau ? Oui, j'…… veux.`,en:'Do you want a cake? Yes, I want (one).',o:['en','la'],a:0,whyNot:{1:`${W('la')} replaces "la + thing". Here it is ${W('un gâteau')}, so ${W('en')}.`},
+  why:`${W('un gâteau')} → ${W('en')}: ${W("j'en veux")}.`},
+{id:'f4-19',lv:4,l:'f09',src:'Worksheet · Page 4 · Tu choisis Q11',type:'mcq',q:`Il prend deux cahiers ? Oui, il …… prend.`,en:'Is he taking two exercise books? Yes, he takes (two of them).',o:['les','en'],a:1,whyNot:{0:`with a number (deux) we use ${W('en')}.`},
+  why:`${W('deux cahiers')} → ${W('en')}: ${W("il en prend (deux)")}.`},
+{id:'f4-20',lv:4,l:'f10',src:'Worksheet · Page 3 · Tu choisis Q1',type:'mcq',q:`Hassan va à l'…… français du Koweït.`,en:'Hassan goes to the French …… of Kuwait.',o:['Institut','tableau'],oe:['Institute','board'],a:0,whyNot:{1:'you cannot go to a board!'},
+  why:`${W("l'Institut français")} is the French Institute, where people take French lessons.`},
+{id:'f4-21',lv:4,l:'f10',src:'Worksheet · Page 3 · Tu choisis Q2',type:'mcq',q:`Hassan voudrait s'inscrire pour un …… de français.`,en:'Hassan would like to sign up for a French …….',o:['plat','cours'],oe:['dish','course / lesson'],a:1,whyNot:{0:`${W('un plat')} is a dish of food.`},
+  why:`${W("s'inscrire pour un cours")} = sign up for a course.`},
+{id:'f4-22',lv:4,l:'f10',src:'Worksheet · Page 8 · Pour accepter',type:'mcq',q:`Pour accepter, tu dis : ……`,en:'To accept, you say: ……',o:['Avec plaisir.','Non, merci.','Je ne peux pas.'],oe:['With pleasure.','No, thank you.',"I can't."],a:0,
+  whyNot:{1:`${W('Non, merci')} refuses.`,2:`${W('Je ne peux pas')} refuses.`},why:`${W('Avec plaisir')} = with pleasure: a way to say yes.`},
+{id:'f4-23',lv:4,l:'f10',src:'Worksheet · Page 8 · Pour accepter',type:'match',q:`Pour accepter : reliez chaque expression à son sens.`,en:'To accept: match each phrase to its meaning.',
+  pairs:[['Oui, merci.','Yes, thank you.'],["D'accord.",'OK. / Agreed.'],['Avec plaisir.','With pleasure.'],['Bonne idée.','Good idea.'],["C'est possible.","That's possible."]],
+  why:'The sheet\'s five ways to accept: Oui, merci · D\'accord · Avec plaisir · Bonne idée · C\'est possible.'},
+{id:'f4-24',lv:4,l:'f10',type:'tf',q:`Vrai ou faux ? « Bonne idée ! » veut dire qu'on accepte.`,en:'True or false? "Good idea!" means you accept.',o:['Vrai','Faux'],oe:['True','False'],a:0,
+  whyNot:{1:`${W('Bonne idée')} (good idea) says yes.`},why:`Vrai (true): ${W('Bonne idée !')} accepts the plan.`},
+{id:'f4-25',lv:4,l:'f10',type:'mcq',q:`Ton ami dit : « On va au cinéma demain ? » Tu acceptes : ……`,en:'Your friend says: "Shall we go to the cinema tomorrow?" You accept: ……',
+  o:["D'accord !",'Non, merci.','Désolé, je ne peux pas.'],oe:['OK!','No, thank you.',"Sorry, I can't."],a:0,whyNot:{1:'that refuses.',2:'that refuses politely.'},
+  why:`${W("D'accord !")} = OK! It accepts.`},
+{id:'f4-26',lv:4,l:'f08',type:'type',q:`Demain, nous …… voir un film. (aller)`,en:'Tomorrow, we are …… to see a film. (to go)',ans:['allons'],mist:{'allez':`${W('allez')} is for vous.`,'vont':`${W('vont')} is for ils.`},
+  why:`aller with nous: ${W('nous allons')}.`},
+{id:'f4-27',lv:4,l:'f08',type:'mcq',q:`Quelle phrase est au futur proche ?`,en:'Which sentence is in the near future?',o:['Je vais manger.','Je mange.','Je mangeons.'],oe:['I am going to eat.','I eat.','(wrong form)'],a:0,
+  whyNot:{1:'that is the present.',2:`${W('mangeons')} goes with nous, not je.`},why:`Futur proche = aller + infinitive: ${W('Je vais manger')}.`},
+];
+const LESSONS={f01:['f01-ma-journee',"Ma journée à l'école"],f02:['f02-matieres-insolite','Les matières et le mot insolite'],f03:['f03-contraires-moments','Les contraires et les moments de la journée'],
+  f04:['f04-verbes-er','Les verbes en -er'],f05:['f05-etudier-manger','Étudier, manger, accepter, refuser'],f06:['f06-apprendre-prendre','Apprendre et prendre'],
+  f07:['f07-avoir-aller-il-faut','Avoir, aller et « il faut »'],f08:['f08-futur-proche','Le futur proche'],f09:['f09-pronom-en','Le pronom « en »'],f10:['f10-institut-dire-oui',"À l'Institut français : dire oui"]};
+
+/* ================= modes ================= */
+const MODES=[
+  {id:'f1',cls:'l1c',lv:'Level 1 · Vocabulaire',name:'Reading & Vocabulary',emo:'📚',pick:()=>BANK.filter(q=>q.lv===1)},
+  {id:'f2',cls:'l2c',lv:'Level 2 · Verbes en -er',name:'-er Verbs',emo:'🗣️',pick:()=>BANK.filter(q=>q.lv===2)},
+  {id:'f3',cls:'l3c',lv:'Level 3 · Verbes irréguliers',name:'Prendre, Avoir, Aller',emo:'🎒',pick:()=>BANK.filter(q=>q.lv===3)},
+  {id:'f4',cls:'l4c',lv:'Level 4 · Grammaire',name:'Futur proche, « en », oui',emo:'🚀',pick:()=>BANK.filter(q=>q.lv===4)},
+  {id:'fboss',cls:'fbc',lv:'Final Boss',name:'Mixed Challenge',emo:'👑',boss:true,
+    pick:()=>{const lv=[...new Set(BANK.map(q=>q.lv))];const per=Math.ceil(25/lv.length);return shuffle(lv.flatMap(c=>shuffle(BANK.filter(q=>q.lv===c)).slice(0,per))).slice(0,25);}},
+];
+const RETRY='fretry'; /* "Practise my mistakes" (Science Quest uses 'retry', Maths Quest 'mretry') */
+const MYMODES=new Set([...MODES.map(m=>m.id),RETRY]);
+const TYPE={type:'⌨️ Type it',mcq:'🎯 Pick one',tf:'⚡ Vrai ou faux',match:'🔗 Match up',tiles:'🧩 Build the sentence',order:'🗂️ Put in order',conj:'📋 Conjugate'};
+const LVL={1:'Vocabulaire',2:'Verbes en -er',3:'Verbes irréguliers',4:'Grammaire'};
+const PRAISE=['Bravo !','Super !','Excellent !','Très bien !','Parfait !','Génial ! 🌟','Magnifique !','Formidable ! 🔥'];
+const OOPS=['Presque ! (Nearly!) Here\'s why:','Pas tout à fait. (Not quite.) Here\'s how:','Good try! Here\'s why:','Oups ! Learn this one:'];
+const pickr=a=>a[Math.floor(Math.random()*a.length)];
+
+/* ---------- continuing a level ----------
+   An unfinished level is saved after every answer (through src/account.js, so it follows the student between
+   devices) and listed on the menu as "Continue where you left off". Only French Quest's own levels are listed here. */
+function savedRuns(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const all=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes||{};
+  return Object.fromEntries(Object.entries(all).filter(([m])=>MYMODES.has(m)));}catch(e){return{};}}
+function saveRun(i){track('quizState',S.mode,{ids:S.qs.map(q=>q.id),i,score:S.score,streak:S.streak,best:S.best,right:S.right,wrong:S.wrong.map(q=>q.id)});}
+function resumeRun(mode,st){const byId=Object.fromEntries(BANK.map(q=>[q.id,q]));const qs=st.ids.map(id=>byId[id]).filter(Boolean);if(!qs.length)return;
+  S={mode,qs,i:Math.min(st.i,qs.length),score:st.score,streak:st.streak,best:st.best,right:st.right,wrong:st.wrong.map(id=>byId[id]).filter(Boolean)};
+  if(S.i>=qs.length){endGame();return;}show('game');renderQ();}
+const modeName=id=>{const m=MODES.find(x=>x.id===id);return m?`${m.emo} ${m.lv}: ${m.name}`:'🔁 Practise my mistakes';};
+function renderResume(){const box=$('#resume'),runs=Object.entries(savedRuns()).sort((a,b)=>(b[1].at||0)-(a[1].at||0));box.innerHTML='';
+  if(!runs.length){box.style.display='none';return;}box.style.display='';
+  box.appendChild(el('h3','','▶ Continue where you left off'));
+  runs.forEach(([mode,st])=>{const n=(st.ids||[]).length;const row=el('div','rrow',`<div class="rt"><b>${modeName(mode)}</b><span>${st.i>=n?'All answered: see your results':`Question ${st.i+1} of ${n}`} · ${st.score} pts</span></div>`);
+    const go=el('button','go','Continue ▶');go.onclick=()=>resumeRun(mode,st);
+    const x=el('button','rx','✕');x.title='Forget this level';x.setAttribute('aria-label','Forget this unfinished level');x.onclick=()=>{track('quizState',mode,null);renderMenu();};
+    row.appendChild(go);row.appendChild(x);box.appendChild(row);});}
+addEventListener('g7-resume',()=>{if(!$('#menu').classList.contains('hidden'))renderMenu();});
+function renderMenu(){
+  renderResume();
+  const box=$('#modes');box.innerHTML='';
+  MODES.forEach(m=>{const qs=m.pick(),ready=m.boss?MODES.every(x=>x.boss||x.pick().length>0):qs.length>0;const n=m.boss?25:qs.length;const best=store.get('sq_best_'+m.id,null);
+    const b=el('button','mode '+m.cls+(ready?'':' soon'),`<div class="emo">${m.emo}</div><div class="lv">${m.lv}</div><h3>${m.name}</h3><div class="meta">${ready?`${n} questions${m.boss?' from every level':''}`:'Coming soon'}</div>`+
+      (best?`<div class="best">Best: ${'⭐'.repeat(best.stars)}${'☆'.repeat(3-best.stars)} · ${best.pct}%</div>`:''));
+    if(ready)b.onclick=()=>start(m.id,m.boss?m.pick():shuffle(m.pick()));else b.disabled=true;box.appendChild(b);});
+  $('#soundBtn').textContent=soundOn?'🔊 Sound: on':'🔇 Sound: off';
+}
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;store.set('sq_sound',soundOn);renderMenu();};
+$('#homeBtn').onclick=()=>{if(confirm('Leave this level? You can continue it later from the menu.'))show('menu');};
+function show(id){['menu','game','end'].forEach(s=>$('#'+s).classList.toggle('hidden',s!==id));if(id==='menu')renderMenu();scrollTo(0,0);}
+
+/* ================= game state ================= */
+let S;
+/* Progress saving: handed to src/account.js, which may load after this script. */
+function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
+function start(mode,qs){S={mode,qs,i:0,score:0,streak:0,best:0,right:0,wrong:[]};saveRun(0);show('game');renderQ();}
+function hud(){$('#prog').style.width=(S.i/S.qs.length*100)+'%';const st=$('#streak');st.textContent='🔥 '+S.streak;st.classList.toggle('hot',S.streak>=3);$('#score').textContent='⭐ '+S.score;}
+
+function renderQ(){
+  hud();const q=S.qs[S.i];const card=$('#card');card.innerHTML='';
+  card.appendChild(el('div','qtop',`<span class="tag tl${q.lv}">${LVL[q.lv]}</span><span class="tag tt">${TYPE[q.type]}</span><span class="qnum">${S.i+1} / ${S.qs.length}</span>`));
+  if(q.src)card.appendChild(el('div','hint',`📄 ${q.src}`));
+  if(q.pass)card.appendChild(el('details','passage',`<summary>${T('📖 Lisez le texte','📖 Read the text')}</summary>`+TEXT.map(([f,e])=>`<p>${T(f,e)}</p>`).join('')));
+  const pr=el('div','prompt',T(q.q,q.en));
+  if(HAS_TTS){const h=el('button','hear','🔈');h.title='Hear it in French';h.setAttribute('aria-label','Hear the question in French');h.onclick=()=>hearFR(q.q);pr.appendChild(h);}
+  card.appendChild(pr);
+  const body=el('div','body');card.appendChild(body);
+  const actions=el('div','actions');const checkBtn=el('button','go','Check ✔');actions.appendChild(checkBtn);card.appendChild(actions);
+  let api=null;
+  api=R[q.type](q,body,()=>{if(api)checkBtn.disabled=!api.ready();},(ok,note)=>finish(ok,note));
+  checkBtn.disabled=!api.ready();
+  if(api.instant)actions.classList.add('hidden');
+  checkBtn.onclick=()=>{if(!api.ready())return;const r=api.check();if(r==null)return; /* null: a nudge, the question stays open */finish(r.ok,r.note);};
+  function finish(ok,note){
+    actions.classList.remove('hidden');checkBtn.disabled=false;
+    if(api.lock)api.lock();
+    if(ok){S.streak++;S.best=Math.max(S.best,S.streak);S.right++;const pts=100+Math.min(50,(S.streak-1)*10);S.score+=pts;sfx.ok();
+      card.appendChild(el('div','plus','+'+pts));if(S.streak%5===0)confetti(70);else confetti(25,innerWidth/2,innerHeight/2);}
+    else{S.streak=0;S.wrong.push(q);sfx.bad();}
+    track('answer',{questionId:q.id,lessonId:q.l,source:'quiz',correct:ok});saveRun(S.i+1);
+    hud();
+    const fb=el('div','fb '+(ok?'ok':'bad'),`<h3>${ok?'✅ '+pickr(PRAISE):'💡 '+pickr(OOPS)}</h3>${!ok&&note?`<p class="not">❌ ${note}</p>`:''}<p>${q.why}</p>`);
+    card.insertBefore(fb,actions);
+    checkBtn.textContent=S.i===S.qs.length-1?'See my results 🏁':'Next ➜';checkBtn.classList.add('green');
+    checkBtn.onclick=()=>{S.i++;if(S.i>=S.qs.length)endGame();else{renderQ();scrollTo({top:0,behavior:'smooth'});}};
+    fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+/* ================= question renderers =================
+   Each returns {ready(), check() -> {ok, note} | null, lock()?, instant?}; instant ones call done(ok, note) themselves. */
+const R={};
+R.mcq=(q,body,upd,done)=>{
+  const tf=q.type==='tf';const box=el('div','opts'+(tf?' tf grid2':' text'));body.appendChild(box);
+  const btns=q.o.map((t,i)=>{const lab=T(t,q.oe&&q.oe[i]);const b=el('button','opt',tf?lab:`<span class="k">${'ABCD'[i]}</span><span>${lab}</span>`);b.dataset.i=i;box.appendChild(b);return b;});
+  btns.forEach((b,i)=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);btns[q.a].classList.add('ok');if(i!==q.a)b.classList.add('bad');
+    const w=q.whyNot&&q.whyNot[i];done(i===q.a,w?(tf?w:`<b>${'ABCD'[i]} is not right:</b> ${w}`):'');});
+  return{instant:true,ready:()=>false};
+};
+R.tf=R.mcq;
+/* typed answer, with buttons for the French accents */
+R.type=(q,body,upd)=>{
+  const inp=el('input','tin');inp.type='text';inp.placeholder='Type your answer in French';
+  ['autocapitalize','autocorrect','autocomplete'].forEach(a=>inp.setAttribute(a,'off'));inp.spellcheck=false;inp.setAttribute('lang','fr');
+  body.appendChild(inp);let locked=false,nudged=null;
+  const acc=el('div','acc');body.appendChild(acc);
+  ['é','è','ê','à','â','ç','ô','î','û','ù',"'"].forEach(k=>{const b=el('button','',k);b.type='button';
+    b.onclick=()=>{if(locked)return;const s=inp.selectionStart??inp.value.length,e=inp.selectionEnd??s;inp.value=inp.value.slice(0,s)+k+inp.value.slice(e);inp.focus();inp.setSelectionRange(s+1,s+1);sfx.tap();upd();};acc.appendChild(b);});
+  const nudge=el('div','nudge hidden');body.appendChild(nudge);
+  inp.addEventListener('input',()=>{nudge.classList.add('hidden');upd();});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const b=document.querySelector('#card .actions .go');if(b&&!b.disabled)b.click();}});
+  return{ready:()=>inp.value.trim().length>0,
+    lock(){locked=true;inp.disabled=true;acc.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){const t=normFR(inp.value);
+      if(q.ans.some(a=>normFR(a)===t)){inp.classList.add('ok');return{ok:true};}
+      if(nudged!==t&&q.ans.some(a=>noAcc(normFR(a))===noAcc(t))){nudged=t;nudge.innerHTML='👀 Nearly! Check the <b>accents</b> (é, è, ê, à…), then press <b>Check</b> again.';nudge.classList.remove('hidden');return null;}
+      inp.classList.add('bad');body.insertBefore(el('div','correct','✔ '+q.ans[0]),acc);
+      const m=Object.keys(q.mist||{}).find(k=>normFR(k)===t);return{ok:false,note:m!=null?q.mist[m]:''};}};
+};
+/* tap word tiles in order to build a French sentence */
+R.tiles=(q,body,upd)=>{
+  let seq=[],locked=false;const slot=el('div','slot');body.appendChild(slot);const tl=el('div','tiles');body.appendChild(tl);
+  const paint=()=>{slot.innerHTML=seq.length?`<span>${joinFR(seq)}</span>`:'<i>Tap the words in order to build the sentence</i>';};
+  shuffle(q.tiles).forEach(t=>{const b=el('button','tile',t);b.onclick=()=>{if(locked)return;sfx.tap();seq.push(t);paint();upd();};tl.appendChild(b);});
+  const del=el('button','tile','⌫');del.onclick=()=>{if(locked)return;seq.pop();paint();upd();};tl.appendChild(del);paint();
+  return{ready:()=>seq.length>0,lock(){locked=true;tl.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){const n=a=>joinFR(a).toLowerCase();const ok=q.answers.some(a=>n(a)===n(seq));slot.classList.add(ok?'ok':'bad');
+      if(!ok)slot.insertAdjacentHTML('beforeend',`<span style="font-size:17px;color:#0f7a40;margin-left:10px">✔ ${q.model}</span>`);return{ok};}};
+};
+const PAIRC=['#2c66cf','#6a45d8','#17935b','#e04848','#d4329a','#c9a000','#0aa5a5'];
+R.match=(q,body,upd)=>{
+  const wrap=el('div','match');body.appendChild(wrap);const L=el('div','mcol'),Rc=el('div','mcol');wrap.append(L,Rc);
+  const lefts=q.pairs.map((p,i)=>({i,t:T(p[0],q.pe&&q.pe[i][0])}));const rights=shuffle(q.pairs.map((p,i)=>({i,t:T(p[1],q.pe&&q.pe[i][1])})));
+  const link={};let selL=null;
+  const lb=lefts.map(o=>{const b=el('button','mi',`<span class="dot"></span><span>${o.t}</span>`);L.appendChild(b);return b;});
+  const rb=rights.map(o=>{const b=el('button','mi',`<span class="dot"></span><span>${o.t}</span>`);b.dataset.i=o.i;Rc.appendChild(b);return b;});
+  function paint(){lb.forEach((b,li)=>{const linked=link[li]!=null;b.classList.toggle('sel',selL===li);b.querySelector('.dot').style.background=linked?PAIRC[li%PAIRC.length]:'';b.style.borderColor=linked?PAIRC[li%PAIRC.length]:'';});
+    rb.forEach((b,ri)=>{const li=Object.keys(link).find(k=>link[k]===ri);b.querySelector('.dot').style.background=li!=null?PAIRC[li%PAIRC.length]:'';b.style.borderColor=li!=null?PAIRC[li%PAIRC.length]:'';});upd();}
+  lb.forEach((b,li)=>b.onclick=()=>{sfx.tap();if(link[li]!=null&&selL!==li){delete link[li];}selL=selL===li?null:li;paint();});
+  rb.forEach((b,ri)=>b.onclick=()=>{if(selL==null){const li=Object.keys(link).find(k=>link[k]===ri);if(li!=null){delete link[li];sfx.tap();paint();}return;}
+    sfx.tap();Object.keys(link).forEach(k=>{if(link[k]===ri)delete link[k];});link[selL]=ri;
+    selL=lb.findIndex((_,k)=>link[k]==null);if(selL<0)selL=null;paint();});
+  selL=0;paint();
+  return{ready:()=>Object.keys(link).length===lefts.length,
+    lock(){lb.concat(rb).forEach(b=>b.disabled=true);},
+    check(){let ok=true;lb.forEach((b,li)=>{const good=rights[link[li]].i===lefts[li].i;b.style.borderColor='';b.classList.remove('sel');b.classList.add(good?'ok':'bad');
+      if(!good){ok=false;b.querySelector('span:last-child').insertAdjacentHTML('beforeend',`<span class="fix">✔ ${T(q.pairs[li][1],q.pe&&q.pe[li][1])}</span>`);}});return{ok};}};
+};
+/* tap the items in the right order */
+R.order=(q,body,upd)=>{
+  let seq=[],locked=false;const ord=el('div','ord');body.appendChild(ord);const tl=el('div','tiles');body.appendChild(tl);
+  const lab=i=>T(q.items[i],q.ie&&q.ie[i]);
+  const rows=q.items.map((_,i)=>{const r=el('div','row',`<span class="n">${i+1}</span><span class="v"></span>`);ord.appendChild(r);return r;});
+  const btns=shuffle(q.items.map((_,i)=>i)).map(i=>{const b=el('button','tile',lab(i));b.dataset.i=i;b.onclick=()=>{if(locked||b.disabled)return;sfx.tap();seq.push(i);b.disabled=true;paint();upd();};tl.appendChild(b);return b;});
+  const undo=el('button','tile','⌫');undo.onclick=()=>{if(locked||!seq.length)return;const i=seq.pop();btns.find(b=>+b.dataset.i===i).disabled=false;paint();upd();};tl.appendChild(undo);
+  function paint(){rows.forEach((r,k)=>r.querySelector('.v').innerHTML=seq[k]!=null?lab(seq[k]):'');}
+  return{ready:()=>seq.length===q.items.length,lock(){locked=true;tl.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){let ok=true;rows.forEach((r,k)=>{const good=seq[k]===k;r.classList.add(good?'ok':'bad');if(!good){ok=false;r.insertAdjacentHTML('beforeend',`<span style="margin-left:auto;font-size:15px;color:#0f7a40">✔ ${lab(k)}</span>`);}});return{ok};}};
+};
+/* fill in a verb table: tap a row (or let it move on by itself), then tap the right form */
+const PRON=['je','tu','il / elle','nous','vous','ils / elles'];
+const PRON_EN=['I','you','he / she','we','you','they'];
+R.conj=(q,body,upd)=>{
+  const vowel=/^[aeiouhéèê]/i.test(q.forms[0]);const pron=PRON.map((p,i)=>i===0&&vowel?"j'":p);
+  const box=el('div','conj');body.appendChild(box);const fill=Array(6).fill(null);let cur=0,locked=false;
+  const rows=pron.map((p,i)=>{const r=el('button','cr'+(p==="j'"?' ap':''),`<span class="p">${T(p,PRON_EN[i])}</span><span class="v"></span>`);r.onclick=()=>{if(locked)return;sfx.tap();cur=i;paint();};box.appendChild(r);return r;});
+  const bank=el('div','tiles');body.appendChild(bank);
+  shuffle([...new Set([...q.forms,...(q.extra||[])])]).forEach(f=>{const b=el('button','tile',f);b.onclick=()=>{if(locked||cur==null)return;sfx.tap();fill[cur]=f;
+    const nx=[...Array(6).keys()].map(k=>(cur+1+k)%6).find(k=>fill[k]==null);cur=nx??null;paint();};bank.appendChild(b);});
+  function paint(){rows.forEach((r,i)=>{r.classList.toggle('sel',i===cur);r.querySelector('.v').innerHTML=fill[i]||'<i>tap a form below</i>';});upd();}
+  paint();
+  return{ready:()=>fill.every(Boolean),lock(){locked=true;rows.forEach(r=>{r.disabled=true;r.classList.remove('sel');});bank.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){let ok=true;rows.forEach((r,i)=>{const good=fill[i]===q.forms[i];r.classList.add(good?'ok':'bad');if(!good){ok=false;r.insertAdjacentHTML('beforeend',`<span class="fix">✔ ${q.forms[i]}</span>`);}});return{ok};}};
+};
+
+/* ================= end ================= */
+/* links to the lessons behind this level's mistakes, most mistakes first */
+function revise(){const cnt={};S.wrong.forEach(q=>{if(LESSONS[q.l])cnt[q.l]=(cnt[q.l]||0)+1;});
+  const ids=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b));if(!ids.length)return'';
+  return `<div class="revise"><h4>📖 Lessons to revise</h4>`+ids.map(id=>`<a href="french/${LESSONS[id][0]}.html"><span class="n">Lesson ${+id.slice(1)}</span>${LESSONS[id][1]}<span class="c">${cnt[id]} mistake${cnt[id]>1?'s':''}</span></a>`).join('')+'</div>';}
+function endGame(){
+  hud();const n=S.qs.length,pct=Math.round(S.right/n*100);const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  track('quizRun',{mode:S.mode,right:S.right,total:n,score:S.score,stars});track('quizState',S.mode,null);
+  const key='sq_best_'+S.mode;const prev=store.get(key,null);if(S.mode!==RETRY&&(!prev||pct>prev.pct))store.set(key,{pct,stars});
+  const msg=stars===3?'Magnifique ! You\'re exam-ready! 🏆':stars===2?'Très bien ! A little more practice and you\'ll ace it!':stars===1?'Bon début ! Practise your mistakes to level up.':'Courage ! Every try makes your French stronger! 💪';
+  const c=$('#endCard');c.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">Level complete</div>
+    <div class="stars">${[0,1,2].map(i=>`<span class="${i<stars?'on':''}" style="animation-delay:${i*.2}s">⭐</span>`).join('')}</div>
+    <div class="bigscore">${S.score} pts</div><p style="font-size:18px;font-weight:700">${msg}</p>
+    <div class="endgrid"><div><b>${S.right}/${n}</b>correct</div><div><b>${pct}%</b>accuracy</div><div><b>🔥 ${S.best}</b>best streak</div></div>
+    ${revise()}<div class="endbtns"></div>`;
+  const bt=c.querySelector('.endbtns');
+  if(S.wrong.length){const r=el('button','go',`🔁 Practise my ${S.wrong.length} mistake${S.wrong.length>1?'s':''}`);r.onclick=()=>start(RETRY,shuffle(S.wrong));bt.appendChild(r);}
+  const again=el('button','ghostbtn','▶ Play again');const mode=S.mode;again.onclick=()=>{const m=MODES.find(x=>x.id===mode);start(mode,m?(m.boss?m.pick():shuffle(m.pick())):shuffle(S.qs));};bt.appendChild(again);
+  const home=el('button','ghostbtn','🏠 Menu');home.onclick=()=>show('menu');bt.appendChild(home);
+  show('end');sfx.win();if(stars>=2){confetti(150);setTimeout(()=>confetti(120,innerWidth*.25,innerHeight*.4),400);setTimeout(()=>confetti(120,innerWidth*.75,innerHeight*.4),800);}
+}
+trUI();renderMenu();
+</script>
+</body>
+</html>

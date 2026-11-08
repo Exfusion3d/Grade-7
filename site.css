@@ -64,6 +64,7 @@ footer{text-align:center;color:#8a86a0;font-size:13px;margin-top:18px}
 /* subjects */
 .hero.science{background:linear-gradient(135deg,#2a2f6b,#6a45d8 60%,#2c66cf)}
 .hero.maths{background:linear-gradient(135deg,#7a2e00,#e06a1b 60%,#f5a54a)}
+.hero.french{background:linear-gradient(135deg,#1d3f8a,#2c66cf 60%,#5d9cf5)}
 .back{display:inline-block;position:relative;color:#fff;background:rgba(255,255,255,.18);border-radius:12px;padding:5px 12px;text-decoration:none;font-weight:800;font-size:15px;margin:-6px 0 8px -4px}
 .hero .who.inline{float:right;margin:-6px -4px 0 0}
 .subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Les contraires et les moments de la journée</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 3 · Lecture et vocabulaire · Page 2 "Donnez l'opposé du mot" (8 items; midi is on the sheet twice)
+   and Page 6 "Mettez en ordre les moments de la journée". Every question is taught with teachFR (french.js). */
+const WS2='Worksheet · Page 2 · ',WS6='Worksheet · Page 6 · ';
+/* the opposites: [word, English, opposite, English, emoji, opposite emoji, what the word means, what the opposite means, why] */
+const OPP={
+  facile:['Facile','Easy','difficile','difficult','😎','😰',`${fw('Facile')} means <b>easy</b>, like 2 + 2.`,`The opposite of easy is <b>difficult</b>: ${fr('difficile','difficult')}.`,`${fr('facile','easy')} ↔ ${fr('difficile','difficult')}. Just add <b>di</b> and change the f: fa-cile, dif-fi-cile.`],
+  facilement:['Facilement','Easily','difficilement','with difficulty','🪶','🏋️',`${fw('Facilement')} means <b>easily</b>. The ending ${fw('-ment')} is like <b>-ly</b> in English.`,`So the opposite is ${fr('difficile','difficult')} plus ${fw('-ment')}: ${fr('difficilement','with difficulty')}.`,`${fw('-ment')} = -ly. ${fr('facile → facilement','easy → easily')}, so ${fr('difficile → difficilement','difficult → with difficulty')}.`],
+  dabord:["D'abord",'First','enfin','finally','1️⃣','🏁',`${fw("D'abord")} means <b>first</b>: the first thing you do.`,`The opposite comes at the very end: ${fr('enfin','finally')}, which means <b>finally</b>.`,`${fr("d'abord","first")} starts a list, ${fr('enfin','finally')} ends it. You met ${fr('enfin','finally')} in the reading text!`],
+  avant:['Avant','Before','après','after','⏮️','⏭️',`${fw('Avant')} means <b>before</b>.`,`The opposite is ${fr('après','after')}: <b>after</b>. Remember ${fr('après la pause','after the break')} from the text?`,`${fr('avant','before')} ↔ ${fr('après','after')}. ${fr("L'après-midi","The afternoon")} is the time <b>after</b> midday!`],
+  tot:['Tôt','Early','tard','late','🐓','🦉',`${fw('Tôt')} means <b>early</b>, like a rooster waking up at sunrise.`,`The opposite is ${fr('tard','late')}: <b>late</b>, like an owl awake at night.`,`${fr('tôt','early')} ↔ ${fr('tard','late')}. Both start with t, so link them: the early rooster, the late owl.`],
+  midi:['Midi','Midday','minuit','midnight','☀️','🌙',`${fw('Midi')} means <b>midday</b>: 12 o'clock in the day, when the sun is high.`,`The opposite is 12 o'clock at night: ${fr('minuit','midnight')}.`,`${fr('midi','midday')} is 12:00, ${fr('minuit','midnight')} is 00:00. ${fw('Mi')} means half: half day, half night!`],
+  matin:['Le matin','The morning','le soir','the evening','🌅','🌇',`${fw('Le matin')} means <b>the morning</b>, when the day begins.`,`The opposite is the end of the day: ${fr('le soir','the evening')}.`,`${fr('le matin','the morning')} ↔ ${fr('le soir','the evening')}. Keep ${fw('le')} in your answer: le matin, <b>le</b> soir.`]};
+async function opp(w,k,src){const [f,e,o,oe,emo,oemo,s1,s2,why]=OPP[k];let pics=[];
+  await teachFR(w,{src,q:fr(`Donnez l'opposé du mot :<br><b>${f}</b> : ……………`,`Give the opposite of the word:<br><b>${e}</b>: ……………`),
+    read:fr(`Donnez l'opposé du mot : ${f}.`,`Give the opposite of the word: ${e}.`),
+    keys:[["l'opposé",`${fw("L'opposé")} means <b>the opposite</b>.`,'opposite'],[f,s1,e]],workY:320,
+    steps:[{act:async()=>{
+        const a=mk('',`left:170px;top:166px;width:200px;height:130px;border-radius:24px;background:#eef4ff;border:4px solid #5d9cf5;display:flex;flex-direction:column;align-items:center;justify-content:center`,
+          `<div style="font-size:56px;line-height:1.1">${emo}</div><div class="fq" style="font-size:22px">${fr(f.toLowerCase(),e.toLowerCase())}</div>`);pop(a);
+        const ar=mk('',`left:400px;top:196px;width:160px;text-align:center;font-size:54px;color:#e04848;font-weight:800`,'↔');pop(ar,300);
+        loop(ar,[{transform:'scale(1)'},{transform:'scale(1.25)'}],500,{direction:'alternate'});
+        const b=mk('',`left:590px;top:166px;width:200px;height:130px;border-radius:24px;background:#fff3e6;border:4px solid #f5a54a;display:flex;flex-direction:column;align-items:center;justify-content:center`,
+          `<div style="font-size:56px;line-height:1.1">${oemo}</div><div class="fq" style="font-size:22px">${fr(o,oe)}</div>`);
+        await w(500);an(b,[{transform:'rotateY(90deg)',opacity:0},{transform:'none',opacity:1}],{duration:700});beep(760,.1);pics=[a,ar,b];},
+      show:fr(`${f.toLowerCase()} ↔ <b>${o}</b>`,`${e.toLowerCase()} ↔ <b>${oe}</b>`),say:s2,wait:2800}],
+    answer:fr(o,oe),why});}
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f03', num:3, part:'Lecture et vocabulaire', emoji:'🌗', title:'Les contraires et les moments de la journée',
+  intro:`${fr('Bonjour !','Hello!')} I'm <b>Coco the Parrot</b> 🦜 Today: <b>opposites</b> and the <b>times of day</b>. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Les contraires',run:async w=>{
+  say(`${fr('Bonjour !','Hello!')} Today we learn ${fr('<b>les contraires</b>','<b>opposites</b>')}: words that mean the exact opposite, like big and small.`);
+  await w(3000);
+  const beam=mk('','left:200px;top:300px;width:560px;height:18px;border-radius:9px;background:#6a45d8;transform-origin:50% 50%');
+  mk('','left:450px;top:318px;width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-bottom:60px solid #2c66cf');
+  const L=mk('',`left:200px;top:190px;width:150px;text-align:center`,`<div style="font-size:70px">🐘</div><div class="fq" style="font-size:24px">${fr('grand','big')}</div>`);
+  const R=mk('',`left:610px;top:190px;width:150px;text-align:center`,`<div style="font-size:44px">🐭</div><div class="fq" style="font-size:24px">${fr('petit','small')}</div>`);
+  pop(L);pop(R,300);
+  loop(beam,[{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'}],1400,{direction:'alternate'});
+  loop(L,[{transform:'translateY(28px)'},{transform:'translateY(-28px)'}],1400,{direction:'alternate'});
+  loop(R,[{transform:'translateY(-28px)'},{transform:'translateY(28px)'}],1400,{direction:'alternate'});
+  say(`Like a seesaw: ${fr('grand','big')} goes up, ${fr('petit','small')} goes down. ${fw('Grand')} means <b>big</b> and ${fw('petit')} means <b>small</b>.`);
+  await w(3600);
+  const t=mk('fq-step','left:220px;top:420px;width:520px;text-align:center',fr("Donnez l'opposé du mot","Give the opposite of the word"));pop(t);point(t);
+  say(`The worksheet says ${fr("<b>Donnez l'opposé du mot</b>","<b>Give the opposite of the word</b>")}. ${fw("L'opposé")} means <b>the opposite</b>.`);
+  await w(3400);}},
+
+/* 1 */ {t:'Facile, facilement',run:async w=>{
+  await opp(w,'facile',WS2+'Opposé: facile');await w(1200);clear();
+  await opp(w,'facilement',WS2+'Opposé: facilement');await w(1500);}},
+
+/* 2 */ {t:"D'abord, avant",run:async w=>{
+  await opp(w,'dabord',WS2+"Opposé: d'abord");await w(1200);clear();
+  await opp(w,'avant',WS2+'Opposé: avant');await w(1500);}},
+
+/* 3 */ {t:'Tôt, midi, le matin',run:async w=>{
+  await opp(w,'tot',WS2+'Opposé: tôt');await w(1200);clear();
+  await opp(w,'midi',WS2+'Opposé: midi');await w(1200);
+  const n=mk('fq-why','left:96px;top:470px;width:820px',`💡 ${fw('Midi')} is on the worksheet twice. Both times the answer is ${fr('minuit','midnight')}.`);pop(n);
+  say(`${fw('Midi')} is on the worksheet <b>twice</b>. Same answer both times: ${fr('minuit','midnight')}.`);await w(2600);clear();
+  await opp(w,'matin',WS2+'Opposé: le matin');await w(1500);}},
+
+/* 4 */ {t:'Les moments de la journée',run:async w=>{
+  say(`Now ${fr('<b>les moments de la journée</b>','<b>the times of day</b>')}. Watch the sun travel across the sky.`);
+  await w(2800);
+  const sky=mk('','left:13px;top:10px;width:934px;height:330px;border-radius:20px;background:linear-gradient(#bfe0ff,#eef7ff)');
+  mk('','left:13px;top:300px;width:934px;height:40px;border-radius:0 0 20px 20px;background:#7fcf8f');
+  const sun=mk('','left:60px;top:250px;font-size:70px;line-height:1','🌅');
+  const T=[[90,250,'🌅','le matin','the morning','#ffe6b3',`${fr('Le matin','The morning')}: the sun rises and the day begins.`],
+    [430,40,'☀️','midi','midday (12:00)','#bfe0ff',`${fr('Midi','Midday')}: 12 o'clock, the sun is at the top.`],
+    [610,90,'🌤️',"l'après-midi",'the afternoon','#cfe6ff',`${fr("L'après-midi","The afternoon")}: <b>after midi</b>. ${fw('Après')} means after!`],
+    [790,230,'🌇','le soir','the evening','#ffc9a8',`${fr('Le soir','The evening')}: the sun goes down.`],
+    [430,40,'🌙','minuit','midnight (00:00)','#2a3566',`${fr('Minuit','Midnight')}: 12 o'clock at night, the middle of the night.`]];
+  for(let i=0;i<5;i++){const [x,y,e,f,en,bg,line]=T[i];
+    an(sky,[{background:`linear-gradient(${bg},#eef7ff)`}],{duration:900});
+    sun.textContent=e;await an(sun,[{left:x+'px',top:y+'px'}],{duration:1100});sun.style.left=x+'px';sun.style.top=y+'px';
+    const l=mk('fq-step',`left:${40+i*182}px;top:${360+(i%2)*70}px;width:170px;text-align:center;font-size:20px;padding:6px 6px`,`${i+1}. ${fr(f,en)}`);pop(l);point(l);beep(560+i*80,.08);
+    say(line);await w(3000);}
+  stage.querySelector('.fq-point')?.remove();
+  say(`In order: ${fr('le matin, midi, l\'après-midi, le soir, minuit','morning, midday, afternoon, evening, midnight')}.`);
+  await w(3600);}},
+
+/* 5 */ {t:'Mettez en ordre',run:async w=>{
+  await teachFR(w,{src:WS6+'Mettez en ordre les moments de la journée',q:fr('Mettez en ordre les moments de la journée :<br>a- midi &nbsp; b- matin &nbsp; c- minuit &nbsp; d- après-midi &nbsp; e- soir','Put the times of day in order:<br>a- midday &nbsp; b- morning &nbsp; c- midnight &nbsp; d- afternoon &nbsp; e- evening'),
+    read:fr('Mettez en ordre les moments de la journée : midi, matin, minuit, après-midi, soir.','Put the times of day in order: midday, morning, midnight, afternoon, evening.'),
+    keys:[['en ordre',`${fw('Mettez en ordre')} means <b>put in order</b>: from the start of the day to the end.`,'in order']],
+    think:`Hint: start with the time you <b>wake up</b>. Think about the order, then tap <b>Show me</b>.`,
+    steps:[{show:'1- '+fr('matin','morning')+' <i>🌅 the day begins</i>',say:`First, ${fr('le matin','the morning')}: the day begins.`,wait:1900},
+      {show:'2- '+fr('midi','midday')+' <i>☀️ 12:00</i>',say:`Then ${fr('midi','midday')}, at 12 o'clock.`,wait:1900},
+      {show:'3- '+fr('après-midi','afternoon')+' <i>🌤️ after midday</i>',say:`Then ${fr("l'après-midi","the afternoon")}: after midday.`,wait:1900},
+      {show:'4- '+fr('soir','evening')+' <i>🌇 the sun sets</i>',say:`Then ${fr('le soir','the evening')}.`,wait:1900},
+      {show:'5- '+fr('minuit','midnight')+' <i>🌙 00:00</i>',say:`And last, ${fr('minuit','midnight')}.`,wait:1900}],
+    answer:fr('matin, midi, après-midi, soir, minuit','morning, midday, afternoon, evening, midnight'),why:`Follow the sun: ${fr('après-midi','afternoon')} must come <b>after</b> ${fr('midi','midday')}.`});
+  await w(1500);}},
+
+/* 6 */ {t:'Ton tour !',run:async w=>{
+  say(`${fr('Ton tour !','Your turn!')} Tap the times of day <b>in order</b>, from morning to midnight. Then press <b>Check</b>.`);
+  const W=[['matin','morning','🌅'],['midi','midday','☀️'],['après-midi','afternoon','🌤️'],['soir','evening','🌇'],['minuit','midnight','🌙']];
+  const slots=W.map((_,i)=>{const s=mk('',`left:${30+i*184}px;top:40px;width:166px;height:150px;border:3px dashed #5d9cf5;border-radius:18px;background:#f5f9ff;display:flex;flex-direction:column;align-items:center;justify-content:center`,
+    `<div style="font-size:22px;font-weight:800;color:#8a9ab5">${i+1}</div>`);pop(s,i*80);return s;});
+  let seq=[],checked=false,ck=null;
+  const order=[2,4,0,3,1];
+  const T=order.map((k,j)=>{const [f,e,em]=W[k];const b=btn('fq-tile',`left:${50+j*166}px;top:290px;width:156px;flex-direction:column;height:100px;padding:0 6px;text-align:center`,`<div style="font-size:34px">${em}</div><div style="font-size:18px">${fr(f,e)}</div>`,()=>{
+      if(checked||seq.includes(k))return;seq.push(k);b.style.opacity=.3;beep(560+seq.length*50,.06);paint();});b.dataset.k=k;pop(b,j*80);return b;});
+  const undo=btn('fq-del','left:880px;top:310px','⌫',()=>{if(checked||!seq.length)return;const k=seq.pop();T.find(b=>+b.dataset.k===k).style.opacity=1;paint();});
+  function paint(){slots.forEach((s,i)=>{const k=seq[i];s.innerHTML=`<div style="font-size:22px;font-weight:800;color:#8a9ab5">${i+1}</div>`+(k!=null?`<div style="font-size:40px">${W[k][2]}</div><div class="fq" style="font-size:20px">${fr(W[k][0],W[k][1])}</div>`:'');});
+    if(seq.length===5&&!ck)ck=btn('ex-btn green','left:380px;top:420px;width:200px','Check ✔',()=>{checked=true;});
+    if(seq.length<5&&ck){ck.remove();ck=null;}}
+  window.AUTOPLAY=()=>{if(!seq.length){seq=[0,1,2,3,4];T.forEach(b=>b.style.opacity=.3);paint();}};
+  await w.until(()=>checked);window.AUTOPLAY=null;ck.remove();
+  let ok=0;slots.forEach((s,i)=>{const g=seq[i]===i;if(g)ok++;s.style.borderStyle='solid';s.style.borderColor=g?'#18a058':'#e04848';s.style.background=g?'#e6f7ee':'#fdecec';});
+  if(ok===5){yay();confetti(90);say(`${fr('Parfait !','Perfect!')} Morning, midday, afternoon, evening, midnight.`);}
+  else{boo();say(`${ok} of 5 in the right place. The order is ${fr('matin, midi, après-midi, soir, minuit','morning, midday, afternoon, evening, midnight')}.`);}
+  await w(3200);}},
+
+/* 7 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! Find the <b>opposite</b> of each word, then put the day in order. Tap 🇬🇧 English if you need help.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 2 · Opposé: facile',q:"Donnez l'opposé du mot : Facile",en:'Give the opposite of the word: Easy',o:['difficile','facilement','tard'],oe:['difficult','easily','late'],a:0,cols:3,
+      why:`${fr('facile','easy')} ↔ ${fr('difficile','difficult')}.`,whyNot:{1:`${fw('facilement')} means easily: the same idea, not the opposite.`,2:`${fw('tard')} means late; it is the opposite of ${fw('tôt')}.`}},
+    {src:'Worksheet · Page 2 · Opposé: facilement',q:"Donnez l'opposé du mot : Facilement",en:'Give the opposite of the word: Easily',o:['difficile','difficilement','enfin'],oe:['difficult','with difficulty','finally'],a:1,cols:3,
+      why:`${fw('-ment')} words go together: ${fr('facilement','easily')} ↔ ${fr('difficilement','with difficulty')}.`,whyNot:{0:`${fw('difficile')} is the opposite of ${fw('facile')}; you need the ${fw('-ment')} word.`,2:`${fw('enfin')} means finally; it is the opposite of ${fw("d'abord")}.`}},
+    {src:`Worksheet · Page 2 · Opposé: d'abord`,q:"Donnez l'opposé du mot : D'abord",en:'Give the opposite of the word: First',o:['avant','enfin','tôt'],oe:['before','finally','early'],a:1,cols:3,
+      why:`${fr("d'abord","first")} ↔ ${fr('enfin','finally')}.`,whyNot:{0:`${fw('avant')} means before; its opposite is ${fw('après')}.`,2:`${fw('tôt')} means early; its opposite is ${fw('tard')}.`}},
+    {src:'Worksheet · Page 2 · Opposé: tôt',q:"Donnez l'opposé du mot : Tôt",en:'Give the opposite of the word: Early',o:['tard','midi','après'],oe:['late','midday','after'],a:0,cols:3,
+      why:`${fr('tôt','early')} ↔ ${fr('tard','late')}.`,whyNot:{1:`${fw('midi')} is midday; its opposite is ${fw('minuit')}.`,2:`${fw('après')} means after; it is the opposite of ${fw('avant')}.`}},
+    {src:'Worksheet · Page 2 · Opposé: midi',q:"Donnez l'opposé du mot : Midi",en:'Give the opposite of the word: Midday',o:['le matin','minuit','le soir'],oe:['the morning','midnight','the evening'],a:1,cols:3,
+      why:`${fr('midi','midday')} (12:00) ↔ ${fr('minuit','midnight')} (00:00).`,whyNot:{0:`${fw('le matin')} is the morning; its opposite is ${fw('le soir')}.`,2:`${fw('le soir')} is the evening; its opposite is ${fw('le matin')}.`}},
+    {src:'Worksheet · Page 2 · Opposé: le matin',q:"Donnez l'opposé du mot : Le matin",en:'Give the opposite of the word: The morning',o:['midi','le soir','tôt'],oe:['midday','the evening','early'],a:1,cols:3,
+      why:`${fr('le matin','the morning')} ↔ ${fr('le soir','the evening')}.`,whyNot:{0:`${fw('midi')} is midday; its opposite is ${fw('minuit')}.`,2:`${fw('tôt')} means early; its opposite is ${fw('tard')}.`}},
+    {src:'Worksheet · Page 2 · Opposé: avant',q:"Donnez l'opposé du mot : Avant",en:'Give the opposite of the word: Before',o:['après','enfin','tard'],oe:['after','finally','late'],a:0,cols:3,
+      why:`${fr('avant','before')} ↔ ${fr('après','after')}.`,whyNot:{1:`${fw('enfin')} means finally; it is the opposite of ${fw("d'abord")}.`,2:`${fw('tard')} means late; it is the opposite of ${fw('tôt')}.`}},
+    {src:'Worksheet · Page 6 · Mettez en ordre les moments de la journée',q:'Mettez en ordre les moments de la journée : a- midi, b- matin, c- minuit, d- après-midi, e- soir',en:'Put the times of day in order: a- midday, b- morning, c- midnight, d- afternoon, e- evening',
+      o:['midi, matin, après-midi, soir, minuit','matin, midi, après-midi, soir, minuit','matin, après-midi, midi, minuit, soir'],oe:['midday, morning, afternoon, evening, midnight','morning, midday, afternoon, evening, midnight','morning, afternoon, midday, midnight, evening'],a:1,cols:1,optH:50,
+      why:`Follow the sun: ${fr('matin, midi, après-midi, soir, minuit','morning, midday, afternoon, evening, midnight')}.`,whyNot:{0:`the day starts with ${fw('le matin')}, before ${fw('midi')}.`,2:`${fw('après-midi')} means after midday, so it comes after ${fw('midi')}; and ${fw('minuit')} is last.`}},
+  ]);}},
+
+/* 8 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Les contraires et les moments de la journée</b>','<b>Opposites and the times of day</b>')}. Let's look back.`);
+  await w(2600);
+  const B=[['😰',fr('facile ↔ difficile','easy ↔ difficult'),`${fw('Facile')}, ${fw('difficile')}.`],
+    ['🏋️',fr('facilement ↔ difficilement','easily ↔ with difficulty'),`${fw('-ment')} is like -ly.`],
+    ['🏁',fr("d'abord ↔ enfin","first ↔ finally"),`${fw("D'abord")}, ${fw('enfin')}.`],
+    ['🦉',fr('tôt ↔ tard','early ↔ late'),`${fw('Tôt')}, ${fw('tard')}.`],
+    ['🌙',fr('midi ↔ minuit','midday ↔ midnight'),`${fw('Midi')}, ${fw('minuit')}.`],
+    ['🌇',fr('le matin ↔ le soir','morning ↔ evening'),`${fw('Le matin')}, ${fw('le soir')}.`],
+    ['⏭️',fr('avant ↔ après','before ↔ after'),`${fw('Avant')}, ${fw('après')}.`],
+    ['🌅',fr('matin, midi, après-midi, soir, minuit','morning, midday, afternoon, evening, midnight'),`And the day in order: ${fr('matin, midi, après-midi, soir, minuit','morning, midday, afternoon, evening, midnight')}.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:${i===7?17:20}px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: <b>verbs</b> that end in ${fw('-er')}.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Étudier, manger, accepter, refuser</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 5 · Les verbes au présent · étudier (Page 2), manger, accepter, refuser (Page 7),
+   Tu choisis Page 3 Q3, Q8, Q9, Q12 and Page 4 Q1, Q3, Q12–15.
+   Every worksheet question is taught with teachFR (french.js), then asked again in the two Exam checks. */
+
+/* one "Tu choisis" question, d = [page, number, French, English, [a, b], [a in English, b in English], answer index] */
+async function choose(w,{d:[p,n,q,en,o,oe,a],keys,steps,why}){
+  await teachFR(w,{src:`Worksheet · Page ${p} · Tu choisis Q${n}`,
+    q:fr(`Tu choisis :<br>${q}<br>a- ${o[0]} &nbsp;&nbsp;&nbsp; b- ${o[1]}`,`Choose:<br>${en}<br>a- ${oe[0]} &nbsp;&nbsp;&nbsp; b- ${oe[1]}`),
+    read:fr(`${q} a : ${o[0]}. b : ${o[1]}.`,`${en} a: ${oe[0]}. b: ${oe[1]}.`),
+    keys,steps,answer:fr(`${'ab'[a]}) ${o[a]}`,`${'ab'[a]}) ${oe[a]}`),why});}
+/* one "Tu conjugues" table: the question on the left, the conjugation card fills in on the right */
+async function table(w,{src,verb,en,rows,steps,why}){let C;
+  await teachFR(w,{src,q:fr(`Tu conjugues au présent le verbe :<br><b>${verb}</b>`,`Conjugate the verb in the present:<br><b>${en}</b>`),
+    read:fr(`Tu conjugues au présent le verbe ${verb}.`,`Conjugate the verb ${en} in the present.`),
+    keys:[[verb,`${fw(verb)} means <b>${en}</b>.`,en]],x:20,wd:440,workX:36,
+    steps:[{act:async()=>{C=conjCard(486,10,456,{verb,en,rows});await w(300);for(let i=0;i<6;i++)await C.show(i,w);},...steps[0]},...steps.slice(1)],
+    answer:fr(`${rows[0][0]}${/'$/.test(rows[0][0])?'':' '}${rows[0][1]} … ${rows[5][0].split(' / ')[0]} ${rows[5][1]}`,`${rows[0][3]} … ${rows[5][3]}`),why});}
+const R=(stem,ends,eng,first)=>[[first||'je',stem+ends[0],ends[0],'I '+eng[0]],['tu',stem+ends[1],ends[1],'you '+eng[0]],['il / elle',stem+ends[2],ends[2],'he / she '+eng[1]],
+  ['nous',ends[3].form||stem+ends[3],ends[3].end||ends[3],'we '+eng[0]],['vous',stem+ends[4],ends[4],'you '+eng[0]],['ils / elles',stem+ends[5],ends[5],'they '+eng[0]]];
+const ER=['e','es','e','ons','ez','ent'];
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f05', num:5, part:'Les verbes au présent', emoji:'🍽️', title:'Étudier, manger, accepter, refuser',
+  intro:`${fr('Bonjour !','Hello!')} I'm <b>Coco the Parrot</b> 🦜 Today: four more <b>-er verbs</b>. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Four -er verbs',run:async w=>{
+  say(`${fr('Bonjour !','Hello!')} Today we learn four verbs that end in <b>-er</b>: to study, to eat, to accept and to refuse.`);
+  const V=[['📚','étudier','to study'],['🍽️','manger','to eat'],['👍','accepter','to accept'],['🙅','refuser','to refuse']];
+  const els=V.map(([e,f,en],i)=>{const c=mk('fq-card',`left:${30+i*228}px;top:30px;width:210px;height:180px;text-align:center`,`<div style="font-size:60px">${e}</div><div style="font-size:26px;font-weight:800;color:#1d3f8a;margin-top:8px">${fr(f,en)}</div>`);return c;});
+  for(let i=0;i<4;i++){pop(els[i]);beep(500+i*80,.07);await w(250);}
+  await w(3200);
+  say(`The <b>-er</b> at the end is the clue. To use the verb, we take off <b>-er</b> and add an <b>ending</b> that matches the person.`);
+  const big=mk('fq','left:0;top:240px;width:960px;text-align:center;font-size:56px',`<span class="fq-stem">mang</span><span id="er" class="fq-end">er</span>`);pop(big);
+  await w(2600);
+  an(big.querySelector('#er'),[{opacity:1},{opacity:0,transform:'translateY(40px) rotate(30deg)'}],{duration:800});beep(300,.1);
+  await w(1200);
+  say(`Here are the six endings. Learn them and you can use almost <b>every</b> -er verb in French!`);
+  const E=[['je','e'],['tu','es'],['il / elle','e'],['nous','ons'],['vous','ez'],['ils / elles','ent']];
+  E.forEach(([p,e],i)=>{const c=mk('fq-step',`left:${22+i*155}px;top:350px;width:146px;text-align:center;padding:6px 4px`,`<div style="font-size:18px;color:#6a45d8">${fw(p)}</div><div class="fq-end" style="font-size:30px">-${e}</div>`);pop(c,i*200);});
+  await w(3600);
+  say(`Remember: ${fw('je')}, ${fw('tu')} and ${fw('il')} sound the same. ${fw('Nous')} always ends in <b>-ons</b> and ${fw('vous')} in <b>-ez</b>. 🎯`);
+  await w(3400);}},
+
+/* 1 */ {t:'Étudier',run:async w=>{
+  await table(w,{src:'Worksheet · Page 2 · étudier',verb:'étudier',en:'to study',rows:[["j'",'étudie','e','I study'],...R('étudi',ER,['study','studies']).slice(1)],
+    steps:[{show:`Take off <b>-er</b>: ${fw('étudi-')}`,say:`Take off the -er and you get ${fw('étudi')}. Then add the endings.`,wait:1000},
+      {show:`${fw("j'étudie")}: ${fw('je')} → ${fw("j'")} before a vowel`,say:`${fw('étudie')} starts with a vowel, so ${fw('je')} shortens to ${fw("j'")}: ${fr("j'étudie","I study")}.`,wait:2600},
+      {show:`The <b>i</b> stays: ${fw('étudions, étudiez')}`,say:`Keep the <b>i</b> of the stem, even with ${fw('nous')} and ${fw('vous')}: ${fr('nous étudions, vous étudiez','we study, you study')}.`,wait:2800}],
+    why:`Stem ${fw('étudi')} + the -er endings. ${fw("J'")} goes before a vowel.`});
+  await w(1500);}},
+
+/* 2 */ {t:'Manger',run:async w=>{
+  await table(w,{src:'Worksheet · Page 7 · manger',verb:'manger',en:'to eat',rows:R('mang',['e','es','e',{form:'mangeons',end:'ons'},'ez','ent'],['eat','eats']),
+    steps:[{show:`Take off <b>-er</b>: ${fw('mang-')}`,say:`Take off the -er: ${fw('mang')}. Most endings are normal.`,wait:1000},
+      {show:`${fw('nous')}: ${fw('mang<b style="color:#e04848">e</b>ons')} with an extra <b>e</b>`,say:`One trick! With ${fw('nous')} we write ${fr('nous mangeons','we eat')}, with an extra <b>e</b>.`,wait:2600},
+      {show:`The <b>e</b> keeps the <b>g</b> soft, like in ${fw('manger')}`,say:`Without the e, ${fw('mangons')} would sound like a hard g, as in "go". The e keeps it soft.`,wait:3000}],
+    why:`${fr('nous mangeons','we eat')} keeps the e. All the others are normal: ${fr('je mange, tu manges, ils mangent','I eat, you eat, they eat')}.`});
+  await w(1500);}},
+
+/* 3 */ {t:'Accepter et refuser',run:async w=>{
+  await table(w,{src:'Worksheet · Page 7 · accepter',verb:'accepter',en:'to accept',rows:[["j'",'accepte','e','I accept'],...R('accept',ER,['accept','accepts']).slice(1)],
+    steps:[{show:`Take off <b>-er</b>: ${fw('accept-')}`,say:`Take off the -er: ${fw('accept')}. Then the six normal endings.`,wait:1000},
+      {show:`${fw("j'accepte")}: ${fw("j'")} before the vowel <b>a</b>`,say:`${fw('accepte')} starts with a vowel, so we write ${fr("j'accepte","I accept")}, just like ${fw("j'étudie")}.`,wait:2600}],
+    why:`A regular -er verb: ${fr("j'accepte, nous acceptons, ils acceptent","I accept, we accept, they accept")}.`});
+  await w(1200);clear();
+  await table(w,{src:'Worksheet · Page 7 · refuser',verb:'refuser',en:'to refuse',rows:R('refus',ER,['refuse','refuses']),
+    steps:[{show:`Take off <b>-er</b>: ${fw('refus-')}`,say:`Take off the -er: ${fw('refus')}. It starts with r, so ${fw('je')} stays ${fw('je')}.`,wait:1000},
+      {show:`${fw('refuser')} is the opposite of ${fw('accepter')}`,say:`${fw('Refuser')} means to say no. It's the opposite of ${fw('accepter')}.`,wait:2400}],
+    why:`Regular -er: ${fr('je refuse, nous refusons, vous refusez','I refuse, we refuse, you refuse')}.`});
+  await w(1500);}},
+
+/* 4 */ {t:'Tu choisis : étudier (1)',run:async w=>{
+  say(`Now the worksheet's <b>Tu choisis</b> questions: choose a or b. First, look at <b>who</b> is doing the action.`);
+  await w(2600);clear();
+  await choose(w,{d:[3,3,'Hassan pense …… dans une université française.','Hassan is thinking of …… at a French university.',['étudie','étudier'],['studies','studying (to study)'],1],
+    keys:[['pense',`${fw('pense')} means <b>thinks</b>. It's already a verb with an ending.`,'thinking']],
+    steps:[{show:`${fw('Hassan pense')} = verb number 1`,say:`${fr('Hassan pense','Hassan thinks')}: that's the first verb, and it already has its ending.`},
+      {show:`Verb 2 stays in the <b>infinitive</b> (-er): ${fw('étudier')}`,say:`When two verbs come together, the second one stays in the <b>infinitive</b>, the -er form: ${fw('étudier')}.`,wait:2600}],
+    why:`Two verbs side by side: the second keeps <b>-er</b>. Like ${fr('il va parler','he is going to speak')} and ${fr('il faut étudier','you must study')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[3,8,'Nous …… le français.','We …… French.',['étudier','étudions'],['to study','study'],1],
+    keys:[['Nous',`${fw('Nous')} means <b>we</b>. It tells us which ending to use.`,'We']],
+    steps:[{show:`${fw('nous')} → ending <b>-ons</b>`,say:`With ${fw('nous')}, the ending is always <b>-ons</b>.`},
+      {show:`${fw('étudi')} + ${fw('ons')} = ${fr('<b>étudions</b>','<b>study</b>')}`,say:`Stem ${fw('étudi')} plus -ons: ${fr('Nous étudions le français.','We study French.')}`,wait:2600}],
+    why:`${fw('étudier')} is only the infinitive. After ${fw('nous')} we need the -ons form: ${fw('étudions')}.`});
+  await w(1200);clear();
+  await choose(w,{d:[3,9,'Il …… le français.','He …… French.',['étudies','étudie'],['study (tu form)','studies'],1],
+    keys:[['Il',`${fw('Il')} means <b>he</b>.`,'He']],
+    steps:[{show:`${fw('il')} → ending <b>-e</b>`,say:`With ${fw('il')}, the ending is <b>-e</b>.`},
+      {show:fr('Il <b>étudie</b> le français.','He <b>studies</b> French.'),say:`So: ${fr('Il étudie le français.','He studies French.')}`,wait:2400}],
+    why:`The <b>-es</b> ending is only for ${fw('tu')}. ${fw('Il')} takes <b>-e</b>.`});
+  await w(1500);}},
+
+/* 5 */ {t:'Tu choisis : étudier (2)',run:async w=>{
+  await choose(w,{d:[3,12,"Mona …… l'arabe.",'Mona …… Arabic.',['étudies','étudie'],['study (tu form)','studies'],1],
+    keys:[['Mona',`${fw('Mona')} is a girl's name, so we can swap it for ${fw('elle')}, she.`,'Mona']],
+    steps:[{show:`${fw('Mona')} = ${fw('elle')} → ending <b>-e</b>`,say:`A name is like ${fw('il')} or ${fw('elle')}. ${fw('Elle')} takes <b>-e</b>.`},
+      {show:fr("Mona <b>étudie</b> l'arabe.","Mona <b>studies</b> Arabic."),say:`${fr("Mona étudie l'arabe.","Mona studies Arabic.")}`,wait:2400}],
+    why:`One person's name works like ${fw('il')} / ${fw('elle')}: ending <b>-e</b>.`});
+  await w(1200);clear();
+  await choose(w,{d:[4,1,'Marie …… la biologie tous les mardis.','Marie …… biology every Tuesday.',['étudie','étudions'],['studies','study (nous form)'],0],
+    keys:[['Marie',`${fw('Marie')} is one girl: that's ${fw('elle')}.`,'Marie'],['tous les mardis',`${fw('tous les mardis')} means <b>every Tuesday</b>.`,'every Tuesday']],
+    steps:[{show:`${fw('Marie')} = ${fw('elle')} → <b>-e</b>`,say:`${fw('Marie')} is ${fw('elle')}, so the ending is <b>-e</b>.`},
+      {show:`${fw('étudions')} needs ${fw('nous')} ✖`,say:`${fw('Étudions')} only goes with ${fw('nous')}. So it's ${fr('Marie étudie la biologie.','Marie studies biology.')}`,wait:2600}],
+    why:`${fr('Marie étudie','Marie studies')}: one person, ending <b>-e</b>.`});
+  await w(1200);clear();
+  await choose(w,{d:[4,3,'Tu …… pour les examens.','You …… for the exams.',['étudies','étudiez'],['study (tu form)','study (vous form)'],0],
+    keys:[['Tu ……',`${fw('Tu')} means <b>you</b>, talking to one friend.`,'You ……']],
+    steps:[{show:`${fw('tu')} → ending <b>-es</b>`,say:`With ${fw('tu')}, the ending is <b>-es</b>.`},
+      {show:fr('Tu <b>étudies</b> pour les examens.','You <b>study</b> for the exams.'),say:`${fr('Tu étudies pour les examens.','You study for the exams.')}`,wait:2400}],
+    why:`${fw('-ez')} goes with ${fw('vous')}. With ${fw('tu')} it's always <b>-es</b>.`});
+  await w(1500);}},
+
+/* 6 */ {t:'Tu choisis : manger',run:async w=>{
+  const ice=mk('','left:860px;top:400px;font-size:70px','🍦');loop(ice,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],700,{direction:'alternate'});
+  await choose(w,{d:[4,12,'Elle …… de la glace.','She …… (some) ice cream.',['mangent','mange'],['eat (ils form)','eats'],1],
+    keys:[['Elle',`${fw('Elle')} means <b>she</b>.`,'She']],
+    steps:[{show:`${fw('elle')} → ending <b>-e</b>`,say:`${fw('Elle')} takes <b>-e</b>: ${fr('Elle mange de la glace.','She eats ice cream.')}`,wait:2600}],
+    why:`${fw('-ent')} is for ${fw('ils')} / ${fw('elles')}, more than one person.`});
+  await w(1200);clear([ice]);
+  await choose(w,{d:[4,13,'Nous …… de la glace.','We …… (some) ice cream.',['mangez','mangeons'],['eat (vous form)','eat (nous form)'],1],
+    keys:[['Nous',`${fw('Nous')} means <b>we</b>.`,'We']],
+    steps:[{show:`${fw('nous')} → <b>-ons</b>`,say:`${fw('Nous')} takes <b>-ons</b>.`},
+      {show:`${fw('mang')} + <b>e</b> + ${fw('ons')} = ${fw('<b>mangeons</b>')}`,say:`And remember the extra <b>e</b>: ${fr('Nous mangeons de la glace.','We eat ice cream.')}`,wait:2600}],
+    why:`${fw('mangez')} goes with ${fw('vous')}. With ${fw('nous')}: ${fw('mangeons')}, with an e.`});
+  await w(1200);clear([ice]);
+  await choose(w,{d:[4,14,'Tu …… quoi ?','You …… what?',['manges','mange'],['eat (tu form)','eat (je / il form)'],0],
+    keys:[['Tu ……',`${fw('Tu')} means <b>you</b>.`,'You ……'],['quoi',`${fw('quoi')} means <b>what</b>.`,'what']],
+    steps:[{show:`${fw('tu')} → <b>-es</b>`,say:`${fw('Tu')} takes <b>-es</b>: ${fr('Tu manges quoi ?','What are you eating?')}`,wait:2600}],
+    why:`The s of ${fw('manges')} is silent, but you must write it after ${fw('tu')}.`});
+  await w(1200);clear([ice]);
+  await choose(w,{d:[4,15,'Il …… de la glace.','He …… (some) ice cream.',['mange','mangent'],['eats','eat (ils form)'],0],
+    keys:[['Il',`${fw('Il')} means <b>he</b>: just one person.`,'He']],
+    steps:[{show:`${fw('il')} → <b>-e</b>`,say:`${fw('Il')} takes <b>-e</b>: ${fr('Il mange de la glace.','He eats ice cream.')}`,wait:2600}],
+    why:`${fw('Il mange')} (one person), but ${fw('ils mangent')} (several people).`});
+  await w(1500);}},
+
+/* 7 */ {t:'Sort the verbs',run:async w=>{
+  const r=await sortGame(w,{bins:[fr('je / il / elle','I / he / she'),fr('tu','you'),fr('nous','we'),fr('ils / elles','they')],colors:['#5d9cf5','#45c288','#f5a54a','#c9b6f4'],top:170,
+    items:[[fr('mange','eat(s)'),0],[fr('étudie','study / studies'),0],[fr('refuse','refuse(s)'),0],[fr('manges','eat'),1],[fr('étudies','study'),1],[fr('acceptes','accept'),1],
+      [fr('mangeons','eat'),2],[fr('étudions','study'),2],[fr('refusons','refuse'),2],[fr('mangent','eat'),3],[fr('étudient','study'),3],[fr('acceptent','accept'),3]],
+    intro:`Tap a verb, then tap the person it goes with. Look at the <b>ending</b>! Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} You know your endings.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`<b>-e</b> for ${fw('je')} and ${fw('il')}, <b>-es</b> for ${fw('tu')}, <b>-ons</b> for ${fw('nous')}, and <b>-ent</b> for ${fw('ils')}.`);
+  await w(3600);}},
+
+/* 8 */ {t:'Exam check: étudier',run:async w=>{
+  say(`Exam check! These are the worksheet's questions. Look at <b>who</b>, then pick the ending.`);
+  await w(2400);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 3 · Tu choisis Q3',q:'Hassan pense …… dans une université française.',en:'Hassan is thinking of …… at a French university.',o:['étudie','étudier'],oe:['studies','studying (to study)'],a:1,
+      why:`Two verbs together: the second stays in the infinitive, ${fw('étudier')}.`,whyNot:{0:`${fw('pense')} is already the first verb, so the second can't have an ending.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q8',q:'Nous …… le français.',en:'We …… French.',o:['étudier','étudions'],oe:['to study','study'],a:1,
+      why:`${fw('Nous')} takes <b>-ons</b>: ${fw('nous étudions')}.`,whyNot:{0:`${fw('étudier')} is the infinitive; ${fw('nous')} needs an ending.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q9',q:'Il …… le français.',en:'He …… French.',o:['étudies','étudie'],oe:['study (tu form)','studies'],a:1,
+      why:`${fw('Il')} takes <b>-e</b>: ${fw('il étudie')}.`,whyNot:{0:`<b>-es</b> is only for ${fw('tu')}.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q12',q:"Mona …… l'arabe.",en:'Mona …… Arabic.',o:['étudies','étudie'],oe:['study (tu form)','studies'],a:1,
+      why:`${fw('Mona')} = ${fw('elle')}, ending <b>-e</b>: ${fw('Mona étudie')}.`,whyNot:{0:`<b>-es</b> is only for ${fw('tu')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q1',q:'Marie …… la biologie tous les mardis.',en:'Marie …… biology every Tuesday.',o:['étudie','étudions'],oe:['studies','study (nous form)'],a:0,
+      why:`${fw('Marie')} = ${fw('elle')}, ending <b>-e</b>.`,whyNot:{1:`${fw('étudions')} only goes with ${fw('nous')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q3',q:'Tu …… pour les examens.',en:'You …… for the exams.',o:['étudies','étudiez'],oe:['study (tu form)','study (vous form)'],a:0,
+      why:`${fw('Tu')} takes <b>-es</b>: ${fw('tu étudies')}.`,whyNot:{1:`<b>-ez</b> goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 2 · étudier',q:'Tu conjugues au présent le verbe : étudier',en:'Conjugate the verb in the present: to study',
+      model:"j'étudie, tu étudies, il étudie, nous étudions, vous étudiez, ils étudient",men:'I study, you study, he studies, we study, you study, they study'},
+  ],{title:'Exam check 1'});}},
+
+/* 9 */ {t:'Exam check: manger',run:async w=>{
+  say(`Exam check 2: ${fw('manger')} and the verb tables.`);
+  await w(2000);
+  await examCheck(w,[
+    {src:'Worksheet · Page 4 · Tu choisis Q12',q:'Elle …… de la glace.',en:'She …… (some) ice cream.',o:['mangent','mange'],oe:['eat (ils form)','eats'],a:1,
+      why:`${fw('Elle')} takes <b>-e</b>: ${fw('elle mange')}.`,whyNot:{0:`<b>-ent</b> is for ${fw('ils')} / ${fw('elles')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q13',q:'Nous …… de la glace.',en:'We …… (some) ice cream.',o:['mangez','mangeons'],oe:['eat (vous form)','eat (nous form)'],a:1,
+      why:`${fw('Nous')} takes <b>-ons</b>, with the extra e: ${fw('nous mangeons')}.`,whyNot:{0:`${fw('mangez')} goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q14',q:'Tu …… quoi ?',en:'You …… what?',o:['manges','mange'],oe:['eat (tu form)','eat (je / il form)'],a:0,
+      why:`${fw('Tu')} takes <b>-es</b>: ${fw('tu manges')}.`,whyNot:{1:`${fw('mange')} goes with ${fw('je')} or ${fw('il')}; ${fw('tu')} needs the s.`}},
+    {src:'Worksheet · Page 4 · Tu choisis Q15',q:'Il …… de la glace.',en:'He …… (some) ice cream.',o:['mange','mangent'],oe:['eats','eat (ils form)'],a:0,
+      why:`${fw('Il')} takes <b>-e</b>: ${fw('il mange')}.`,whyNot:{1:`${fw('mangent')} is for ${fw('ils')}, several people.`}},
+    {src:'Worksheet · Page 7 · manger',q:'Tu conjugues au présent le verbe : manger',en:'Conjugate the verb in the present: to eat',
+      model:'je mange, tu manges, il mange, nous mangeons, vous mangez, ils mangent',men:'I eat, you eat, he eats, we eat, you eat, they eat'},
+    {src:'Worksheet · Page 7 · accepter',q:'Tu conjugues au présent le verbe : accepter',en:'Conjugate the verb in the present: to accept',
+      model:"j'accepte, tu acceptes, il accepte, nous acceptons, vous acceptez, ils acceptent",men:'I accept, you accept, he accepts, we accept, you accept, they accept'},
+    {src:'Worksheet · Page 7 · refuser',q:'Tu conjugues au présent le verbe : refuser',en:'Conjugate the verb in the present: to refuse',
+      model:'je refuse, tu refuses, il refuse, nous refusons, vous refusez, ils refusent',men:'I refuse, you refuse, he refuses, we refuse, you refuse, they refuse'},
+  ],{title:'Exam check 2'});}},
+
+/* 10 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Étudier, manger, accepter, refuser</b>','<b>To study, to eat, to accept, to refuse</b>')}. Let's look back.`);
+  await w(2600);
+  const B=[['✂️',fr('mang<b>er</b> → mang-','to eat → stem'),`Take off the -er to find the stem.`],
+    ['🔤',fr('-e -es -e -ons -ez -ent','the six endings'),`The six endings: e, es, e, ons, ez, ent.`],
+    ['📚',fr("j'étudie","I study"),`${fw('Je')} becomes ${fw("j'")} before a vowel.`],
+    ['🧑‍🎓',fr('nous étudions','we study'),`The i stays: ${fw('nous étudions')}.`],
+    ['🍦',fr('nous mangeons','we eat'),`${fw('Nous mangeons')} keeps an extra e.`],
+    ['👍',fr("j'accepte","I accept"),`${fw("J'accepte")}, with ${fw("j'")}.`],
+    ['🙅',fr('je refuse','I refuse'),`${fw('Refuser')} is the opposite of ${fw('accepter')}.`],
+    ['➡️',fr('Hassan pense étudier','Hassan is thinking of studying'),`Two verbs together: the second keeps -er.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:20px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: two tricky verbs, ${fw('apprendre')} and ${fw('prendre')}.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

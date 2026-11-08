@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Les matières et le mot insolite</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 2 · Lecture et vocabulaire · school subjects and school words, and Page 2 "Trouvez le mot insolite" (Q1–6).
+   Every worksheet question is taught with teachFR (french.js): question first and read aloud, key words lit up,
+   the student taps "Show me", then the groups are found step by step, the odd one out is stamped and explained. */
+const WS='Worksheet · Page 2 · ';
+/* a word card: emoji on top, French word (with its English) underneath */
+function wcard(x,y,wd,ht,emo,f,e,col='#c6d8f6'){return mk('fq-card',`left:${x}px;top:${y}px;width:${wd}px;height:${ht}px;text-align:center;padding:8px 4px;display:flex;flex-direction:column;justify-content:center;border-color:${col};box-shadow:0 5px 0 ${col}`,
+  `<div style="font-size:${Math.round(ht*.32)}px;line-height:1.15">${emo}</div><div style="font-size:19px;font-weight:800;color:#1d3f8a;margin-top:6px;line-height:1.2">${fr(f,e)}</div>`);}
+/* one "mot insolite" question: the four words light up in their group, the odd one is circled in red */
+const INS=[
+  {n:1,words:['TCF','DELF','EPS','DALF'],en:['TCF','DELF','EPS','DALF'],odd:2,
+    group:fr('TCF, DELF, DALF = des examens de français','TCF, DELF, DALF = French language exams'),
+    groupSay:`${fw('TCF')}, ${fw('DELF')} and ${fw('DALF')} are all <b>French language exams</b>. People take them to prove how well they speak French.`,
+    oddLine:fr('EPS = éducation physique et sportive (le sport)','EPS = PE, physical education (sport)'),
+    oddSay:`${fw('EPS')} is different. It means ${fr('éducation physique et sportive','physical education')}: <b>PE</b> at school, not a French exam.`,
+    why:`TCF, DELF and DALF are French language exams. ${fw('EPS')} is PE, a school subject.`},
+  {n:2,words:['France','géo','art','maths'],en:['France','geography','art','maths'],odd:0,
+    group:fr('géo, art, maths = des matières','geography, art, maths = school subjects'),
+    groupSay:`${fr('Géo, art, maths','Geography, art, maths')}: these are all <b>school subjects</b>. ${fw('Géo')} is short for ${fr('géographie','geography')}.`,
+    oddLine:fr('la France = un pays','France = a country'),
+    oddSay:`${fr('La France','France')} is a <b>country</b>, not a school subject.`,
+    why:`${fr('Géo, art et maths','Geography, art and maths')} are school subjects. ${fr('La France','France')} is a country.`},
+  {n:3,words:['anglais','oncle','arabe','italien'],en:['English','uncle','Arabic','Italian'],odd:1,
+    group:fr('anglais, arabe, italien = des langues','English, Arabic, Italian = languages'),
+    groupSay:`${fr('Anglais, arabe, italien','English, Arabic, Italian')}: these are all <b>languages</b>.`,
+    oddLine:fr('un oncle = la famille','an uncle = family'),
+    oddSay:`${fw('Oncle')} means <b>uncle</b>. He is a member of the <b>family</b>, not a language.`,
+    why:`${fr('Anglais, arabe, italien','English, Arabic, Italian')} are languages. ${fw('Oncle')} means uncle: family.`},
+  {n:4,words:['étudiant','professeur','école','plat'],en:['student','teacher','school','dish'],odd:3,
+    group:fr("étudiant, professeur, école = l'école","student, teacher, school = school words"),
+    groupSay:`${fr('Étudiant, professeur, école','Student, teacher, school')}: these words all belong to <b>school</b>.`,
+    oddLine:fr('un plat = de la nourriture','a dish = food'),
+    oddSay:`${fw('Un plat')} is a <b>dish</b> of food, like a plate of rice. It has nothing to do with school.`,
+    why:`${fr('Étudiant, professeur, école','Student, teacher, school')} are school words. ${fw('Un plat')} is a dish of food.`},
+  {n:5,words:['tableau','matière','météo','devoir'],en:['board','subject','weather forecast','homework'],odd:2,
+    group:fr("tableau, matière, devoir = l'école","board, subject, homework = school words"),
+    groupSay:`${fr('Tableau, matière, devoir','Board, subject, homework')}: the <b>board</b>, a <b>subject</b> and <b>homework</b>. All school words.`,
+    oddLine:fr('la météo = le temps qu\'il fait','the weather forecast = the weather'),
+    oddSay:`${fw('La météo')} is the <b>weather forecast</b>: sunny, rainy or windy. Not a school word!`,
+    why:`${fr('Tableau, matière, devoir','Board, subject, homework')} are school words. ${fw('La météo')} is the weather forecast.`},
+  {n:6,words:['café','test','étude','cours'],en:['coffee','test','study','lesson'],odd:0,
+    group:fr("test, étude, cours = l'école","test, study, lesson = school words"),
+    groupSay:`${fr('Test, étude, cours','Test, study, lesson')}: a <b>test</b>, <b>study</b> and a <b>lesson</b>. All school words.`,
+    oddLine:fr('un café = une boisson','a coffee = a drink'),
+    oddSay:`${fw('Un café')} is a <b>coffee</b>, a drink, or a café where you drink it. Not a school word.`,
+    why:`${fr('Test, étude, cours','Test, study, lesson')} are school words. ${fw('Un café')} is a coffee.`}];
+async function insolite(w,I){
+  const list=I.words.map((t,i)=>fr(t,I.en[i])).join(' / ');
+  let chips=[];
+  await teachFR(w,{src:WS+'Mot insolite Q'+I.n,q:fr('Trouvez le mot insolite :','Find the odd one out:')+`<br>${I.n}- ${list}`,
+    read:`${fr('Trouvez le mot insolite.','Find the odd one out.')} ${list}.`,
+    keys:[['insolite',`${fw('Insolite')} means <b>odd</b> or unusual. Three words belong together; one does not.`,'odd one out']],
+    before:[{act:async()=>{chips=I.words.map((t,i)=>{const c=mk('fq-chip',`left:${70+i*215}px;top:160px;width:190px;text-align:center`,fr(t,I.en[i]));pop(c,i*120);return c;});await w(700);},
+      show:'Tip: find what <b>three</b> of the words share.',say:`Tip: look for what <b>three</b> of the words have in common.`,try:true}],
+    workY:230,
+    steps:[{act:async()=>{chips.forEach((c,i)=>{if(i!==I.odd)an(c,[{background:'#eef4ff'},{background:'#e6f7ee',borderColor:'#18a058'}],{duration:500});});beep(700,.08);},
+        show:I.group,say:I.groupSay,wait:2800},
+      {act:async()=>{const c=chips[I.odd];an(c,[{transform:'none'},{transform:'scale(1.15) rotate(-4deg)',background:'#fdecec',borderColor:'#e04848',color:'#b02a2a'}],{duration:600});shake(c);boo();},
+        show:I.oddLine,say:I.oddSay,wait:2800}],
+    answer:fr(I.words[I.odd],I.en[I.odd]),why:I.why});}
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f02', num:2, part:'Lecture et vocabulaire', emoji:'📚', title:'Les matières et le mot insolite',
+  intro:`${fr('Salut !','Hi!')} I'm <b>Coco the Parrot</b> 🦜 Today: school subjects, and spotting the <b>odd one out</b>. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Les matières',run:async w=>{
+  say(`${fr('Salut !','Hi!')} At school you study lots of <b>subjects</b>. In French, a school subject is ${fr('<b>une matière</b>','<b>a subject</b>')}.`);
+  await w(3000);
+  const M=[['🇫🇷','français','French'],['🇬🇧','anglais','English'],['✒️','arabe','Arabic'],['➗','maths','maths'],['🧬','biologie','biology'],['🌍','géographie','geography'],
+    ['🏛️','histoire','history'],['💻','informatique','computing'],['🎨','art','art'],['⚽','sport (EPS)','sport (PE)'],['🔬','sciences','science'],['🎵','musique','music']];
+  const C=M.map(([e,f,en],i)=>wcard(13+(i%6)*157,14+Math.floor(i/6)*176,145,160,e,f,en));
+  for(let i=0;i<12;i++){pop(C[i]);beep(480+i*40,.05);point(C[i]);say(fr(M[i][1],M[i][2]));await w(1000);}
+  stage.querySelector('.fq-point')?.remove();
+  const n=mk('fq-why','left:60px;top:376px;width:840px',`💡 ${fw('Géo')} is short for ${fr('géographie','geography')}. ${fw('EPS')} means ${fr('éducation physique et sportive','physical education')}: <b>PE</b>.`);pop(n);
+  say(`Two short names: ${fw('géo')} is short for ${fr('géographie','geography')}, and ${fw('EPS')} is <b>PE</b>, physical education.`);
+  await w(3600);
+  const m=mk('fq-step','left:240px;top:460px;width:480px;text-align:center',fr("J'aime l'informatique !","I like computing!"));pop(m);
+  say(`What's your favourite? Coco's is ${fr("l'informatique","computing")}. ${fr("J'aime l'informatique !","I like computing!")}`);
+  await w(3000);}},
+
+/* 1 */ {t:"Les mots de l'école",run:async w=>{
+  say(`Now some useful <b>school words</b>. Listen and repeat after me!`);
+  await w(2400);
+  const M=[['🧑‍🎓','un étudiant','a student'],['👩‍🏫','un professeur','a teacher'],['🏫','une école','a school'],['🟩','un tableau','a board'],['📚','une matière','a subject'],
+    ['📝','un devoir','homework'],['✅','un test','a test'],['📖','une étude','a study'],['🧑‍🏫','un cours','a lesson']];
+  const C=M.map(([e,f,en],i)=>wcard(40+(i%5)*180,20+Math.floor(i/5)*180,165,160,e,f,en));
+  for(let i=0;i<9;i++){pop(C[i]);beep(500+i*50,.05);point(C[i]);say(`${fr(M[i][1],M[i][2])}: <b>${M[i][2]}</b>.`);await w(1700);}
+  stage.querySelector('.fq-point')?.remove();
+  const box=mk('fq-why','left:760px;top:200px;width:180px;text-align:center',`🏫 All of these<br>belong to<br><b>${fr("l'école","school")}</b>`);pop(box);
+  loop(box,[{transform:'scale(1)'},{transform:'scale(1.06)'}],700,{direction:'alternate'});
+  say(`All nine words belong to ${fr("<b>l'école</b>","<b>school</b>")}. Remember them: they will help you find the odd one out!`);
+  await w(3400);}},
+
+/* 2 */ {t:'Des familles de mots',run:async w=>{
+  say(`Words come in <b>families</b>. To find the odd one out, find the family that <b>three</b> words share.`);
+  await w(3000);
+  const F=[['🗣️',fr('Les langues','Languages'),[['anglais','English'],['arabe','Arabic'],['italien','Italian'],['français','French']],'#5d9cf5'],
+    ['👨‍👩‍👧',fr('La famille','Family'),[['un oncle','an uncle'],['une tante','an aunt'],['un père','a father'],['une mère','a mother']],'#45c288'],
+    ['🍽️',fr('La nourriture','Food and drink'),[['un plat','a dish'],['un café','a coffee'],['un gâteau','a cake'],['du riz','rice']],'#f5a54a'],
+    ['📜',fr('Les examens de français','French language exams'),[['TCF','TCF'],['DELF','DELF'],['DALF','DALF']],'#c9b6f4']];
+  const P=F.map(([e,h,ws,col],i)=>{const p=mk('fq-card',`left:${13+(i%2)*474}px;top:${10+Math.floor(i/2)*252}px;width:460px;height:238px;border-color:${col};box-shadow:0 5px 0 ${col}`,
+    `<h4>${e} ${h}</h4>`);return p;});
+  const lines=[`${fr('Les langues','Languages')}: ${fr('anglais, arabe, italien, français','English, Arabic, Italian, French')}.`,
+    `${fr('La famille','Family')}: ${fr('un oncle','an uncle')} is an uncle, ${fr('une tante','an aunt')} is an aunt.`,
+    `${fr('La nourriture','Food')}: ${fr('un plat','a dish')} is a dish of food, ${fr('un café','a coffee')} is a coffee.`,
+    `And ${fr('TCF, DELF, DALF','TCF, DELF, DALF')} are <b>exams</b> that test your French.`];
+  for(let i=0;i<4;i++){pop(P[i]);point(P[i]);
+    F[i][2].forEach(([f,e],j)=>{const c=mk('fq-chip',`position:relative;display:inline-block;margin:10px 10px 0 0;font-size:24px`,fr(f,e),P[i]);c.style.position='relative';pop(c,j*150);});
+    say(lines[i]);await w(3400);}
+  stage.querySelector('.fq-point')?.remove();
+  say(`So if three words are school words and one is food, the food word is ${fr('le mot insolite','the odd one out')}!`);
+  await w(3200);}},
+
+/* 3 */ {t:'Le mot insolite (1)',run:async w=>{
+  say(`Now the worksheet: ${fr('<b>Trouvez le mot insolite</b>','<b>Find the odd one out</b>')}. Let's do them one at a time.`);
+  await w(2800);
+  await insolite(w,INS[0]);await w(1200);clear();
+  await insolite(w,INS[1]);await w(1500);}},
+
+/* 4 */ {t:'Le mot insolite (2)',run:async w=>{
+  await insolite(w,INS[2]);await w(1200);clear();
+  await insolite(w,INS[3]);await w(1500);}},
+
+/* 5 */ {t:'Le mot insolite (3)',run:async w=>{
+  await insolite(w,INS[4]);await w(1200);clear();
+  await insolite(w,INS[5]);await w(1500);}},
+
+/* 6 */ {t:"À l'école ou pas ?",run:async w=>{
+  const r=await sortGame(w,{bins:[fr('Les matières','School subjects'),fr("Les mots de l'école",'School words'),fr("Pas à l'école","Not school")],colors:['#5d9cf5','#45c288','#f5a54a'],top:170,
+    items:[[fr('géo','geography'),0],[fr('histoire','history'),0],[fr('informatique','computing'),0],[fr('anglais','English'),0],
+      [fr('tableau','board'),1],[fr('devoir','homework'),1],[fr('professeur','teacher'),1],[fr('cours','lesson'),1],
+      [fr('oncle','uncle'),2],[fr('plat','dish'),2],[fr('météo','weather forecast'),2],[fr('café','coffee'),2]],
+    intro:`Tap a word, then tap its box: ${fr('les matières','school subjects')}, ${fr("les mots de l'école",'school words')}, or ${fr("pas à l'école","not school")}. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} Every word is in the right box.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`Subjects like ${fr('histoire','history')}, school words like ${fr('tableau','board')}, and the odd ones: ${fr('oncle, plat, météo, café','uncle, dish, weather forecast, coffee')}.`);
+  await w(3800);}},
+
+/* 7 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! For each one, tap the <b>odd one out</b>. Tap 🇬🇧 English if you need help.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 2 · Mot insolite Q1',q:'Trouvez le mot insolite : TCF / DELF / EPS / DALF',en:'Find the odd one out: TCF / DELF / EPS / DALF',o:['TCF','DELF','EPS','DALF'],oe:['TCF','DELF','EPS (PE)','DALF'],a:2,
+      why:`TCF, DELF and DALF are French language exams. ${fw('EPS')} is PE.`,whyNot:{0:'TCF is a French language exam, like DELF and DALF.',1:'DELF is a French language exam, like TCF and DALF.',3:'DALF is a French language exam, like TCF and DELF.'}},
+    {src:'Worksheet · Page 2 · Mot insolite Q2',q:'Trouvez le mot insolite : France / géo / art / maths',en:'Find the odd one out: France / geography / art / maths',o:['France','géo','art','maths'],oe:['France','geography','art','maths'],a:0,
+      why:`${fr('Géo, art, maths','Geography, art, maths')} are school subjects; ${fr('la France','France')} is a country.`,whyNot:{1:`${fw('géo')} is a school subject.`,2:`${fw('art')} is a school subject.`,3:`${fw('maths')} is a school subject.`}},
+    {src:'Worksheet · Page 2 · Mot insolite Q3',q:'Trouvez le mot insolite : anglais / oncle / arabe / italien',en:'Find the odd one out: English / uncle / Arabic / Italian',o:['anglais','oncle','arabe','italien'],oe:['English','uncle','Arabic','Italian'],a:1,
+      why:`The others are languages. ${fw('Oncle')} means uncle: family.`,whyNot:{0:`${fw('anglais')} is a language.`,2:`${fw('arabe')} is a language.`,3:`${fw('italien')} is a language.`}},
+    {src:'Worksheet · Page 2 · Mot insolite Q4',q:'Trouvez le mot insolite : étudiant / professeur / école / plat',en:'Find the odd one out: student / teacher / school / dish',o:['étudiant','professeur','école','plat'],oe:['student','teacher','school','dish'],a:3,
+      why:`The others are school words. ${fw('Un plat')} is a dish of food.`,whyNot:{0:`${fw('étudiant')} (student) is a school word.`,1:`${fw('professeur')} (teacher) is a school word.`,2:`${fw('école')} (school) is a school word.`}},
+    {src:'Worksheet · Page 2 · Mot insolite Q5',q:'Trouvez le mot insolite : tableau / matière / météo / devoir',en:'Find the odd one out: board / subject / weather forecast / homework',o:['tableau','matière','météo','devoir'],oe:['board','subject','weather forecast','homework'],a:2,
+      why:`The others are school words. ${fw('La météo')} is the weather forecast.`,whyNot:{0:`${fw('tableau')} (board) is a school word.`,1:`${fw('matière')} (subject) is a school word.`,3:`${fw('devoir')} (homework) is a school word.`}},
+    {src:'Worksheet · Page 2 · Mot insolite Q6',q:'Trouvez le mot insolite : café / test / étude / cours',en:'Find the odd one out: coffee / test / study / lesson',o:['café','test','étude','cours'],oe:['coffee','test','study','lesson'],a:0,
+      why:`The others are school words. ${fw('Un café')} is a coffee.`,whyNot:{1:`${fw('test')} is a school word.`,2:`${fw('étude')} (study) is a school word.`,3:`${fw('cours')} (lesson) is a school word.`}},
+  ]);}},
+
+/* 8 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Les matières et le mot insolite</b>','<b>School subjects and the odd one out</b>')}. Let's look back.`);
+  await w(2600);
+  const B=[['📚',fr('une matière','a subject'),`${fw('Une matière')} is a school subject.`],
+    ['🌍',fr('géo = géographie','geo = geography'),`${fw('Géo')} is short for geography.`],
+    ['⚽',fr('EPS = le sport','EPS = PE'),`${fw('EPS')} is PE, not an exam.`],
+    ['📜',fr('TCF, DELF, DALF','TCF, DELF, DALF'),`TCF, DELF and DALF are French exams.`],
+    ['👨',fr('un oncle','an uncle'),`${fw('Un oncle')} is family, not a language.`],
+    ['🍲',fr('un plat','a dish'),`${fw('Un plat')} is a dish of food.`],
+    ['🌦️',fr('la météo','the weather forecast'),`${fw('La météo')} is the weather forecast.`],
+    ['☕',fr('un café','a coffee'),`And ${fw('un café')} is a coffee.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:20px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: <b>opposites</b> and the <b>times of day</b>.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

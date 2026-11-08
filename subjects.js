@@ -1,5 +1,5 @@
 /* The subjects and their lessons, shared by the home page, the subject pages and the parent page.
-   Lesson ids are one letter per subject plus a number: l = Science (named before subjects existed), m = Maths.
+   Lesson ids are one letter per subject plus a number: l = Science (named before subjects existed), m = Maths, f = French.
    A lesson without an href is planned but not built yet ("coming soon"). Hrefs are relative to the site root.
    To add a subject: add it here (soon:true until its first lesson exists), give it a page like maths.html,
    and put its lessons in a folder of their own. */
@@ -53,7 +53,25 @@ window.SUBJECTS = [
         ['m14','maths/m14-nth-term-functions.html','⚙️','The nth term and function machines']]},
       {tag:'Chapter 10', name:'Percentages', color:'#d6336c', soft:'#f6c9da', les:[
         ['m15','maths/m15-percentages.html','💯','Percentages, fractions and decimals']]}]},
-  {id:'french', name:'French', emoji:'🇫🇷', grad:'#2c66cf,#5d9cf5', soon:true, units:[]},
+  {id:'french', name:'French', emoji:'🇫🇷', page:'french.html', grad:'#2c66cf,#5d9cf5', guide:'Coco the Parrot',
+    blurb:'Revision sheet · with Coco the Parrot',
+    quiz:{href:'french-quiz.html', title:'French Quest Quiz', desc:'116 questions in 4 levels plus a Final Boss: pick, match, conjugate, build sentences and earn stars. Tap 🇬🇧 English to translate.',
+      modes:[['f1','📚','Vocabulaire'],['f2','🗣️','Verbes en -er'],['f3','🎒','Prendre, avoir, aller'],['f4','🚀','Futur, en, oui'],['fboss','👑','Final Boss']]},
+    guidePdf:{href:'french-study-guide.pdf', title:'Study Guide (PDF)', desc:'Every worksheet question with its answer and English translation, verb tables, practice questions and a cheat sheet.'},
+    units:[
+      {tag:'Part 1', name:'Lecture et vocabulaire · Reading & vocabulary', color:'#2c66cf', soft:'#c6d8f6', les:[
+        ['f01','french/f01-ma-journee.html','🏫',"Ma journée à l'école (My school day)"],
+        ['f02','french/f02-matieres-insolite.html','📚','Les matières et le mot insolite (School subjects & the odd one out)'],
+        ['f03','french/f03-contraires-moments.html','🌗','Les contraires et les moments de la journée (Opposites & times of day)']]},
+      {tag:'Part 2', name:'Les verbes au présent · Verbs in the present', color:'#6a45d8', soft:'#ddd3fb', les:[
+        ['f04','french/f04-verbes-er.html','🗣️','Les verbes en -er : parler, aimer, donner, penser (-er verbs)'],
+        ['f05','french/f05-etudier-manger.html','🍽️','Étudier, manger, accepter, refuser (to study, eat, accept, refuse)'],
+        ['f06','french/f06-apprendre-prendre.html','📖','Apprendre et prendre (to learn and to take)'],
+        ['f07','french/f07-avoir-aller-il-faut.html','🎒','Avoir, aller et « il faut » (to have, to go, you must)']]},
+      {tag:'Part 3', name:'Grammaire et expressions · Grammar & phrases', color:'#e04848', soft:'#f8cccc', les:[
+        ['f08','french/f08-futur-proche.html','🚀','Le futur proche (The near future: going to)'],
+        ['f09','french/f09-pronom-en.html','🍬','Le pronom « en » (The pronoun "en")'],
+        ['f10','french/f10-institut-dire-oui.html','🤝',"À l'Institut français : dire oui (Saying yes)"]]}]},
   {id:'kss', name:'KSS', emoji:'🇰🇼', grad:'#17935b,#45c288', soon:true, units:[]},
   {id:'arabic', name:'Arabic', native:'اللغة العربية', emoji:'✒️', grad:'#0f7a6e,#2bb39c', soon:true, units:[]},
   {id:'islamic', name:'Islamic Studies', emoji:'🌙', grad:'#8a5a00,#d9a441', soon:true, units:[]},

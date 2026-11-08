@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Les verbes en -er : parler, aimer, donner, penser</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 4 · Les verbes au présent · the -er pattern, the Page 7 tables for parler, donner, aimer, penser,
+   and Page 5 "Tu choisis" Q8–14 (parler). Every question is taught with teachFR (french.js). */
+const W5='Worksheet · Page 5 · ',W7='Worksheet · Page 7 · ';
+const ENDS=['e','es','e','ons','ez','ent'];
+/* the six rows of a regular -er verb: rows(stem, english forms, elide j') */
+const rows=(st,en,elide)=>[[elide?"j'":'je',st+'e','e',en[0]],['tu',st+'es','es',en[1]],['il / elle',st+'e','e',en[2]],['nous',st+'ons','ons',en[3]],['vous',st+'ez','ez',en[4]],['ils / elles',st+'ent','ent',en[5]]];
+const V={
+  parler:{en:'to speak',st:'parl',e:['I speak','you speak','he / she speaks','we speak','you speak','they speak'],emo:'🗣️'},
+  donner:{en:'to give',st:'donn',e:['I give','you give','he / she gives','we give','you give','they give'],emo:'🎁'},
+  penser:{en:'to think',st:'pens',e:['I think','you think','he / she thinks','we think','you think','they think'],emo:'💭'},
+  aimer:{en:'to like / to love',st:'aim',e:['I like','you like','he / she likes','we like','you like','they like'],emo:'❤️',elide:true}};
+/* "Tu conjugues au présent les verbes : parler": stem first, then the six forms one at a time */
+async function conjQ(w,verb,before=[]){const v=V[verb];const R=rows(v.st,v.e,v.elide);
+  await teachFR(w,{src:W7+verb,q:fr(`Tu conjugues au présent les verbes :<br><b>${verb}</b>`,`Conjugate the verbs in the present:<br><b>${verb}</b> (${v.en})`),
+    read:fr(`Tu conjugues au présent le verbe ${verb}.`,`Conjugate the verb ${v.en} in the present.`),
+    keys:[['présent',`${fw('Au présent')} means in the <b>present tense</b>: what is happening now.`,'present'],[verb,`${fw(verb)} means <b>${v.en}</b>. It ends in ${fw('-er')}, so it follows the pattern.`,verb]],
+    before,
+    steps:[{act:async()=>{const sc=mk('',`left:330px;top:150px;font-size:44px`,'✂️');await an(sc,[{transform:'translateX(-60px) rotate(-20deg)'},{transform:'translateX(40px) rotate(10deg)'}],{duration:700});sc.remove();beep(300,.1);},
+        show:fr(`${verb} → <b>${v.st}</b> <span class="fq-end">+ endings</span>`,`stem <b>${v.st}-</b> + endings`),
+        say:`Cut off ${fw('-er')}. The stem is ${fw(v.st)}. Then add the endings.`,wait:2400},
+      {act:async()=>{const c=conjCard(500,166,420,{verb,en:v.en,rows:R});for(let i=0;i<6;i++)await c.show(i,w);}}],
+    answer:fr(R.map(r=>(/'$/.test(r[0])?r[0]:r[0].split(' / ')[0]+' ')+r[1]).join(', '),R.map(r=>r[3]).join(', ')),workY:150});}
+/* one "Tu choisis" question about parler */
+async function chooseQ(w,{n,q,en,o,a,pron,pronSay,pronEn,ending,form}){
+  await teachFR(w,{src:W5+'Tu choisis Q'+n,q:fr(`Tu choisis :<br>${n}- ${q}<br>a- ${o[0]} &nbsp; &nbsp; b- ${o[1]}`,`Choose:<br>${n}- ${en}<br>a- ${o[0]} (speak) &nbsp; &nbsp; b- ${o[1]} (speak)`),
+    read:`${fr('Tu choisis : '+q.replace(/…+/,'blanc'),'Choose: '+en.replace(/…+/,'blank'))} ${fr(`a, ${o[0]}. b, ${o[1]}.`,`a, ${o[0]}. b, ${o[1]}.`)}`,
+    keys:[[pron,pronSay,pronEn]],
+    steps:[{show:fr(`${pron} → ending <b class="fq-end">-${ending}</b>`,`${pronEn} → ending <b class="fq-end">-${ending}</b>`),
+        say:`So the ending is ${fw('-'+ending)}.`,wait:2000},
+      {show:fr(`parl + ${ending} = <b>${form}</b>`,`parl + ${ending} = <b>${form}</b>`),say:`${fw('parl')} plus ${fw(ending)} makes ${fw(form)}.`,wait:2200}],
+    answer:fr(`${'ab'[a]}- ${form}`,`${'ab'[a]}- ${form} (${en.replace(/…+/,form)})`),
+    why:`${fr(q.replace(/…+/,'<b>'+form+'</b>'),en.replace(/…+/,'<b>'+form+'</b>'))} ${fw(pron)} takes the ending ${fw('-'+ending)}.`});}
+const QS=[
+  {n:8,q:'Je …… français.',en:'I …… French.',o:['parle','parles'],a:0,pron:'Je',pronEn:'I',pronSay:`${fw('Je')} means <b>I</b>. With je, the ending is ${fw('-e')}.`,ending:'e',form:'parle'},
+  {n:9,q:'Ali …… arabe.',en:'Ali …… Arabic.',o:['parles','parle'],a:1,pron:'Ali',pronEn:'Ali',pronSay:`<b>Ali</b> is one boy, so he is ${fr('il','he')}. With il, the ending is ${fw('-e')}.`,ending:'e',form:'parle'},
+  {n:10,q:'Nous …… arabe.',en:'We …… Arabic.',o:['parlons','parles'],a:0,pron:'Nous',pronEn:'We',pronSay:`${fw('Nous')} means <b>we</b>. With nous, the ending is ${fw('-ons')}.`,ending:'ons',form:'parlons'},
+  {n:11,q:'Tu …… arabe.',en:'You …… Arabic.',o:['parle','parles'],a:1,pron:'Tu',pronEn:'You',pronSay:`${fw('Tu')} means <b>you</b>, one friend. With tu, the ending is ${fw('-es')}.`,ending:'es',form:'parles'},
+  {n:12,q:'Vous …… anglais.',en:'You …… English.',o:['parlez','parles'],a:0,pron:'Vous',pronEn:'You',pronSay:`${fw('Vous')} means <b>you</b>: several people, or someone polite. With vous, the ending is ${fw('-ez')}.`,ending:'ez',form:'parlez'},
+  {n:13,q:'Mona …… anglais.',en:'Mona …… English.',o:['parlent','parle'],a:1,pron:'Mona',pronEn:'Mona',pronSay:`<b>Mona</b> is one girl, so she is ${fr('elle','she')}. With elle, the ending is ${fw('-e')}.`,ending:'e',form:'parle'},
+  {n:14,q:'Il …… arabe.',en:'He …… Arabic.',o:['parle','parles'],a:0,pron:'Il',pronEn:'He',pronSay:`${fw('Il')} means <b>he</b>. With il, the ending is ${fw('-e')}.`,ending:'e',form:'parle'}];
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f04', num:4, part:'Les verbes au présent', emoji:'🗣️', title:'Les verbes en -er : parler, aimer, donner, penser',
+  intro:`${fr('Bonjour !','Hello!')} I'm <b>Coco the Parrot</b> 🦜 Today: verbs that end in ${fw('-er')}. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Les verbes en -er',run:async w=>{
+  say(`A <b>verb</b> is a doing word. In French, lots of verbs end in ${fw('<b>-er</b>')}. Here are four from the worksheet.`);
+  await w(3000);
+  const L=Object.entries(V).map(([k,v],i)=>{const c=mk('fq-card',`left:${30+i*228}px;top:40px;width:210px;height:200px;text-align:center;display:flex;flex-direction:column;justify-content:center`,
+    `<div style="font-size:60px">${v.emo}</div><div style="font-size:30px;font-weight:800;color:#1d3f8a">${fr(k.slice(0,-2)+'<span class="fq-end">er</span>',v.en)}</div>`);return c;});
+  for(let i=0;i<4;i++){pop(L[i]);point(L[i]);const [k,v]=Object.entries(V)[i];beep(520+i*60,.06);say(`${fr(k,v.en)}: <b>${v.en}</b>.`);await w(1700);}
+  stage.querySelector('.fq-point')?.remove();
+  L.forEach(c=>c.querySelectorAll('.fq-end').forEach(e=>loop(e,[{color:'#e04848'},{color:'#ffb02e'}],500,{direction:'alternate'})));
+  const n=mk('fq-why','left:120px;top:280px;width:720px',`💡 The <b>-er</b> form is the <b>infinitive</b>: the "to" form, like <b>to speak</b>. You find it in the dictionary.`);pop(n);
+  say(`The ${fw('-er')} form is the <b>infinitive</b>, the "to" form. ${fr('Parler','To speak')} means <b>to speak</b>.`);
+  await w(3400);
+  const s=mk('fq-step','left:220px;top:390px;width:520px;text-align:center',fr('parler → je parle','to speak → I speak'));pop(s);point(s);
+  say(`But with a person, the ending changes: ${fr('je parle','I speak')}. Let's learn how!`);
+  await w(3000);}},
+
+/* 1 */ {t:'Les pronoms',run:async w=>{
+  say(`First, the <b>people</b>. These little words are called <b>pronouns</b>.`);
+  await w(2400);
+  const P=[['🙋','je','I'],['👉','tu','you (one friend)'],['👦','il','he'],['👧','elle','she'],['👨‍👩‍👧','nous','we'],['🧑‍🤝‍🧑','vous','you (several / polite)'],['👦👦','ils','they (boys / mixed)'],['👧👧','elles','they (girls)']];
+  const C=P.map(([e,f,en],i)=>mk('fq-card',`left:${13+(i%4)*237}px;top:${12+Math.floor(i/4)*196}px;width:222px;height:180px;text-align:center;display:flex;flex-direction:column;justify-content:center`,
+    `<div style="font-size:52px">${e}</div><div style="font-size:30px;font-weight:800;color:#6a45d8">${fr(f,en.split(' (')[0])}</div><div style="font-size:15px;font-weight:700;color:#6b7590">${en}</div>`));
+  for(let i=0;i<8;i++){pop(C[i]);point(C[i]);beep(500+i*50,.05);say(`${fw(P[i][1])}: <b>${P[i][2]}</b>.`);await w(1600);}
+  stage.querySelector('.fq-point')?.remove();
+  const n=mk('fq-why','left:60px;top:410px;width:840px',`💡 A name works like a pronoun: <b>Ali</b> = ${fr('il','he')}, <b>Mona</b> = ${fr('elle','she')}.`);pop(n);
+  say(`A name works the same way. <b>Ali</b> is ${fr('il','he')} and <b>Mona</b> is ${fr('elle','she')}.`);
+  await w(3200);}},
+
+/* 2 */ {t:'Les terminaisons',run:async w=>{
+  say(`Now the magic recipe. Take the verb, cut off ${fw('-er')}, and keep the <b>stem</b>.`);
+  await w(2800);
+  const big=mk('fq','left:0;top:30px;width:960px;text-align:center;font-size:70px',`parl<span class="fq-end" id="er">er</span>`);pop(big);
+  await w(800);const er=big.querySelector('#er');await an(er,[{opacity:1},{opacity:0,transform:'translateY(40px) rotate(30deg)'}],{duration:800});beep(250,.15);
+  say(`${fr('Parler','To speak')} becomes ${fw('parl')}. Then we add an <b>ending</b> for each person.`);
+  await w(2800);
+  big.remove();
+  for(let i=0;i<6;i++){const r=mk('fq-step',`left:${i<3?90:500}px;top:${30+(i%3)*90}px;width:370px;font-size:30px`,
+      `<span style="color:#6a45d8;display:inline-block;width:150px;text-align:right">${['je','tu','il / elle','nous','vous','ils / elles'][i]}</span> parl<span class="fq-end">${ENDS[i]}</span>`);
+    an(r,[{opacity:0,transform:'translateY(-40px)'},{opacity:1,transform:'none'}],{duration:500});point(r);beep(560+i*60,.06);
+    say(`${['Je','Tu','Il','Nous','Vous','Ils'][i]}: ${fw('-'+ENDS[i])}. ${fr(['je','tu','il','nous','vous','ils'][i]+' '+'parl'+ENDS[i],V.parler.e[i])}.`);await w(1900);}
+  stage.querySelector('.fq-point')?.remove();
+  const n=mk('fq-why','left:90px;top:310px;width:780px',`💡 <b>e, es, e, ons, ez, ent</b>. Secret: ${fr('parle, parles, parlent','speak, speak, speak')} all <b>sound the same</b>! The endings e, es and ent are silent.`);pop(n);
+  say(`Remember: <b>e, es, e, ons, ez, ent</b>. And a secret: ${fr('parle, parles, parlent','speak, speak, speak')} all sound the same. Only the spelling changes.`);
+  await w(3800);
+  const t=mk('fq-step try','left:200px;top:420px;width:560px;text-align:center','🎵 e · es · e · ons · ez · ent 🎵');pop(t);loop(t,[{transform:'rotate(-1deg)'},{transform:'rotate(1deg)'}],400,{direction:'alternate'});
+  say(`Say it like a song: e, es, e, ons, ez, ent!`);await w(2600);}},
+
+/* 3 */ {t:'Parler',run:async w=>{
+  say(`Now the worksheet: ${fr('<b>Tu conjugues au présent les verbes</b>','<b>Conjugate the verbs in the present</b>')}. First, ${fr('parler','to speak')}.`);
+  await w(2800);
+  await conjQ(w,'parler');await w(1500);}},
+
+/* 4 */ {t:'Donner, penser',run:async w=>{
+  await conjQ(w,'donner');await w(1200);clear();
+  await conjQ(w,'penser');await w(1500);}},
+
+/* 5 */ {t:"Aimer : j'aime",run:async w=>{
+  await conjQ(w,'aimer',[{show:fr("je + aime → <b>j'aime</b>","I + like → <b>I like</b>"),
+    say:`Careful! ${fr('Aimer','To like')} starts with a vowel. ${fw('Je')} loses its e and becomes ${fw("j'")}: ${fr("j'aime","I like")}.`,try:true,wait:2800}]);
+  await w(1500);}},
+
+/* 6 */ {t:'Tu choisis (1)',run:async w=>{
+  say(`Now the ${fr('<b>Tu choisis</b>','<b>Choose</b>')} questions with ${fr('parler','to speak')}. Look at <b>who</b> is speaking, then pick the ending.`);
+  await w(2800);
+  for(let i=0;i<4;i++){if(i)clear();await chooseQ(w,QS[i]);await w(1200);}}},
+
+/* 7 */ {t:'Tu choisis (2)',run:async w=>{
+  for(let i=4;i<7;i++){if(i>4)clear();await chooseQ(w,QS[i]);await w(1200);}}},
+
+/* 8 */ {t:'Qui parle ?',run:async w=>{
+  const r=await sortGame(w,{bins:['je / il / elle','tu','nous','vous','ils / elles'],colors:['#5d9cf5','#45c288','#f5a54a','#c9b6f4','#f06595'],top:170,
+    items:[[fr('parle','speak'),0],[fr('aime','like'),0],[fr('donne','give'),0],[fr('parles','speak'),1],[fr('penses','think'),1],[fr('parlons','speak'),2],[fr('aimons','like'),2],
+      [fr('parlez','speak'),3],[fr('donnez','give'),3],[fr('parlent','speak'),4],[fr('pensent','think'),4]],
+    intro:`Who goes with each verb? Tap a verb, then tap the right person. Look at the <b>ending</b>! Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} You know your endings.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`${fw('-e')} for je, il and elle. ${fw('-es')} for tu. ${fw('-ons')} for nous. ${fw('-ez')} for vous. ${fw('-ent')} for ils and elles.`);
+  await w(3800);}},
+
+/* 9 */ {t:'Construis la phrase',run:async w=>{
+  const R=[[fr('Écris : <b>We speak Arabic.</b>','Write: <b>We speak Arabic.</b>'),['Nous','parlons','parlez','parle','arabe'],[['Nous','parlons','arabe']],'Nous parlons arabe.',`Nous goes with ${fw('-ons')}: ${fr('nous parlons','we speak')}.`],
+    [fr('Écris : <b>You (one friend) like sport.</b>','Write: <b>You (one friend) like sport.</b>'),['Tu','aimes','aime','aimez','le','sport'],[['Tu','aimes','le','sport']],'Tu aimes le sport.',`Tu goes with ${fw('-es')}: ${fr('tu aimes','you like')}.`],
+    [fr("Écris : <b>I like French.</b>","Write: <b>I like French.</b>"),["J'",'Je','aime','aimes','le','français'],[["J'",'aime','le','français']],"J'aime le français.",`Before a vowel, je becomes ${fw("j'")}: ${fr("j'aime","I like")}.`]];
+  say(`${fr('Construis la phrase !','Build the sentence!')} Tap the words in order, then press <b>Check</b>.`);
+  await w(2800);let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,why]=R[i];
+    mk('ex-head','',`🧩 ${i+1} of ${R.length}`);say(q);
+    const r=await buildSentence(w,{q,tiles,answer,top:44});
+    if(r.ok){right++;say(`Yes! ${fw(model)} ${why}`);}
+    else{const s=mk('stamp',`left:300px;top:${r.y+16}px`,'✔ '+model);pop(s);point(s);say(`Not quite. ${why}`);}
+    await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🧩</div><div style="font-size:30px;font-weight:800;color:#1d3f8a;margin-top:6px">You built ${right} of ${R.length}!</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`All ${R.length} right! ${fr('Bravo !','Well done!')}`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 10 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! Look at <b>who</b>, then choose the ending. Tap 🇬🇧 English if you need help.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 5 · Tu choisis Q8',q:'Tu choisis : Je …… français.',en:'Choose: I …… French.',o:['parle','parles'],oe:['parle (speak)','parles (speak)'],a:0,
+      why:`With je the ending is ${fw('-e')}: ${fr('je parle','I speak')}.`,whyNot:{1:`${fw('-es')} is the ending for tu, not je.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q9',q:'Tu choisis : Ali …… arabe.',en:'Choose: Ali …… Arabic.',o:['parles','parle'],oe:['parles (speak)','parle (speaks)'],a:1,
+      why:`Ali is ${fr('il','he')}, so ${fw('-e')}: ${fr('Ali parle','Ali speaks')}.`,whyNot:{0:`${fw('-es')} is only for tu.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q10',q:'Tu choisis : Nous …… arabe.',en:'Choose: We …… Arabic.',o:['parlons','parles'],oe:['parlons (speak)','parles (speak)'],a:0,
+      why:`With nous the ending is ${fw('-ons')}: ${fr('nous parlons','we speak')}.`,whyNot:{1:`${fw('-es')} is the ending for tu.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q11',q:'Tu choisis : Tu …… arabe.',en:'Choose: You …… Arabic.',o:['parle','parles'],oe:['parle (speak)','parles (speak)'],a:1,
+      why:`With tu the ending is ${fw('-es')}: ${fr('tu parles','you speak')}.`,whyNot:{0:`${fw('-e')} is for je, il and elle, not tu.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q12',q:'Tu choisis : Vous …… anglais.',en:'Choose: You …… English.',o:['parlez','parles'],oe:['parlez (speak)','parles (speak)'],a:0,
+      why:`With vous the ending is ${fw('-ez')}: ${fr('vous parlez','you speak')}.`,whyNot:{1:`${fw('-es')} is for tu; vous takes ${fw('-ez')}.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q13',q:'Tu choisis : Mona …… anglais.',en:'Choose: Mona …… English.',o:['parlent','parle'],oe:['parlent (speak)','parle (speaks)'],a:1,
+      why:`Mona is ${fr('elle','she')}, one person, so ${fw('-e')}: ${fr('Mona parle','Mona speaks')}.`,whyNot:{0:`${fw('-ent')} is for ils and elles: more than one person.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q14',q:'Tu choisis : Il …… arabe.',en:'Choose: He …… Arabic.',o:['parle','parles'],oe:['parle (speaks)','parles (speak)'],a:0,
+      why:`With il the ending is ${fw('-e')}: ${fr('il parle','he speaks')}.`,whyNot:{1:`${fw('-es')} is only for tu.`}},
+    {src:'Worksheet · Page 7 · parler',q:'Tu conjugues au présent les verbes : parler',en:'Conjugate the verbs in the present: parler (to speak)',
+      model:'je parle, tu parles, il parle, nous parlons, vous parlez, ils parlent',men:'I speak, you speak, he speaks, we speak, you speak, they speak'},
+    {src:'Worksheet · Page 7 · donner',q:'Tu conjugues au présent les verbes : donner',en:'Conjugate the verbs in the present: donner (to give)',
+      model:'je donne, tu donnes, il donne, nous donnons, vous donnez, ils donnent',men:'I give, you give, he gives, we give, you give, they give'},
+    {src:'Worksheet · Page 7 · aimer',q:'Tu conjugues au présent les verbes : aimer',en:'Conjugate the verbs in the present: aimer (to like)',
+      model:"j'aime, tu aimes, il aime, nous aimons, vous aimez, ils aiment",men:'I like, you like, he likes, we like, you like, they like'},
+    {src:'Worksheet · Page 7 · penser',q:'Tu conjugues au présent les verbes : penser',en:'Conjugate the verbs in the present: penser (to think)',
+      model:'je pense, tu penses, il pense, nous pensons, vous pensez, ils pensent',men:'I think, you think, he thinks, we think, you think, they think'},
+  ]);}},
+
+/* 11 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Les verbes en -er</b>','<b>-er verbs</b>')}. Let's look back.`);
+  await w(2600);
+  const B=[['✂️',fr('parler → parl','to speak → stem parl'),`Cut off ${fw('-er')} to find the stem.`],
+    ['🎵','e · es · e<br>ons · ez · ent',`The endings: e, es, e, ons, ez, ent.`],
+    ['🙋',fr('je parle','I speak'),`${fr('Je parle','I speak')}.`],
+    ['👉',fr('tu parles','you speak'),`${fr('Tu parles','You speak')}.`],
+    ['👨‍👩‍👧',fr('nous parlons','we speak'),`${fr('Nous parlons','We speak')}.`],
+    ['🧑‍🤝‍🧑',fr('vous parlez','you speak'),`${fr('Vous parlez','You speak')}.`],
+    ['👦👦',fr('ils parlent','they speak'),`${fr('Ils parlent','They speak')}.`],
+    ['❤️',fr("j'aime","I like"),`Before a vowel: ${fr("j'aime","I like")}.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:20px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: ${fr('étudier','to study')} and ${fr('manger','to eat')}.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

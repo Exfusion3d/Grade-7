@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Le futur proche</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 8 · Grammaire et expressions · Le futur proche (aller + infinitive).
+   Covers Page 5 "Tu choisis" Q1–7 and Page 6 "Transformez les phrases au futur proche" Q1–5.
+   Every worksheet question is taught with teachFR (french.js): question first, key words lit, "Show me", steps, stamp, why. */
+const P5='Worksheet · Page 5 · Tu choisis ',P6='Worksheet · Page 6 · Futur proche ';
+const ALLER=[['je','vais','','I go / I am going'],['tu','vas','','you go / you are going'],['il / elle','va','','he / she goes, is going'],
+  ['nous','allons','ons','we go / we are going'],['vous','allez','ez','you go / you are going'],['ils / elles','vont','','they go / they are going']];
+/* a worksheet "Tu choisis" question with its two choices: a- … b- … */
+const choiceQ=(f,e,a,ae,b,be)=>fr(f,e)+`<div style="margin-top:6px;font-size:19px">a- ${fr(a,ae)} &nbsp;&nbsp;&nbsp; b- ${fr(b,be)}</div>`;
+/* a big "rocket" formula: aller + infinitive */
+function formula(y,a,b,col='#2c66cf'){const f=mk('',`left:0;top:${y}px;width:960px;display:flex;justify-content:center;align-items:center;gap:16px`,
+  `<span class="fq-chip" style="font-size:30px;border-color:${col}">${a}</span><span class="fq" style="font-size:36px">+</span><span class="fq-chip" style="font-size:30px;background:#e6f7ee;border-color:#18a058;color:#0f7a40">${b}</span>`);pop(f);return f;}
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f08', num:8, part:'Grammaire et expressions', emoji:'🚀', title:'Le futur proche',
+  intro:`Bonjour! I'm <b>Coco the Parrot</b> 🦜 Today we'll talk about the future in French. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Demain…',run:async w=>{
+  const r=mk('','left:110px;top:330px;font-size:110px','🚀');pop(r);
+  say(`What are you <b>going to</b> do tomorrow? In French, ${fw('demain')} means <b>tomorrow</b>. Let's learn to talk about the future!`);
+  await w(3000);
+  an(r,[{transform:'none'},{transform:'translate(620px,-300px) rotate(20deg)'}],{duration:1800,easing:'ease-in'});beep(300,.4,'sawtooth',.04);
+  const d=mk('fq-card','left:150px;top:40px;width:300px;height:170px;text-align:center',`<div style="font-size:60px">📅</div><div class="fq" style="font-size:30px">${fr('demain','tomorrow')}</div>`);pop(d,600);
+  await w(2600);
+  const s=mk('fq-step','left:200px;top:250px;width:560px;text-align:center;font-size:30px',fr('Je <b>vais</b> voir un film.','I <b>am going to</b> see a film.'));pop(s);point(s);
+  say(`Listen: ${fr('Je vais voir un film.','I am going to see a film.')} That means <b>I am going to see a film</b>.`);
+  await w(3400);
+  say(`This is called ${fw('le futur proche')}, the <b>near future</b>. It's for things that are <b>going to</b> happen soon.`);
+  await w(3400);
+  const t=mk('fq-why','left:200px;top:340px;width:560px;text-align:center','💡 '+fw('le futur proche')+' = the near future = <b>going to</b>');pop(t);point(t);
+  say(`Good news: it is very easy. It only needs <b>two</b> words. Let's see how!`);
+  await w(2800);}},
+
+/* 1 */ {t:'Le verbe aller',run:async w=>{
+  say(`First we need the verb ${fw('aller')}. It means <b>to go</b>. It's an irregular verb, so we learn it by heart.`);
+  await w(3000);
+  const C=conjCard(40,20,520,{verb:'aller',en:'to go',rows:ALLER,fs:23});
+  for(let i=0;i<6;i++)await C.show(i,w);
+  stage.querySelector('.fq-point')?.remove();
+  const tip=mk('fq-why','left:600px;top:60px;width:320px',`💡 Say it like a song:<br>${fw('vais, vas, va')}<br>${fw('allons, allez, vont')}`);pop(tip);
+  say(`Say it like a song: ${fr('je vais, tu vas, il va, nous allons, vous allez, ils vont.','I go, you go, he goes, we go, you go, they go.')}`);
+  await w(4000);
+  const tip2=mk('fq-why','left:600px;top:260px;width:320px',`⚠️ ${fw('nous allons')} and ${fw('vous allez')} start with <b>all-</b>. The others are short!`);pop(tip2);point(tip2);
+  say(`Notice: ${fw('nous allons')} and ${fw('vous allez')} start with <b>all</b>. The other four are short words.`);
+  await w(3600);}},
+
+/* 2 */ {t:'La recette',run:async w=>{
+  say(`Here's the recipe for the near future: ${fw('aller')} in the present, plus a verb in the <b>infinitive</b>.`);
+  await w(3000);
+  formula(40,fr('aller','to go'),fr('infinitif','infinitive'));
+  await w(1200);
+  say(`The <b>infinitive</b> is the verb's dictionary form. It ends in ${fw('-er')}, ${fw('-ir')} or ${fw('-re')}: ${fr('parler, voir, prendre','to speak, to see, to take')}.`);
+  await w(3600);
+  const E=[['Je','vais','parler','à Ali.','I am going to speak to Ali.'],['Nous','allons','voir','un film.','We are going to see a film.'],['Ils','vont','manger.','','They are going to eat.']];
+  for(let i=0;i<3;i++){const [p,a,inf,rest,en]=E[i];
+    const l=mk('fq-step',`left:150px;top:${150+i*90}px;width:660px;font-size:30px`,fr(`${p} <span style="color:#2c66cf">${a}</span> <span style="color:#18a058">${inf}</span> ${rest}`,en));pop(l);point(l);
+    say(`${fr(`${p} ${a} ${inf} ${rest}`,en)} ${fw(a)} is the aller part, and ${fw(inf.replace('.',''))} is the infinitive.`);await w(3600);}
+  stage.querySelector('.fq-point')?.remove();
+  const k=mk('fq-why','left:150px;top:430px;width:660px','💡 The first verb changes with the person. The second verb <b>never changes</b>: it stays in the infinitive.');pop(k);
+  say(`Remember: ${fw('aller')} changes with the person. The second verb <b>never changes</b>. It stays in the infinitive.`);
+  await w(3600);}},
+
+/* 3 */ {t:'Quelle forme de aller ?',run:async w=>{
+  say(`Now worksheet questions. First, choose the right form of ${fw('aller')}. Look at <b>who</b> is doing it.`);
+  await w(2600);
+  await teachFR(w,{src:P5+'Q1',q:choiceQ('Les étudiants …… apprendre le français.','The students are …… to learn French.','allez','(you) go','vont','(they) go'),
+    read:fr('Les étudiants …… apprendre le français.','The students are going to learn French.'),
+    keys:[['Les étudiants',`${fw('Les étudiants')} means <b>the students</b>. That's lots of people: <b>they</b>.`,'The students']],
+    steps:[{show:fr('Les étudiants = <b>ils</b>','The students = <b>they</b>'),say:`The students are <b>they</b>, so we need the ${fw('ils')} form.`},
+      {show:fr('ils <b>vont</b>','they <b>go</b>'),say:`${fr('Ils vont','They go')}. So the answer is ${fw('vont')}.`}],
+    answer:fr('b- vont','b- (they) go'),why:`${fw('allez')} goes with ${fw('vous')}. The students are <b>they</b>: ${fr('Les étudiants vont apprendre le français.','The students are going to learn French.')}`});
+  await w(1200);clear();
+  await teachFR(w,{src:P5+'Q2',q:choiceQ('Demain nous …… voir un film au cinéma.','Tomorrow we are …… to see a film at the cinema.','allons','(we) go','va','(he) goes'),
+    read:fr('Demain nous …… voir un film au cinéma.','Tomorrow we are going to see a film at the cinema.'),
+    keys:[['nous',`${fw('Nous')} means <b>we</b>.`,'we']],
+    steps:[{show:fr('nous → <b>allons</b>','we → <b>go</b>'),say:`With ${fw('nous')}, aller is ${fw('allons')}. Nous forms end in ${fw('-ons')}.`}],
+    answer:fr('a- allons','a- (we) go'),why:`${fw('va')} goes with ${fw('il')} or ${fw('elle')}. ${fr('Demain nous allons voir un film au cinéma.','Tomorrow we are going to see a film at the cinema.')}`});
+  await w(1200);clear();
+  await teachFR(w,{src:P5+'Q3',q:choiceQ('Demain Ali …… voir un film.','Tomorrow Ali is …… to see a film.','vas','(you) go','va','(he) goes'),
+    read:fr('Demain Ali …… voir un film.','Tomorrow Ali is going to see a film.'),
+    keys:[['Ali',`<b>Ali</b> is one boy, so he is ${fw('il')}.`,'Ali']],
+    steps:[{show:fr('Ali = <b>il</b> → il <b>va</b>','Ali = <b>he</b> → he <b>goes</b>'),say:`Ali is ${fw('il')}, and ${fr('il va','he goes')}.`}],
+    answer:fr('b- va','b- (he) goes'),why:`${fw('vas')} goes with ${fw('tu')}. ${fr('Demain Ali va voir un film.','Tomorrow Ali is going to see a film.')}`});
+  await w(1500);}},
+
+/* 4 */ {t:"Après aller : l'infinitif",run:async w=>{
+  say(`Now the other half. After ${fw('aller')}, the second verb is always the <b>infinitive</b>.`);
+  await w(2600);
+  const Q=[[4,'Mona va …… un film.','Mona is going to …… a film.','voir','to see','vont','(they) go',0,'voir','see',
+      `${fw('vont')} is aller again. After ${fw('va')} we need an infinitive: ${fr('Mona va voir un film.','Mona is going to see a film.')}`],
+    [5,'Ali va …… 20 ans.','Ali is going to …… 20 (years old).','avoir','to have','ont','(they) have',0,'avoir','have',
+      `In French you <b>have</b> an age: ${fr("j'ai 12 ans","I am 12")}. ${fw('ont')} is not an infinitive. ${fr('Ali va avoir 20 ans.','Ali is going to be 20.')}`],
+    [6,'Mes sœurs vont …… à la maison.','My sisters are going to …… at home.','rester','to stay','restes','(you) stay',0,'rester','stay',
+      `${fw('restes')} goes with ${fw('tu')}. After ${fw('vont')} the verb stays in the infinitive: ${fr('Mes sœurs vont rester à la maison.','My sisters are going to stay at home.')}`],
+    [7,'Je vais …… au chalet.','I am going to …… to the chalet.','vas','(you) go','aller','to go',1,'aller','go',
+      `Yes, ${fw('aller')} can follow ${fw('vais')}! ${fr('Je vais aller au chalet.','I am going to go to the chalet.')}`]];
+  for(const [n,f,e,a,ae,b,be,ans,inf,infEn,why] of Q){clear();
+    await teachFR(w,{src:P5+'Q'+n,q:choiceQ(f,e,a,ae,b,be),read:fr(f,e),
+      keys:[[f.split(' …')[0].split(' ').pop(),`${fw(f.split(' …')[0].split(' ').pop())} is a form of ${fw('aller')}. So the next verb must be an <b>infinitive</b>.`]],
+      steps:[{show:`${fr(ans?a:b,ans?ae:be)} ✖ <i>not an infinitive</i>`,say:`${fw(ans?a:b)} is a conjugated form, not the infinitive.`},
+        {show:`${fr(inf,'to '+infEn)} ✔ <i>infinitive: ends in -er, -ir or -re</i>`,say:`${fw(inf)} is the infinitive. It means <b>to ${infEn}</b>.`}],
+      answer:fr((ans?'b- ':'a- ')+inf,(ans?'b- ':'a- ')+'to '+infEn),why});
+    await w(1200);}
+  }},
+
+/* 5 */ {t:'Transformez (1)',run:async w=>{
+  say(`Next the worksheet says ${fr('<b>Transformez les phrases au futur proche</b>','<b>Change the sentences into the near future</b>')}. We change <b>one</b> verb into <b>two</b>.`);
+  await w(3200);
+  const T=[[1,'Je parle à Ali.','I speak to Ali.','parle','parler','Je vais parler à Ali.',"I'm going to speak to Ali.",'je','vais','parle','parler','speak'],
+    [2,'Je prends un café.','I have a coffee.','prends','prendre','Je vais prendre un café.',"I'm going to have a coffee.",'je','vais','prends','prendre','take'],
+    [3,'Il mange du poulet.','He eats chicken.','mange','manger','Il va manger du poulet.',"He's going to eat chicken.",'il','va','mange','manger','eat']];
+  for(const [n,f,e,verb,inf,ans,ansEn,p,al] of T){clear();
+    await teachFR(w,{src:P6+'Q'+n,q:fr('Transformez la phrase au futur proche :<br><b>'+f+'</b>','Change the sentence into the near future:<br><b>'+e+'</b>'),
+      read:fr('Transformez la phrase au futur proche. '+f,'Change the sentence into the near future. '+e),
+      keys:[[verb,`The verb is ${fw(verb)}. This is the one we change.`]],
+      steps:[{show:fr(`${p} → <span style="color:#2c66cf">${al}</span>`,`${p==='je'?'I':'he'} → <span style="color:#2c66cf">${p==='je'?'am going':'is going'}</span>`),say:`Step 1: put ${fw('aller')} for ${fw(p)}: ${fr(p+' '+al,p==='je'?'I am going':'he is going')}.`},
+        {show:fr(`${verb} → <span style="color:#18a058">${inf}</span>`,`the verb → the infinitive`),say:`Step 2: change ${fw(verb)} back to the infinitive: ${fw(inf)}.`},
+        {show:fr(ans,ansEn),say:`Step 3: keep the rest of the sentence. ${fr(ans,ansEn)}`,wait:2400}],
+      answer:fr(ans,ansEn),why:`${fw(al)} + infinitive. The rest of the sentence stays the same.`});
+    await w(1200);}
+  }},
+
+/* 6 */ {t:'Transformez (2)',run:async w=>{
+  await teachFR(w,{src:P6+'Q4',q:fr('Transformez la phrase au futur proche :<br><b>Il fait le devoir.</b>','Change the sentence into the near future:<br><b>He does the homework.</b>'),
+    read:fr('Transformez la phrase au futur proche. Il fait le devoir.','Change the sentence into the near future. He does the homework.'),
+    keys:[['fait',`${fw('fait')} comes from ${fw('faire')}, which means <b>to do</b> or <b>to make</b>.`,'does']],
+    steps:[{show:fr('il → il <span style="color:#2c66cf">va</span>','he → he <span style="color:#2c66cf">is going</span>'),say:`${fw('il')} needs ${fw('va')}.`},
+      {show:fr('fait → <span style="color:#18a058">faire</span>','does → <span style="color:#18a058">to do</span>'),say:`${fw('fait')} goes back to the infinitive ${fw('faire')}.`},
+      {show:fr('Il va faire le devoir.',"He's going to do the homework."),say:fr('Il va faire le devoir.',"He's going to do the homework."),wait:2200}],
+    answer:fr('Il va faire le devoir.',"He's going to do the homework."),why:`${fw('va')} + the infinitive ${fw('faire')}.`});
+  await w(1200);clear();
+  await teachFR(w,{src:P6+'Q5',q:fr('Transformez la phrase au futur proche :<br><b>Tu fais le devoir ?</b>','Change the sentence into the near future:<br><b>Do you do the homework?</b>'),
+    read:fr('Transformez la phrase au futur proche. Tu fais le devoir ?','Change the sentence into the near future. Do you do the homework?'),
+    keys:[['Tu',`${fw('Tu')} means <b>you</b>, one friend.`,'you'],['?',`It's a <b>question</b>, so keep the question mark.`]],
+    steps:[{show:fr('tu → tu <span style="color:#2c66cf">vas</span>','you → you <span style="color:#2c66cf">are going</span>'),say:`${fw('tu')} needs ${fw('vas')}.`},
+      {show:fr('fais → <span style="color:#18a058">faire</span>','do → <span style="color:#18a058">to do</span>'),say:`${fw('fais')} goes back to ${fw('faire')}.`},
+      {show:fr('Tu vas faire le devoir ?','Are you going to do the homework?'),say:fr('Tu vas faire le devoir ?','Are you going to do the homework?'),wait:2200}],
+    answer:fr('Tu vas faire le devoir ?','Are you going to do the homework?'),why:`${fw('vas')} + ${fw('faire')}, and keep the <b>?</b> because it's still a question.`});
+  await w(1500);}},
+
+/* 7 */ {t:'Qui va ?',run:async w=>{
+  const r=await sortGame(w,{bins:[fr('vais','(I) go'),fr('va','(he/she) goes'),fr('allons','(we) go'),fr('vont','(they) go')],colors:['#5d9cf5','#45c288','#f5a54a','#c9b6f4'],top:170,
+    items:[[fr('je','I'),0],[fr('Ali','Ali'),1],[fr('Mona','Mona'),1],[fr('il','he'),1],[fr('nous','we'),2],[fr('Ali et moi','Ali and I'),2],[fr('les étudiants','the students'),3],[fr('mes sœurs','my sisters'),3],[fr('ils','they'),3]],
+    intro:`Who goes with which form of ${fw('aller')}? Tap a word, then tap its box. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} You know aller really well.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`One person is ${fw('va')}. Lots of people are ${fw('vont')}. And ${fr('Ali et moi','Ali and I')} means <b>we</b>, so ${fw('allons')}.`);
+  await w(3600);}},
+
+/* 8 */ {t:'Construis la phrase',run:async w=>{
+  const R=[[fr('Mettez au futur proche : <b>Il mange du poulet.</b>','Put into the near future: <b>He eats chicken.</b>'),['Il','va','vais','manger','mange','du','poulet'],[['Il','va','manger','du','poulet']],'Il va manger du poulet.',"He's going to eat chicken."],
+    [fr('Mettez au futur proche : <b>Je prends un café.</b>','Put into the near future: <b>I have a coffee.</b>'),['Je','vais','va','prendre','prends','un','café'],[['Je','vais','prendre','un','café']],'Je vais prendre un café.',"I'm going to have a coffee."],
+    [fr('Mettez au futur proche : <b>Tu fais le devoir ?</b>','Put into the near future: <b>Do you do the homework?</b>'),['Tu','vas','va','faire','fais','le','devoir','?'],[['Tu','vas','faire','le','devoir','?']],'Tu vas faire le devoir ?','Are you going to do the homework?']];
+  say(`Your turn to build! Tap the words <b>in order</b> to make the near future, then press <b>Check</b>.`);
+  await w(3000);
+  let right=0;
+  for(let i=0;i<R.length;i++){stage.innerHTML='';const [q,tiles,answer,model,mEn]=R[i];
+    mk('ex-head','',`🧩 ${fr('Construis la phrase','Build the sentence')} · ${i+1} / ${R.length}`);
+    say(q);
+    const r=await buildSentence(w,{q,tiles,answer,top:44});
+    if(r.ok){right++;say(`${fr('Oui !','Yes!')} ${fr(model,mEn)}`);}
+    else{const s=mk('stamp',`left:250px;top:${r.y+20}px`,'✔ '+fr(model,mEn));pop(s);point(s);say(`Not quite. The answer is ${fr(model,mEn)}`);}
+    await w(3000);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">🚀</div><div style="font-size:30px;font-weight:800;color:#1d3f8a;margin-top:6px">${right} / ${R.length}</div>`);pop(s);
+  if(right===R.length){yay();confetti(100);}
+  say(right===R.length?`${fr('Bravo !','Well done!')} All ${R.length} right!`:`Good effort! Press Replay to build them again.`);
+  await w(2500);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question and its choices. Tap 🇬🇧 English if you need help.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 5 · Tu choisis Q1',q:"Les étudiants …… apprendre le français.",en:'The students are …… to learn French.',o:['allez','vont'],oe:['(you) go','(they) go'],a:1,
+      why:`The students are <b>they</b>: ${fr('ils vont','they go')}.`,whyNot:{0:`${fw('allez')} goes with ${fw('vous')}.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q2',q:"Demain nous …… voir un film au cinéma.",en:'Tomorrow we are …… to see a film at the cinema.',o:['allons','va'],oe:['(we) go','(he) goes'],a:0,
+      why:`${fr('nous allons','we go')}: nous forms end in -ons.`,whyNot:{1:`${fw('va')} goes with ${fw('il')} or ${fw('elle')}.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q3',q:"Demain Ali …… voir un film.",en:'Tomorrow Ali is …… to see a film.',o:['vas','va'],oe:['(you) go','(he) goes'],a:1,
+      why:`Ali is ${fw('il')}: ${fr('il va','he goes')}.`,whyNot:{0:`${fw('vas')} goes with ${fw('tu')}.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q4',q:"Mona va …… un film.",en:'Mona is going to …… a film.',o:['voir','vont'],oe:['to see','(they) go'],a:0,
+      why:`After ${fw('va')} comes an infinitive: ${fw('voir')}.`,whyNot:{1:`${fw('vont')} is aller again, not an infinitive.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q5',q:"Ali va …… 20 ans.",en:'Ali is going to …… 20 (years old).',o:['avoir','ont'],oe:['to have','(they) have'],a:0,
+      why:`After ${fw('va')} comes the infinitive ${fw('avoir')}. In French you <b>have</b> an age.`,whyNot:{1:`${fw('ont')} means they have; it is not an infinitive.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q6',q:"Mes sœurs vont …… à la maison.",en:'My sisters are going to …… at home.',o:['rester','restes'],oe:['to stay','(you) stay'],a:0,
+      why:`After ${fw('vont')} the verb stays in the infinitive: ${fw('rester')}.`,whyNot:{1:`${fw('restes')} goes with ${fw('tu')}.`}},
+    {src:'Worksheet · Page 5 · Tu choisis Q7',q:"Je vais …… au chalet.",en:'I am going to …… to the chalet.',o:['vas','aller'],oe:['(you) go','to go'],a:1,
+      why:`After ${fw('vais')} comes the infinitive ${fw('aller')}.`,whyNot:{0:`${fw('vas')} goes with ${fw('tu')}, and it is not an infinitive.`}},
+    {src:'Worksheet · Page 6 · Futur proche Q1',q:"Transformez la phrase au futur proche : Je parle à Ali.",en:'Change the sentence into the near future: I speak to Ali.',model:'Je vais parler à Ali.',men:"I'm going to speak to Ali."},
+    {src:'Worksheet · Page 6 · Futur proche Q2',q:"Transformez la phrase au futur proche : Je prends un café.",en:'Change the sentence into the near future: I have a coffee.',model:'Je vais prendre un café.',men:"I'm going to have a coffee."},
+    {src:'Worksheet · Page 6 · Futur proche Q3',q:"Transformez la phrase au futur proche : Il mange du poulet.",en:'Change the sentence into the near future: He eats chicken.',model:'Il va manger du poulet.',men:"He's going to eat chicken."},
+    {src:'Worksheet · Page 6 · Futur proche Q4',q:"Transformez la phrase au futur proche : Il fait le devoir.",en:'Change the sentence into the near future: He does the homework.',model:'Il va faire le devoir.',men:"He's going to do the homework."},
+    {src:'Worksheet · Page 6 · Futur proche Q5',q:"Transformez la phrase au futur proche : Tu fais le devoir ?",en:'Change the sentence into the near future: Do you do the homework?',model:'Tu vas faire le devoir ?',men:'Are you going to do the homework?'},
+  ]);}},
+
+/* 10 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr('<b>Le futur proche</b>','<b>The near future</b>')}. Let's look back at what you learned.`);
+  await w(2600);
+  const B=[['🚀',fr('le futur proche','the near future'),`${fw('Le futur proche')} means <b>going to</b>.`],
+    ['➕',fr('aller + infinitif','aller + infinitive'),`The recipe: ${fw('aller')} plus an infinitive.`],
+    ['🙋',fr('je vais · tu vas · il va','I go · you go · he goes'),`${fr('je vais, tu vas, il va','I go, you go, he goes')}.`],
+    ['👥',fr('nous allons · vous allez · ils vont','we go · you go · they go'),`${fr('nous allons, vous allez, ils vont','we go, you go, they go')}.`],
+    ['🎬',fr('Mona va voir un film.','Mona is going to see a film.'),`The second verb stays in the infinitive.`],
+    ['🎂',fr('Ali va avoir 20 ans.','Ali is going to be 20.'),`In French you <b>have</b> an age: ${fw('avoir')}.`],
+    ['🗣️',fr('Je vais parler à Ali.',"I'm going to speak to Ali."),`One verb becomes two: ${fr('je parle','I speak')} becomes ${fr('je vais parler','I am going to speak')}.`],
+    ['❓',fr('Tu vas faire le devoir ?','Are you going to do the homework?'),`Questions keep their question mark.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:18px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} Next up: the little word ${fw('en')}.`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

@@ -4,8 +4,8 @@ Read this first. It says what this project is, what already exists, the decision
 building in the same style. For the details of writing a lesson, read `lessons/LESSON-GUIDE.md`.
 
 ## What this is
-A revision website for one Grade 7 student (Cambridge curriculum), organised by **subject**: **Science** (complete) and
-**Maths** (being built), with French, KSS, Arabic and Islamic Studies planned ("coming soon" cards). Each subject is built
+A revision website for one Grade 7 student (Cambridge curriculum), organised by **subject**: **Science**, **Maths** and **French** (all complete), with KSS, Arabic and Islamic Studies
+planned ("coming soon" cards). Each subject is built
 from the school's own review worksheet, the same way. Science is built from the
 school's review worksheet: **"Class 7 Cambridge Worksheet Midterm 2026"** (Pakistan English School Kuwait, Class 7 C/D),
 which covers **Unit 4 Grouping & identifying organisms, Unit 5 Properties of materials, Unit 9 Electricity**.
@@ -22,13 +22,17 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | Path | What it is |
 |---|---|
 | `index.html` | **Home page**: "Hi, nickname", Parent page button and Sign out, an overall progress bar, **Lessons to revise** across all subjects (each with a subject label; decided: quiz questions and lesson Exam check questions count separately), and a **card per subject** (finished lessons, progress bar; planned subjects show "Coming soon"). Also the iPhone tips and the voice help (`#voice-help`, linked from every lesson). Once per device, the first student to sign in is offered to import Science lessons ticked before logins existed (old `g7_done_*` keys; remembered in `g7_legacy_done`) |
-| `subjects.js` | **The subject catalogue** (classic script, loaded by the home, subject and parent pages): every subject with its units/chapters and lessons `[id, href, emoji, title]` (href null = planned, shown as "coming soon"), quiz and study-guide cards, plus the shared page renderers (`renderHome`, `renderSubject`, `renderRevise`). Lesson ids are one letter per subject + two digits: `l` = Science, `m` = Maths |
-| `science.html`, `maths.html`, `site.css` | Subject pages (lessons by unit or chapter with ✅ and "continue at scene N", progress bar, that subject's Lessons to revise, quiz and study guide cards), all drawn from `subjects.js`. `site.css` is shared by the home and subject pages |
+| `subjects.js` | **The subject catalogue** (classic script, loaded by the home, subject and parent pages): every subject with its units/chapters and lessons `[id, href, emoji, title]` (href null = planned, shown as "coming soon"), quiz and study-guide cards, plus the shared page renderers (`renderHome`, `renderSubject`, `renderRevise`). Lesson ids are one letter per subject + two digits: `l` = Science, `m` = Maths, `f` = French |
+| `science.html`, `maths.html`, `french.html`, `site.css` | Subject pages (lessons by unit or chapter with ✅ and "continue at scene N", progress bar, that subject's Lessons to revise, quiz and study guide cards), all drawn from `subjects.js`. `site.css` is shared by the home and subject pages |
 | `lessons/l01`–`l14-*.html` | All 14 **Science** lessons on the shared engine, each with about 9 animated, narrated scenes. Lesson 5 (`l05-metals-nonmetals.html`, 14 scenes) is the approved pilot and the style reference for all lessons |
 | `adventure.html` | Redirect to Lesson 5 (its old address), so old links and Home Screen bookmarks keep working |
 | `lessons/engine.js`, `lessons/engine.css` | Shared lesson engine for **every subject** (a lesson passes `subject`, `home`, `part`, `guide` and `mascot` to `Lesson.start`; Science lessons leave them out and get Professor Atom): page layout, Professor Atom narration and voice, animation helpers, exam check, sort game, navigation, progress saving |
 | `lessons/LESSON-GUIDE.md`, `lessons/_template.html` | How to write a lesson (API, layout, tone, testing) and a minimal working example |
 | `maths/` | **Maths lessons** (`m01-writing-expressions.html` …) and `maths.js` (Pi the Robot, the Maths tutor; `frac()` fractions; `buildExpr()` "tap the tiles to build the expression" activity). Maths lessons load `../lessons/engine.js` then `maths.js` and start with `Object.assign({}, MATHS, {...})` |
+| `french/` | **French lessons** (`f01-ma-journee.html` … `f10`) and `french.js` (Coco the Parrot 🦜, the French tutor; `fr(french, english)` for every French string, spoken with a French voice; the **🇬🇧 English translate button** that swaps every `fr()` on the page to English and back; `fw()` for a French word explained in English; `teachFR()` step-by-step questions; `conjCard()` verb tables; `buildSentence()`) |
+| `source/french/worksheet-transcript.md` | The French revision sheet (8 scanned pages, handwritten answers) transcribed word for word with an English translation of every question, `[FIX]` typos, and the 10-lesson plan |
+| `french-quiz.html` | **French Quest** (Coco, blue; silent apart from a 🔈 "hear it in French" button): 4 levels (`f1` Vocabulaire 28, `f2` -er verbs 30, `f3` prendre/avoir/aller 31, `f4` futur proche, en, saying yes 27 = **116 questions**) plus a 25-question Final Boss (`fboss`) and `fretry`. Every question has `en` and choices `oe`, and **🇬🇧 English** (menu and HUD) swaps them. Types: pick one, vrai ou faux, match, put in order, build the sentence (tiles), conjugate (fill a verb table), type it (accent keys; accents nudged once). Ids `f1-01`… permanent; `q:` in backticks on the same line as `id:`. Test: `node tools/test/frquizcheck.js` and `QUIZ=french-quiz.html DRIVER=frquizdriver.js tools/test/quizplay.py f1 <dir>` (`EN=1` for English) |
+| `french-study-guide.pdf` | 15-page French study guide (every worksheet question with its answer and English, verb tables, Watch out / memory-trick boxes, Try these + answer key, cheat sheet). Printed from `source/french/study-guide-source.html` |
 | `source/maths/worksheet-transcript.md` | The Maths 2nd Term worksheet (34 handwritten pages, Chapters 2, 4, 6, 9, 10) transcribed word for word. `[CHECK]` marks the sheet's wrong worked answers, `[?]` hard-to-read spots |
 | `quiz.html` | **Science Quest**: 111 interactive questions in 4 levels (Unit 4, Unit 5, Unit 9, and a 25-question mixed "Final Boss"), 10 question types, points, streaks, stars and "practise my mistakes". Each question has `l:` (the lesson that teaches it); the results screen lists "Lessons to revise" from the mistakes |
 | `maths-quiz.html` | **Maths Quest** (Pi, orange; silent like Science Quest): a level per chapter (`c2`, `c4`, `c6`, `c9`, `c10`) plus a 25-question Final Boss (`mboss`, mixed; opens when every level has questions) and `mretry` (practise mistakes). **All built: 112 questions (Ch 2: 30, Ch 4: 25, Ch 6: 12, Ch 9: 25, Ch 10: 20).** About half worksheet questions, half the same kinds with new numbers. Types: typed answers on an on-screen keypad (checked by value, so `2n + m` = `m + 2n`; `simplest:true` nudges unsimplified answers; `mist` gives a message for a known wrong answer), pick one / quick fire (with `whyNot`), match, build it (tiles), number line (inequalities), put in order. Question ids `c2-01`… are permanent; keep `q:` on the same line as `id:` (the parent page reads the wording). Each quiz lists only its own unfinished levels. Test: `node tools/test/quizcheck.js` (offline answer check) and `tools/test/quizplay.py <level> <dir>` (headless play-through with screenshots) |
@@ -62,6 +66,17 @@ Ch 9: 12 Order of operations & negative numbers (Getting started Q1–3) · 13 S
 Lesson 10 teaches Ex 4.4 Q6 a) as 27.852 ÷ 12 = 2.321 (the sheet's 27.853 does not give its own answer). Maths Quest (`maths-quiz.html`) and the study guide (`maths-study-guide.pdf`) are built.
 Worksheet cards cite the exercise: `Worksheet · Ex 2.1 · Q6 v)`. Exam check `src`/`q` must be literal strings (the
 parent page reads them from the lesson file to show a missed question's wording).
+
+### French: 10 lessons (all built: `french/f01`–`f10`)
+Built from the school's French revision sheet (8 pages). Tutor: **Coco the Parrot** 🦜 (blue, red beret). Coco explains in
+English and says every French word with the device's French voice. **Every French text has an English translation**:
+the 🇬🇧 English button in each lesson and in French Quest turns all the French into English so the student can compare.
+Part 1 Lecture et vocabulaire: 1 Ma journée à l'école (reading text, table, times) · 2 Les matières et le mot insolite ·
+3 Les contraires et les moments de la journée. Part 2 Les verbes au présent: 4 -er verbs (parler, aimer, donner, penser) ·
+5 Étudier, manger, accepter, refuser · 6 Apprendre et prendre · 7 Avoir, aller et « il faut » (5 tips without stress).
+Part 3 Grammaire et expressions: 8 Le futur proche · 9 Le pronom « en » · 10 À l'Institut français : dire oui.
+Worksheet cards cite the page: `Worksheet · Page 5 · Tu choisis Q8`. The sheet's typos (`[FIX]` in the transcript) are
+corrected silently, as for Maths.
 
 ## The style to keep (decided and approved)
 - **Professor Atom**, a smiling yellow atom mascot, narrates every line. The text appears in a speech bubble and is
@@ -110,12 +125,12 @@ parent page reads them from the lesson file to show a missed question's wording)
 - **Test before publishing:** run `.venv/bin/python tools/test/runall.py` (on Linux, set `CHROME` to a Chromium that
   runs with `--no-sandbox`). One-time setup:
   `python3 -m venv .venv && .venv/bin/pip install websocket-client`. All scenes must pass. Look at the screenshots
-  in `tools/test/shots/`. The tester mutes all sound. A run of every lesson takes over 10 minutes, so test Science and Maths
-  in separate batches; memory is limited, so set `WORKERS=2` (default 6 browsers) if anything else is running.
+  in `tools/test/shots/`. The tester mutes all sound. A run of every lesson takes over 10 minutes, so test Science, Maths and
+  French in separate batches (French twice: also with `QS=en=1`, the English mode); memory is limited, so set `WORKERS=2` (default 6 browsers) if anything else is running.
 - **Publish:** commit (and push to `main`), then create a Cortex release with Deploy App on. Cortex builds `dist/` and
   deploys it to https://tutor.gocortex.app after the user confirms. Note that unknown paths there return the home page,
   not a 404, so check a new page's title (not just the status code) when confirming a deploy.
-- **Rebuild the study guide PDFs** after editing `source/study-guide-source.html` or `source/maths/study-guide-source.html` (commands in `README.md`).
+- **Rebuild the study guide PDFs** after editing `source/study-guide-source.html`, `source/maths/study-guide-source.html` or `source/french/study-guide-source.html` (commands in `README.md`).
 
 ## Going live with student accounts (not done yet)
 `main` needs logins on the **Production** Convex database before it is released, or every page asks for a login nobody has:

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2c66cf">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>À l'Institut français : dire oui</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="french.js"></script>
+<script>
+/* French Lesson 10 · Grammaire et expressions · Hassan at the French Institute, and how to accept an invitation.
+   Covers Page 3 "Tu choisis" Q1–2 and Page 8 "Pour accepter tu dis".
+   Every worksheet question is taught with teachFR (french.js): question first, key words lit, "Show me", steps, stamp, why. */
+const P3='Worksheet · Page 3 · Tu choisis ',P8='Worksheet · Page 8 · Pour accepter';
+const ACC=[['Oui, merci.','Yes, thank you.','🙏'],["D'accord.",'OK.','👍'],['Avec plaisir.','With pleasure.','😊'],['Bonne idée.','Good idea.','💡'],["C'est possible.","That's possible.",'🤔']];
+const REF=[['Non, merci.','No, thank you.'],['Désolé, je ne peux pas.',"Sorry, I can't."],['Je ne suis pas libre.',"I'm not free."]];
+/* Hassan: a boy emoji with a name tag */
+function hassan(x,y,s=90){const h=mk('',`left:${x}px;top:${y}px;text-align:center;font-size:${s}px;line-height:1`,`👦<div style="font-size:18px;font-weight:800;color:#1d3f8a;margin-top:4px">Hassan</div>`);pop(h);return h;}
+/* a speech bubble */
+function bubble(x,y,wd,html,col='#c6d8f6'){const b=mk('fq-step',`left:${x}px;top:${y}px;width:${wd}px;border-color:${col};border-radius:22px;font-size:26px`,html);pop(b);return b;}
+
+Lesson.start(Object.assign({}, FRENCH, {
+  id:'f10', num:10, part:'Grammaire et expressions', emoji:'🤝', title:"À l'Institut français : dire oui",
+  intro:`Bonjour! I'm <b>Coco the Parrot</b> 🦜 Today Hassan signs up for French lessons, and we learn to say yes. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:"Hassan à l'Institut",run:async w=>{
+  const bld=mk('','left:520px;top:60px;width:380px;height:300px;border-radius:16px 16px 6px 6px;background:linear-gradient(#eef4ff,#c6d8f6);border:4px solid #2c66cf;box-shadow:0 8px 0 #9db8e8');pop(bld);
+  mk('','left:20px;top:16px;width:340px;padding:8px;border-radius:10px;background:#2c66cf;color:#fff;font-size:21px;font-weight:800;text-align:center',fr('Institut français du Koweït','French Institute of Kuwait'),bld);
+  mk('','left:150px;top:-50px;width:66px;height:42px;border-radius:4px;background:linear-gradient(90deg,#2c66cf 33%,#fff 33% 66%,#e04848 66%);box-shadow:0 0 0 2px #ccd',null,bld);
+  for(let i=0;i<6;i++)mk('',`left:${30+(i%3)*112}px;top:${80+Math.floor(i/3)*90}px;width:80px;height:60px;border-radius:8px;background:#fff;border:3px solid #5d9cf5`,null,bld);
+  const door=mk('','left:150px;top:230px;width:80px;height:70px;border-radius:40px 40px 0 0;background:#e06a1b',null,bld);
+  const h=hassan(-120,250);
+  say(`Meet <b>Hassan</b>. He lives in Kuwait, and he wants to learn French. So he goes to the ${fr('<b>Institut français du Koweït</b>','<b>French Institute of Kuwait</b>')}.`);
+  await an(h,[{transform:'translateX(0)'},{transform:'translateX(420px)'}],{duration:2200,easing:'ease-out'});beep(500,.1);
+  await w(2600);
+  say(`An ${fw('institut')} is a place where you can take <b>lessons</b>. The French Institute teaches French to people in Kuwait.`);
+  await w(3400);
+  const s=mk('fq-step','left:40px;top:60px;width:440px;font-size:24px',fr("Hassan va à l'Institut français du Koweït.","Hassan goes to the French Institute of Kuwait."));pop(s);point(s);
+  say(fr("Hassan va à l'Institut français du Koweït.","Hassan goes to the French Institute of Kuwait."));
+  await w(3000);
+  const s2=mk('fq-step','left:40px;top:170px;width:440px;font-size:24px',fr("Il voudrait s'inscrire pour un cours de français.","He would like to sign up for a French course."));pop(s2);point(s2);
+  say(`${fr("Il voudrait s'inscrire pour un cours de français.","He would like to sign up for a French course.")} Let's learn these words!`);
+  await w(3600);}},
+
+/* 1 */ {t:"Les mots de l'Institut",run:async w=>{
+  say(`Here are the words Hassan needs at the Institute. Tap any card to hear it again.`);
+  await w(2400);
+  const V=[['🏛️',"l'institut",'the institute','a place for lessons'],['📖','un cours','a lesson / a course','what you sign up for'],['✍️',"s'inscrire",'to sign up / to enrol','put your name on the list'],
+    ['👩‍💼','le / la secrétaire','the secretary','who helps you sign up'],['📶','le niveau','the level','how good you are'],['🎓','une université','a university','where you study after school']];
+  for(let i=0;i<6;i++){const [e,f,en,why]=V[i];
+    const c=mk('fq-card',`left:${18+(i%3)*312}px;top:${16+Math.floor(i/3)*250}px;width:300px;height:232px;text-align:center`,
+      `<div style="font-size:60px">${e}</div><div style="font-size:26px;font-weight:800;color:#1d3f8a;margin-top:6px">${fr(f,en)}</div><div style="font-size:16px;font-weight:700;color:#6b7590;margin-top:8px">${why}</div>`);pop(c);point(c);
+    say(`${fr(f,en)}. ${fw(f)} means <b>${en}</b>.`);await w(2400);}
+  stage.querySelector('.fq-point')?.remove();
+  say(`Watch out: ${fw('un cours')} is a lesson. It's nothing to do with a golf course!`);
+  await w(3000);}},
+
+/* 2 */ {t:"À l'… français",run:async w=>{
+  say(`Now the worksheet questions about Hassan. Read each sentence carefully, then choose the word that makes sense.`);
+  await w(2600);
+  await teachFR(w,{src:P3+'Q1',q:fr("Hassan va à l'…………… français du Koweït.","Hassan goes to the French …………… of Kuwait.")+`<div style="margin-top:6px;font-size:19px">a- ${fr('Institut','Institute')} &nbsp;&nbsp;&nbsp; b- ${fr('tableau','board')}</div>`,
+    read:fr("Hassan va à l'…… français du Koweït.","Hassan goes to the French Institute of Kuwait."),
+    keys:[['va à',`${fr('va à','goes to')}: Hassan <b>goes to</b> a place.`,'goes to'],['du Koweït',`${fw('du Koweït')} means <b>of Kuwait</b>. So it's a place in Kuwait.`,'of Kuwait']],
+    steps:[{show:fr('tableau = a board ✖','tableau = a board ✖'),say:`A ${fw('tableau')} is a <b>board</b>, like a whiteboard. You can't go to a board in Kuwait!`},
+      {show:fr('Institut = an institute, a place ✔','Institute = an institute, a place ✔'),say:`An ${fw('Institut')} is a <b>place</b> with lessons. That makes sense.`},
+      {show:fr("Hassan va à l'Institut français du Koweït.","Hassan goes to the French Institute of Kuwait."),say:fr("Hassan va à l'Institut français du Koweït.","Hassan goes to the French Institute of Kuwait."),wait:2400}],
+    answer:fr('a- Institut','a- Institute'),why:`You <b>go to</b> a place: the French Institute. A board is a thing in a classroom.`});
+  await w(1500);}},
+
+/* 3 */ {t:'Un cours de français',run:async w=>{
+  const plate=mk('','left:840px;top:416px;font-size:72px;opacity:0','🍽️');
+  await teachFR(w,{src:P3+'Q2',q:fr("Hassan voudrait s'inscrire pour un …………… de français.","Hassan would like to sign up for a French …………… .")+`<div style="margin-top:6px;font-size:19px">a- ${fr('plat','dish')} &nbsp;&nbsp;&nbsp; b- ${fr('cours','course')}</div>`,
+    read:fr("Hassan voudrait s'inscrire pour un …… de français.","Hassan would like to sign up for a French course."),
+    keys:[["s'inscrire",`${fw("s'inscrire")} means <b>to sign up</b> or enrol.`,'sign up'],['de français',`${fw('de français')}: something <b>of French</b>.`,'French']],
+    steps:[{act:async()=>{pop(plate);beep(400,.1);},show:fr('plat = a dish of food ✖','plat = a dish of food ✖'),say:`A ${fw('plat')} is a <b>dish</b> of food. You can't sign up for a French dish!`},
+      {show:fr('cours = a lesson, a course ✔','cours = a lesson, a course ✔'),say:`A ${fw('cours')} is a <b>course</b> or lesson. You sign up for a course.`},
+      {show:fr("Hassan voudrait s'inscrire pour un cours de français.","Hassan would like to sign up for a French course."),say:fr("Hassan voudrait s'inscrire pour un cours de français.","Hassan would like to sign up for a French course."),wait:2600}],
+    answer:fr('b- cours','b- course'),why:`${fr('un cours de français','a French course')}. Remember: ${fw('cours')} = lesson, ${fw('plat')} = food.`});
+  await w(1500);}},
+
+/* 4 */ {t:'Une invitation !',run:async w=>{
+  const h=hassan(60,300);
+  const f=mk('',`left:780px;top:300px;text-align:center;font-size:90px;line-height:1`,`👧<div style="font-size:18px;font-weight:800;color:#1d3f8a;margin-top:4px">Mona</div>`);pop(f);
+  say(`Hassan's classmate <b>Mona</b> has an idea after the lesson. She invites him to the cinema!`);
+  await w(2800);
+  const b=bubble(420,40,480,fr('Tu veux venir au cinéma avec moi ? 🎬','Do you want to come to the cinema with me? 🎬'),'#f5a54a');point(b);
+  say(fr('Tu veux venir au cinéma avec moi ?','Do you want to come to the cinema with me?'));
+  await w(3000);
+  say(`Hassan wants to say <b>yes</b>. In French, there are lots of ways to accept. Let's see five of them.`);
+  await w(3000);
+  for(let i=0;i<5;i++){const [a,e,em]=ACC[i];
+    const c=bubble(200,140+i*70,400,`${em} ${fr(a,e)}`,'#45c288');point(c);beep(600+i*60,.07);
+    say(`${fr(a,e)} That means <b>${e}</b>`);await w(2200);}
+  stage.querySelector('.fq-point')?.remove();
+  an(h,[{transform:'none'},{transform:'translateY(-30px)'},{transform:'none'}],{duration:500,iterations:3});yay();
+  say(`Any of these means <b>yes</b>. Hassan and Mona go to the cinema! 🎉`);
+  await w(2800);}},
+
+/* 5 */ {t:'Pour accepter tu dis…',run:async w=>{
+  await teachFR(w,{src:P8,q:fr('Tu réponds :<br>Pour accepter tu dis : 1- …… 2- …… 3- …… 4- …… 5- ……','Answer:<br>To accept, you say: 1- …… 2- …… 3- …… 4- …… 5- ……'),
+    read:fr('Tu réponds. Pour accepter tu dis…','Answer. To accept, you say…'),
+    keys:[['accepter',`${fw('accepter')} means <b>to accept</b>, to say yes to an invitation.`,'accept'],['tu dis',`${fr('tu dis','you say')}: we need <b>five</b> things you can say. Think of Hassan and Mona!`,'you say']],
+    steps:ACC.map(([a,e,em],i)=>({show:`${i+1}- ${em} ${fr(a,e)}`,say:`${fr(a,e)} <b>${e}</b>`,wait:1600})),
+    answer:fr("Oui, merci · D'accord · Avec plaisir · Bonne idée · C'est possible","Yes, thank you · OK · With pleasure · Good idea · That's possible"),
+    why:`All five say <b>yes</b>. ${fr('Avec plaisir','With pleasure')} is the friendliest!`,y:6});
+  await w(1500);}},
+
+/* 6 */ {t:'Dis oui !',run:async w=>{
+  const INV=[['Tu veux un jus de fruits ?','Do you want a fruit juice?','🧃',["Avec plaisir.",'With pleasure.'],['Non, merci.','No, thank you.']],
+    ['On va au parc samedi ?','Shall we go to the park on Saturday?','🌳',['Je ne suis pas libre.',"I'm not free."],['Bonne idée !','Good idea!']],
+    ['Tu viens à ma fête ?','Are you coming to my party?','🎉',['Désolé, je ne peux pas.',"Sorry, I can't."],["D'accord !",'OK!']]];
+  say(`Your turn! A friend invites you. Tap the answer that <b>accepts</b> the invitation.`);
+  await w(2600);
+  let right=0;
+  for(let i=0;i<3;i++){stage.innerHTML='';const [q,qe,em,A,B]=INV[i];const good=i===0?0:1;
+    mk('ex-head','',`💌 ${fr('Dis oui !','Say yes!')} · ${i+1} / 3`);
+    const e=mk('','left:60px;top:70px;font-size:90px',em);pop(e);
+    const b=bubble(200,80,600,fr(q,qe),'#f5a54a');
+    say(fr(q,qe));await w(1800);
+    let pick=-1;const opts=[A,B].map(([f,en],k)=>{const o=btn('fq-tile',`left:${150+k*340}px;top:260px;width:320px;height:90px;text-align:center`,fr(f,en),()=>{if(pick<0)pick=k;});pop(o,k*100);return o;});
+    window.AUTOPLAY=()=>{if(pick<0)pick=good;};
+    await w.until(()=>pick>=0);window.AUTOPLAY=null;
+    const ok=pick===good;opts[good].style.background='#e6f7ee';opts[good].style.borderColor='#18a058';
+    if(!ok){opts[pick].style.background='#fdecec';opts[pick].style.borderColor='#e04848';shake(opts[pick]);boo();}else{right++;yay();confetti(40);}
+    const r=mk('fq-why','left:150px;top:390px;width:660px',ok?`✅ ${fr(INV[i][3+good][0],INV[i][3+good][1])} says <b>yes</b>!`:`❌ ${fr(INV[i][3+pick][0],INV[i][3+pick][1])} says <b>no</b>. To accept: ${fr(INV[i][3+good][0],INV[i][3+good][1])}`);pop(r);
+    say(ok?`${fr('Oui !','Yes!')} That accepts the invitation.`:`Not quite. That one says no.`);
+    await w(2800);}
+  stage.innerHTML='';
+  const s=mk('','left:180px;top:150px;width:600px;text-align:center',`<div style="font-size:70px">💌</div><div style="font-size:30px;font-weight:800;color:#1d3f8a;margin-top:6px">${right} / 3</div>`);pop(s);
+  if(right===3){yay();confetti(100);}
+  say(right===3?`${fr('Parfait !','Perfect!')} You know how to say yes.`:`Good try! Press Replay to have another go.`);
+  await w(2400);}},
+
+/* 7 */ {t:'Accepter ou refuser ?',run:async w=>{
+  const r=await sortGame(w,{bins:[fr('Accepter 👍','Accept 👍'),fr('Refuser 👎','Refuse 👎')],colors:['#45c288','#f5a54a'],top:170,
+    items:[...ACC.map(([f,e])=>[fr(f,e),0]),...REF.map(([f,e])=>[fr(f,e),1])],
+    intro:`Does it say yes or no? Tap a phrase, then tap ${fw('Accepter')} or ${fw('Refuser')}. Press <b>Check</b> when done.`});
+  say(r.ok===r.total?`${fr('Parfait !','Perfect!')} Every phrase is in the right box.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong box.`);
+  await w(2600);
+  say(`To refuse politely you can say ${fr('Non, merci','No, thank you')} or ${fr('Désolé, je ne peux pas','Sorry, I can\'t')}. But the worksheet asks how to <b>accept</b>.`);
+  await w(3800);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Exam check! I'll read each worksheet question. Tap 🇬🇧 English if you need help.`);
+  await w(2600);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Page 3 · Tu choisis Q1',q:"Hassan va à l'…… français du Koweït.",en:'Hassan goes to the French …… of Kuwait.',o:['Institut','tableau'],oe:['Institute','board'],a:0,
+      why:`Hassan goes to a place: ${fr("l'Institut français du Koweït","the French Institute of Kuwait")}.`,whyNot:{1:`a ${fw('tableau')} is a board, not a place you go to.`}},
+    {src:'Worksheet · Page 3 · Tu choisis Q2',q:"Hassan voudrait s'inscrire pour un …… de français.",en:'Hassan would like to sign up for a French …… .',o:['plat','cours'],oe:['dish','course'],a:1,
+      why:`You sign up for ${fr('un cours de français','a French course')}.`,whyNot:{0:`a ${fw('plat')} is a dish of food.`}},
+    {src:'Worksheet · Page 8 · Pour accepter',q:"Tu réponds : Pour accepter tu dis : 1- …… 2- …… 3- …… 4- …… 5- ……",en:'Answer: To accept, you say: 1- …… 2- …… 3- …… 4- …… 5- ……',
+      model:"Oui, merci. · D'accord. · Avec plaisir. · Bonne idée. · C'est possible.",men:"Yes, thank you. · OK. · With pleasure. · Good idea. · That's possible."},
+  ]);}},
+
+/* 9 */ {t:'Bravo !',run:async w=>{
+  say(`${fr('Bravo !','Well done!')} 🎉 You finished ${fr("<b>À l'Institut français : dire oui</b>","<b>At the French Institute: saying yes</b>")}. Let's look back.`);
+  await w(2600);
+  const B=[['🏛️',fr("l'Institut français","the French Institute"),`An ${fw('institut')} is a place with lessons.`],
+    ['📖',fr('un cours de français','a French course'),`${fw('un cours')} is a lesson or course.`],
+    ['✍️',fr("s'inscrire","to sign up"),`${fw("s'inscrire")} means to sign up.`],
+    ['🙏',fr('Oui, merci.','Yes, thank you.'),`${fr('Oui, merci','Yes, thank you')}.`],
+    ['👍',fr("D'accord.",'OK.'),`${fr("D'accord",'OK')}.`],
+    ['😊',fr('Avec plaisir.','With pleasure.'),`${fr('Avec plaisir','With pleasure')}.`],
+    ['💡',fr('Bonne idée.','Good idea.'),`${fr('Bonne idée','Good idea')}.`],
+    ['🤔',fr("C'est possible.","That's possible."),`${fr("C'est possible","That's possible")}.`]];
+  for(let i=0;i<8;i++){const b=mk('badge',`left:${13+(i%4)*237}px;top:${14+Math.floor(i/4)*214}px;width:222px;height:200px`,`<span class="e">${B[i][0]}</span><div style="font-size:19px">${B[i][1]}</div>`);pop(b);beep(500+i*70,.08);point(b);
+    say(B[i][2]);await w(1800);}
+  stage.querySelector('.fq-point')?.remove();
+  confetti(200);yay();await w(1200);
+  const f=mk('','left:180px;top:448px;width:600px;height:58px;border-radius:18px;background:linear-gradient(135deg,#2c66cf,#5d9cf5);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer','🏠 Back to the French lessons ➜');f.onclick=()=>{location.href='../french.html';};pop(f);
+  say(`${fr('Très bien !','Very good!')} That was the last French lesson. Now try the <b>French Quest</b> quiz!`);
+  await w(2000);}},
+  ]
+}));
+</script>
+</body>
+</html>

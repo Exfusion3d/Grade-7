@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Grade 7 French – Exam Study Guide</title>
+<style>
+@page { size: A4; margin: 14mm 15mm 16mm 15mm;
+  @bottom-center { content: counter(page); font: 600 9pt "Avenir Next", sans-serif; color: #8a90a2; }
+}
+@page :first { @bottom-center { content: none; } }
+:root{
+  --ink:#1f2433; --muted:#5b6275; --line:#dfe3ec;
+  --g:#17935b; --gl:#e4f6ec; --gd:#0e6b41;
+  --o:#e06a1b; --ol:#fdeedf; --od:#a84a0c;
+  --b:#2c66cf; --bl:#e5eefc; --bd:#1c4a9c;
+  --y:#fff4c2; --pu:#6a45d8; --pul:#efe9ff; --pud:#4a2ea6; --pk:#d6336c; --pkl:#fde4ec; --pkd:#a01e4e; --yb:#f2c200; --r:#fde6e6; --rb:#e04848; --p:#f0e9ff; --pb:#7d55d6;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+body{font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif; color:var(--ink); font-size:11pt; line-height:1.45; margin:0}
+h1,h2,h3{line-height:1.15; margin:0}
+h2{font-size:17pt; font-weight:800; margin:18px 0 8px; display:flex; align-items:center; gap:10px}
+h2 .n{display:inline-flex; align-items:center; justify-content:center; min-width:34px; height:34px; padding:0 8px; border-radius:10px; color:#fff; font-size:13pt}
+h3{font-size:12.5pt; font-weight:700; margin:12px 0 4px}
+p{margin:5px 0}
+ul{margin:4px 0; padding-left:20px} li{margin:2px 0}
+b,strong{font-weight:700}
+.u4 h2 .n{background:var(--g)} .u4 h2{color:var(--gd)} .u4 h3{color:var(--gd)}
+.u5 h2 .n{background:var(--o)} .u5 h2{color:var(--od)} .u5 h3{color:var(--od)}
+.u9 h2 .n{background:var(--b)} .u9 h2{color:var(--bd)} .u9 h3{color:var(--bd)}
+.unit{break-before:page}
+.banner{border-radius:18px; padding:18px 22px; color:#fff; display:flex; align-items:center; gap:18px; margin-bottom:6px}
+.banner .big{font-size:38pt; font-weight:800; line-height:1}
+.banner h1{font-size:22pt; font-weight:800}
+.banner p{margin:4px 0 0; font-size:11pt; opacity:.95}
+.u4 .banner{background:linear-gradient(120deg,#17935b,#4cc28a)}
+.u5 .banner{background:linear-gradient(120deg,#e06a1b,#f5a54a)}
+.u9 .banner{background:linear-gradient(120deg,#2c66cf,#5aa0f0)}
+.bigidea{border:2px dashed currentColor; border-radius:14px; padding:10px 14px; margin:10px 0; font-size:11.5pt}
+.u4 .bigidea{color:var(--gd); background:var(--gl)} .u5 .bigidea{color:var(--od); background:var(--ol)} .u9 .bigidea{color:var(--bd); background:var(--bl)}
+.bigidea span{color:var(--ink)}
+.box{border-radius:12px; padding:9px 13px 9px 13px; margin:9px 0; break-inside:avoid; border-left:6px solid}
+.box .lab{font-weight:800; font-size:9.5pt; letter-spacing:.06em; text-transform:uppercase; display:block; margin-bottom:2px}
+.tip{background:var(--y); border-color:var(--yb)} .tip .lab{color:#8a6a00}
+.warn{background:var(--r); border-color:var(--rb)} .warn .lab{color:#b02525}
+.trick{background:var(--p); border-color:var(--pb)} .trick .lab{color:#5a35b0}
+.real{background:#eef3f7; border-color:#7a8ca3} .real .lab{color:#4b5d75}
+table{border-collapse:collapse; width:100%; margin:8px 0; font-size:10.3pt}
+tr{break-inside:avoid}
+h2,h3{break-after:avoid; break-inside:avoid}
+h2 + *, h3 + *{break-before:avoid}
+.fig svg{break-inside:avoid}
+th,td{border:1px solid var(--line); padding:5px 8px; text-align:left; vertical-align:top}
+th{font-weight:700}
+.u4 th{background:var(--gl)} .u5 th{background:var(--ol)} .u9 th{background:var(--bl)}
+.letter{font-size:16pt; font-weight:800; text-align:center; width:34px}
+.u4 .letter{color:var(--g)}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start}
+.fig{text-align:center; margin:8px 0; break-inside:avoid}
+.fig .cap{font-size:9pt; color:var(--muted); margin-top:2px}
+.qa{break-inside:avoid; margin:4px 0}
+.ans td:first-child{width:36px; font-weight:700; text-align:center}
+.small{font-size:9.5pt; color:var(--muted)}
+.chip{display:inline-block; padding:1px 8px; border-radius:20px; font-weight:700; font-size:9.5pt}
+.keep{break-inside:avoid}
+.pb{break-before:page}
+/* cover */
+.cover{height:262mm; display:flex; flex-direction:column; justify-content:space-between}
+.cover .top{background:linear-gradient(135deg,#2a2f6b,#5b3fb5 55%,#2c66cf); color:#fff; border-radius:24px; padding:34px 30px}
+.cover .top .k{font-size:12pt; letter-spacing:.14em; text-transform:uppercase; opacity:.85; font-weight:600}
+.cover .top h1{font-size:40pt; font-weight:800; margin:8px 0 6px}
+.cover .top p{font-size:13pt; margin:0; opacity:.95}
+.cards{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+.card{border-radius:18px; padding:16px; color:#fff; min-height:150px}
+.card .u{font-weight:800; font-size:10pt; letter-spacing:.1em; text-transform:uppercase; opacity:.9}
+.card h3{color:#fff; font-size:15pt; margin:4px 0 6px}
+.card p{font-size:10pt; margin:0}
+.how{border:2px solid var(--line); border-radius:18px; padding:14px 18px}
+.how h3{margin-top:0}
+.legend{display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; margin-top:8px}
+.legend .box{margin:0; padding:5px 10px; font-size:10pt}
+/* cheat sheet */
+.cheat{break-before:page}
+.cheat h1{font-size:22pt; text-align:center; margin-bottom:8px}
+.cheatgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:9.4pt; line-height:1.35}
+.cheatgrid section{border-radius:12px; padding:10px 11px}
+.cheatgrid h3{margin:0 0 4px; font-size:11.5pt}
+.cheatgrid ul{padding-left:15px}
+.cg{background:var(--gl)} .cg h3{color:var(--gd)}
+.co{background:var(--ol)} .co h3{color:var(--od)}
+.cb{background:var(--bl)} .cb h3{color:var(--bd)}
+svg text{font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif}
+
+/* ---- Maths chapters: c2 orange, c4 blue, c6 green, c9 purple, c10 pink ---- */
+.c2 h2 .n{background:var(--o)} .c2 h2,.c2 h3{color:var(--od)} .c2 .banner{background:linear-gradient(120deg,#e06a1b,#f5a54a)} .c2 .bigidea{color:var(--od);background:var(--ol)} .c2 th{background:var(--ol)} .c2 .ans{color:var(--od)} .c2 .try{border-color:var(--o)}
+.c4 h2 .n{background:var(--b)} .c4 h2,.c4 h3{color:var(--bd)} .c4 .banner{background:linear-gradient(120deg,#2c66cf,#5aa0f0)} .c4 .bigidea{color:var(--bd);background:var(--bl)} .c4 th{background:var(--bl)} .c4 .ans{color:var(--bd)} .c4 .try{border-color:var(--b)}
+.c6 h2 .n{background:var(--g)} .c6 h2,.c6 h3{color:var(--gd)} .c6 .banner{background:linear-gradient(120deg,#17935b,#4cc28a)} .c6 .bigidea{color:var(--gd);background:var(--gl)} .c6 th{background:var(--gl)} .c6 .ans{color:var(--gd)} .c6 .try{border-color:var(--g)}
+.c9 h2 .n{background:var(--pu)} .c9 h2,.c9 h3{color:var(--pud)} .c9 .banner{background:linear-gradient(120deg,#6a45d8,#9b7cf0)} .c9 .bigidea{color:var(--pud);background:var(--pul)} .c9 th{background:var(--pul)} .c9 .ans{color:var(--pud)} .c9 .try{border-color:var(--pu)}
+.c10 h2 .n{background:var(--pk)} .c10 h2,.c10 h3{color:var(--pkd)} .c10 .banner{background:linear-gradient(120deg,#d6336c,#f06595)} .c10 .bigidea{color:var(--pkd);background:var(--pkl)} .c10 th{background:var(--pkl)} .c10 .ans{color:var(--pkd)} .c10 .try{border-color:var(--pk)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; line-height:1.05; margin:0 .12em; font-size:.92em}
+.fr>span:first-child{border-bottom:.08em solid currentColor; padding:0 .15em}
+.m{font-weight:700; white-space:nowrap}
+ol.steps{margin:4px 0; padding-left:22px} ol.steps li{margin:3px 0}
+.ex{border:1.5px solid var(--line); border-radius:12px; padding:8px 12px; margin:8px 0; break-inside:avoid}
+.ex .src{font-size:8.5pt; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+.ex .q{font-weight:700; margin:1px 0 4px}
+.work{border-left:3px solid var(--line); padding-left:10px; margin:2px 0}
+.work div{padding:1px 0}
+.work i{font-style:normal; color:var(--muted); font-size:9.5pt; margin-left:6px}
+.ans{font-weight:800}
+.try{border:2px dashed; border-radius:12px; padding:8px 12px 6px; margin:10px 0 14px; break-inside:avoid}
+.try .lab{font-weight:800; font-size:9.5pt; letter-spacing:.06em; text-transform:uppercase}
+.try ol{margin:3px 0; padding-left:22px} .try li{margin:2px 0}
+.check{list-style:none; padding:0; columns:3; font-size:10pt} .check li{margin:2px 0} .check li:before{content:"☐ "; font-size:12pt}
+/* answer key */
+.keygrid{columns:2; column-gap:18px; font-size:9.6pt; line-height:1.35}
+.keygrid .k{break-inside:avoid; margin:0 0 6px}
+.keygrid h3{break-after:avoid; margin:8px 0 3px; font-size:11pt}
+.cm2{background:var(--ol)} .cm2 h3{color:var(--od)} .cm4{background:var(--bl)} .cm4 h3{color:var(--bd)} .cm6{background:var(--gl)} .cm6 h3{color:var(--gd)}
+.cm9{background:var(--pul)} .cm9 h3{color:var(--pud)} .cm10{background:var(--pkl)} .cm10 h3{color:var(--pkd)}
+
+/* ---- tighter print layout (the guide covers every worksheet question) ---- */
+body{font-size:10pt; line-height:1.36}
+h2{font-size:15pt; margin:14px 0 6px} h2 .n{min-width:30px; height:30px; font-size:12pt}
+h3{font-size:11.5pt; margin:9px 0 3px}
+p{margin:4px 0}
+table{font-size:9.2pt; margin:5px 0} th,td{padding:3px 6px}
+.ex{padding:6px 10px; margin:6px 0; break-inside:auto} .ex .q{margin:1px 0 3px}
+.ex:not(:has(table)){break-inside:avoid}
+.box{padding:6px 11px; margin:7px 0}
+.try{padding:6px 11px 4px; margin:8px 0 10px}
+.fig{margin:5px 0} .fig svg{max-height:150px; width:auto; max-width:100%}
+table{break-inside:avoid} .ex table{break-inside:auto} /* short tables stay whole; long worksheet tables may continue on the next page */
+.bigidea{padding:8px 12px; margin:8px 0}
+ol.steps li{margin:2px 0}
+
+/* ---- French: part 1 blue, part 2 purple (verbs), part 3 red ---- */
+.p1 h2 .n{background:var(--b)} .p1 h2,.p1 h3{color:var(--bd)} .p1 .banner{background:linear-gradient(120deg,#2c66cf,#5d9cf5)} .p1 .bigidea{color:var(--bd);background:var(--bl)} .p1 th{background:var(--bl)} .p1 .ans{color:var(--bd)} .p1 .try{border-color:var(--b)}
+.p2 h2 .n{background:var(--pu)} .p2 h2,.p2 h3{color:var(--pud)} .p2 .banner{background:linear-gradient(120deg,#6a45d8,#9b7cf0)} .p2 .bigidea{color:var(--pud);background:var(--pul)} .p2 th{background:var(--pul)} .p2 .ans{color:var(--pud)} .p2 .try{border-color:var(--pu)}
+.p3 h2 .n{background:#c0392b} .p3 h2,.p3 h3{color:#a02a1e} .p3 .banner{background:linear-gradient(120deg,#c0392b,#e86a5a)} .p3 .bigidea{color:#a02a1e;background:#fde8e5} .p3 th{background:#fde8e5} .p3 .ans{color:#a02a1e} .p3 .try{border-color:#c0392b}
+h2 .en{font-size:11pt; font-weight:600; color:var(--muted)}
+.end{color:#e04848; font-weight:800}
+td.end{text-align:center}
+.endings td{font-size:10pt}
+table.side td{width:50%}
+.cp1{background:var(--bl)} .cp1 h3{color:var(--bd)} .cp2{background:var(--pul)} .cp2 h3{color:var(--pud)} .cp3{background:#fde8e5} .cp3 h3{color:#a02a1e}
+ul.vt{list-style:none; padding-left:0} ul.vt li{margin:3px 0}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="top" style="background:linear-gradient(135deg,#1c3f8f,#2c66cf 55%,#5d9cf5)">
+    <div class="k">Grade 7 · French · Revision Sheet Review</div>
+    <h1>The French<br>Study Guide 🦜</h1>
+    <p>Everything on your French revision sheet, explained by Coco the Parrot: the rules, every worksheet question with its answer and an English translation, the mistakes to avoid, and practice questions with answers.</p>
+  </div>
+  <div class="cards" style="grid-template-columns:repeat(3,1fr);gap:10px">
+    <div class="card" style="background:linear-gradient(140deg,#2c66cf,#5d9cf5)"><div class="u">Part 1 · Lessons 1–3</div><h3>Lecture et vocabulaire</h3><p>Reading &amp; vocabulary: my school day, school subjects, the odd one out, opposites, times of day.</p></div>
+    <div class="card" style="background:linear-gradient(140deg,#6a45d8,#9b7cf0)"><div class="u">Part 2 · Lessons 4–7</div><h3>Les verbes au présent</h3><p>Verbs in the present: -er verbs, étudier, manger, apprendre, prendre, avoir, aller, il faut.</p></div>
+    <div class="card" style="background:linear-gradient(140deg,#c0392b,#e86a5a)"><div class="u">Part 3 · Lessons 8–10</div><h3>Grammaire et expressions</h3><p>Grammar &amp; phrases: the near future, the pronoun « en », saying yes.</p></div>
+  </div>
+  <div class="how">
+    <h3>How to use this guide</h3>
+    <p>There is one section for each of the 10 French lessons. Each section gives the <b>big idea</b>, the <b>rule</b>, <b>every worksheet question</b> with its answer (French on the left, English on the right), and <b>Try these</b> practice questions. The answers to every <b>Try these</b> are in the <b>answer key</b> at the back. The <b>cheat sheet</b> has every verb table on one page.</p>
+    <p class="small">In the verb tables, the <span class="end">red letters</span> are the endings that change. Say each answer out loud: French is a language you speak!</p>
+    <div class="legend">
+      <div class="box tip"><span class="lab">Exam tip</span>How to get the marks.</div>
+      <div class="box warn"><span class="lab">Watch out!</span>A common mistake to avoid.</div>
+      <div class="box trick"><span class="lab">Memory trick</span>An easy way to remember.</div>
+      <div class="box real"><span class="lab">Say it</span>How it sounds.</div>
+    </div>
+    <h3 style="margin-top:12px">Contents · tick off each lesson when you know it</h3>
+    <ul class="check" style="columns:2">
+      <li>1 Ma journée à l'école <i class="small">(My school day)</i></li>
+      <li>2 Les matières et le mot insolite <i class="small">(School subjects &amp; the odd one out)</i></li>
+      <li>3 Les contraires et les moments de la journée <i class="small">(Opposites &amp; times of day)</i></li>
+      <li>4 Les verbes en -er : parler, aimer, donner, penser</li>
+      <li>5 Étudier, manger, accepter, refuser</li>
+      <li>6 Apprendre et prendre</li>
+      <li>7 Avoir, aller et « il faut »</li>
+      <li>8 Le futur proche <i class="small">(The near future)</i></li>
+      <li>9 Le pronom « en » <i class="small">(The pronoun "en")</i></li>
+      <li>10 À l'Institut français : dire oui <i class="small">(Saying yes)</i></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ PART 1 ============ -->
+<div class="unit p1">
+  <div class="banner"><div class="big">1</div><div><h1>Lecture et vocabulaire</h1><p>Reading &amp; vocabulary: reading a text about a school day, school subjects, the odd one out, opposites and the times of day.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>Read French <b>one sentence at a time</b>. Look for words you know (days, times, subjects), and the question word tells you what to find: <b>Jour</b> = day, <b>Lieu</b> = place, <b>Matière</b> = subject.</span></div>
+
+  <h2><span class="n">1</span> Ma journée à l'école <span class="en">· My school day</span></h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Read the text one sentence at a time. Each question word (Jour, Lieu, Matière…) points to <b>one sentence</b> with the answer in it.</span></div>
+  <h3>The reading text · Lisez le texte suivant (Read the following text)</h3>
+  <table class="side"><tr><th>Français</th><th>English</th></tr>
+    <tr><td>Aujourd'hui c'est <b>lundi</b>, ma journée préférée.</td><td>Today is <b>Monday</b>, my favourite day.</td></tr>
+    <tr><td>Je vais <b>à l'école</b> à <b>7 heures et demie</b>.</td><td>I go <b>to school</b> at <b>half past seven</b>.</td></tr>
+    <tr><td>J'ai <b>français</b> de 8 heures à 9 heures, puis de 9 heures et quart à 10 heures j'ai math.</td><td>I have <b>French</b> from 8 o'clock to 9 o'clock, then from quarter past 9 to 10 o'clock I have maths.</td></tr>
+    <tr><td>Après la pause, on va étudier l'arabe, la biologie et l'informatique.</td><td>After the break, we are going to study Arabic, biology and computing.</td></tr>
+    <tr><td>Le dernier cours c'est le cours de sport.</td><td>The last lesson is the sport lesson.</td></tr>
+    <tr><td>Je l'aime beaucoup parce qu'on joue au foot avec les amis.</td><td>I like it a lot because we play football with friends.</td></tr>
+    <tr><td>Enfin, je termine à <b>14 heures</b>, je rentre à la maison <b>en voiture</b> avec papa.</td><td>Finally, I finish at <b>2 pm (14:00)</b>, I go back home <b>by car</b> with Dad.</td></tr>
+  </table>
+  <h3>Telling the time</h3>
+  <table><tr><th>Français</th><th>English</th><th>Français</th><th>English</th></tr>
+    <tr><td>8 heures</td><td>8 o'clock</td><td>7 heures et demie</td><td>half past seven (7:30)</td></tr>
+    <tr><td>9 heures et quart</td><td>quarter past nine (9:15)</td><td>14 heures</td><td>14:00 = 2 pm (24-hour clock)</td></tr>
+  </table>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 1 · Complétez le tableau suivant (Complete the following table)</div>
+    <table><tr><th>Question</th><th>English</th><th>Answer</th><th>English</th></tr>
+      <tr><td>Jour</td><td>Day</td><td class="ans">lundi</td><td>Monday</td></tr>
+      <tr><td>Lieu</td><td>Place</td><td class="ans">à l'école</td><td>at school</td></tr>
+      <tr><td>Matière</td><td>Subject</td><td class="ans">français</td><td>French</td></tr>
+      <tr><td>Heure de retour à la maison</td><td>Time back home</td><td class="ans">14 heures</td><td>14:00 (2 pm)</td></tr>
+      <tr><td>Moyen de transport</td><td>Means of transport</td><td class="ans">en voiture</td><td>by car</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 1 · Tu complètes : les matières comme : (Complete: school subjects such as:)</div>
+    <div class="work"><div><span class="ans">1 français · 2 maths · 3 anglais · 4 biologie · 5 art</span> <i>(French · maths · English · biology · art)</i></div>
+    <div>Any five school subjects are right, e.g. from the text: l'arabe, l'informatique, le sport.</div></div></div>
+  <div class="box tip"><span class="lab">Exam tip</span>Find the sentence with the answer and copy the words exactly: <b>à l'école</b>, <b>en voiture</b>, <b>14 heures</b>. The answer is always in the text.</div>
+  <div class="box warn"><span class="lab">Watch out!</span>Days and subjects start with a <b>small letter</b> in French: <b>lundi</b>, <b>français</b> (not Lundi, Français), unless they start a sentence.</div>
+  <div class="box trick"><span class="lab">Memory trick</span>Transport uses <b>en</b> (in): <b>en voiture</b> (by car), <b>en bus</b> (by bus), <b>en taxi</b> (by taxi). But walking is <b>à pied</b> (on foot).</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Translate: <b>Je vais à l'école en bus.</b></li><li>Write in French: half past eight.</li><li>"Mardi, j'ai anglais à 10 heures." What is the <b>Jour</b> and the <b>Matière</b>?</li></ol></div>
+
+  <h2><span class="n">2</span> Les matières et le mot insolite <span class="en">· School subjects &amp; the odd one out</span></h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Learn the <b>school words</b>. To find the odd one out, spot what <b>three</b> words have in common.</span></div>
+  <h3>School words</h3>
+  <table><tr><th>Français</th><th>English</th><th>Français</th><th>English</th><th>Français</th><th>English</th></tr>
+    <tr><td>le français</td><td>French</td><td>la géographie (la géo)</td><td>geography</td><td>le professeur</td><td>teacher</td></tr>
+    <tr><td>les maths</td><td>maths</td><td>l'histoire</td><td>history</td><td>l'étudiant</td><td>student</td></tr>
+    <tr><td>l'anglais</td><td>English</td><td>l'informatique</td><td>computing</td><td>le tableau</td><td>(white)board</td></tr>
+    <tr><td>l'arabe</td><td>Arabic</td><td>l'art</td><td>art</td><td>le devoir</td><td>homework</td></tr>
+    <tr><td>la biologie</td><td>biology</td><td>l'EPS</td><td>PE (sport)</td><td>le cours</td><td>lesson / course</td></tr>
+    <tr><td>l'italien</td><td>Italian</td><td>la matière</td><td>subject</td><td>le test, l'étude</td><td>test, study</td></tr>
+  </table>
+  <p>Not school words: <b>la France</b> (France, a country), <b>l'oncle</b> (uncle), <b>le plat</b> (dish of food), <b>la météo</b> (weather forecast), <b>le café</b> (coffee / café). <b>TCF, DELF, DALF</b> are French language exams.</p>
+  <h3>Worksheet questions, with answers · Trouvez le mot insolite (Find the odd one out)</h3>
+  <div class="ex"><div class="src">Worksheet · Page 2 · Trouvez le mot insolite</div>
+    <table><tr><th>#</th><th>Words</th><th>Odd one out</th><th>Why (English)</th></tr>
+      <tr><td>1</td><td>TCF / DELF / EPS / DALF</td><td class="ans">EPS</td><td>EPS is PE; the others are French language exams</td></tr>
+      <tr><td>2</td><td>France / géo / art / maths</td><td class="ans">France</td><td>a country; the others are school subjects</td></tr>
+      <tr><td>3</td><td>anglais / oncle / arabe / italien</td><td class="ans">oncle</td><td>uncle (family); the others are languages</td></tr>
+      <tr><td>4</td><td>étudiant / professeur / école / plat</td><td class="ans">plat</td><td>a dish of food; the others are school words</td></tr>
+      <tr><td>5</td><td>tableau / matière / météo / devoir</td><td class="ans">météo</td><td>the weather; the others are school words</td></tr>
+      <tr><td>6</td><td>café / test / étude / cours</td><td class="ans">café</td><td>coffee; the others are school words</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 3 · Tu choisis (Choose) · Q1–2</div>
+    <table><tr><th>Question</th><th>English</th><th>Answer</th></tr>
+      <tr><td>1- Hassan va à l'…… français du Koweït. <i class="small">(a- Institut b- tableau)</i></td><td>Hassan goes to the French …… of Kuwait.</td><td class="ans">a- Institut (Institute)</td></tr>
+      <tr><td>2- Hassan voudrait s'inscrire pour un …… de français. <i class="small">(a- plat b- cours)</i></td><td>Hassan would like to sign up for a French ……</td><td class="ans">b- cours (course)</td></tr>
+    </table></div>
+  <div class="box tip"><span class="lab">Exam tip</span>For the odd one out, first find the <b>group</b> that three words share (subjects? languages? school things?), then the word that doesn't fit is your answer.</div>
+  <div class="box trick"><span class="lab">Memory trick</span>A language uses the same word as its people: <b>anglais</b> (English), <b>arabe</b>, <b>italien</b>, <b>français</b>. An <b>oncle</b> (uncle) is in your family, not a language.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Odd one out: histoire / biologie / voiture / art</li><li>Odd one out: lundi / mardi / tableau / jeudi</li><li>Translate: <b>le devoir</b> and <b>le tableau</b>.</li></ol></div>
+
+  <h2><span class="n">3</span> Les contraires et les moments de la journée <span class="en">· Opposites &amp; times of day</span></h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Opposites come in <b>pairs</b> (facile ↔ difficile), and the day runs <b>matin → midi → après-midi → soir → minuit</b>.</span></div>
+  <h3>Worksheet questions, with answers · Donnez l'opposé du mot (Give the opposite of the word)</h3>
+  <div class="ex"><div class="src">Worksheet · Page 2 · Donnez l'opposé du mot</div>
+    <table><tr><th>Mot</th><th>English</th><th>Opposé</th><th>English</th></tr>
+      <tr><td>facile</td><td>easy</td><td class="ans">difficile</td><td>difficult</td></tr>
+      <tr><td>facilement</td><td>easily</td><td class="ans">difficilement</td><td>with difficulty</td></tr>
+      <tr><td>d'abord</td><td>first</td><td class="ans">enfin</td><td>finally</td></tr>
+      <tr><td>tôt</td><td>early</td><td class="ans">tard</td><td>late</td></tr>
+      <tr><td>midi</td><td>midday</td><td class="ans">minuit</td><td>midnight</td></tr>
+      <tr><td>le matin</td><td>the morning</td><td class="ans">le soir</td><td>the evening</td></tr>
+      <tr><td>avant</td><td>before</td><td class="ans">après</td><td>after</td></tr>
+    </table>
+    <div class="small">(The sheet asks for <b>midi</b> twice: both times the answer is <b>minuit</b>.)</div></div>
+  <div class="ex"><div class="src">Worksheet · Page 6 · Mettez en ordre les moments de la journée (Put the times of day in order)</div>
+    <div class="q">a) midi · b) matin · c) minuit · d) après-midi · e) soir</div>
+    <div class="work"><div><span class="ans">1 matin → 2 midi → 3 après-midi → 4 soir → 5 minuit</span></div>
+      <div><i>morning → midday → afternoon → evening → midnight</i></div></div></div>
+  <div class="fig"><svg width="560" height="70" viewBox="0 0 560 70">
+    <defs><linearGradient id="sky" x1="0" x2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset=".5" stop-color="#9fd0ff"/><stop offset=".8" stop-color="#f5a54a"/><stop offset="1" stop-color="#2a2f6b"/></linearGradient></defs>
+    <rect x="10" y="8" width="540" height="30" rx="15" fill="url(#sky)"/>
+    <g font-size="12" font-weight="700" text-anchor="middle" fill="#1f2433">
+      <text x="60" y="58">1 matin</text><text x="170" y="58">2 midi</text><text x="280" y="58">3 après-midi</text><text x="395" y="58">4 soir</text><text x="505" y="58">5 minuit</text></g>
+  </svg><div class="cap">The day from morning to midnight.</div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>Midi</b> (midday, 12:00) and <b>minuit</b> (midnight, 00:00) look alike. <b>Mi-nuit</b> = the middle of the <b>nuit</b> (night); <b>mi-di</b> = the middle of the day.</div>
+  <div class="box trick"><span class="lab">Memory trick</span>Opposite pairs often share a pattern: <b>facile → difficile</b>, so <b>facilement → difficilement</b> (just add -ment to both).</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Give the opposite: <b>tard</b>.</li><li>Give the opposite: <b>après</b>.</li><li>What comes between <b>midi</b> and <b>soir</b>?</li></ol></div>
+</div>
+
+<!-- ============ PART 2 ============ -->
+<div class="unit p2">
+  <div class="banner"><div class="big">2</div><div><h1>Les verbes au présent</h1><p>Verbs in the present: the -er pattern, verbs with a twist (étudier, manger), apprendre and prendre, avoir, aller and « il faut ».</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>A French verb changes its <b>ending</b> to match <b>who</b> does it: je, tu, il/elle, nous, vous, ils/elles. Find the person first, then pick the ending.</span></div>
+
+  <h2><span class="n">4</span> Les verbes en -er : parler, aimer, donner, penser</h2>
+  <div class="bigidea"><b>Big idea:</b> <span>-er verbs: take off <b>-er</b>, then add <b>e, es, e, ons, ez, ent</b>.</span></div>
+  <p>Most French verbs end in <b>-er</b>. Take off -er to get the <b>stem</b> (parl-), then add the ending for the person.</p>
+  <table class="endings"><tr><th>Person</th><th>Ending</th><th>parler (to speak)</th><th>aimer (to like / love)</th><th>donner (to give)</th><th>penser (to think)</th></tr>
+    <tr><td>je / j'</td><td class="end">-e</td><td>je parl<span class="end">e</span></td><td>j'aim<span class="end">e</span></td><td>je donn<span class="end">e</span></td><td>je pens<span class="end">e</span></td></tr>
+    <tr><td>tu</td><td class="end">-es</td><td>tu parl<span class="end">es</span></td><td>tu aim<span class="end">es</span></td><td>tu donn<span class="end">es</span></td><td>tu pens<span class="end">es</span></td></tr>
+    <tr><td>il / elle</td><td class="end">-e</td><td>il parl<span class="end">e</span></td><td>il aim<span class="end">e</span></td><td>il donn<span class="end">e</span></td><td>il pens<span class="end">e</span></td></tr>
+    <tr><td>nous</td><td class="end">-ons</td><td>nous parl<span class="end">ons</span></td><td>nous aim<span class="end">ons</span></td><td>nous donn<span class="end">ons</span></td><td>nous pens<span class="end">ons</span></td></tr>
+    <tr><td>vous</td><td class="end">-ez</td><td>vous parl<span class="end">ez</span></td><td>vous aim<span class="end">ez</span></td><td>vous donn<span class="end">ez</span></td><td>vous pens<span class="end">ez</span></td></tr>
+    <tr><td>ils / elles</td><td class="end">-ent</td><td>ils parl<span class="end">ent</span></td><td>ils aim<span class="end">ent</span></td><td>ils donn<span class="end">ent</span></td><td>ils pens<span class="end">ent</span></td></tr>
+  </table>
+  <p class="small">English: I speak, you speak, he/she speaks, we speak, you speak, they speak.</p>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 5 · Tu choisis (Choose) · Q8–14</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>8- Je …… français.</td><td>I speak French.</td><td>parle / parles</td><td class="ans">a- parle</td></tr>
+      <tr><td>9- Ali …… arabe.</td><td>Ali speaks Arabic.</td><td>parles / parle</td><td class="ans">b- parle</td></tr>
+      <tr><td>10- Nous …… arabe.</td><td>We speak Arabic.</td><td>parlons / parles</td><td class="ans">a- parlons</td></tr>
+      <tr><td>11- Tu …… arabe.</td><td>You speak Arabic.</td><td>parle / parles</td><td class="ans">b- parles</td></tr>
+      <tr><td>12- Vous …… anglais.</td><td>You speak English.</td><td>parlez / parles</td><td class="ans">a- parlez</td></tr>
+      <tr><td>13- Mona …… anglais.</td><td>Mona speaks English.</td><td>parlent / parle</td><td class="ans">b- parle</td></tr>
+      <tr><td>14- Il …… arabe.</td><td>He speaks Arabic.</td><td>parle / parles</td><td class="ans">a- parle</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 7 · Tu conjugues au présent (Conjugate in the present) · parler, donner, aimer, penser</div>
+    <div class="work"><div>All four follow the table above exactly. Note <b>j'aime</b>: je becomes <b>j'</b> before a vowel (a, e, i, o, u) or h.</div></div></div>
+  <div class="box tip"><span class="lab">Exam tip</span>A name (Ali, Mona) or "mon ami" is one person, so it takes the <b>il / elle</b> ending: Ali parl<b>e</b>, Mona parl<b>e</b>.</div>
+  <div class="box real"><span class="lab">Say it</span>je parl<b>e</b>, tu parl<b>es</b>, il parl<b>e</b> and ils parl<b>ent</b> all <b>sound the same</b> ("parl"). Only nous parl<b>ons</b> and vous parl<b>ez</b> sound different. So the spelling matters in writing!</div>
+  <div class="box trick"><span class="lab">Memory trick</span>Endings song: <b>e, es, e, ons, ez, ent</b>. And <b>tu</b> always ends in <b>-s</b>.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Nous …… (aimer) le sport.</li><li>Elles …… (donner) un cadeau.</li><li>Tu …… (penser) à l'examen.</li></ol></div>
+
+  <h2><span class="n">5</span> Étudier, manger, accepter, refuser</h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Same endings as parler. Use <b>j'</b> before a vowel, and write <b>nous mangeons</b> with an e.</span></div>
+  <p>These are -er verbs too, with two small twists: <b>étudier</b> and <b>accepter</b> start with a vowel (so <b>j'</b>), and <b>manger</b> keeps an <b>e</b> in <b>nous mangeons</b>.</p>
+  <table class="endings"><tr><th>Person</th><th>étudier (to study)</th><th>manger (to eat)</th><th>accepter (to accept)</th><th>refuser (to refuse)</th></tr>
+    <tr><td>je / j'</td><td>j'étudi<span class="end">e</span></td><td>je mang<span class="end">e</span></td><td>j'accept<span class="end">e</span></td><td>je refus<span class="end">e</span></td></tr>
+    <tr><td>tu</td><td>tu étudi<span class="end">es</span></td><td>tu mang<span class="end">es</span></td><td>tu accept<span class="end">es</span></td><td>tu refus<span class="end">es</span></td></tr>
+    <tr><td>il / elle</td><td>il étudi<span class="end">e</span></td><td>il mang<span class="end">e</span></td><td>il accept<span class="end">e</span></td><td>il refus<span class="end">e</span></td></tr>
+    <tr><td>nous</td><td>nous étudi<span class="end">ons</span></td><td>nous mang<span class="end">eons</span></td><td>nous accept<span class="end">ons</span></td><td>nous refus<span class="end">ons</span></td></tr>
+    <tr><td>vous</td><td>vous étudi<span class="end">ez</span></td><td>vous mang<span class="end">ez</span></td><td>vous accept<span class="end">ez</span></td><td>vous refus<span class="end">ez</span></td></tr>
+    <tr><td>ils / elles</td><td>ils étudi<span class="end">ent</span></td><td>ils mang<span class="end">ent</span></td><td>ils accept<span class="end">ent</span></td><td>ils refus<span class="end">ent</span></td></tr>
+  </table>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 3 · Tu choisis · Q3, 8, 9, 12</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>3- Hassan pense …… dans une université française.</td><td>Hassan is thinking of studying at a French university.</td><td>étudie / étudier</td><td class="ans">b- étudier</td></tr>
+      <tr><td>8- Nous …… le français.</td><td>We study French.</td><td>étudier / étudions</td><td class="ans">b- étudions</td></tr>
+      <tr><td>9- Il …… le français.</td><td>He studies French.</td><td>étudies / étudie</td><td class="ans">b- étudie</td></tr>
+      <tr><td>12- Mona …… l'arabe.</td><td>Mona studies Arabic.</td><td>étudies / étudie</td><td class="ans">b- étudie</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 4 · Tu choisis · Q1, 3, 12–15</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>1- Marie …… la biologie tous les mardis.</td><td>Marie studies biology every Tuesday.</td><td>étudie / étudions</td><td class="ans">a- étudie</td></tr>
+      <tr><td>3- Tu …… pour les examens.</td><td>You study for the exams.</td><td>étudies / étudiez</td><td class="ans">a- étudies</td></tr>
+      <tr><td>12- Elle …… de la glace.</td><td>She eats (some) ice cream.</td><td>mangent / mange</td><td class="ans">b- mange</td></tr>
+      <tr><td>13- Nous …… de la glace.</td><td>We eat (some) ice cream.</td><td>mangez / mangeons</td><td class="ans">b- mangeons</td></tr>
+      <tr><td>14- Tu …… quoi ?</td><td>What are you eating?</td><td>manges / mange</td><td class="ans">a- manges</td></tr>
+      <tr><td>15- Il …… de la glace.</td><td>He eats (some) ice cream.</td><td>mange / mangent</td><td class="ans">a- mange</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Pages 2 and 7 · Tu conjugues au présent · étudier, accepter, manger, refuser</div>
+    <div class="work"><div>See the table above: every form is the worksheet's answer.</div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span>After <b>pense</b>, <b>voudrait</b>, <b>va</b> or <b>il faut</b>, the second verb stays in the <b>infinitive</b> (the -er form): Hassan pense <b>étudier</b>. And <b>nous mang<u>e</u>ons</b> keeps its e so the g still sounds soft, like "j".</div>
+  <div class="box trick"><span class="lab">Memory trick</span>j'étudie, tu étudies… keep the <b>i</b> of the stem <b>étudi-</b>: nous étud<b>i</b>ons, vous étud<b>i</b>ez.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Vous …… (étudier) la géographie.</li><li>Nous …… (manger) du riz.</li><li>Ils …… (refuser) le gâteau.</li></ol></div>
+
+  <h2><span class="n">6</span> Apprendre et prendre</h2>
+  <div class="bigidea"><b>Big idea:</b> <span><b>prendre</b> and <b>apprendre</b>: prends, prends, prend, prenons, prenez, prennent.</span></div>
+  <p><b>Prendre</b> (to take; also to have food or drink) is irregular, and <b>apprendre</b> (to learn) is prendre with <b>ap-</b> in front, so it changes in exactly the same way.</p>
+  <table class="endings"><tr><th>Person</th><th>prendre (to take / to have)</th><th>apprendre (to learn)</th><th>English (apprendre)</th></tr>
+    <tr><td>je / j'</td><td>je prend<span class="end">s</span></td><td>j'apprend<span class="end">s</span></td><td>I learn</td></tr>
+    <tr><td>tu</td><td>tu prend<span class="end">s</span></td><td>tu apprend<span class="end">s</span></td><td>you learn</td></tr>
+    <tr><td>il / elle</td><td>il prend</td><td>il apprend</td><td>he / she learns</td></tr>
+    <tr><td>nous</td><td>nous pren<span class="end">ons</span></td><td>nous appren<span class="end">ons</span></td><td>we learn</td></tr>
+    <tr><td>vous</td><td>vous pren<span class="end">ez</span></td><td>vous appren<span class="end">ez</span></td><td>you learn</td></tr>
+    <tr><td>ils / elles</td><td>ils pren<span class="end">nent</span></td><td>ils appren<span class="end">nent</span></td><td>they learn</td></tr>
+  </table>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 3 · Tu choisis · Q6, 7, 10, 11, 13</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>6- J'…… une nouvelle langue.</td><td>I learn a new language.</td><td>apprend / apprends</td><td class="ans">b- apprends</td></tr>
+      <tr><td>7- Ali …… une nouvelle langue.</td><td>Ali learns a new language.</td><td>apprend / apprends</td><td class="ans">a- apprend</td></tr>
+      <tr><td>10- Nous …… à lire.</td><td>We learn to read.</td><td>apprenons / apprenez</td><td class="ans">a- apprenons</td></tr>
+      <tr><td>11- Tu …… le français.</td><td>You learn French.</td><td>apprend / apprends</td><td class="ans">b- apprends</td></tr>
+      <tr><td>13- Elle …… la leçon.</td><td>She learns the lesson.</td><td>apprend / apprends</td><td class="ans">a- apprend</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 4 · Tu choisis · Q2, 4, 5</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>2- Les amies …… le vocabulaire.</td><td>The friends learn the vocabulary.</td><td>apprenez / apprennent</td><td class="ans">b- apprennent</td></tr>
+      <tr><td>4- Nous …… la géographie.</td><td>We learn geography.</td><td>apprenons / apprends</td><td class="ans">a- apprenons</td></tr>
+      <tr><td>5- Vous …… à parler anglais.</td><td>You learn to speak English.</td><td>apprenons / apprenez</td><td class="ans">b- apprenez</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 8 · Tu choisis · Q1–10 (prendre)</div>
+    <table><tr><th>Question</th><th>English</th><th>Answer</th><th>Question</th><th>English</th><th>Answer</th></tr>
+      <tr><td>1- Je …… du poulet.</td><td>I have (some) chicken.</td><td class="ans">prends</td><td>6- Mona …… du café.</td><td>Mona has (some) coffee.</td><td class="ans">prend</td></tr>
+      <tr><td>2- Il …… du café.</td><td>He has (some) coffee.</td><td class="ans">prend</td><td>7- Ali …… le bus.</td><td>Ali takes the bus.</td><td class="ans">prend</td></tr>
+      <tr><td>3- Je …… un taxi.</td><td>I take a taxi.</td><td class="ans">prends</td><td>8- Nous …… le bus.</td><td>We take the bus.</td><td class="ans">prenons</td></tr>
+      <tr><td>4- Tu …… quoi ?</td><td>What are you having?</td><td class="ans">prends</td><td>9- Mon ami …… du café.</td><td>My friend has (some) coffee.</td><td class="ans">prend</td></tr>
+      <tr><td>5- Ils …… du poulet.</td><td>They have (some) chicken.</td><td class="ans">prennent</td><td>10- Mon amie …… du poulet.</td><td>My friend (girl) has (some) chicken.</td><td class="ans">prend</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Pages 2 and 7 · Tu conjugues au présent · apprendre, prendre</div>
+    <div class="work"><div>See the table above: every form is the worksheet's answer.</div></div></div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>je</b> and <b>tu</b> end in <b>-s</b> (prends), but <b>il / elle</b> has <b>no s</b> (prend). And <b>ils prennent</b> has <b>two n's</b>; nous prenons and vous prenez have only one.</div>
+  <div class="box trick"><span class="lab">Memory trick</span>Learn <b>prendre</b> once and you get <b>apprendre</b> free: just put <b>ap</b> in front. (Also comprendre, to understand!)</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Elles …… (prendre) le train.</li><li>Vous …… (apprendre) le français.</li><li>Mon frère …… (prendre) un jus.</li></ol></div>
+
+  <h2><span class="n">7</span> Avoir, aller et « il faut »</h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Learn <b>avoir</b> and <b>aller</b> by heart, and use <b>il faut</b> + infinitive to give advice.</span></div>
+  <table class="endings"><tr><th>Person</th><th>avoir (to have)</th><th>English</th><th>aller (to go)</th><th>English</th></tr>
+    <tr><td>je / j'</td><td>j'<b>ai</b></td><td>I have</td><td>je <b>vais</b></td><td>I go</td></tr>
+    <tr><td>tu</td><td>tu <b>as</b></td><td>you have</td><td>tu <b>vas</b></td><td>you go</td></tr>
+    <tr><td>il / elle</td><td>il <b>a</b></td><td>he / she has</td><td>il <b>va</b></td><td>he / she goes</td></tr>
+    <tr><td>nous</td><td>nous <b>avons</b></td><td>we have</td><td>nous <b>allons</b></td><td>we go</td></tr>
+    <tr><td>vous</td><td>vous <b>avez</b></td><td>you have</td><td>vous <b>allez</b></td><td>you go</td></tr>
+    <tr><td>ils / elles</td><td>ils <b>ont</b></td><td>they have</td><td>ils <b>vont</b></td><td>they go</td></tr>
+  </table>
+  <p><b>Il faut</b> + infinitive = "you must / you need to / it is necessary to": <b>il faut avoir</b> (you need to have), <b>il faut faire du sport</b> (you must do sport). It never changes.</p>
+  <p><b>Très</b> = very (goes before an adjective: <b>très facile</b>). <b>Beaucoup</b> = a lot (goes after a verb: <b>je l'aime beaucoup</b>). <b>Bon</b> (good) goes with a masculine noun: <b>un bon niveau</b>; <b>bonne</b> with a feminine one: <b>une bonne idée</b>.</p>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 3 · Tu choisis · Q4–5 and Page 4 · Q6–9</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>P3 4- Il …… parler au secrétaire.</td><td>He is going to speak to the secretary.</td><td>vont / va</td><td class="ans">b- va</td></tr>
+      <tr><td>P3 5- Il faut avoir un …… niveau.</td><td>You need to have a good level.</td><td>bon / bonne</td><td class="ans">a- bon</td></tr>
+      <tr><td>P4 6- Il faut …… un bon niveau.</td><td>You need to have a good level.</td><td>avons / avoir</td><td class="ans">b- avoir</td></tr>
+      <tr><td>P4 7- C'est …… facile.</td><td>It's very easy.</td><td>beaucoup / très</td><td class="ans">b- très</td></tr>
+      <tr><td>P4 8- J'…… math.</td><td>I have maths.</td><td>as / ai</td><td class="ans">b- ai</td></tr>
+      <tr><td>P4 9- Je …… à l'école à 7 heures.</td><td>I go to school at 7 o'clock.</td><td>vais / va</td><td class="ans">a- vais</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 6 · Donnez 5 conseils pour vivre sans stress (Give 5 tips for living without stress)</div>
+    <table><tr><th>Français</th><th>English</th></tr>
+      <tr><td class="ans">1. Il faut faire du sport.</td><td>You must do sport.</td></tr>
+      <tr><td class="ans">2. Il faut lire le Coran.</td><td>You must read the Qur'an.</td></tr>
+      <tr><td class="ans">3. Il faut bien manger.</td><td>You must eat well.</td></tr>
+      <tr><td class="ans">4. Il faut bien dormir.</td><td>You must sleep well.</td></tr>
+      <tr><td class="ans">5. Il faut faire la prière.</td><td>You must pray.</td></tr>
+    </table></div>
+  <div class="box tip"><span class="lab">Exam tip</span>Every tip starts the same way: <b>Il faut</b> + a verb ending in <b>-er, -ir, -re</b> (faire, lire, manger, dormir). Other good tips: il faut se reposer (rest), il faut parler à un ami (talk to a friend).</div>
+  <div class="box warn"><span class="lab">Watch out!</span><b>j'ai</b> (I have), <b>tu as</b> (you have). <b>Je vais</b> (I go), <b>il va</b> (he goes). Don't mix up the je and il forms!</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Nous …… (aller) au cinéma.</li><li>Ils …… (avoir) un chat.</li><li>Write one more tip for living without stress, starting with <b>Il faut</b>.</li></ol></div>
+</div>
+
+<!-- ============ PART 3 ============ -->
+<div class="unit p3">
+  <div class="banner"><div class="big">3</div><div><h1>Grammaire et expressions</h1><p>Grammar &amp; phrases: talking about the near future, the pronoun « en », and ways to say yes.</p></div></div>
+  <div class="bigidea"><b>Big idea:</b> <span>Small words do big jobs: <b>aller</b> makes the future, <b>en</b> stops you repeating a thing, and a few phrases (<b>d'accord</b>, <b>avec plaisir</b>) say yes politely.</span></div>
+
+  <h2><span class="n">8</span> Le futur proche <span class="en">· The near future</span></h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Near future = <b>aller</b> (present) + <b>infinitive</b>: je vais parler.</span></div>
+  <p>To say what you are <b>going to</b> do: <b>aller</b> (in the present) + a verb in the <b>infinitive</b>.</p>
+  <div class="fig"><svg width="540" height="70" viewBox="0 0 540 70">
+    <rect x="10" y="10" width="150" height="46" rx="12" fill="#c0392b"/><text x="85" y="40" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">je vais</text>
+    <text x="185" y="42" text-anchor="middle" font-size="26" font-weight="800" fill="#1f2433">+</text>
+    <rect x="210" y="10" width="150" height="46" rx="12" fill="#2c66cf"/><text x="285" y="40" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">parler</text>
+    <text x="385" y="42" text-anchor="middle" font-size="26" font-weight="800" fill="#1f2433">=</text>
+    <text x="465" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2433">I'm going</text><text x="465" y="50" text-anchor="middle" font-size="14" font-weight="700" fill="#1f2433">to speak</text>
+  </svg><div class="cap">aller (je vais, tu vas, il va, nous allons, vous allez, ils vont) + infinitive.</div></div>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 5 · Tu choisis · Q1–7</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>1- Les étudiants …… apprendre le français.</td><td>The students are going to learn French.</td><td>allez / vont</td><td class="ans">b- vont</td></tr>
+      <tr><td>2- Demain nous …… voir un film au cinéma.</td><td>Tomorrow we are going to see a film at the cinema.</td><td>allons / va</td><td class="ans">a- allons</td></tr>
+      <tr><td>3- Demain Ali …… voir un film.</td><td>Tomorrow Ali is going to see a film.</td><td>vas / va</td><td class="ans">b- va</td></tr>
+      <tr><td>4- Mona va …… un film.</td><td>Mona is going to see a film.</td><td>voir / vont</td><td class="ans">a- voir</td></tr>
+      <tr><td>5- Ali va …… 20 ans.</td><td>Ali is going to be 20.</td><td>avoir / ont</td><td class="ans">a- avoir</td></tr>
+      <tr><td>6- Mes sœurs vont …… à la maison.</td><td>My sisters are going to stay at home.</td><td>rester / restes</td><td class="ans">a- rester</td></tr>
+      <tr><td>7- Je vais …… au chalet.</td><td>I'm going to go to the chalet.</td><td>vas / aller</td><td class="ans">b- aller</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 6 · Transformez les phrases au futur proche (Change the sentences into the near future)</div>
+    <table><tr><th>Sentence</th><th>Futur proche</th><th>English</th></tr>
+      <tr><td>1- Je parle à Ali.</td><td class="ans">Je vais parler à Ali.</td><td>I'm going to speak to Ali.</td></tr>
+      <tr><td>2- Je prends un café.</td><td class="ans">Je vais prendre un café.</td><td>I'm going to have a coffee.</td></tr>
+      <tr><td>3- Il mange du poulet.</td><td class="ans">Il va manger du poulet.</td><td>He's going to eat chicken.</td></tr>
+      <tr><td>4- Il fait le devoir.</td><td class="ans">Il va faire le devoir.</td><td>He's going to do the homework.</td></tr>
+      <tr><td>5- Tu fais le devoir ?</td><td class="ans">Tu vas faire le devoir ?</td><td>Are you going to do the homework?</td></tr>
+    </table></div>
+  <div class="box tip"><span class="lab">Exam tip</span>To transform: keep the person, put the right form of <b>aller</b>, then turn the verb back into its infinitive (parle → <b>parler</b>, prends → <b>prendre</b>, fais → <b>faire</b>). Keep the rest of the sentence the same, even the <b>?</b>.</div>
+  <div class="box warn"><span class="lab">Watch out!</span>Only <b>aller</b> changes. The second verb never does: "Mes sœurs vont <b>rester</b>", not "restent".</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Transform: <b>Nous mangeons au restaurant.</b></li><li>Transform: <b>Elle prend le bus.</b></li><li>Ils …… (aller) jouer au foot.</li></ol></div>
+
+  <h2><span class="n">9</span> Le pronom « en » <span class="en">· The pronoun "en"</span></h2>
+  <div class="bigidea"><b>Big idea:</b> <span><b>en</b> replaces "some / one / of it" and goes <b>before the verb</b>: j'en veux.</span></div>
+  <p><b>En</b> replaces a thing introduced by <b>un, une, des, du, de la, de l'</b>, a <b>number</b>, or <b>de</b> ("some of it / of them / about it"). It goes <b>just before the verb</b>. If there is a number or amount, keep it at the end.</p>
+  <div class="fig"><svg width="560" height="74" viewBox="0 0 560 74">
+    <text x="10" y="26" font-size="16" font-weight="700" fill="#1f2433">Tu veux <tspan fill="#c0392b" font-weight="800">un bonbon</tspan> ?</text>
+    <text x="10" y="66" font-size="16" font-weight="700" fill="#1f2433">Oui, j'<tspan fill="#c0392b" font-weight="800">en</tspan> veux.</text>
+    <text x="10" y="44" font-size="11" font-weight="700" fill="#c0392b">↓ un bonbon becomes en</text>
+    <text x="250" y="26" font-size="16" font-weight="700" fill="#1f2433">Tu as <tspan fill="#c0392b" font-weight="800">deux stylos</tspan> ?</text>
+    <text x="250" y="66" font-size="16" font-weight="700" fill="#1f2433">Oui, j'<tspan fill="#c0392b" font-weight="800">en</tspan> ai <tspan fill="#2c66cf" font-weight="800">deux</tspan>.</text>
+    <defs><marker id="ah3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#c0392b"/></marker></defs>
+  </svg><div class="cap">"en" takes the place of the thing; a number (deux) stays at the end.</div></div>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 5 · Tu réponds en utilisant le pronom « en » (Answer using the pronoun "en")</div>
+    <table><tr><th>Question</th><th>English</th><th>Answer</th><th>English</th></tr>
+      <tr><td>1- Tu veux un bonbon ?</td><td>Do you want a sweet?</td><td class="ans">Oui, j'en veux.</td><td>Yes, I want one.</td></tr>
+      <tr><td>2- Elle mange de la glace ?</td><td>Is she eating ice cream?</td><td class="ans">Oui, elle en mange.</td><td>Yes, she's eating some.</td></tr>
+      <tr><td>3- Tu as deux stylos ?</td><td>Have you got two pens?</td><td class="ans">Oui, j'en ai deux.</td><td>Yes, I've got two.</td></tr>
+      <tr><td>4- Tu achètes un kilo de riz ?</td><td>Are you buying a kilo of rice?</td><td class="ans">Oui, j'en achète un kilo.</td><td>Yes, I'm buying a kilo.</td></tr>
+      <tr><td>5- Il parle de sa fête d'anniversaire ?</td><td>Is he talking about his birthday party?</td><td class="ans">Oui, il en parle.</td><td>Yes, he's talking about it.</td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 4 · Tu choisis · Q10–11</div>
+    <table><tr><th>Question</th><th>English</th><th>Choices</th><th>Answer</th></tr>
+      <tr><td>10- Tu veux un gâteau ? Oui, j'…… veux.</td><td>Do you want a cake? Yes, I want one.</td><td>en / la</td><td class="ans">a- en</td></tr>
+      <tr><td>11- Il prend deux cahiers ? Oui, il …… prend.</td><td>Is he taking two exercise books? Yes, he's taking (two).</td><td>les / en</td><td class="ans">b- en</td></tr>
+    </table></div>
+  <div class="box warn"><span class="lab">Watch out!</span>Use <b>en</b>, not <b>la / les</b>, when the thing came with <b>un, une, des, de, du, de la</b> or a number. And <b>je + en = j'en</b> (the e drops before a vowel).</div>
+  <div class="box trick"><span class="lab">Memory trick</span>Answer in 3 steps: <b>Oui,</b> + <b>person</b> + <b>en</b> + <b>verb</b> (+ the number). Tu as deux stylos? → Oui, j'<b>en</b> ai deux.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Tu manges du pain ? Oui, ……</li><li>Il a trois frères ? Oui, ……</li><li>Vous voulez des pommes ? Oui, nous ……</li></ol></div>
+
+  <h2><span class="n">10</span> À l'Institut français : dire oui <span class="en">· Saying yes</span></h2>
+  <div class="bigidea"><b>Big idea:</b> <span>Five ways to say yes: <b>Oui, merci · D'accord · Avec plaisir · Bonne idée · C'est possible</b>.</span></div>
+  <p>Hassan goes to the <b>Institut français</b> (the French Institute) to sign up for a French <b>cours</b> (course). When someone invites you or suggests something, here's how to <b>accept</b> (and how to refuse politely).</p>
+  <h3>Worksheet questions, with answers</h3>
+  <div class="ex"><div class="src">Worksheet · Page 8 · Tu réponds : pour accepter tu dis : (Answer: to accept, you say:)</div>
+    <table><tr><th>Français</th><th>English</th><th>Français</th><th>English</th></tr>
+      <tr><td class="ans">1- Oui, merci.</td><td>Yes, thank you.</td><td class="ans">4- Bonne idée.</td><td>Good idea.</td></tr>
+      <tr><td class="ans">2- D'accord.</td><td>OK / agreed.</td><td class="ans">5- C'est possible.</td><td>That's possible.</td></tr>
+      <tr><td class="ans">3- Avec plaisir.</td><td>With pleasure.</td><td></td><td></td></tr>
+    </table></div>
+  <div class="ex"><div class="src">Worksheet · Page 3 · Tu choisis · Q1–2 (Hassan)</div>
+    <div class="work"><div>1- Hassan va à l'<span class="ans">Institut</span> français du Koweït. <i>(Hassan goes to the French Institute of Kuwait.)</i></div>
+      <div>2- Hassan voudrait s'inscrire pour un <span class="ans">cours</span> de français. <i>(Hassan would like to sign up for a French course.)</i></div></div></div>
+  <table><tr><th>To refuse politely</th><th>English</th></tr>
+    <tr><td>Non, merci.</td><td>No, thank you.</td></tr>
+    <tr><td>Désolé(e), je ne peux pas.</td><td>Sorry, I can't.</td></tr>
+    <tr><td>Ce n'est pas possible.</td><td>It's not possible.</td></tr>
+  </table>
+  <div class="box tip"><span class="lab">Exam tip</span>Learn the five "yes" phrases as a list: <b>Oui, merci · D'accord · Avec plaisir · Bonne idée · C'est possible</b>. Write the apostrophes and accents: <b>d'accord</b>, <b>idée</b>.</div>
+  <div class="box trick"><span class="lab">Memory trick</span><b>Bonne idée</b>: idée is feminine (une idée), so it's <b>bonne</b>, not bon.</div>
+  <div class="try"><span class="lab">✏️ Try these (answers at the back)</span>
+    <ol type="a"><li>Translate: <b>Avec plaisir !</b></li><li>Your friend says "On va au cinéma ?". Accept in two different ways.</li><li>Refuse politely in French.</li></ol></div>
+</div>
+
+<!-- ============ CHEAT SHEET ============ -->
+<div class="cheat">
+  <h1>🦜 French cheat sheet</h1>
+  <div class="cheatgrid">
+    <section class="cp2"><h3>-er verbs (parler)</h3><ul class="vt">
+      <li>je parl<span class="end">e</span> · tu parl<span class="end">es</span></li><li>il parl<span class="end">e</span> · nous parl<span class="end">ons</span></li><li>vous parl<span class="end">ez</span> · ils parl<span class="end">ent</span></li>
+      <li class="small">Same: aimer (j'aime), donner, penser, accepter (j'accepte), refuser</li></ul></section>
+    <section class="cp2"><h3>étudier · manger</h3><ul class="vt">
+      <li>j'étudie, tu étudies, il étudie, nous étudions, vous étudiez, ils étudient</li>
+      <li>je mange, tu manges, il mange, nous <b>mangeons</b>, vous mangez, ils mangent</li></ul></section>
+    <section class="cp2"><h3>prendre · apprendre</h3><ul class="vt">
+      <li>je prends, tu prends, il <b>prend</b>, nous prenons, vous prenez, ils <b>prennent</b></li>
+      <li>j'apprends, tu apprends, il apprend, nous apprenons, vous apprenez, ils apprennent</li></ul></section>
+    <section class="cp2"><h3>avoir · aller</h3><ul class="vt">
+      <li>j'ai, tu as, il a, nous avons, vous avez, ils ont</li>
+      <li>je vais, tu vas, il va, nous allons, vous allez, ils vont</li></ul></section>
+    <section class="cp3"><h3>Futur proche</h3><ul>
+      <li><b>aller + infinitive</b>: je vais parler (I'm going to speak)</li><li>il va manger · nous allons voir · ils vont rester</li><li>Only aller changes!</li></ul></section>
+    <section class="cp3"><h3>Pronoun « en »</h3><ul>
+      <li>Replaces un/une/des/du/de la/de + thing</li><li><b>Before the verb</b>: j'en veux · elle en mange</li><li>Number at the end: j'en ai <b>deux</b></li></ul></section>
+    <section class="cp1"><h3>Opposites</h3><ul>
+      <li>facile ↔ difficile · facilement ↔ difficilement</li><li>d'abord ↔ enfin · tôt ↔ tard</li><li>midi ↔ minuit · le matin ↔ le soir · avant ↔ après</li></ul></section>
+    <section class="cp1"><h3>Times of day &amp; time</h3><ul>
+      <li>matin → midi → après-midi → soir → minuit</li><li>et demie = half past · et quart = quarter past</li><li>14 heures = 2 pm</li></ul></section>
+    <section class="cp1"><h3>School words</h3><ul>
+      <li>matière = subject · cours = lesson · devoir = homework</li><li>tableau = board · professeur = teacher</li><li>Jour = day · Lieu = place · en voiture = by car</li></ul></section>
+    <section class="cp3"><h3>Saying yes / no</h3><ul>
+      <li>Oui, merci · D'accord · Avec plaisir</li><li>Bonne idée · C'est possible</li><li>Non, merci · Désolé(e), je ne peux pas</li></ul></section>
+    <section class="cp2"><h3>Il faut · très</h3><ul>
+      <li><b>Il faut</b> + infinitive: il faut bien dormir</li><li>très facile (very easy) · j'aime beaucoup (a lot)</li><li>un <b>bon</b> niveau · une <b>bonne</b> idée</li></ul></section>
+    <section class="cp1" style="background:#fff4c2"><h3 style="color:#8a6a00">Stuck? 🦜</h3><ul>
+      <li>Find <b>who</b> (je, tu, il…) first, then the ending</li><li>A name = <b>il / elle</b></li><li>After a verb like va / faut / pense: <b>infinitive</b></li></ul></section>
+  </div>
+</div>
+
+<!-- ============ ANSWER KEY ============ -->
+<div class="pb">
+  <div class="banner" style="background:linear-gradient(120deg,#1f2433,#5b6275)"><div class="big">✔</div><div><h1>Answer key: Try these</h1><p>Check your answers. If one is wrong, read the rule again in that section.</p></div></div>
+  <div class="keygrid">
+    <h3 style="color:var(--bd)">Part 1 · Reading &amp; vocabulary</h3>
+    <div class="k"><b>1 a)</b> I go to school by bus.</div>
+    <div class="k"><b>1 b)</b> huit heures et demie</div>
+    <div class="k"><b>1 c)</b> Jour: mardi (Tuesday); Matière: anglais (English)</div>
+    <div class="k"><b>2 a)</b> voiture <i class="small">(a car; the others are subjects)</i></div>
+    <div class="k"><b>2 b)</b> tableau <i class="small">(a board; the others are days)</i></div>
+    <div class="k"><b>2 c)</b> homework; (white)board</div>
+    <div class="k"><b>3 a)</b> tôt <i class="small">(early)</i></div>
+    <div class="k"><b>3 b)</b> avant <i class="small">(before)</i></div>
+    <div class="k"><b>3 c)</b> après-midi <i class="small">(afternoon)</i></div>
+    <h3 style="color:var(--pud)">Part 2 · Verbs in the present</h3>
+    <div class="k"><b>4 a)</b> aimons</div>
+    <div class="k"><b>4 b)</b> donnent</div>
+    <div class="k"><b>4 c)</b> penses</div>
+    <div class="k"><b>5 a)</b> étudiez</div>
+    <div class="k"><b>5 b)</b> mangeons <i class="small">(keep the e)</i></div>
+    <div class="k"><b>5 c)</b> refusent</div>
+    <div class="k"><b>6 a)</b> prennent <i class="small">(two n's)</i></div>
+    <div class="k"><b>6 b)</b> apprenez</div>
+    <div class="k"><b>6 c)</b> prend <i class="small">(one person, no s)</i></div>
+    <div class="k"><b>7 a)</b> allons</div>
+    <div class="k"><b>7 b)</b> ont</div>
+    <div class="k"><b>7 c)</b> e.g. Il faut se reposer. / Il faut parler à un ami. / Il faut boire de l'eau.</div>
+    <h3 style="color:#a02a1e">Part 3 · Grammar &amp; phrases</h3>
+    <div class="k"><b>8 a)</b> Nous allons manger au restaurant.</div>
+    <div class="k"><b>8 b)</b> Elle va prendre le bus.</div>
+    <div class="k"><b>8 c)</b> vont</div>
+    <div class="k"><b>9 a)</b> Oui, j'en mange.</div>
+    <div class="k"><b>9 b)</b> Oui, il en a trois.</div>
+    <div class="k"><b>9 c)</b> Oui, nous en voulons.</div>
+    <div class="k"><b>10 a)</b> With pleasure!</div>
+    <div class="k"><b>10 b)</b> Any two of: Oui, merci · D'accord · Avec plaisir · Bonne idée · C'est possible</div>
+    <div class="k"><b>10 c)</b> Non, merci. / Désolé(e), je ne peux pas.</div>
+  </div>
+</div>
+
+</body>
+</html>
