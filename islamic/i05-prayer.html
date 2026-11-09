@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#b8862b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Prayer: required acts and rulings</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="islamic.js"></script>
+<script>
+/* Islamic Studies Lesson 5 · Fiqh (الفقه) · Worksheet Q5 (a), (b), (c) and Hadith 3.
+   Q5 (a) five required acts of prayer, shown by a stick figure praying; Q5 (b) three ticks and crosses;
+   Q5 (c) the definitions of الواجب, السنة and المكروه, taught as building blocks and a doer / leaver grid. */
+const WS='Worksheet · Q5 · ';
+document.head.insertAdjacentHTML('beforeend',`<style>
+.pr-fig svg{display:block}
+.pr-fig .st{fill:none;stroke:#1f2433;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+.pr-bub{position:absolute;background:#fff;border:3px solid #2c66cf;border-radius:18px;padding:4px 14px;font-size:30px;font-weight:700;color:#1f3f8a;white-space:nowrap;z-index:5}
+.pr-bub:after{content:'';position:absolute;left:40px;bottom:-14px;border:9px solid transparent;border-top-color:#2c66cf}
+.lego .is-b{position:relative;margin-top:12px;border-radius:8px}
+.lego .is-b:before,.lego .is-b:after{content:'';position:absolute;top:-11px;left:calc(50% - 26px);width:18px;height:11px;border-radius:5px 5px 0 0;background:inherit}
+.lego .is-b:after{left:calc(50% + 8px)}
+.pr-grid{position:absolute;border-collapse:separate;border-spacing:8px;font-weight:800}
+.pr-grid td,.pr-grid th{background:#fff;border:3px solid #f0d9a8;border-radius:14px;text-align:center;padding:4px 10px;height:62px}
+.pr-grid th{background:#fff4dc;color:#7a4a00;font-size:19px}
+.pr-grid td{font-size:19px}
+.pr-grid .t{font-size:30px;color:#5a3c00}
+.pr-grid .good{background:#e6f7ee;border-color:#18a058;color:#0f7a40}
+.pr-grid .bad{background:#fdecec;border-color:#e04848;color:#b02a2a}
+.pr-grid .ok{background:#f2f2f6;border-color:#c9c6d6;color:#626a80}
+.pr-grid .hide{visibility:hidden}
+.hl-d{color:#18a058}.hl-l{color:#c2367a}
+</style>`);
+
+/* ---------- the praying stick figure (200×200, ground at y=186) ---------- */
+const POSE={
+  stand:`<circle cx="100" cy="36" r="16" fill="#f2b47c" stroke="#1f2433" stroke-width="4"/><path class="st" d="M100 54 L100 120 M100 120 L90 186 M100 120 L110 186 M100 68 L82 88 L106 92 M100 68 L118 86 L98 90"/>`,
+  ruku:`<circle cx="36" cy="112" r="15" fill="#f2b47c" stroke="#1f2433" stroke-width="4"/><path class="st" d="M122 118 L52 114 M122 118 L116 186 M122 118 L128 186 M64 116 L114 150"/>`,
+  up:`<circle cx="100" cy="36" r="16" fill="#f2b47c" stroke="#1f2433" stroke-width="4"/><path class="st" d="M100 54 L100 120 M100 120 L90 186 M100 120 L110 186 M100 66 L86 118 M100 66 L114 118"/>`,
+  sujood:`<circle cx="56" cy="172" r="13" fill="#f2b47c" stroke="#1f2433" stroke-width="4"/><path class="st" d="M156 186 L112 184 L130 138 L72 164 M78 162 L74 186 L52 188"/>`,
+  sit:`<circle cx="122" cy="80" r="16" fill="#f2b47c" stroke="#1f2433" stroke-width="4"/><path class="st" d="M126 98 L130 164 L72 178 L138 186 M127 112 L82 168"/>`,
+  tash:`<circle cx="122" cy="80" r="16" fill="#f2b47c" stroke="#1f2433" stroke-width="4"/><path class="st" d="M126 98 L130 164 L72 178 L138 186 M127 112 L82 168 L78 146"/>`};
+function figure(x,y,s=1,pose='stand'){
+  const f=mk('pr-fig',`left:${x}px;top:${y}px;width:${200*s}px;height:${200*s}px`,'');
+  f.set=p=>{f.innerHTML=`<svg width="${200*s}" height="${200*s}" viewBox="0 0 200 200"><rect x="20" y="186" width="160" height="10" rx="4" fill="#18a058" opacity=".55"/>${POSE[p]}</svg>`;
+    f.animate([{opacity:.2,transform:'scale(.96)'},{opacity:1,transform:'scale(1)'}],{duration:450});};
+  f.set(pose);return f;}
+
+const ACTS=[ /* in prayer order */
+  {e:'🔄',word:'Move',pose:'ruku',said:['الله أكبر','Allaahu akbar'],bl:[['تكبيرات','takbeeraat','saying Allahu akbar'],['الانتقال','al-intiqaal','when moving']],
+   en:`saying "Allahu akbar" each time you <b>move</b> to the next position`},
+  {e:'👂',word:'Hear',pose:'up',said:['سمع الله لمن حمده','sami\'a Allaahu liman hamidah'],bl:[['التسميع','at-tasmee\'','saying "sami\'a Allaahu…"']],
+   en:`saying "sami'a Allaahu liman hamidah" as you rise from bowing`},
+  {e:'🙌',word:'Praise',pose:'up',said:['ربنا ولك الحمد','rabbanaa wa lakal-hamd'],bl:[['التحميد','at-tahmeed','saying "rabbanaa wa lakal-hamd"']],
+   en:`saying "rabbanaa wa lakal-hamd" when you are standing up straight`},
+  {e:'🧎',word:'Sit',pose:'sit',said:null,bl:[['الجلوس','al-juloos','sitting'],['للتشهد','lit-tashahhud','for the tashahhud'],['الأول','al-awwal','first']],
+   en:`<b>sitting</b> for the first tashahhud, after two rak'ahs`},
+  {e:'☝️',word:'Say',pose:'tash',said:['التحيات لله','at-tahiyyaatu lillaah'],bl:[['التشهد','at-tashahhud','the tashahhud'],['الأول','al-awwal','first']],
+   en:`<b>saying</b> the first tashahhud, which begins "at-tahiyyaatu lillaah"`}];
+
+const DEF={
+  w:{t:'الواجب',ts:'al-waajib',te:'required',a:'ما يثاب فاعله ويأثم تاركه',s:'maa yuthaabu faa\'iluhu wa ya\'thamu taarikuh',
+     bl:[['ما','maa','what'],['يثاب','yuthaabu','is rewarded'],['فاعله','faa\'iluhu','its doer'],['ويأثم','wa ya\'thamu','and is sinful'],['تاركه','taarikuh','its leaver']],
+     en:'what its doer is rewarded for and its leaver is sinful for'},
+  s:{t:'السنة',ts:'as-sunna',te:'recommended',a:'ما يثاب فاعلها ولا يأثم تاركها',s:'maa yuthaabu faa\'iluhaa wa laa ya\'thamu taarikuhaa',
+     bl:[['ما','maa','what'],['يثاب','yuthaabu','is rewarded'],['فاعلها','faa\'iluhaa','its doer'],['ولا','wa laa','and not'],['يأثم','ya\'thamu','is sinful'],['تاركها','taarikuhaa','its leaver']],
+     en:'what its doer is rewarded for, and its leaver is not sinful'},
+  m:{t:'المكروه',ts:'al-makrooh',te:'disliked',a:'ما يثاب تاركه ولا يأثم فاعله',s:'maa yuthaabu taarikuhu wa laa ya\'thamu faa\'iluh',
+     bl:[['ما','maa','what'],['يثاب','yuthaabu','is rewarded'],['تاركه','taarikuhu','its leaver'],['ولا','wa laa','and not'],['يأثم','ya\'thamu','is sinful'],['فاعله','faa\'iluh','its doer']],
+     en:'what its leaver is rewarded for, and its doer is not sinful'}};
+/* colour the doer green and the leaver pink in the definition blocks */
+const tint=bl=>bl.map(([a,s,m])=>[a,s,m,/فاعل/.test(a)?'#18a058':/تارك/.test(a)?'#c2367a':/يثاب/.test(a)?'#d39a00':/يأثم/.test(a)?'#e04848':'#6a45d8']);
+
+Lesson.start(Object.assign({}, ISLAMIC, {
+  id:'i05', num:5, part:'Fiqh · الفقه', emoji:'🕌', title:'Prayer: required acts and rulings',
+  intro:`Assalaamu alaykum! Hudhud here 🐦 Today: <b>prayer</b>, Question 5 of your sheet, and Hadith 3. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Into the mosque',run:async w=>{
+  const m=mk('','left:0;top:4px;width:960px;text-align:center;font-size:84px','🕌');pop(m);
+  const t=mk('ar-font','left:0;top:110px;width:960px;text-align:center;font-size:52px;color:#8a4b00',aw('الصلاة','as-salaah'));pop(t);
+  const f=figure(700,250,1.15,'stand');
+  say(`${aw('السلام عليكم','assalaamu alaykum')}! Today is about ${aw('الصلاة','as-salaah')}, <b>prayer</b>. Watch my friend pray: standing, bowing, prostrating, sitting.`);
+  for(const p of ['stand','ruku','up','sujood','sit']){f.set(p);await w(700);}
+  await w(1600);
+  const P=[['👀','Hadith 3','Eyes down in prayer'],['🖐️','Q5 a','Five required acts'],['✅','Q5 b','Tick or cross'],['🧱','Q5 c','Three definitions']];
+  const els=P.map(([e,a,b],i)=>mk('is-card',`left:${30+(i%2)*360}px;top:${250+Math.floor(i/2)*124}px;width:330px;height:104px`,
+    `<div style="display:flex;gap:14px;align-items:center"><div style="font-size:50px">${e}</div><div><div style="font-size:23px;font-weight:800;color:#7a4a00">${a}</div><div style="font-size:17px;font-weight:700;color:#626a80">${b}</div></div></div>`));
+  const lines=[`First, <b>Hadith 3</b>: where to look when you pray.`,`Then <b>Question 5 a</b>: five things you <b>must</b> do in prayer.`,`<b>Question 5 b</b>: three ticks and crosses.`,`And <b>Question 5 c</b>: three definitions, built from the same few blocks.`];
+  for(let i=0;i<4;i++){pop(els[i]);point(els[i]);beep(520+i*80,.08);say(lines[i]);await w(2600);}
+  unpoint();say(`${aw('هيا بنا','hayyaa binaa')}! Let's go!`);await w(1600);}},
+
+/* 1 */ {t:'Eyes down (Hadith 3)',run:async w=>{
+  say(`First, the <b>third hadith</b> you learn by heart. It is about where your eyes look in prayer.`);await w(2800);
+  const h=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">Hadith 3 · الحديث الثالث</div><div class="q" style="font-size:24px;line-height:1.6">${ar(
+    `عن أنس بن مالك رضي الله عنه أن رسول الله ﷺ قال : ( ما بال أقوام ${kw('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')} في صلاتهم ، فاشتد قوله في ذلك حتى قال : لينتهن عن ذلك أو لتخطفن أبصارهم ) .`,
+    `Anas ibn Malik (may Allah be pleased with him) reported that the Messenger of Allah ﷺ said: "What is wrong with people who ${kw('raise their eyes to the sky')} in their prayer?" He spoke very strongly about it, until he said: "They must stop that, or their sight will be snatched away."`,'','blk')}</div>`);pop(h);
+  say(`The Prophet ﷺ said: ${ar('ما بال أقوام يرفعون أبصارهم إلى السماء في صلاتهم','What is wrong with people who raise their eyes to the sky in their prayer?')}`);await w(4200);
+  h.classList.add('lit');point(h.querySelector('.kw'));
+  say(`The keywords: ${aw('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')}: they <b>raise their eyes to the sky</b>.`);await w(3400);
+  say(`He spoke very strongly: they must stop, or their <b>sight</b> could be taken away. So this is serious!`);await w(3400);unpoint();
+  /* keep only the keyword line so the pictures have room */
+  h.querySelector('.q').innerHTML=ar(`${kw('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')} في صلاتهم`,`They ${kw('raise their eyes to the sky')} in their prayer`,'','blk');h.classList.add('lit');
+  await w(60);const top=h.offsetHeight+22;
+  const A=mk('is-card',`left:60px;top:${top}px;width:400px;height:${440-top}px;border-color:#e04848;text-align:center`,'');pop(A);
+  const B=mk('is-card',`left:500px;top:${top}px;width:400px;height:${440-top}px;border-color:#18a058;text-align:center`,'');pop(B);
+  const sc=Math.min(.9,(440-top-50)/200);const fy=top+Math.max(40,(440-top-200*sc)/2+10);
+  const fa=figure(60+200-100*sc,fy,sc,'stand'),fb=figure(500+200-100*sc,fy,sc,'stand');
+  const ua=mk('',`left:${60+200+30*sc}px;top:${fy-36}px;font-size:34px`,'☁️');const ea=mk('',`left:${60+200+10*sc}px;top:${fy-10}px;font-size:24px`,'⬆️');
+  loop(ea,[{transform:'translateY(4px)'},{transform:'translateY(-6px)'}],500,{direction:'alternate'});
+  const xa=mk('',`left:76px;top:${top+8}px;font-size:40px`,'❌');pop(xa);
+  say(`Here, eyes go <b>up to the sky</b>. That's what the hadith warns against.`);await w(2800);
+  const eb=mk('',`left:${500+200+20*sc}px;top:${fy+150*sc}px;font-size:24px`,'⬇️');loop(eb,[{transform:'translateY(-4px)'},{transform:'translateY(6px)'}],500,{direction:'alternate'});
+  const spot=mk('',`left:${500+200-110*sc}px;top:${fy+174*sc}px;width:${36*sc}px;height:${14*sc}px;border-radius:50%;background:#ffd84d;box-shadow:0 0 12px #ffc400`,'');
+  loop(spot,[{opacity:.5},{opacity:1}],600,{direction:'alternate'});
+  const xb=mk('',`left:516px;top:${top+8}px;font-size:40px`,'✅');pop(xb);
+  say(`Here, eyes look <b>down</b> at the place where your forehead goes in sujood. That's the right way: calm and focused.`);await w(3600);
+  const tip=mk('is-why','left:130px;top:450px;width:700px;text-align:center;font-size:19px','💡 In prayer: eyes <b>down</b> 👇 on your sujood spot, never up to the sky ☁️');pop(tip);
+  say(`Remember: in prayer, your eyes stay <b>down</b>, on your sujood spot. Never up at the sky.`);await w(3200);}},
+
+/* 2 */ {t:'Watch the prayer (Q5 a)',run:async w=>{
+  const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:26px">${ar(
+    `اكتب خمسة من ${kw('واجبات','waajibaat')} ${kw('الصلاة','as-salaah')}`,`Write five of the ${kw('required acts')} of ${kw('prayer')}`,'','blk')}</div>`);pop(q);
+  say(`Question 5 a says: ${ar('اكتب خمسة من واجبات الصلاة','Write five of the required acts of prayer.')}`);await w(2800);
+  q.classList.add('lit');const K=q.querySelectorAll('.kw');point(K[0]);
+  say(`Keywords: ${aw('واجبات','waajibaat')}, <b>required acts</b>, things you <b>must</b> do, and ${aw('الصلاة','as-salaah')}, <b>prayer</b>. Five dotted lines, so five answers.`);await w(3800);unpoint();
+  const top=q.offsetHeight+20;
+  const pane=mk('is-card',`left:30px;top:${top}px;width:300px;height:${505-top}px`,'');
+  const fig=figure(80,top+(505-top)-215,1,'stand');
+  say(`Let's watch a prayer and catch the five required acts as they happen.`);await w(2400);
+  const list=mk('',`left:360px;top:${top+190}px;width:570px;display:flex;flex-direction:row-reverse;flex-wrap:wrap;gap:8px 10px`,'');
+  for(let i=0;i<5;i++){const A=ACTS[i];
+    stage.querySelectorAll('.pr-bub,.cur-ans').forEach(e=>e.remove());
+    if(A.pose==='sit'){fig.set('ruku');await w(500);fig.set('up');await w(500);fig.set('sujood');await w(700);}
+    fig.set(A.pose);await w(300);
+    if(A.said){const b=mk('pr-bub ar-font',`left:50px;top:${top+8}px`,aw(A.said[0],A.said[1]));pop(b);}
+    const bl=ansBlocks(360,top,570,A.bl,{size:34,show:false});bl.classList.add('cur-ans');await w(30);
+    await revealBlocks(w,bl,{say:false,wait:300});point(bl);
+    say(`${aw(A.bl.map(b=>b[0]).join(' '),A.bl.map(b=>b[1]).join(' '))}: ${A.en}.`);await w(3800);
+    const chip=mk('is-chip','position:static',`<span style="font-size:24px">${A.e}</span><span class="ar-font" dir="rtl">${A.bl.map(b=>b[0]).join(' ')}</span>`,list);pop(chip);beep(600+i*70,.07);
+    if(i===2){const tip=mk('is-why',`left:360px;top:${top+110}px;width:570px;font-size:16px;padding:6px 12px`,
+      `👂 <span class="ar-font" dir="rtl" style="font-size:22px">الت<b style="color:#2c66cf">سمع</b>يع</span> has <span class="ar-font" style="font-size:22px">سمع</span> = <b>hear</b> &nbsp;·&nbsp; 🙌 <span class="ar-font" dir="rtl" style="font-size:22px">الت<b style="color:#e06a1b">حمد</b>يد</span> has <span class="ar-font" style="font-size:22px">حمد</span> = <b>praise</b>`);pop(tip);
+      say(`Watch out! ${aw('التسميع','at-tasmee\'')} and ${aw('التحميد','at-tahmeed')} look alike. Tasmee' has ${aw('سمع','sami\'a')}, <b>hear</b>. Tahmeed has ${aw('حمد','hamd')}, <b>praise</b>.`);await w(4400);tip.remove();}}
+  stage.querySelectorAll('.pr-bub,.cur-ans').forEach(e=>e.remove());unpoint();
+  say(`That's all five! The figure did them in one prayer.`);await w(2200);}},
+
+/* 3 */ {t:'Five required acts (Q5 a)',run:async w=>{
+  const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:24px">${ar(
+    `اكتب خمسة من ${kw('واجبات','waajibaat')} ${kw('الصلاة','as-salaah')}`,`Write five of the ${kw('required acts')} of ${kw('prayer')}`,'','blk')}</div>`);pop(q);q.classList.add('lit');
+  const tip=mk('is-clue','left:200px;top:160px;width:560px;text-align:center;white-space:normal',`Remember: <b>M</b>ove, <b>H</b>ear, <b>P</b>raise, <b>S</b>it, <b>S</b>ay`);pop(tip);
+  say(`Here's a memory sentence that follows the prayer: <b>Move, Hear, Praise, Sit, Say</b>.`);await w(3400);tip.remove();
+  let y=q.offsetTop+q.offsetHeight+10; /* each row starts under the one before (row heights depend on the Arabic font) */
+  for(let i=0;i<5;i++){const A=ACTS[i];
+    const ic=mk('',`left:858px;top:${y}px;width:76px;text-align:center;font-size:40px;line-height:1`,A.e);pop(ic);
+    const lab=mk('',`left:858px;top:${y+44}px;width:76px;text-align:center;font-size:13px;font-weight:800;color:#7a4a00`,A.word);pop(lab);
+    const bl=ansBlocks(30,y,810,A.bl.map(b=>[b[0],b[1],'',b[3]]),{size:22,show:false});await w(30);const rowH=Math.max(bl.offsetHeight,62);
+    await revealBlocks(w,bl,{say:false,wait:200});point(ic);y+=rowH+6;
+    say(`<b>${A.word}</b>: ${aw(A.bl.map(b=>b[0]).join(' '),A.bl.map(b=>b[1]).join(' '))}.`);await w(2600);}
+  unpoint();
+  say(`Five dotted lines, five answers. You can write them in any order.`);await w(2800);}},
+
+/* 4 */ {t:'Tick or cross (Q5 b)',run:async w=>{
+  say(`Question 5 b: ${ar('ضع علامة ( √ ) أو ( × ) أمام العبارات التالية','Put a tick or a cross next to the following statements.')}`);await w(3000);
+  await tfCard(w,{src:WS+'(b) · 1',ok:true,
+    q:`من ${kw('سنن','sunan')} الصلاة ${kw('القولية','al-qawliyya')} ${kw('الاستعاذة','al-isti\'aadha')}`,en:`Saying "a'oodhu billaah" (${kw('al-isti\'aadha')}) is one of the ${kw('spoken')} ${kw('sunnahs')} of prayer`,
+    keys:[`${aw('سنن','sunan')} means <b>sunnahs</b>: good extras that earn reward.`,`${aw('القولية','al-qawliyya')} means <b>spoken</b>: things you say.`,
+      `${aw('الاستعاذة','al-isti\'aadha')} is saying ${aw('أعوذ بالله من الشيطان الرجيم','a\'oodhu billaahi minash-shaytaanir-rajeem')}.`],
+    clue:`<span class="ar-font" dir="rtl">الاستعاذة</span> → 🗣️🛡️ → a spoken sunnah`,
+    why:`You <b>say</b> the isti'aadha, and it is a sunnah. So it's a spoken sunnah: true √.`});
+  await w(1400);clear();
+  await tfCard(w,{src:WS+'(b) · 2',ok:false,
+    q:`من ${kw('واجبات','waajibaat')} الصلاة ${kw('الالتفات بلا حاجة','al-iltifaat bilaa haaja')}`,en:`${kw('Turning around without need')} is one of the ${kw('required acts')} of prayer`,
+    keys:[`${aw('واجبات','waajibaat')}: <b>required acts</b>, things you must do.`,`${aw('الالتفات بلا حاجة','al-iltifaat bilaa haaja')}: <b>turning around without need</b>. Must you do that? No!`],
+    clue:`<span class="ar-font" dir="rtl">الالتفات</span> → 🙍↩️ → not required`,
+    why:`Turning your head around without a need is <b>not</b> required. It is ${aw('مكروه','makrooh')}, <b>disliked</b>.`});
+  const c=mk('is-why','left:50px;top:452px;width:860px;text-align:center;font-size:20px;border-color:#18a058;background:#e6f7ee',
+    `✔ The true fact: ${ar('الالتفات بلا حاجة مكروه','turning around without need is disliked (makrooh)','al-iltifaat bilaa haaja makrooh')}`);pop(c);point(c);
+  say(`The true fact: ${ar('الالتفات بلا حاجة مكروه','turning around without need is disliked.')}`);await w(3200);
+  await w(800);clear();
+  await tfCard(w,{src:WS+'(b) · 3',ok:true,
+    q:`من ${kw('مبطلات','mubtilaat')} الصلاة ${kw('القهقهة','al-qahqaha')}`,en:`${kw('Laughing out loud')} ${kw('breaks')} the prayer`,
+    keys:[`${aw('مبطلات','mubtilaat')} means things that <b>break</b> the prayer, so you must pray again.`,`${aw('القهقهة','al-qahqaha')}: <b>laughing out loud</b>. Even the word sounds like a laugh: qah-qah!`],
+    clue:`<span class="ar-font" dir="rtl">القهقهة</span> → 😆💥 → breaks the prayer`,
+    why:`Laughing out loud breaks the prayer: you have to pray it again. True √.`});
+  await w(1200);}},
+
+/* 5 */ {t:'Rule building blocks (Q5 c)',run:async w=>{
+  say(`Question 5 c: ${ar('عرف ما يأتي','Define the following')}. Three words: ${aw('الواجب','al-waajib')}, ${aw('السنة','as-sunna')} and ${aw('المكروه','al-makrooh')}.`);await w(3600);
+  say(`Good news: all three definitions are built from the <b>same six blocks</b>, like LEGO!`);await w(2600);
+  const B=[['ما','maa','what','#6a45d8'],['يثاب','yuthaab','is rewarded ⭐','#d39a00'],['يأثم','ya\'tham','is sinful ⚠️','#e04848'],
+    ['فاعل','faa\'il','the doer 🏃','#18a058'],['تارك','taarik','the leaver 🙅','#c2367a'],['ولا','wa laa','and not 🚫','#2c66cf']];
+  const row=ansBlocks(40,14,880,B,{size:34,show:false});row.classList.add('lego');row.style.justifyContent='center';row.style.gap='10px 14px';await w(30);
+  const L=[`${aw('ما','maa')}: <b>what</b>, the thing that…`,`${aw('يثاب','yuthaab')}: <b>is rewarded</b> ⭐`,`${aw('يأثم','ya\'tham')}: <b>is sinful</b>, gets a sin.`,
+    `${aw('فاعل','faa\'il')}: the <b>doer</b>, the one who does it.`,`${aw('تارك','taarik')}: the <b>leaver</b>, the one who leaves it out.`,`${aw('ولا','wa laa')}: <b>and not</b>.`];
+  for(let i=0;i<6;i++){const b=row.children[i];b.style.visibility='visible';pop(b);beep(480+i*60,.06);point(b);say(L[i]);await w(2300);}
+  unpoint();
+  const g=mk('pr-grid',`left:110px;top:${row.offsetHeight+26}px;width:740px`,`<table class="pr-grid" style="position:static;width:100%"><tr><th></th><th>🏃 the doer <span class="ar-font">فاعل</span></th><th>🙅 the leaver <span class="ar-font">تارك</span></th></tr>`+
+    [['w','good','⭐ rewarded','bad','⚠️ sinful'],['s','good','⭐ rewarded','ok','🆗 not sinful'],['m','ok','🆗 not sinful','good','⭐ rewarded']].map(([k,c1,t1,c2,t2])=>
+    `<tr><td class="t">${aw(DEF[k].t,DEF[k].ts)}<div style="font-size:14px;color:#626a80">${DEF[k].te}</div></td><td class="${c1} hide">${t1}</td><td class="${c2} hide">${t2}</td></tr>`).join('')+`</table>`);
+  pop(g);
+  say(`Now the big idea. For each word, ask two questions: does the <b>doer</b> get a star? And is the <b>leaver</b> sinful?`);await w(3600);
+  const R=g.querySelectorAll('tr');
+  const lines=[[`${aw('الواجب','al-waajib')}, required: the doer is <b>rewarded</b> ⭐…`,`…and the leaver is <b>sinful</b> ⚠️. You must not leave it!`],
+    [`${aw('السنة','as-sunna')}, the sunnah: the doer is <b>rewarded</b> ⭐…`,`…but the leaver is <b>not sinful</b>. It's a bonus.`],
+    [`${aw('المكروه','al-makrooh')}, disliked: this one flips! The doer is <b>not sinful</b>…`,`…and the one who <b>leaves it</b> gets the star ⭐.`]];
+  for(let r=1;r<=3;r++)for(let c=1;c<=2;c++){const td=R[r].children[c];td.classList.remove('hide');pop(td);point(td);beep(td.classList.contains('good')?760:td.classList.contains('bad')?300:520,.08);say(lines[r-1][c-1]);await w(2700);}
+  unpoint();}},
+
+/* 6 */ {t:'Required and sunnah (Q5 c 1 and 2)',run:async w=>{
+  await clueCard(w,{src:WS+'(c) · 1',kind:['عرف','\'arrif','define: write what it means'],
+    q:`عرف ما يأتي : ${kw('الواجب','al-waajib')}`,en:`Define the following: ${kw('al-waajib (the required)')}`,
+    keys:[`${aw('الواجب','al-waajib')}: the <b>required</b>. Star for the doer ⭐, sin for the leaver ⚠️.`],
+    clue:`<span class="ar-font" dir="rtl">الواجب</span> → 🏃⭐ 🙅⚠️ → doer rewarded, leaver sinful`,answer:tint(DEF.w.bl),blockSize:32,
+    why:`Doer ⭐, leaver ⚠️: ${aw(DEF.w.a,DEF.w.s)}.`});
+  await w(1400);clear();
+  await clueCard(w,{src:WS+'(c) · 2',
+    q:`عرف ما يأتي : ${kw('السنة','as-sunna')}`,en:`Define the following: ${kw('as-sunna (the recommended)')}`,
+    keys:[`${aw('السنة','as-sunna')}: the <b>sunnah</b>. Star for the doer ⭐, but the leaver is <b>not</b> sinful, so we add ${aw('ولا','wa laa')}.`],
+    clue:`<span class="ar-font" dir="rtl">السنة</span> → 🏃⭐ 🙅🆗 → doer rewarded, leaver not sinful`,answer:tint(DEF.s.bl),blockSize:30,
+    why:`See the endings? ${aw('فاعلها','faa\'iluhaa')} and ${aw('تاركها','taarikuhaa')} end in ${aw('ها','haa')}. Why? Next screen!`});
+  await w(1200);clear();
+  const t=mk('','left:0;top:16px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#7a4a00','👧 السنة is a "she" word');
+  t.innerHTML=`👧 <span class="ar-font" dir="rtl">السنة</span> is a "she" word`;pop(t);
+  say(`${aw('السنة','as-sunna')} ends in ${aw('ة','taa\' marbooTa')}, a round t. That makes it a <b>feminine</b> word, a "she" word.`);await w(3400);
+  const C=[{x:60,col:'#2c66cf',h:'👦 الواجب · المكروه',a:['فاعل','ـه'],b:['تارك','ـه'],s:['faa\'iluhu','taarikuhu'],m:'"he" words end in <span class="ar-font" dir="rtl">ه</span> (hu)'},
+    {x:500,col:'#c2367a',h:'👧 السنة',a:['فاعل','ـها'],b:['تارك','ـها'],s:['faa\'iluhaa','taarikuhaa'],m:'"she" words end in <span class="ar-font" dir="rtl">ها</span> (haa)'}];
+  for(const c of C){const k=mk('is-card',`left:${c.x}px;top:76px;width:400px;text-align:center;border-color:${c.col}`,
+      `<div class="ar-font" dir="rtl" style="font-size:30px;font-weight:700;color:#5a3c00">${c.h}</div>`+
+      [0,1].map(j=>{const p=j?c.b:c.a;return `<div class="ar-font" dir="rtl" style="font-size:44px;font-weight:700;margin-top:2px;line-height:1.4">${p[0]}<span style="color:${c.col}">${p[1].slice(1)}</span></div><div style="font-size:16px;font-weight:800;color:#2c66cf">${c.s[j]}</div>`;}).join('')+
+      `<div style="font-size:18px;font-weight:800;color:#626a80;margin-top:8px">${c.m}</div>`);pop(k);point(k);
+    say(c.x<100?`${aw('الواجب','al-waajib')} and ${aw('المكروه','al-makrooh')} are "he" words: ${aw('فاعله','faa\'iluhu')}, ${aw('تاركه','taarikuhu')}, ending in ${aw('ه','haa\'')}.`
+      :`${aw('السنة','as-sunna')} is a "she" word: ${aw('فاعلها','faa\'iluhaa')}, ${aw('تاركها','taarikuhaa')}, ending in ${aw('ها','haa')}.`);await w(3800);}
+  unpoint();
+  const cardsBottom=Math.max(...[...stage.querySelectorAll('.is-card')].map(e=>e.offsetTop+e.offsetHeight));
+  const tip=mk('is-why',`left:160px;top:${Math.min(cardsBottom+14,462)}px;width:640px;text-align:center;font-size:19px`,`💡 Round <span class="ar-font" style="font-size:24px">ة</span> in the word → <span class="ar-font" style="font-size:24px">ها</span> in the answer`);pop(tip);
+  say(`Tip: the round ${aw('ة','taa\' marbooTa')} in the word means ${aw('ها','haa')} in the answer.`);await w(3000);}},
+
+/* 7 */ {t:'Disliked (Q5 c 3)',run:async w=>{
+  await clueCard(w,{src:WS+'(c) · 3',kind:['عرف','\'arrif','define: write what it means'],
+    q:`عرف ما يأتي : ${kw('المكروه','al-makrooh')}`,en:`Define the following: ${kw('al-makrooh (the disliked)')}`,
+    keys:[`${aw('المكروه','al-makrooh')}: the <b>disliked</b>. It flips: the <b>leaver</b> gets the star ⭐, and the doer is not sinful.`],
+    clue:`<span class="ar-font" dir="rtl">المكروه</span> → 🙅⭐ 🏃🆗 → leaver rewarded, doer not sinful`,answer:tint(DEF.m.bl),blockSize:30,
+    why:`It's the sunnah's pattern with ${aw('تارك','taarik')} and ${aw('فاعل','faa\'il')} swapped, and "he" endings ${aw('ه','haa\'')}.`});
+  await w(1400);clear();
+  say(`Let's see all three together. Green is the doer, pink is the leaver.`);await w(2600);
+  const ks=['w','s','m'];
+  for(let i=0;i<3;i++){const D=DEF[ks[i]],y=20+i*165;
+    const tl=mk('is-card',`left:760px;top:${y+8}px;width:170px;height:118px;text-align:center;padding:8px`,
+      `<div class="ar-font" dir="rtl" style="font-size:32px;font-weight:700;color:#5a3c00">${D.t}</div><div style="font-size:14px;font-weight:800;color:#2c66cf">${D.ts}</div><div style="font-size:14px;font-weight:800;color:#626a80">${D.te}</div>`);pop(tl);
+    const bl=ansBlocks(20,y,725,tint(D.bl),{size:28,show:false});await revealBlocks(w,bl,{say:false,wait:160});point(tl);
+    say(`${aw(D.t,D.ts)}: ${aw(D.a,D.s)}.`);await w(3600);}
+  unpoint();}},
+
+/* 8 */ {t:'Build the answers',run:async w=>{
+  say(`Now you build the definitions with tiles. Watch out for the ${aw('ها','haa')} endings! Remember: <b>right to left</b>.`);await w(3000);
+  let r=await buildAR(w,{src:WS+'(c) · 2',q:`Build the definition of ${aw('السنة','as-sunna')}: doer rewarded ⭐, leaver <b>not</b> sinful. It's a "she" word 👧`,
+    tiles:[['تاركها','taarikuhaa'],['يثاب','yuthaabu'],['فاعله','faa\'iluhu'],['ولا','wa laa'],['ما','maa'],['يأثم','ya\'thamu'],['فاعلها','faa\'iluhaa'],['تاركه','taarikuh']],
+    answer:['ما','يثاب','فاعلها','ولا','يأثم','تاركها']});
+  say(r.ok?`Excellent! ${aw(DEF.s.a,DEF.s.s)}.`:`Nearly! It's ${aw(DEF.s.a,DEF.s.s)}, with the "she" endings ${aw('ها','haa')}.`);await w(3400);clear();
+  r=await buildAR(w,{src:WS+'(c) · 3',q:`Build the definition of ${aw('المكروه','al-makrooh')}: the <b>leaver</b> is rewarded ⭐, the doer is <b>not</b> sinful`,
+    tiles:[['فاعله','faa\'iluh'],['ولا','wa laa'],['ما','maa'],['تاركه','taarikuhu'],['يأثم','ya\'thamu'],['يثاب','yuthaabu'],['ويأثم','wa ya\'thamu']],
+    answer:['ما','يثاب','تاركه','ولا','يأثم','فاعله']});
+  say(r.ok?`Brilliant! ${aw(DEF.m.a,DEF.m.s)}.`:`Look again: ${aw(DEF.m.a,DEF.m.s)}. The leaver comes first.`);await w(3400);}},
+
+/* 9 */ {t:'Trace it',run:async w=>{
+  say(`Now trace some short answer words with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
+  const W=[['التسميع','at-tasmee\'','saying "sami\'a Allaah…"'],['التحميد','at-tahmeed','saying "rabbanaa wa lakal-hamd"'],['يثاب','yuthaab','is rewarded']];
+  for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}: <b>${m}</b>. Press <b>Done</b> when you've finished.`);
+    const r=await traceAR(w,{word:a,tr:s,en:m});
+    say(r.ok?`Lovely writing! That's ${aw(a,s)}.`:r.tooMuch?`Try to stay on the grey letters, not colour the whole box.`:`Good try! Next time go over more of the letters.`);await w(2200);}
+  clear();
+  const p=mk('is-card','left:110px;top:70px;width:740px;text-align:center',`<div style="font-size:54px">📝</div><div style="font-size:24px;font-weight:800;color:#7a4a00">Now on paper!</div>`+
+    `<div style="font-size:19px;font-weight:700;margin-top:6px;line-height:1.5">1. Look at the answer. &nbsp; 2. Cover it. &nbsp; 3. Write it. &nbsp; 4. Check it.</div>`+
+    `<div class="ar-font" dir="rtl" style="font-size:34px;margin-top:10px;color:#5a3c00;line-height:1.6">${DEF.w.a}<br>${DEF.s.a}<br>${DEF.m.a}</div>`);pop(p);
+  say(`The exam is written by hand, so practise on paper: <b>look</b>, <b>cover</b>, <b>write</b>, <b>check</b>. Write the three definitions, then the five required acts.`);await w(4200);}},
+
+/* 10 */ {t:'Keyword match',run:async w=>{
+  say(`Keyword game! Each card is something from this lesson. Tap a card, then tap the box it belongs to.`);await w(2800);
+  const r=await sortGame(w,{bins:[`<span class="ar-font" style="font-size:26px">واجب</span> <small>required</small>`,`<span class="ar-font" style="font-size:26px">سنة</span> <small>sunnah</small>`,
+      `<span class="ar-font" style="font-size:26px">مكروه</span> <small>disliked</small>`,`<span class="ar-font" style="font-size:26px">مبطل</span> <small>breaks it</small>`],
+    items:[[aw('التسميع','at-tasmee\''),0],[aw('التحميد','at-tahmeed'),0],[aw('التشهد الأول','at-tashahhud al-awwal'),0],[aw('ويأثم تاركه','wa ya\'thamu taarikuh'),0],
+      [aw('الاستعاذة','al-isti\'aadha'),1],[aw('ولا يأثم تاركها','wa laa ya\'thamu taarikuhaa'),1],
+      [aw('الالتفات بلا حاجة','al-iltifaat bilaa haaja'),2],[aw('يثاب تاركه','yuthaabu taarikuh'),2],
+      [aw('القهقهة','al-qahqaha'),3],[`😆💥`,3]],top:180,colors:['#2c66cf','#18a058','#e06a1b','#e04848']});
+  say(r.ok===r.total?`Perfect! You sorted every card.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
+
+/* 11 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Hadith 3 · الحديث الثالث',q:'ما بال أقوام .......... أبصارهم إلى السماء في صلاتهم',en:'What is wrong with people who …… their eyes to the sky in their prayer?',
+      o:['يخفضون','يرفعون','يغمضون'],oe:['lower','raise','close'],otr:['yakhfidoon','yarfa\'oon','yughmidoon'],a:1,cols:3,
+      why:'They raise (yarfa\'oon) their eyes to the sky. In prayer, keep your eyes down on your sujood spot.',whyNot:{0:'Lowering the eyes is the right way to pray, so the Prophet ﷺ did not warn against it.',2:'The hadith is about looking up to the sky, not closing the eyes.'}},
+    {src:'Worksheet · Q5 · (b) · 1',q:'من سنن الصلاة القولية الاستعاذة',en:'Saying "a\'oodhu billaah" (al-isti\'aadha) is one of the spoken sunnahs of prayer.',
+      o:['√','×'],oe:['true','false'],otr:['saheeh','khata\''],a:0,cols:2,
+      why:'True: you say the isti\'aadha, and it is a sunnah.',whyNot:{1:'The isti\'aadha is said out loud with words and it is a sunnah, so it is a spoken sunnah.'}},
+    {src:'Worksheet · Q5 · (b) · 2',q:'من واجبات الصلاة الالتفات بلا حاجة',en:'Turning around without need is one of the required acts of prayer.',
+      o:['√','×'],oe:['true','false'],otr:['saheeh','khata\''],a:1,cols:2,
+      why:'False: turning around without need is disliked (makrooh), not required.',whyNot:{0:'You never have to turn around in prayer. Doing it without need is makrooh.'}},
+    {src:'Worksheet · Q5 · (b) · 3',q:'من مبطلات الصلاة القهقهة',en:'Laughing out loud breaks the prayer.',
+      o:['√','×'],oe:['true','false'],otr:['saheeh','khata\''],a:0,cols:2,
+      why:'True: laughing out loud (al-qahqaha) breaks the prayer.',whyNot:{1:'Laughing out loud does break the prayer: you must pray again.'}},
+    {src:'Worksheet · Q5 · (c) · 1',q:'عرف ما يأتي : الواجب',en:'Define the following: al-waajib (the required).',
+      o:['ما يثاب فاعلها ولا يأثم تاركها','ما يثاب فاعله ويأثم تاركه','ما يثاب تاركه ولا يأثم فاعله'],oe:['what its doer is rewarded for, and its leaver is not sinful','what its doer is rewarded for and its leaver is sinful for','what its leaver is rewarded for, and its doer is not sinful'],otr:['maa yuthaabu faa\'iluhaa wa laa ya\'thamu taarikuhaa','maa yuthaabu faa\'iluhu wa ya\'thamu taarikuh','maa yuthaabu taarikuhu wa laa ya\'thamu faa\'iluh'],a:1,cols:1,
+      why:'Required: the doer gets a star and the leaver is sinful.',whyNot:{0:'That is the sunnah (see the -haa endings).',2:'That is the makrooh: the leaver gets the star.'}},
+    {src:'Worksheet · Q5 · (c) · 2',q:'عرف ما يأتي : السنة',en:'Define the following: as-sunna (the recommended).',
+      o:['ما يثاب تاركه ولا يأثم فاعله','ما يثاب فاعله ويأثم تاركه','ما يثاب فاعلها ولا يأثم تاركها'],oe:['what its leaver is rewarded for, and its doer is not sinful','what its doer is rewarded for and its leaver is sinful for','what its doer is rewarded for, and its leaver is not sinful'],otr:['maa yuthaabu taarikuhu wa laa ya\'thamu faa\'iluh','maa yuthaabu faa\'iluhu wa ya\'thamu taarikuh','maa yuthaabu faa\'iluhaa wa laa ya\'thamu taarikuhaa'],a:2,cols:1,
+      why:'Sunnah: the doer is rewarded, the leaver is not sinful, with the "she" endings -haa.',whyNot:{0:'That is the makrooh.',1:'That is the waajib: leaving a sunnah is not a sin.'}},
+    {src:'Worksheet · Q5 · (c) · 3',q:'عرف ما يأتي : المكروه',en:'Define the following: al-makrooh (the disliked).',
+      o:['ما يثاب تاركه ولا يأثم فاعله','ما يثاب فاعلها ولا يأثم تاركها','ما يثاب فاعله ويأثم تاركه'],oe:['what its leaver is rewarded for, and its doer is not sinful','what its doer is rewarded for, and its leaver is not sinful','what its doer is rewarded for and its leaver is sinful for'],otr:['maa yuthaabu taarikuhu wa laa ya\'thamu faa\'iluh','maa yuthaabu faa\'iluhaa wa laa ya\'thamu taarikuhaa','maa yuthaabu faa\'iluhu wa ya\'thamu taarikuh'],a:0,cols:1,
+      why:'Makrooh flips it: the one who leaves it gets the star, and the doer is not sinful.',whyNot:{1:'That is the sunnah.',2:'That is the waajib.'}},
+    {src:'Worksheet · Q5 · (a)',q:'اكتب خمسة من واجبات الصلاة',en:'Write five of the required acts of prayer.',
+      model:'1- تكبيرات الانتقال<br>2- التحميد<br>3- التسميع<br>4- التشهد الأول<br>5- الجلوس للتشهد الأول',
+      men:'1- Saying "Allahu akbar" when moving<br>2- Saying "Rabbanaa wa lakal-hamd"<br>3- Saying "Sami\'a Allaahu liman hamidah"<br>4- The first tashahhud<br>5- Sitting for the first tashahhud',
+      mtr:'Move, Hear, Praise, Sit, Say'}
+  ]);}},
+
+/* 12 */ {t:'You did it!',run:async w=>{
+  const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 5 done!');pop(t);
+  const B=[['👇','أبصارهم إلى السماء','Hadith 3: eyes down'],['🔄','تكبيرات الانتقال','Move'],['👂🙌','التسميع · التحميد','Hear · Praise'],['🧎☝️','الجلوس · التشهد الأول','Sit · Say'],
+    ['✅','الاستعاذة · القهقهة','Q5 b: both true √'],['🙍↩️','الالتفات ×','disliked, not required'],['⭐⚠️','الواجب','doer ⭐ leaver ⚠️'],['👧','فاعلها · تاركها','sunnah: "she" endings']];
+  B.forEach(([e,a,m],i)=>{const c=mk('is-card',`left:${30+(i%4)*228}px;top:${80+Math.floor(i/4)*200}px;width:212px;height:180px;text-align:center;padding:10px 8px`,
+    `<div style="font-size:40px">${e}</div><div class="ar-font" dir="rtl" style="font-size:${a.length>14?20:28}px;font-weight:700;color:#5a3c00;margin:6px 0;line-height:1.3">${a}</div><div style="font-size:15px;font-weight:800;color:#626a80">${m}</div>`);pop(c,i*140);});
+  await w(1200);confetti(160);yay();
+  say(`${aw('ما شاء الله','maa shaa\' Allaah')}! You know all of Question 5 and Hadith 3: five required acts, three ticks and crosses, and three definitions. Practise writing them on paper!`);
+  await w(4200);}}
+  ]}));
+</script>
+</body>
+</html>

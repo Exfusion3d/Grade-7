@@ -207,18 +207,19 @@ async function clueCard(w,{src,q,en,tr,kind,keys=[],clue,answer,stamp,why,x=30,y
     think:th=`Your turn. Which answer goes with this keyword? When you're ready, tap <b>Show me</b>.`}){
   const st=stamp||answer.map(b=>b[0]).join(' ');
   const c=mk('is-card',`left:${x}px;top:${y}px;width:${wd}px;z-index:20`,`<div class="src">${src}</div><div class="q">${ar(q,en,tr,'blk')}</div>`+
-    `<div class="stamp"><span class="ar-font" dir="rtl">✔ ${st}</span></div>`);pop(c);
+    `<div class="stamp">${st==='√'||st==='×'?`<span style="font-size:1.4em">${st}</span>`:`<span class="ar-font" dir="rtl">✔ ${st}</span>`}</div>`);pop(c);
   await w(60);point(c.querySelector('.q'));
   if(readQ){say(`Here's the question: ${ar(q,en)}`);await w(1800);}
   let cy=y+c.offsetHeight+12;
-  if(kind){const k=mk('is-chip',`left:${x+20}px;top:${cy}px`,`<span class="ar-font" dir="rtl">${kind[0]}</span><span>= ${kind[2]}</span>`);pop(k);point(k);
+  const extra=[]; /* the instruction chip and the clue line: removed later if the explanation would not fit */
+  if(kind){const k=mk('is-chip',`left:${x+20}px;top:${cy}px`,`<span class="ar-font" dir="rtl">${kind[0]}</span><span>= ${kind[2]}</span>`);pop(k);point(k);extra.push(k);
     say(`The instruction word is ${aw(kind[0],kind[1])}. It means <b>${kind[2]}</b>.`);await w(2200);cy+=k.offsetHeight+10;}
   if(keys.length){c.classList.add('dim');say(`You don't need every word. Look for the <b>keyword</b>.`);await w(1600);c.classList.add('lit');
     const K=[...c.querySelectorAll('.kw')];
     for(let i=0;i<keys.length;i++){const k=K[Math.min(i,K.length-1)];if(k){point(k);k.animate([{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:600});}
       say(keys[i]);await w(2000);}
     c.classList.remove('dim');}
-  if(clue){const k=mk('is-clue',`left:${x+20}px;top:${cy}px`,'🔎 '+clue);pop(k);point(k);await w(400);cy+=k.offsetHeight+12;}
+  if(clue){const k=mk('is-clue',`left:${x+20}px;top:${cy}px`,'🔎 '+clue);pop(k);point(k);extra.push(k);await w(400);cy+=k.offsetHeight+12;}
   say(th);let open=false;
   const b=btn('ex-btn green',`left:${x+20}px;top:${cy}px;width:220px;z-index:30`,'👀 Show me',()=>{open=true;});pop(b);point(b);
   window.AUTOPLAY=()=>{open=true;};
@@ -227,8 +228,14 @@ async function clueCard(w,{src,q,en,tr,kind,keys=[],clue,answer,stamp,why,x=30,y
   await revealBlocks(w,bl,{wait:answer.length>2?900:1300});
   const sp=c.querySelector('.stamp');sp.style.visibility='visible';
   an(sp,[{transform:'scale(3) rotate(-20deg)',opacity:0},{transform:'rotate(-2deg)',opacity:1}],{duration:500,fill:'both',easing:'cubic-bezier(.5,1.6,.5,1)'});yay();point(sp);
-  say(`So the answer is ${aw(st,answer.map(b=>b[1]).join(' '))}.`);await w(1800);
-  if(why){const e=mk('is-why',`left:${x+20}px;top:${cy+bl.offsetHeight+12}px;width:${wd-40}px`,'💡 '+why);pop(e);point(e);say(why);await w(2400);}
+  say(st==='√'?`So it's <b>true</b>: put a tick √.`:st==='×'?`So it's <b>false</b>: put a cross ×.`:`So the answer is ${aw(st,answer.map(b=>b[1]).join(' '))}.`);await w(1800);
+  if(why){const e=mk('is-why',`left:${x+20}px;top:${cy+bl.offsetHeight+12}px;width:${wd-40}px`,'💡 '+why);await w(30);
+    /* too tall for the stage: drop the chip and clue (already read) and move the answer up */
+    const over=e.offsetTop+e.offsetHeight-512;
+    if(over>0&&extra.length){const top=Math.min(...extra.map(el=>el.offsetTop)),up=Math.min(over,bl.offsetTop-top);
+      extra.forEach(el=>el.remove());bl.style.top=(bl.offsetTop-up)+'px';e.style.top=(e.offsetTop-up)+'px';}
+    if(e.offsetTop+e.offsetHeight>512)e.style.fontSize='15px';
+    pop(e);point(e);say(why);await w(2400);}
   return c;}
 
 /* ---------- "Build the answer" ----------
@@ -300,3 +307,11 @@ async function traceAR(w,{word,tr,en,x=60,y=96,wd=840,h=300,need=.6}){
   draw(good?'#18a058':'#e6dcc6');pad.style.borderColor=good?'#18a058':'#f0d9a8';
   if(good){yay();confetti(40);}else beep(300,.12);
   return{ok:good,cover,tooMuch};}
+
+/* ---------- tick or cross (ضع علامة √ أو ×) ----------
+   A clue card whose answer is a big √ (true) or × (false). The deciding word is marked with kw() in q and en;
+   keys explain it. ok: true for √. */
+const TICK=[['√','saheeh','true','#18a058']],CROSS=[['×','khata\'','false','#e04848']];
+function tfCard(w,o){return clueCard(w,Object.assign({kind:['ضع علامة ( √ ) أو ( × )','da\' \'alaama','put a tick or a cross'],
+  think:`Your turn. Is it true √ or false ×? The keyword decides. Tap <b>Show me</b> when you're ready.`},o,
+  {answer:o.ok?TICK:CROSS,stamp:o.ok?'√':'×',blockSize:46}));}

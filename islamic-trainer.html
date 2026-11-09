@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Memory Trainer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#8a5a00">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Memory Trainer: Grade 7 Islamic Studies</title>
+<style>
+:root{--ink:#1f2433;--muted:#626a80;--line:#e3e6ef;--p:#b8862b;--pl:#fbf0d9;--pd:#7a4a00;--ok:#18a058;--okl:#e3f7ec;--bad:#e04848;--badl:#fde8e8;--mid:#e0a800}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:var(--ink);background:#f7f3ea;min-height:100vh;
+  background-image:radial-gradient(circle at 10% 10%,#f6e7c5 0,transparent 35%),radial-gradient(circle at 90% 80%,#e5eefc 0,transparent 40%)}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:780px;margin:0 auto;padding:18px 16px 60px}
+.hidden{display:none!important}
+.hero{background:linear-gradient(135deg,#5a3a00,#8a5a00 45%,#d9a441);color:#fff;border-radius:26px;padding:24px;position:relative;overflow:hidden}
+.hero h1{margin:0;font-size:clamp(28px,6vw,42px);font-weight:800}
+.hero p{margin:6px 0 0;opacity:.94;font-size:16.5px}
+.hero .atom{position:absolute;right:-6px;top:-14px;font-size:110px;opacity:.16;transform:rotate(12deg)}
+.panel{background:#fff;border-radius:22px;padding:16px 18px;margin-top:16px;box-shadow:0 8px 24px rgba(90,60,0,.08)}
+.panel h2{margin:0 0 8px;font-size:19px}
+.big{display:flex;align-items:center;gap:16px}
+.ring{flex:none;width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:var(--pd)}
+.ring span{background:#fff;width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1.05}
+.ring small{font-size:11px;color:var(--muted)}
+.go{border:none;border-radius:16px;padding:13px 22px;font-size:18px;font-weight:800;color:#fff;background:var(--p);box-shadow:0 5px 0 var(--pd);transition:transform .1s}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--pd)}
+.go.green{background:var(--ok);box-shadow:0 5px 0 #0f7a41}.go.amber{background:var(--mid);box-shadow:0 5px 0 #a87d00}.go.red{background:var(--bad);box-shadow:0 5px 0 #a82e2e}
+.go:disabled{opacity:.5}
+.ghost{border:2.5px solid var(--line);background:#fff;border-radius:16px;padding:11px 18px;font-size:16px;font-weight:800;box-shadow:0 4px 0 var(--line)}
+.secs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.sec{border:2.5px solid var(--line);background:#fff;border-radius:16px;padding:10px 12px;text-align:left;box-shadow:0 3px 0 var(--line)}
+.sec b{display:block;font-size:15px}.sec span{font-size:13px;color:var(--muted);font-weight:700}
+.bar{height:10px;border-radius:6px;background:#f1ead9;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#e0b45a,#18a058)}
+.pill{border:2px solid var(--line);background:#fff;border-radius:30px;padding:7px 14px;font-weight:700;font-size:14px;text-decoration:none;color:inherit}
+.pill.on{background:#fff4dc;border-color:#d9a441;color:#7a4a00}
+.foot{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-top:16px}
+.how{font-size:15px;line-height:1.55;color:#4a4f60}
+/* card */
+.hud{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.hud .x{background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 10px;font-weight:800}
+.prog{flex:1;height:14px;border-radius:10px;background:#fff;border:2px solid var(--line);overflow:hidden}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8862b,#e0b45a);transition:width .4s}
+.stat{background:#fff;border:2px solid var(--line);border-radius:14px;padding:5px 10px;font-weight:800;font-size:15px;white-space:nowrap}
+.stat.on{background:#fff4dc;border-color:#d9a441}
+.card{background:#fff;border-radius:24px;padding:18px 18px 16px;box-shadow:0 10px 30px rgba(90,60,0,.1)}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:var(--pl);color:var(--pd)}
+.box{margin-left:auto;font-size:13px;font-weight:800;color:var(--muted)}
+.q{direction:rtl;text-align:right;font-size:27px;font-weight:700;line-height:1.7}
+.en{font-size:15px;color:#2c66cf;font-weight:700;margin-top:2px}
+.kw{background:#ffe680;border-radius:7px;padding:0 4px;box-shadow:0 0 0 2px #ffd84d}
+.hintline{margin-top:10px;background:#fff8e6;border-radius:12px;padding:8px 12px;font-weight:700;font-size:15.5px;color:#7a4a00}
+.step{margin-top:14px;font-size:15px;font-weight:800;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.ans{margin-top:8px;background:var(--okl);border:2.5px solid #9fdcbb;border-radius:18px;padding:12px 14px;text-align:center}
+.ans .a{direction:rtl;font-size:36px;font-weight:700;color:#0f5c33;line-height:1.5}
+.ans .s{font-size:16px;font-weight:800;color:#2c66cf}
+.ans .m{font-size:15px;font-weight:700;color:#3c4a40;margin-top:2px}
+.ans.cover{background:#f1ead9;border-color:#e2d3b1;color:#a08c63;font-weight:800;font-size:18px;padding:22px}
+.hear{border:2px solid #f0d9a8;background:#fff8e6;border-radius:12px;padding:2px 9px;font-size:17px;margin-left:6px;vertical-align:middle}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.pad{position:relative;margin-top:10px;border:3px dashed #d9a441;border-radius:18px;background:#fffdf7;height:190px;touch-action:none}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;border-radius:16px}
+.pad .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c9b48a;font-weight:800;pointer-events:none}
+.ax,.aw,.arf{font-family:"Geeza Pro","Noto Naskh Arabic","Noto Sans Arabic","Traditional Arabic","Segoe UI","DejaVu Sans",sans-serif}
+.aw{unicode-bidi:isolate}
+body.nosnd .ans .s,body.nosnd .trq{display:none}
+.trq{font-size:14px;color:#2c66cf;font-weight:800;direction:ltr;text-align:right}
+.done{text-align:center}
+.done .em{font-size:64px}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:100}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <section id="menu">
+    <div class="hero"><div class="atom">🧠</div>
+      <h1>Memory Trainer 🧠</h1>
+      <p>Ten answers a day from your Islamic Studies sheet. Spot the keyword, remember the answer, then write it. The ones you find hard come back sooner.</p></div>
+    <div class="panel">
+      <div class="big"><div class="ring" id="ring"><span><b id="mN">0</b><small>of 46</small></span></div>
+        <div><h2 id="mTxt">answers mastered</h2><div class="how" id="dueTxt"></div><div class="row" style="justify-content:flex-start"><button class="go" id="startBtn">▶ Start today's 10</button></div></div></div>
+    </div>
+    <div class="panel"><h2>🎯 Practise one question</h2><div class="secs" id="secs"></div></div>
+    <div class="panel how">
+      <b>How it works.</b> Each card has 3 steps: 🔎 <b>spot</b> the keyword and say the answer in your head, 👀 <b>check</b> it,
+      ✍️ <b>cover and write</b> it (on paper or on the screen). Then be honest: ✔ <b>Got it</b> moves the card up a box and you see it
+      again later; 〰 <b>Nearly</b> keeps it where it is; ✗ <b>Not yet</b> sends it back to box 1, so it comes back tomorrow (and once more today).
+      An answer is <b>mastered</b> when it reaches box 4.
+    </div>
+    <div class="foot"><a class="pill" href="islamic.html">🏠 Islamic lessons</a><button class="pill" id="sndBtn">🔤 Sounds</button></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="hud"><button class="x" id="quit" title="Back">✕</button><div class="prog"><i id="pbar"></i></div><button class="stat" id="sndHud" title="Show the sounds">🔤</button><div class="stat" id="cnt"></div></div>
+    <div class="card" id="card"></div>
+  </section>
+
+  <section id="end" class="hidden"><div class="card done" id="endCard"></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const W=(a,tr)=>`<span class="aw" dir="rtl" lang="ar">${a}</span>`;
+const K=t=>`<span class="kw">${t}</span>`;
+
+/* ================= the cards: every answer the student has to WRITE on the sheet (46) =================
+   id: permanent (progress is saved against it); s: worksheet question; l: lesson; q: the question in Arabic with the keyword
+   marked K(); en: English; hint: the picture or memory trick; a: the answer to write, tr: its sounds, m: its meaning. */
+const QS=[
+ {id:'2a1',s:'Q2 (a)',l:'i02',q:`اكتب ${K('وظيفة')} : جبريل`,en:'Write the job of: Jibreel',hint:'📜 the message from Allah',a:'ملك الوحي',tr:'malak al-wahy',m:'the angel of revelation'},
+ {id:'2a2',s:'Q2 (a)',l:'i02',q:`اكتب ${K('وظيفة')} : ميكائيل`,en:'Write the job of: Mikail',hint:'🌧️ rain → 🌱 plants → 🍞 food',a:'موكل بالأرزاق والنبات والمطر',tr:'muwakkal bil-arzaaq wan-nabaat wal-matar',m:'in charge of provisions, plants and rain'},
+ {id:'2a3',s:'Q2 (a)',l:'i02',q:`اكتب ${K('وظيفة')} : ملك الموت`,en:'Write the job of: the Angel of Death',hint:'⏳ when a life ends',a:'قبض الأرواح',tr:'qabd al-arwaah',m:'taking the souls'},
+ {id:'2b1',s:'Q2 (b) · 1 of 4',l:'i02',q:`دون أربعة من ${K('ثمرات')} الإيمان ${K('بالملائكة')}`,en:'Four benefits of believing in the angels: number 1',hint:'❤️ L of "Lovely Manners Get Thanks"',a:'محبة الملائكة لطاعتهم لله',tr:'mahabbat al-malaa\'ika li-taa\'atihim lillaah',m:'loving the angels because they obey Allah'},
+ {id:'2b2',s:'Q2 (b) · 2 of 4',l:'i02',q:`دون أربعة من ${K('ثمرات')} الإيمان ${K('بالملائكة')}`,en:'Four benefits of believing in the angels: number 2',hint:'🪞 M of "Lovely Manners Get Thanks"',a:'التخلق بأخلاق الملائكة',tr:'at-takhalluq bi-akhlaaq al-malaa\'ika',m:'taking on the good manners of the angels'},
+ {id:'2b3',s:'Q2 (b) · 3 of 4',l:'i02',q:`دون أربعة من ${K('ثمرات')} الإيمان ${K('بالملائكة')}`,en:'Four benefits of believing in the angels: number 3',hint:'🌌 G of "Lovely Manners Get Thanks"',a:'العلم بعظمة الله وقوته',tr:'al-\'ilm bi-\'azamat Allaah wa quwwatih',m:'knowing the greatness and power of Allah'},
+ {id:'2b4',s:'Q2 (b) · 4 of 4',l:'i02',q:`دون أربعة من ${K('ثمرات')} الإيمان ${K('بالملائكة')}`,en:'Four benefits of believing in the angels: number 4',hint:'🙏 T of "Lovely Manners Get Thanks"',a:'شكر الله تعالى على عنايته ببني آدم',tr:'shukr Allaah ta\'aalaa \'alaa \'inaayatihi bi-banee Aadam',m:'thanking Allah the Exalted for His care for the children of Adam'},
+ {id:'2c1',s:'Q2 (c) · 1',l:'i02',q:`خلق الله تعالى ${K('الملائكة')} الكرام ${K('من')} ..........`,en:'Allah the Exalted created the noble angels from ……',hint:'👼 + من → 💡',a:'نور',tr:'noor',m:'light'},
+ {id:'2c2',s:'Q2 (c) · 2',l:'i02',q:`${K('فطرت')} الملائكة ${K('وجبلت')} على ..........`,en:'The angels were made by nature to ……',hint:'👼🙇 they always obey',a:'الطاعة',tr:'at-taa\'a',m:'obedience'},
+ {id:'2c3',s:'Q2 (c) · 3',l:'i02',q:`الإيمان بالملائكة ${K('ركن من أركان')} ..........`,en:'Believing in the angels is one of the pillars of ……',hint:'🏛️ six pillars',a:'الإيمان',tr:'al-eemaan',m:'faith'},
+ {id:'2c4',s:'Q2 (c) · 4',l:'i02',q:`خلق الله تعالى ${K('الإنسان')} ${K('من')} ..........`,en:'Allah the Exalted created mankind from ……',hint:'🧍 + من → 🟫',a:'طين',tr:'teen',m:'clay'},
+ {id:'3b1',s:'Q3 (b) · 1 of 4',l:'i03',q:`اكتب ${K('ثمرات')} ${K('الإخلاص')}`,en:'The benefits of sincerity: number 1',hint:'✅ deeds are accepted',a:'صحة الأعمال',tr:'sihhat al-a\'maal',m:'deeds are valid (accepted)'},
+ {id:'3b2',s:'Q3 (b) · 2 of 4',l:'i03',q:`اكتب ${K('ثمرات')} ${K('الإخلاص')}`,en:'The benefits of sincerity: number 2',hint:'🛟 saved from trials',a:'النجاة من الفتن',tr:'an-najaat min al-fitan',m:'being saved from trials'},
+ {id:'3b3',s:'Q3 (b) · 3 of 4',l:'i03',q:`اكتب ${K('ثمرات')} ${K('الإخلاص')}`,en:'The benefits of sincerity: number 3',hint:'🛡️ protected from Shaytan',a:'العصمة من الشيطان',tr:'al-\'isma min ash-shaytaan',m:'protection from Shaytan'},
+ {id:'3b4',s:'Q3 (b) · 4 of 4',l:'i03',q:`اكتب ${K('ثمرات')} ${K('الإخلاص')}`,en:'The benefits of sincerity: number 4',hint:'🤲 the Prophet ﷺ will speak for you',a:'نيل شفاعة النبي ﷺ',tr:'nayl shafaa\'at an-nabee',m:'earning the intercession of the Prophet ﷺ'},
+ {id:'4a1',s:'Q4 (a) · 1',l:'i04',q:`${K('أول')} ما نزل من القرآن أول آيات من ${K('سورة')} ..........`,en:'The first verses revealed were from Surah ……',hint:'📖 the first word means "Read"',a:'العلق',tr:'al-\'alaq',m:'Al-\'Alaq'},
+ {id:'4a2',s:'Q4 (a) · 2',l:'i04',q:`كان النبي ﷺ يتعبد في ${K('غار')} ..........`,en:'The Prophet ﷺ used to worship in the cave of ……',hint:'⛰️ the cave on the mountain',a:'حراء',tr:'hiraa\'',m:'Hira'},
+ {id:'4a3',s:'Q4 (a) · 3',l:'i04',q:`${K('الملك')} الذي ${K('نزل')} على النبي ﷺ هو : ..........`,en:'The angel who came down to the Prophet ﷺ is ……',hint:'📜 the angel of revelation',a:'جبريل عليه السلام',tr:'jibreel \'alayhis-salaam',m:'Jibreel, peace be upon him'},
+ {id:'4c1',s:'Q4 (c) · 1 · لغة',l:'i04',q:`عرف الوحي ${K('لغة')}`,en:'Define revelation in language',hint:'🤫 secret + ⚡ quick',a:'يطلق على الإعلام في خفاء وسرعة',tr:'yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a',m:'telling someone something secretly and quickly'},
+ {id:'4c2',s:'Q4 (c) · 1 · شرعا',l:'i04',q:`عرف الوحي ${K('شرعا')}`,en:'Define revelation in Islamic law',hint:'📨 Allah → His prophets and messengers',a:'إعلام الله تعالى أنبياءه ورسله بما يريد أن يبلغه إليهم',tr:'i\'laam Allaah ta\'aalaa anbiyaa\'ahu wa rusulahu bimaa yureedu an yuballighahu ilayhim',m:'Allah the Exalted telling His prophets and messengers what He wants to pass on to them'},
+ {id:'4c3',s:'Q4 (c) · 2',l:'i04',q:`ما ${K('حال')} النبي ﷺ ${K('بعد')} نزول الوحي ؟`,en:'How was the Prophet ﷺ after the revelation came?',hint:'💪 ready',a:'أصبح مستعدا لقبول الوحي',tr:'asbaha musta\'iddan li-qabool al-wahy',m:'he became ready to receive the revelation'},
+ {id:'4c4',s:'Q4 (c) · 3',l:'i04',q:`ما المقصود ${K('بالناموس')} من كلام ورقة بن نوفل ؟`,en:'What did Waraqa ibn Nawfal mean by "an-Naamoos"?',hint:'📜 = Jibreel',a:'ملك الوحي ( جبريل عليه السلام )',tr:'malak al-wahy (jibreel \'alayhis-salaam)',m:'the angel of revelation (Jibreel, peace be upon him)'},
+ {id:'5a1',s:'Q5 (a) · 1 of 5',l:'i05',q:`اكتب خمسة من ${K('واجبات الصلاة')}`,en:'Five required acts of prayer: number 1',hint:'🔄 "Allahu akbar" when moving',a:'تكبيرات الانتقال',tr:'takbeeraat al-intiqaal',m:'saying "Allahu akbar" when moving'},
+ {id:'5a2',s:'Q5 (a) · 2 of 5',l:'i05',q:`اكتب خمسة من ${K('واجبات الصلاة')}`,en:'Five required acts of prayer: number 2',hint:'🙌 "Rabbanaa wa lakal-hamd" (from حمد, praise)',a:'التحميد',tr:'at-tahmeed',m:'saying "Rabbanaa wa lakal-hamd"'},
+ {id:'5a3',s:'Q5 (a) · 3 of 5',l:'i05',q:`اكتب خمسة من ${K('واجبات الصلاة')}`,en:'Five required acts of prayer: number 3',hint:'👂 "Sami\'a Allaahu liman hamidah" (from سمع, hear)',a:'التسميع',tr:'at-tasmee\'',m:'saying "Sami\'a Allaahu liman hamidah"'},
+ {id:'5a4',s:'Q5 (a) · 4 of 5',l:'i05',q:`اكتب خمسة من ${K('واجبات الصلاة')}`,en:'Five required acts of prayer: number 4',hint:'☝️ the first tashahhud',a:'التشهد الأول',tr:'at-tashahhud al-awwal',m:'the first tashahhud'},
+ {id:'5a5',s:'Q5 (a) · 5 of 5',l:'i05',q:`اكتب خمسة من ${K('واجبات الصلاة')}`,en:'Five required acts of prayer: number 5',hint:'🧎 sitting for it',a:'الجلوس للتشهد الأول',tr:'al-juloos lit-tashahhud al-awwal',m:'sitting for the first tashahhud'},
+ {id:'5c1',s:'Q5 (c) · 1',l:'i05',q:`عرف : ${K('الواجب')}`,en:'Define: al-waajib (required)',hint:'do it ⭐ · leave it ⚠️',a:'ما يثاب فاعله ويأثم تاركه',tr:'maa yuthaabu faa\'iluhu wa ya\'thamu taarikuh',m:'its doer is rewarded, its leaver is sinful'},
+ {id:'5c2',s:'Q5 (c) · 2',l:'i05',q:`عرف : ${K('السنة')}`,en:'Define: as-sunna (recommended)',hint:'do it ⭐ · leave it ✔️ no sin · feminine ـها',a:'ما يثاب فاعلها ولا يأثم تاركها',tr:'maa yuthaabu faa\'iluhaa wa laa ya\'thamu taarikuhaa',m:'its doer is rewarded, its leaver is not sinful'},
+ {id:'5c3',s:'Q5 (c) · 3',l:'i05',q:`عرف : ${K('المكروه')}`,en:'Define: al-makrooh (disliked)',hint:'leave it ⭐ · do it ✔️ no sin',a:'ما يثاب تاركه ولا يأثم فاعله',tr:'maa yuthaabu taarikuhu wa laa ya\'thamu faa\'iluh',m:'its leaver is rewarded, its doer is not sinful'},
+ {id:'6a1',s:'Q6 (a) · 1 of 4',l:'i06',q:`دون ${K('أسباب')} ${K('آفات اللسان')}`,en:'The causes of the sins of the tongue: number 1',hint:'👁️ forgetting Allah is watching',a:'عدم مراقبة الله',tr:'\'adam muraaqabat Allaah',m:'forgetting that Allah is watching'},
+ {id:'6a2',s:'Q6 (a) · 2 of 4',l:'i06',q:`دون ${K('أسباب')} ${K('آفات اللسان')}`,en:'The causes of the sins of the tongue: number 2',hint:'🏠 how you were brought up',a:'سوء التربية',tr:'soo\' at-tarbiya',m:'a bad upbringing'},
+ {id:'6a3',s:'Q6 (a) · 3 of 4',l:'i06',q:`دون ${K('أسباب')} ${K('آفات اللسان')}`,en:'The causes of the sins of the tongue: number 3',hint:'😒 envy + 😤 arrogance',a:'الحسد والكبر',tr:'al-hasad wal-kibr',m:'envy and arrogance'},
+ {id:'6a4',s:'Q6 (a) · 4 of 4',l:'i06',q:`دون ${K('أسباب')} ${K('آفات اللسان')}`,en:'The causes of the sins of the tongue: number 4',hint:'⚖️ forgetting reward and punishment',a:'الغفلة عن الجزاء',tr:'al-ghafla \'an al-jazaa\'',m:'forgetting about reward and punishment'},
+ {id:'6b1',s:'Q6 (b) · 1',l:'i06',q:`ذكر الناس بما ${K('يكرهونه')} بالقول أو الفعل`,en:'Mentioning people with what they hate, by words or actions',hint:'🙈 behind their back',a:'الغيبة',tr:'al-gheeba',m:'backbiting'},
+ {id:'6b2',s:'Q6 (b) · 2',l:'i06',q:`${K('احتقار')} الناس بالهمز واللمز`,en:'Looking down on people with mocking gestures and digs',hint:'😏 looking down on',a:'السخرية',tr:'as-sukhriyya',m:'mocking'},
+ {id:'6b3',s:'Q6 (b) · 3',l:'i06',q:`${K('نقل')} الكلام للإفساد بين الناس`,en:'Carrying talk to make trouble between people',hint:'📨 carrying talk',a:'النميمة',tr:'an-nameema',m:'spreading tales'},
+ {id:'7a1',s:'Q7 (a) · 1',l:'i07',q:`شاب ${K('أسرف')} بالسهر خلال شهر رمضان`,en:'A young man who stayed up far too late in Ramadan',hint:'🌙😴 overdid it',a:'غير مسؤول',tr:'ghayr mas\'ool',m:'irresponsible'},
+ {id:'7a2',s:'Q7 (a) · 2',l:'i07',q:`فتاة ${K('تكثر')} من مشروبات الطاقة`,en:'A girl who drinks a lot of energy drinks',hint:'🥤🥤🥤 too much',a:'غير مسؤول',tr:'ghayr mas\'ool',m:'irresponsible'},
+ {id:'7a3',s:'Q7 (a) · 3',l:'i07',q:`أب ${K('يعلم')} أولاده ${K('الصلاة')}`,en:'A father who teaches his children to pray',hint:'👨‍👧 teaching prayer 👍',a:'مسؤول',tr:'mas\'ool',m:'responsible'},
+ {id:'7b1',s:'Q7 (b) · 1 of 4',l:'i07',q:`دون ${K('أقسام المسؤولية')} الفردية`,en:'The kinds of personal responsibility: number 1',hint:'🕌 religion',a:'المسؤولية الدينية',tr:'al-mas\'ooliyya ad-deeniyya',m:'religious responsibility'},
+ {id:'7b2',s:'Q7 (b) · 2 of 4',l:'i07',q:`دون ${K('أقسام المسؤولية')} الفردية`,en:'The kinds of personal responsibility: number 2',hint:'🧍 myself',a:'المسؤولية الشخصية',tr:'al-mas\'ooliyya ash-shakhsiyya',m:'personal responsibility'},
+ {id:'7b3',s:'Q7 (b) · 3 of 4',l:'i07',q:`دون ${K('أقسام المسؤولية')} الفردية`,en:'The kinds of personal responsibility: number 3',hint:'👨‍👩‍👧 family',a:'المسؤولية الأسرية',tr:'al-mas\'ooliyya al-usariyya',m:'family responsibility'},
+ {id:'7b4',s:'Q7 (b) · 4 of 4',l:'i07',q:`دون ${K('أقسام المسؤولية')} الفردية`,en:'The kinds of personal responsibility: number 4',hint:'🏙️ society',a:'المسؤولية المجتمعية',tr:'al-mas\'ooliyya al-mujtama\'iyya',m:'responsibility to society'},
+ {id:'7c1',s:'Q7 (c) · 1 of 2',l:'i07',q:`وضح المسؤولية ${K('تجاه الدين')}`,en:'Responsibility towards religion: number 1',hint:'🕌 worship (prayer)',a:'في العبادات ( الصلاة )',tr:'fil-\'ibaadaat (as-salaah)',m:'in acts of worship (prayer)'},
+ {id:'7c2',s:'Q7 (c) · 2 of 2',l:'i07',q:`وضح المسؤولية ${K('تجاه الدين')}`,en:'Responsibility towards religion: number 2',hint:'🛒 dealings (buying and selling)',a:'في المعاملات ( البيع والشراء )',tr:'fil-mu\'aamalaat (al-bay\' wash-shiraa\')',m:'in dealings with people (buying and selling)'},
+];
+const SECTIONS=[['Q2','👼','The angels'],['Q3','🤲','Sincerity'],['Q4','📜','The first revelation'],['Q5','🕌','Prayer'],['Q6','👅','Sins of the tongue'],['Q7','🧩','Responsibility']];
+
+/* ================= spaced repetition (Leitner boxes) =================
+   Box 1 comes back the next day, box 2 after 2 days, box 3 after 4, box 4 after 7, box 5 after 14. Got it: up a box;
+   Nearly: same box; Not yet: back to box 1 (and once more in today's session). Mastered = box 4 or 5.
+   The state is saved like a quiz level (mode 'itrainer') through src/account.js, so it follows the student between
+   devices, and the parent page shows "answers mastered". */
+const MODE='itrainer',GAP=[0,1,2,4,7,14],MASTER=4,PER_DAY=10;
+const today=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000);
+function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
+let B={}; /* id -> [box, next day] */
+function loadState(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const st=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes[MODE];if(st&&st.b){B=st.b;return;}}catch(e){}
+  B=store.get('isl_trainer_local',{});}
+function mastered(){return QS.filter(c=>(B[c.id]||[0])[0]>=MASTER).length;}
+function saveState(){store.set('isl_trainer_local',B);
+  track('quizState',MODE,{v:1,b:B,mastered:mastered(),seen:Object.keys(B).length,total:QS.length});}
+const due=c=>B[c.id]&&B[c.id][1]<=today();
+function todays(){const d=QS.filter(due).sort((a,b)=>B[a.id][0]-B[b.id][0]);const fresh=QS.filter(c=>!B[c.id]);
+  return d.slice(0,PER_DAY).concat(fresh.slice(0,Math.max(0,PER_DAY-d.length)));}
+
+/* ================= sounds and voice ================= */
+let SND=store.get('isl_sounds_t',true);
+function sndUI(){document.body.classList.toggle('nosnd',!SND);[$('#sndBtn'),$('#sndHud')].forEach(b=>b.classList.toggle('on',SND));}
+$('#sndBtn').onclick=$('#sndHud').onclick=()=>{SND=!SND;store.set('isl_sounds_t',SND);sndUI();};
+const HAS_TTS='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+function hearAR(t){if(!HAS_TTS)return;t=t.replace(/<[^>]+>/g,' ').replace(/ﷺ/g,' صلى الله عليه وسلم ').replace(/[.…]{2,}/g,'، ').replace(/[()]/g,' ').replace(/\s+/g,' ').trim();
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=speechSynthesis.getVoices().filter(v=>/^ar([-_]|$)/i.test(v.lang))[0];if(v){u.voice=v;u.lang=v.lang;}else u.lang='ar-SA';u.rate=.85;speechSynthesis.speak(u);}
+let actx=null;function tone(f,d=.12){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+  g.gain.setValueAtTime(.15,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];function rs(){cv.width=innerWidth;cv.height=innerHeight;}addEventListener('resize',rs);rs();
+function confetti(n=90){const cols=['#b8862b','#18a058','#ffd84d','#6a45d8','#e06a1b'];for(let i=0;i<n;i++)parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,r:Math.random()*6+4,c:cols[i%5],a:0,l:110});
+  if(parts.length===n)requestAnimationFrame(fx);}
+function fx(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=.1;p.l--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.globalAlpha=Math.max(0,p.l/40);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cx.restore();});
+  parts=parts.filter(p=>p.l>0);if(parts.length)requestAnimationFrame(fx);else cx.clearRect(0,0,cv.width,cv.height);}
+
+/* ================= menu ================= */
+function show(id){['menu','game','end'].forEach(s=>$('#'+s).classList.toggle('hidden',s!==id));if(id==='menu')renderMenu();scrollTo(0,0);}
+function renderMenu(){loadState();const n=mastered(),pct=n/QS.length*100;
+  $('#mN').textContent=n;$('#ring').style.background=`conic-gradient(#18a058 ${pct}%,#f1ead9 ${pct}%)`;
+  $('#mTxt').textContent=n===QS.length?'answers mastered 🏆':'answers mastered';
+  const dueN=QS.filter(due).length,fresh=QS.filter(c=>!B[c.id]).length;
+  $('#dueTxt').innerHTML=dueN?`<b>${dueN}</b> answer${dueN>1?'s':''} to review today${fresh?` · ${fresh} not started yet`:''}.`:fresh?`Nothing to review today. ${fresh} new answers are waiting.`:'All caught up for today! Come back tomorrow, or practise one question below.';
+  const t=todays();$('#startBtn').disabled=!t.length;$('#startBtn').textContent=t.length?`▶ Start today's ${t.length}`:'✔ Done for today';
+  $('#secs').innerHTML='';
+  SECTIONS.forEach(([s,e,name])=>{const cs=QS.filter(c=>c.s.startsWith(s)),m=cs.filter(c=>(B[c.id]||[0])[0]>=MASTER).length;
+    const b=el('button','sec',`<b>${e} ${s} · ${name}</b><span>${m} of ${cs.length} mastered</span><div class="bar"><i style="width:${m/cs.length*100}%"></i></div>`);
+    b.onclick=()=>start(cs.slice());$('#secs').appendChild(b);});}
+$('#startBtn').onclick=()=>start(todays());
+$('#quit').onclick=()=>show('menu');
+addEventListener('g7-resume',()=>{if(!$('#menu').classList.contains('hidden'))renderMenu();});
+
+/* ================= a session ================= */
+let S;
+function start(list){if(!list.length)return;S={list,i:0,got:0,n:list.length,again:new Set()};show('game');card();}
+function card(){const c=S.list[S.i],bx=(B[c.id]||[0])[0];
+  $('#pbar').style.width=(S.i/S.list.length*100)+'%';$('#cnt').textContent=`${S.i+1} / ${S.list.length}`;
+  const k=$('#card');k.innerHTML='';
+  k.appendChild(el('div','top',`<span class="tag">${c.s}</span><span class="box">${bx?'📦 Box '+bx:'🆕 New'}</span>`));
+  const q=el('div','q arf',c.q);const h=el('button','hear','🔈');h.onclick=()=>hearAR(c.q);q.appendChild(h);k.appendChild(q);
+  k.appendChild(el('div','en','🇬🇧 '+c.en));
+  k.appendChild(el('div','step','Step 1 · 🔎 Spot the keyword, then say the answer in your head'));
+  const ans=el('div','ans cover','❔ What is the answer?');k.appendChild(ans);
+  const row=el('div','row');k.appendChild(row);
+  const hint=el('button','ghost','💡 Hint');hint.onclick=()=>{hint.replaceWith(el('div','hintline','💡 '+c.hint));};
+  const showB=el('button','go','👀 Show the answer');row.append(hint,showB);
+  const fill=()=>{ans.className='ans';ans.innerHTML=`<div class="a arf">${c.a}</div><div class="s">${c.tr}</div><div class="m">${c.m}</div>`;const h2=el('button','hear','🔈');h2.onclick=()=>hearAR(c.a);ans.querySelector('.m').appendChild(h2);};
+  showB.onclick=()=>{fill();hearAR(c.a);row.innerHTML='';k.querySelector('.step').textContent='Step 2 · 👀 Read it, hear it, notice the letters';
+    const cover=el('button','go','✍️ Cover it and write it');row.appendChild(cover);
+    cover.onclick=()=>{ans.className='ans cover';ans.innerHTML='🙈 Covered. Write it on paper, or with your finger below.';k.querySelector('.step').textContent='Step 3 · ✍️ Write it from memory';
+      const pad=el('div','pad','<div class="ph">✍️ write here (right to left ⬅)</div>');const cvs=document.createElement('canvas');pad.appendChild(cvs);k.insertBefore(pad,row);padDraw(pad,cvs);
+      row.innerHTML='';const clr=el('button','ghost','🧽 Clear');clr.onclick=()=>{const g=cvs.getContext('2d');g.clearRect(0,0,cvs.width,cvs.height);};
+      const chk=el('button','go','✔ Check my writing');row.append(clr,chk);
+      chk.onclick=()=>{fill();k.querySelector('.step').textContent='Step 4 · Be honest: how did you do?';row.innerHTML='';
+        const y=el('button','go green','✔ Got it'),n=el('button','go amber','〰 Nearly'),x=el('button','go red','✗ Not yet');row.append(y,n,x);
+        y.onclick=()=>mark(c,2);n.onclick=()=>mark(c,1);x.onclick=()=>mark(c,0);};};};}
+/* a simple finger-writing pad (not checked: the student compares it with the answer) */
+function padDraw(pad,cvs){const R=2;const fit=()=>{cvs.width=pad.clientWidth*R;cvs.height=pad.clientHeight*R;};fit();const g=cvs.getContext('2d');g.lineCap=g.lineJoin='round';g.lineWidth=5*R;g.strokeStyle='#1d4b9e';
+  let down=false,last=null;const pos=e=>{const r=cvs.getBoundingClientRect();return[(e.clientX-r.left)*cvs.width/r.width,(e.clientY-r.top)*cvs.height/r.height];};
+  cvs.addEventListener('pointerdown',e=>{down=true;last=pos(e);cvs.setPointerCapture(e.pointerId);pad.querySelector('.ph')?.remove();});
+  cvs.addEventListener('pointermove',e=>{if(!down)return;const p=pos(e);g.beginPath();g.moveTo(...last);g.lineTo(...p);g.stroke();last=p;});
+  ['pointerup','pointercancel'].forEach(t=>cvs.addEventListener(t,()=>{down=false;}));}
+function mark(c,how){const t=today();const cur=B[c.id]||[0,t];let box=cur[0]||1;
+  if(how===2){box=Math.min(5,(cur[0]||0)+1);if(!S.again.has(c.id))S.got++;tone(880);}else if(how===1){box=Math.max(1,cur[0]||1);tone(600);}else{box=1;tone(220);
+    if(!S.again.has(c.id)){S.again.add(c.id);S.list.push(c);}} /* once more today */
+  B[c.id]=[box,t+GAP[box]];saveState();
+  S.i++;if(S.i>=S.list.length)end();else{card();scrollTo({top:0,behavior:'smooth'});}}
+function end(){const n=mastered();
+  $('#endCard').innerHTML=`<div class="em">${S.got>=S.n*.8?'🏆':'💪'}</div><h2>Session done!</h2><p style="font-size:18px;font-weight:700">You got <b>${S.got}</b> right first time out of ${S.n}.</p>
+    <p style="font-size:17px">🧠 <b>${n} of ${QS.length}</b> answers mastered.</p><p class="how">The ones you missed come back tomorrow. Read them once more before you sleep! 🌙</p>
+    <div class="row"><button class="go" id="again">🏠 Back to the trainer</button><a class="ghost" href="islamic.html" style="text-decoration:none">📚 Lessons</a></div>`;
+  $('#again').onclick=()=>show('menu');show('end');confetti();tone(660);setTimeout(()=>tone(990),120);}
+sndUI();renderMenu();
+</script>
+</body>
+</html>

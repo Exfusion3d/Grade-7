@@ -137,4 +137,14 @@ describe("progress", () => {
     await expect(ctx.t.mutation(api.progress.importFinished, { token: s.token, lessonIds: ["bad"] })).rejects.toThrow(/Unknown lesson/);
     await expect(ctx.t.mutation(api.progress.importFinished, { token: ctx.parent.token, lessonIds: ["l01"] })).rejects.toThrow(/Only a student/);
   });
+
+  test("the Islamic Memory Trainer's mastered count reaches the overview and the parent page", async () => {
+    const s = await ctx.addStudent("zaid");
+    expect((await ctx.t.query(api.progress.myOverview, { token: s.token })).trainer).toBeNull();
+    const state = JSON.stringify({ v: 1, b: { "2c1": [4, 99999] }, mastered: 1, seen: 3, total: 46 });
+    await ctx.t.mutation(api.progress.saveQuizState, { token: s.token, mode: "itrainer", state });
+    expect((await ctx.t.query(api.progress.myOverview, { token: s.token })).trainer).toEqual({ mastered: 1, seen: 3, total: 46 });
+    const all = await ctx.t.query(api.parent.students, { token: ctx.parent.token });
+    expect(all.find((x) => x.username === "zaid")?.trainer).toEqual({ mastered: 1, seen: 3, total: 46 });
+  });
 });

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#b8862b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Exam toolkit</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="islamic.js"></script>
+<script>
+/* Islamic Studies Lesson 1 · Start here · Exam toolkit.
+   How to read the exam: the six question areas, the nine instruction words (what each one asks you to do), the keyword
+   trick (shown on questions from Q4, Q6 and Q7), and tips for writing Arabic answers (right to left, joined letters,
+   ال, ة / ه, ى / ي and the hamza seats). */
+const COL=['#18a058','#2c66cf','#e06a1b','#6a45d8','#c2367a','#0f7a6e'];
+/* an instruction-word card: emoji, the Arabic word, its meaning and what to do */
+const IW=(x,{a,s,m,e,todo,col,fs=36})=>mk('is-card',`left:${x}px;top:8px;width:268px;height:190px;text-align:center;padding:6px 10px;border-color:${col}`,
+  `<div style="font-size:28px;line-height:1.1">${e}</div><div style="font-size:${fs}px;font-weight:700;color:#5a3c00;line-height:1.2;white-space:nowrap">${aw(a,s)}</div>`+
+  `<div style="font-size:19px;font-weight:800;color:${col};line-height:1.2">${m}</div><div style="font-size:14px;font-weight:700;color:#626a80;line-height:1.2">${todo}</div>`);
+/* the demo panel under the cards: a real line from the sheet and an animation of what to do */
+let PANEL=null;
+const demo=(src,q,en,tr)=>{if(PANEL)PANEL.remove();
+  PANEL=mk('is-card','left:30px;top:216px;width:900px;height:294px;padding:10px 20px',`<div class="src">${src}</div><div class="q" style="font-size:28px">${ar(q,en,tr,'blk')}</div>`);pop(PANEL);return PANEL;};
+/* numbered dotted answer lines, right to left like the sheet */
+async function lines(w,p,n,top){const L=[];for(let i=0;i<n;i++){
+    const l=mk('',`left:${150}px;top:${top+i*36}px;width:700px;height:32px;display:flex;flex-direction:row-reverse;align-items:flex-end;gap:10px`,
+      `<b style="font-size:20px;color:#7a4a00">-${i+1}</b><div style="flex:1;border-bottom:4px dotted #b9a27a;height:24px"></div><span class="pen" style="font-size:24px;visibility:hidden">✏️</span>`,p);
+    pop(l);beep(520+i*70,.06);L.push(l);
+    const pen=l.querySelector('.pen');pen.style.visibility='visible';an(pen,[{transform:'translateX(0)'},{transform:'translateX(-560px)'}],{duration:500});await w(520);pen.style.visibility='hidden';}
+  return L;}
+const chip=(a,s)=>`${aw(a)}<small style="color:#2c66cf;margin-left:6px;font-size:13px">${s}</small>`;
+const big=(t,col='#5a3c00',fs=34)=>`<span class="ar-font" dir="rtl" style="font-size:${fs}px;font-weight:700;color:${col}">${t}</span>`;
+
+Lesson.start(Object.assign({}, ISLAMIC, {
+  id:'i01', num:1, part:'Start here', emoji:'🧰', title:'Exam toolkit: instruction words and keywords',
+  intro:`Assalaamu alaykum! I'm <b>Hudhud the Hoopoe</b> 🐦 Before we learn the answers, let's learn how to <b>read the exam</b>. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Meet Hudhud',run:async w=>{
+  const hi=mk('ar-font','left:0;top:6px;width:960px;text-align:center;font-size:64px;color:#8a4b00',aw('السلام عليكم','assalaamu \'alaykum'));pop(hi);
+  say(`${aw('السلام عليكم','assalaamu alaykum')}! I'm <b>Hudhud the Hoopoe</b>. In the Qur'an, a hoopoe brought important news to Prophet Sulaiman. I'll bring you the news you need for your exam.`);
+  await w(3600);
+  const steps=[['🔎','Spot the keyword','Find the one or two words that tell you the answer.'],['🧠','Remember the answer','See it in colours, hear it and picture it.'],['✍️','Write it','Build it, trace it, then write it on paper.']];
+  const els=steps.map(([e,t,d],i)=>mk('is-card',`left:${30+i*306}px;top:168px;width:286px;height:170px;text-align:center`,
+    `<div style="font-size:52px">${e}</div><div style="font-size:23px;font-weight:800;color:#7a4a00">${i+1}. ${t}</div><div style="font-size:16px;font-weight:700;color:#626a80;margin-top:4px">${d}</div>`));
+  for(let i=0;i<3;i++){pop(els[i]);point(els[i]);beep(520+i*90,.08);say([`You don't need to understand every Arabic word. First, <b>spot the keyword</b>.`,`Then <b>remember the answer</b>: I'll show it in colours, say it, and give you a picture for it.`,`Then <b>write it</b>: build it with tiles, trace it with your finger, and write it on paper.`][i]);await w(3200);}
+  unpoint();
+  const tb=mk('','left:110px;top:372px;width:740px;padding:12px 18px;border-radius:18px;background:#fff4dc;border:3px solid #d9a441;font-size:19px;font-weight:800;color:#7a4a00;text-align:center;line-height:1.5',
+    `<span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🇬🇧</span> turns all the Arabic into English. &nbsp; <span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🔤</span> shows how the Arabic sounds.<br>👆 Tap any Arabic on the screen to hear it again.`);pop(tb);point(tb);
+  say(`Two buttons help you at the top. The <b>English</b> button turns all the Arabic into English. The <b>Sounds</b> button shows how the Arabic sounds, in English letters. Tap any Arabic to hear it.`);
+  await w(4200);unpoint();
+  say(`This first lesson is your <b>exam toolkit</b>: how to find your way around the sheet, what each instruction means, and how to write your answers.`);await w(3400);}},
+
+/* 1 */ {t:'Six question areas',run:async w=>{
+  const h=mk('is-card','left:30px;top:8px;width:900px;text-align:center',`<div class="src">How every question starts</div><div class="q" style="font-size:30px">${ar(
+    `${kw('السؤال','as-su\'aal')} الثاني : في مجال : ${kw('العقيدة','al-\'aqeeda')}`,`${kw('Question')} 2: in the area of: ${kw('Belief')}`,'','blk')}</div>`);pop(h);
+  say(`Every question on your sheet starts with a heading like this one: ${ar('السؤال الثاني : في مجال : العقيدة','Question 2: in the area of Belief.')}`);await w(3000);
+  h.classList.add('lit');const K=h.querySelectorAll('.kw');
+  point(K[0]);say(`${aw('السؤال','as-su\'aal')} means <b>the question</b>.`);await w(2200);
+  point(K[1]);say(`The <b>last word</b> is the important one: it tells you the <b>topic</b>. ${aw('العقيدة','al-\'aqeeda')} means <b>Belief</b>.`);await w(3000);unpoint();
+  const A=[['Q2','👼','العقيدة','al-\'aqeeda','Belief: the angels'],['Q3','🤲','الحديث','al-hadeeth','Hadith: sincerity, Hijra'],['Q4','📜','السيرة','as-seera','Life of the Prophet ﷺ'],
+    ['Q5','🕌','الفقه','al-fiqh','Fiqh: prayer'],['Q6','👅','التهذيب','at-tahdheeb','Manners: the tongue'],['Q7','🧩','الثقافة الإسلامية','ath-thaqaafa al-islaamiyya','Islamic culture']];
+  const top=h.offsetHeight+22;const C=[];
+  for(let i=0;i<6;i++){const [n,e,a,s,m]=A[i],x=644-(i%3)*307,y=top+Math.floor(i/3)*148;
+    const c=mk('is-card',`left:${x}px;top:${y}px;width:286px;height:134px;text-align:center;padding:6px 8px;border-color:${COL[i]}`,
+      `<div style="font-size:18px;font-weight:800;color:${COL[i]}">${n} <span style="font-size:30px">${e}</span></div>`+
+      `<div style="font-size:${a.length>10?25:32}px;font-weight:700;color:#5a3c00;line-height:1.25">${aw(a,s)}</div><div style="font-size:15px;font-weight:800;color:#626a80">${m}</div>`);
+    pop(c);point(c);C.push(c);beep(500+i*60,.06);
+    say(`${['Question 2','Question 3','Question 4','Question 5','Question 6','Question 7'][i]}: ${aw(a,s)}, ${['<b>Belief</b>. Think of an angel 👼.','<b>Hadith</b>, the sayings of the Prophet ﷺ.','<b>the life of the Prophet</b> ﷺ. Think of a story scroll 📜.','<b>Fiqh</b>, the rules of worship, like prayer 🕌.','<b>Manners</b>, good behaviour. This one is about the tongue 👅.','<b>Islamic culture</b>. This one is about responsibility.'][i]}`);await w(2900);}
+  unpoint();
+  const tip=mk('is-why',`left:150px;top:${top+300}px;width:660px;text-align:center;white-space:nowrap`,`${big('السؤال','#2c66cf',26)} = the question &nbsp;·&nbsp; ${big('الإجابة','#18a058',26)} = the answer`);
+  if(top+300+60<=520){pop(tip);point(tip);}else tip.remove();
+  say(`One more word: under every question, the sheet shows ${aw('الإجابة','al-ijaaba')}: <b>the answer</b>. Question, then answer.`);await w(3200);unpoint();}},
+
+/* 2 */ {t:'Write, write down, complete',run:async w=>{
+  say(`Every question starts with an <b>instruction word</b>. It tells you <b>what to do</b>. There are nine of them. Here are the first three.`);await w(3200);
+  const W=[{a:'اكتب',s:'uktub',m:'write',e:'✍️',todo:'Write the answer or answers.',col:'#18a058'},
+    {a:'دون',s:'dawwin',m:'write down',e:'📝',todo:'Write a list. Count the dotted lines!',col:'#2c66cf'},
+    {a:'أكمل',s:'akmil',m:'complete',e:'🧩',todo:'Fill the gap with the missing word.',col:'#e06a1b'}];
+  const cards=W.map((o,i)=>{const c=IW(644-i*307,o);c.style.visibility='hidden';return c;});
+  /* اكتب */
+  cards[0].style.visibility='';pop(cards[0]);point(cards[0]);
+  say(`${aw('اكتب','uktub')} means <b>write</b>. Write the answer, or answers.`);await w(2600);
+  let p=demo('Worksheet · Q5 · (a)',`اكتب ${kw('خمسة','khamsa')} من واجبات الصلاة`,`Write ${kw('five')} of the required acts of prayer`);
+  say(`Like Question 5 a: ${ar('اكتب خمسة من واجبات الصلاة','Write five of the required acts of prayer.')}`);await w(2600);
+  p.classList.add('lit');point(p.querySelector('.kw'));
+  say(`Look for a <b>number</b>! ${aw('خمسة','khamsa')} means <b>five</b>, so you write five answers. ${aw('أربعة','arba\'a')} means <b>four</b>.`);await w(3400);
+  const hands=mk('',`left:0;top:120px;width:860px;text-align:center;font-size:44px`,'',p);
+  for(let i=0;i<5;i++){hands.insertAdjacentHTML('beforeend',`<span style="display:inline-block;margin:0 8px">✏️<b style="font-size:26px;color:#18a058">${i+1}</b></span>`);pop(hands.lastChild);beep(520+i*60,.05);await w(300);}
+  mk('',`left:0;top:200px;width:860px;text-align:center;font-size:21px;font-weight:800;color:#7a4a00`,`${big('خمسة','#18a058',30)} = 5 answers &nbsp;·&nbsp; ${big('أربعة','#2c66cf',30)} = 4 answers`,p);
+  await w(1800);
+  /* دون */
+  cards[1].style.visibility='';pop(cards[1]);point(cards[1]);
+  say(`${aw('دون','dawwin')} means <b>write down</b>: write a <b>list</b>.`);await w(2400);
+  p=demo('Worksheet · Q6 · (a)','دون أسباب آفات اللسان','Write down the causes of the sins of the tongue');
+  say(`Like Question 6 a: ${ar('دون أسباب آفات اللسان','Write down the causes of the sins of the tongue.')}. There's no number here. So how many answers?`);await w(3200);
+  say(`Count the <b>dotted lines</b>!`);await lines(w,p,4,96);
+  const n4=mk('is-chip','left:20px;top:116px',`4 lines = 4 answers`,p);pop(n4);point(n4);
+  say(`Four dotted lines, so <b>four answers</b>. The number of dotted lines tells you how many answers to write.`);await w(3200);
+  /* أكمل */
+  cards[2].style.visibility='';pop(cards[2]);point(cards[2]);
+  say(`${aw('أكمل','akmil')} means <b>complete</b>. A word is missing: fill the gap.`);await w(2400);
+  p=demo('Worksheet · Q2 · (c) · 4',`خلق الله تعالى الإنسان من <span class="gap" style="color:#e06a1b">..........</span>`,`Allah the Exalted created mankind from <span class="gap" style="color:#e06a1b">……</span>`);
+  say(`Like Question 2 c: ${ar('خلق الله تعالى الإنسان من ..........','Allah the Exalted created mankind from …')}`);await w(2600);
+  const g=p.querySelector('.gap');point(g);
+  an(g,[{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:500,iterations:2});await w(1200);
+  g.textContent=EN?'clay':'طين';g.style.cssText='display:inline-block;background:#18a058;color:#fff;border-radius:10px;padding:0 12px';pop(g);yay();
+  say(`The dots are the gap. One word goes in: ${aw('طين','teen')}, <b>clay</b>. You'll learn that one in Lesson 2.`);await w(3200);unpoint();}},
+
+/* 3 */ {t:'Underline, tick or cross, decide',run:async w=>{
+  say(`The next three instruction words don't ask for long answers. You <b>mark</b> or <b>label</b> something.`);await w(2800);
+  const W=[{a:'ضع خطا تحت',s:'da\' khattan taht',m:'put a line under',e:'➖',todo:'Underline the right choice.',col:'#6a45d8',fs:30},
+    {a:'ضع علامة ( √ ) أو ( × )',s:'da\' \'alaama',m:'put a mark',e:'✔️ ✖️',todo:'Tick if true, cross if false.',col:'#18a058',fs:23},
+    {a:'حدد',s:'haddid',m:'decide',e:'🏷️',todo:'Choose the right label and write it.',col:'#c2367a'}];
+  const cards=W.map((o,i)=>{const c=IW(644-i*307,o);c.style.visibility='hidden';return c;});
+  /* ضع خطا تحت */
+  cards[0].style.visibility='';pop(cards[0]);point(cards[0]);
+  say(`${aw('ضع خطا تحت','da\' khattan taht')} means <b>put a line under</b>. Three choices are in brackets: underline the right one.`);await w(3200);
+  let p=demo('Worksheet · Q3 · (a) · 1','ترك بلد الشرك إلى بلد الإسلام ( النية – <span class="ul">الهجرة</span> – الإخلاص )',
+    'Leaving the land of shirk for the land of Islam (intention – <span class="ul">Hijra</span> – sincerity)');
+  say(`Like Question 3 a: ${ar('ترك بلد الشرك إلى بلد الإسلام ( النية – الهجرة – الإخلاص )','Leaving the land of shirk for the land of Islam: intention, Hijra, or sincerity?')}`);await w(3000);
+  const ul=p.querySelector('.ul');ul.style.cssText='background:linear-gradient(#e04848,#e04848) no-repeat right bottom / 0% 5px;padding-bottom:4px';point(ul);
+  an(ul,[{backgroundSize:'0% 5px'},{backgroundSize:'100% 5px'}],{duration:700,fill:'forwards'});beep(700,.1);await w(800);
+  say(`Draw a line under ${aw('الهجرة','al-hijra')}, the <b>Hijra</b>. Don't write anything else: just one neat line.`);await w(3000);
+  /* ضع علامة */
+  cards[1].style.visibility='';pop(cards[1]);point(cards[1]);
+  say(`${aw('ضع علامة','da\' \'alaama')} means <b>put a mark</b>: a <b>tick</b> √ if the sentence is true, a <b>cross</b> × if it's false.`);await w(3200);
+  p=demo('Worksheet · Q4 · (b) · 1 and 2','','');p.querySelector('.q').remove();
+  const S=[['نزل الوحي على النبي ﷺ عند بلوغه أربعين سنة','Revelation came to the Prophet ﷺ when he reached forty.','√','#18a058'],
+    ['كان الوحي ينزل على النبي في صورة واحدة','Revelation always came to the Prophet in one single form.','×','#e04848']];
+  for(let i=0;i<2;i++){const [a,e,m,c]=S[i],y=44+i*100;
+    const t=mk('',`left:120px;top:${y}px;width:740px;font-size:25px;font-weight:700`,ar(a,e,'','blk'),p);pop(t);
+    const b=mk('',`left:10px;top:${y}px;width:84px;height:56px;border:3px solid #d9a441;border-radius:12px;background:#fffaf0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#a89577`,'( &nbsp; )',p);pop(b);
+    say(ar(a,e));await w(2800);
+    b.innerHTML=`<span style="font-size:42px;color:${c}">${m}</span>`;b.style.borderColor=c;pop(b);point(b);if(m==='√')yay();else boo();
+    say(m==='√'?`True, so a <b>tick</b> √.`:`False, so a <b>cross</b> ×. The revelation came in <b>more than one</b> form.`);await w(2800);}
+  /* حدد */
+  cards[2].style.visibility='';pop(cards[2]);point(cards[2]);
+  say(`${aw('حدد','haddid')} means <b>decide</b>. The question gives you the labels: you pick one and write it.`);await w(2800);
+  p=demo('Worksheet · Q7 · (a) · 1','شاب أسرف بالسهر خلال شهر رمضان','A young man who stayed up far too late in Ramadan');
+  const L=mk('',`left:0;top:120px;width:860px;display:flex;justify-content:center;gap:30px`,
+    `<span class="is-chip">${big('مسؤول','#18a058',30)} <span>responsible</span></span><span class="is-chip">${big('غير مسؤول','#e04848',30)} <span>not responsible</span></span>`,p);pop(L);
+  say(`In Question 7 a, the two labels are ${aw('مسؤول','mas\'ool')}, <b>responsible</b>, and ${aw('غير مسؤول','ghayr mas\'ool')}, <b>not responsible</b>. ${aw('غير','ghayr')} means <b>not</b>.`);await w(3800);
+  say(ar('شاب أسرف بالسهر خلال شهر رمضان','A young man who stayed up far too late in Ramadan.'));await w(2600);
+  const ans=mk('',`left:250px;top:200px;width:360px;text-align:center;background:#e04848;color:#fff;border-radius:14px;padding:4px 10px`,
+    `${big('غير مسؤول','#fff',36)}<div style="font-size:15px;font-weight:800">ghayr mas'ool · not responsible</div>`,p);pop(ans);point(ans);boo();
+  say(`Staying up far too late is not looking after yourself. So: ${aw('غير مسؤول','ghayr mas\'ool')}.`);await w(3000);unpoint();}},
+
+/* 4 */ {t:'Define, answer, explain',run:async w=>{
+  say(`The last three instruction words ask you to write a <b>sentence</b> of your own.`);await w(2400);
+  const W=[{a:'عرف',s:'\'arrif',m:'define',e:'📖',todo:'Write what the word means.',col:'#2c66cf'},
+    {a:'أجب',s:'ajib',m:'answer',e:'💬',todo:'Write a short answer.',col:'#0f7a6e'},
+    {a:'وضح',s:'wadd-dih',m:'explain',e:'💡',todo:'Explain it in your own words.',col:'#d66a0a'}];
+  const cards=W.map((o,i)=>{const c=IW(644-i*307,o);c.style.visibility='hidden';return c;});
+  /* عرف */
+  cards[0].style.visibility='';pop(cards[0]);point(cards[0]);
+  say(`${aw('عرف','\'arrif')} means <b>define</b>: write what a word means.`);await w(2400);
+  let p=demo('Worksheet · Q4 · (c) · 1',`عرف الوحي ${kw('لغة','lugha')} ${kw('وشرعا','wa shar\'an')} .`,`Define revelation ${kw('in language')} ${kw('and in Islamic law')}.`);
+  say(`Like Question 4 c: ${ar('عرف الوحي لغة وشرعا','Define revelation in language and in Islamic law.')}`);await w(2800);
+  p.classList.add('lit');
+  const two=[['لغة :','lugha','in language'],['شرعا :','shar\'an','in Islamic law']];
+  for(let i=0;i<2;i++){const [a,s,m]=two[i];
+    const r=mk('',`left:110px;top:${100+i*70}px;width:740px;height:56px;display:flex;flex-direction:row-reverse;align-items:flex-end;gap:12px`,
+      `<span style="font-size:30px;font-weight:700;color:#2c66cf">${aw(a,s)}</span><div style="flex:1;border-bottom:4px dotted #b9a27a;height:30px"></div><span style="font-size:16px;font-weight:800;color:#626a80">${m}</span>`,p);pop(r);point(r);
+    say(`${aw(a,s)}: <b>${m}</b>.`);await w(1800);}
+  say(`Two keywords, so the answer has <b>two parts</b>. You'll learn both in Lesson 4.`);await w(2600);
+  /* أجب */
+  cards[1].style.visibility='';pop(cards[1]);point(cards[1]);
+  say(`${aw('أجب','ajib')} means <b>answer</b>. Answer the question with a short sentence.`);await w(2400);
+  p=demo('Worksheet · Q4 · (c) · 2','ما حال النبي ﷺ بعد نزول الوحي <span class="qm">؟</span>','How was the Prophet ﷺ after the revelation came <span class="qm">?</span>');
+  say(`Like Question 4 c: ${ar('ما حال النبي ﷺ بعد نزول الوحي ؟','How was the Prophet ﷺ after the revelation came?')}`);await w(2800);
+  const qm=mk('',`left:0;top:96px;width:860px;text-align:center;font-size:20px;font-weight:800;color:#7a4a00`,
+    `<span style="font-size:70px;color:#0f7a6e;display:inline-block" class="ar-font">؟</span><br>The Arabic question mark faces the other way.`,p);pop(qm);point(qm);
+  loop(qm.firstChild,[{transform:'rotate(-10deg)'},{transform:'rotate(10deg)'}],500,{direction:'alternate'});
+  say(`See the question mark? In Arabic it's written the other way round: ؟. When you see it, write a short answer.`);await w(3400);
+  /* وضح */
+  cards[2].style.visibility='';pop(cards[2]);point(cards[2]);
+  say(`${aw('وضح','wadd-dih')} means <b>explain</b>: show what something means, with its parts or examples.`);await w(2800);
+  p=demo('Worksheet · Q7 · (c)','وضح المسؤولية تجاه الدين .','Explain responsibility towards religion.');
+  say(`Like Question 7 c: ${ar('وضح المسؤولية تجاه الدين','Explain responsibility towards religion.')}. The answer on the sheet has two parts.`);await w(3200);
+  await lines(w,p,2,104);
+  say(`So write <b>two</b> lines. You'll learn them in Lesson 7. That's all nine instruction words!`);await w(3000);unpoint();}},
+
+/* 5 */ {t:'The keyword trick',run:async w=>{
+  say(`Now the most useful trick of all: the <b>keyword</b>. You don't need to understand the whole question. One or two words tell you the answer.`);await w(3600);
+  await clueCard(w,{src:'Worksheet · Q4 · (a) · 2',kind:['أكمل','akmil','complete: fill the gap'],
+    q:`كان النبي ﷺ يتعبد في ${kw('غار','ghaar')} ..........`,en:`The Prophet ﷺ used to worship in the ${kw('cave')} of ……`,
+    keys:[`${aw('غار','ghaar')} means <b>cave</b>. Which cave did the Prophet ﷺ worship in?`],
+    clue:`<span class="ar-font" dir="rtl">غار</span> → ⛰️🕳️ → Hira`,answer:[['حراء','hiraa\'','Hira']],blockSize:44,
+    why:`The Prophet ﷺ used to worship in the cave of ${aw('حراء','hiraa\'')}, on a mountain near Makkah. See ${aw('غار','ghaar')}: write ${aw('حراء','hiraa\'')}.`});
+  await w(1400);clear();
+  await clueCard(w,{src:'Worksheet · Q6 · (b) · 2',kind:['اكتب المصطلح الصحيح','uktub al-mustalah as-saheeh','write the correct term'],
+    q:`${kw('احتقار','ihtiqaar')} الناس بالهمز واللمز .`,en:`${kw('Looking down on')} people with mocking gestures and digs.`,
+    keys:[`${aw('احتقار','ihtiqaar')} means <b>looking down on</b> people, as if they were worth less than you.`],
+    clue:`<span class="ar-font" dir="rtl">احتقار</span> → 😏👉 → mocking`,answer:[['السخرية','as-sukhriyya','mocking']],blockSize:44,
+    why:`Looking down on people and making fun of them is ${aw('السخرية','as-sukhriyya')}, <b>mocking</b>. See ${aw('احتقار','ihtiqaar')}: write ${aw('السخرية','as-sukhriyya')}.`});
+  await w(1400);clear();
+  await clueCard(w,{src:'Worksheet · Q7 · (a) · 3',kind:['حدد','haddid','decide: write the label'],
+    q:`أب ${kw('يعلم','yu\'allim')} أولاده ${kw('الصلاة','as-salaah')}`,en:`A father who ${kw('teaches')} his children ${kw('to pray')}`,
+    keys:[`${aw('يعلم','yu\'allim')} means <b>teaches</b>.`,`${aw('الصلاة','as-salaah')} means <b>the prayer</b>. A father teaching his children to pray: is that responsible?`],
+    clue:`<span class="ar-font" dir="rtl">يعلم … الصلاة</span> → 👨‍👧🕌 → responsible`,answer:[['مسؤول','mas\'ool','responsible']],blockSize:44,
+    why:`Teaching your children to pray is looking after them: ${aw('مسؤول','mas\'ool')}, <b>responsible</b>. No ${aw('غير','ghayr')} this time!`});
+  await w(1200);}},
+
+/* 6 */ {t:'Writing Arabic',run:async w=>{
+  const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#7a4a00','⬅ Arabic goes from right to left');pop(t);
+  say(`Now some tips for <b>writing</b> your answers. Arabic is written from <b>right to left</b>. You start on the right.`);await w(3000);
+  /* the letters of الطاعة, one at a time from the right */
+  const Lt=[['ا','alif'],['ل','laam'],['ط','taa'],['ا','alif'],['ع','\'ayn'],['ة','taa marboota']];
+  const row=mk('','left:80px;top:80px;width:800px;height:130px;display:flex;flex-direction:row-reverse;justify-content:center;gap:22px','');
+  for(let i=0;i<Lt.length;i++){const s=document.createElement('div');s.style.cssText='text-align:center;background:#fff;border:3px solid #f0d9a8;border-radius:14px;padding:0 12px;min-width:70px';
+    s.innerHTML=`<div class="ar-font" style="font-size:56px;font-weight:700;color:#5a3c00;line-height:1.4">${Lt[i][0]}</div><div style="font-size:13px;font-weight:800;color:#2c66cf">${Lt[i][1]}</div>`;
+    row.appendChild(s);pop(s);beep(500+i*60,.05);await w(380);}
+  point(row);say(`Here are the letters of ${aw('الطاعة','at-taa\'a')}, <b>obedience</b>, one by one, starting on the right.`);await w(3000);
+  await an(row,[{gap:'22px',opacity:1},{gap:'0px',opacity:.25}],{duration:900,fill:'forwards'});
+  row.remove();
+  const word=mk('','left:180px;top:70px;width:600px;text-align:center',`${big('الطاعة','#18a058',96)}<div style="font-size:18px;font-weight:800;color:#2c66cf">at-taa'a · obedience</div>`);pop(word);yay();point(word);
+  say(`In a real word, the letters <b>join up</b>, like joined-up handwriting. They change shape a little when they join.`);await w(3200);
+  say(`A few letters, like ${aw('ا','alif')}, never join to the letter after them. That's why you see small gaps in ${aw('الطاعة','at-taa\'a')}.`);await w(3600);
+  /* ال at the start */
+  const eq=[['ال','al','the'],['طاعة','taa\'a','obedience'],'الطاعة','at-taa\'a','the obedience'],eq2=[['ال','al','the'],['إيمان','eemaan','faith'],'الإيمان','al-eemaan','faith'];
+  const rowE=(e,y)=>{const r=mk('',`left:60px;top:${y}px;width:840px;display:flex;flex-direction:row-reverse;align-items:center;justify-content:center;gap:18px`,
+    `<div class="is-b" style="background:#e06a1b"><div class="a ar-font" dir="rtl" style="font-size:38px">${e[0][0]}</div><div class="s">${e[0][1]}</div><div class="m">${e[0][2]}</div></div>`+
+    `<span style="font-size:36px;font-weight:800;color:#7a4a00">+</span>`+
+    `<div class="is-b" style="background:#2c66cf"><div class="a ar-font" dir="rtl" style="font-size:38px">${e[1][0]}</div><div class="s">${e[1][1]}</div><div class="m">${e[1][2]}</div></div>`+
+    `<span style="font-size:36px;font-weight:800;color:#7a4a00">=</span>`+
+    `<div class="is-b" style="background:#18a058"><div class="a ar-font" dir="rtl" style="font-size:38px">${e[2]}</div><div class="s">${e[3]}</div><div class="m">${e[4]}</div></div>`);
+    [...r.children].forEach(c=>{if(c.dataset)c.dataset.a=c.querySelector?.('.a')?.textContent||'';});pop(r);return r;};
+  const r1=rowE(eq,250);point(r1);
+  say(`Lots of answers start with ${aw('ال','al')}. It means <b>the</b>: ${aw('ال','al')} plus ${aw('طاعة','taa\'a')} makes ${aw('الطاعة','at-taa\'a')}.`);await w(3600);
+  const r2=rowE(eq2,385);point(r2);
+  say(`And ${aw('ال','al')} plus ${aw('إيمان','eemaan')} makes ${aw('الإيمان','al-eemaan')}, <b>faith</b>. Don't forget the ${aw('ال','al')} when the answer has it!`);await w(3800);unpoint();}},
+
+/* 7 */ {t:'Letters that look alike',run:async w=>{
+  say(`Some Arabic letters look almost the same. A few dots change everything! Let's look at the ones in your answers.`);await w(3000);
+  const R=[
+    {l:[['ة','taa marboota','two dots on top · sounds "a" or "t"'],['ه','haa','no dots · sounds "h"']],
+     ex:[['الطاعة · السخرية','at-taa\'a · as-sukhriyya'],['فاعله','faa\'iluh']],
+     say:`At the end of a word: ${aw('ة','taa marboota')} has <b>two dots on top</b>, like in ${aw('الطاعة','at-taa\'a')} and ${aw('السخرية','as-sukhriyya')}. ${aw('ه','haa')} has <b>no dots</b>, like in ${aw('فاعله','faa\'iluh')}.`},
+    {l:[['ى','alif maqsoora','no dots · sounds "aa"'],['ي','yaa','two dots under · sounds "ee"']],
+     ex:[['تعالى','ta\'aalaa'],['النبي','an-nabee']],
+     say:`${aw('ى','alif maqsoora')} has <b>no dots</b> and sounds "aa", like in ${aw('تعالى','ta\'aalaa')}. ${aw('ي','yaa')} has <b>two dots under</b> and sounds "ee", like in ${aw('النبي','an-nabee')}.`},
+    {l:[['أ إ ؤ ء','hamza','the little hamza ء sits on a seat, or alone']],
+     ex:[['أكمل · الإيمان · مسؤول · الجزاء','akmil · al-eemaan · mas\'ool · al-jazaa\'']],
+     say:`The little ${aw('ء','hamza')} is a short stop. It sits <b>on</b> an alif, <b>under</b> an alif, on a waw, or <b>alone</b>, as in these four answers. Check where it sits!`}];
+  for(let i=0;i<3;i++){const o=R[i],y=8+i*170;
+    const c=mk('is-card',`left:30px;top:${y}px;width:900px;height:154px;padding:8px 14px;border-color:${COL[i]}`,'');pop(c);
+    const half=o.l.length===2?430:860;
+    o.l.forEach(([a,s,m],j)=>{mk('',`left:${(o.l.length===2?(1-j)*440:0)+10}px;top:4px;width:${half}px;display:flex;flex-direction:row-reverse;align-items:center;gap:14px`,
+      `<div class="ar-font" dir="rtl" style="font-size:58px;font-weight:700;color:${COL[i]};min-width:70px;text-align:center;line-height:1.3">${a}</div>`+
+      `<div style="text-align:right"><div style="font-size:16px;font-weight:800;color:#2c66cf">${s}</div><div style="font-size:15px;font-weight:700;color:#626a80">${m}</div>`+
+      `<div class="ar-font" dir="rtl" style="font-size:30px;font-weight:700;color:#5a3c00;line-height:1.3">${o.ex[j][0]}</div><div style="font-size:13px;font-weight:800;color:#2c66cf">${o.ex[j][1]}</div></div>`,c);});
+    point(c);say(o.say);await w(5200);}
+  unpoint();}},
+
+/* 8 */ {t:'Build the answers',run:async w=>{
+  say(`Now you build answers with tiles. Remember: <b>right to left</b>, so the first tile goes on the right.`);await w(3000);
+  let r=await buildAR(w,{src:'Worksheet · Q4 · (a) · 3',q:`The angel who came down to the Prophet ﷺ: build <b>Jibreel, peace be upon him</b>`,
+    tiles:[['السلام','as-salaam'],['جبريل','jibreel'],['ميكائيل','meekaa\'eel'],['عليه','\'alayhi']],answer:['جبريل','عليه','السلام']});
+  say(r.ok?`Yes! ${aw('جبريل عليه السلام','jibreel \'alayhis-salaam')}: Jibreel, peace be upon him.`:`Nearly! It's ${aw('جبريل عليه السلام','jibreel \'alayhis-salaam')}: ${aw('جبريل','jibreel')} first, on the right.`);await w(3200);clear();
+  r=await buildAR(w,{src:'Worksheet · Q7 · (a) · 1',q:`Staying up far too late in Ramadan: build <b>not responsible</b>`,
+    tiles:[['مسؤول','mas\'ool'],['المسؤولية','al-mas\'ooliyya'],['غير','ghayr']],answer:['غير','مسؤول']});
+  say(r.ok?`Brilliant! ${aw('غير مسؤول','ghayr mas\'ool')}: <b>not</b> comes first.`:`Look again: ${aw('غير مسؤول','ghayr mas\'ool')}. ${aw('غير','ghayr')}, <b>not</b>, comes first, on the right.`);await w(3200);}},
+
+/* 9 */ {t:'Trace it',run:async w=>{
+  say(`Now trace some answers with your finger. Go over the grey letters, from <b>right to left</b>, and keep the joined letters joined.`);await w(3400);
+  const W=[['حراء','hiraa\'','Hira'],['مسؤول','mas\'ool','responsible'],['الطاعة','at-taa\'a','obedience']];
+  for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. Watch the hamza! Press <b>Done</b> when you've finished.`);
+    const r=await traceAR(w,{word:a,tr:s,en:m});
+    say(r.ok?`Lovely writing! That's ${aw(a,s)}.`:r.tooMuch?`Try to stay on the grey letters, not colour the whole box.`:`Good try! Next time go over more of the letters.`);await w(2200);}
+  clear();
+  const p=mk('is-card','left:130px;top:110px;width:700px;text-align:center',`<div style="font-size:54px">📝</div><div style="font-size:24px;font-weight:800;color:#7a4a00">Now on paper!</div>`+
+    `<div style="font-size:19px;font-weight:700;margin-top:6px;line-height:1.5">1. Look at the word. &nbsp; 2. Cover it. &nbsp; 3. Write it. &nbsp; 4. Check it.</div>`+
+    `<div class="ar-font" dir="rtl" style="font-size:42px;margin-top:8px;color:#5a3c00">حراء · السخرية · مسؤول · الطاعة</div>`+
+    `<div style="font-size:15px;font-weight:800;color:#2c66cf">hiraa' · as-sukhriyya · mas'ool · at-taa'a</div>`);pop(p);
+  say(`The exam is written by hand, so practise on paper too: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b> the dots and the hamza.`);await w(4000);}},
+
+/* 10 */ {t:'Match game',run:async w=>{
+  say(`Game time! Each card is an <b>instruction word</b>. Tap a card, then tap what it asks you to do.`);await w(2800);
+  let r=await sortGame(w,{bins:[`✍️ <small>write answers</small>`,`🧩 <small>fill the gap</small>`,`✔️ <small>mark or label</small>`,`💡 <small>define, explain</small>`],
+    items:[[chip('اكتب','uktub'),0],[chip('دون','dawwin'),0],[chip('أجب','ajib'),0],[chip('أكمل','akmil'),1],[chip('ضع خطا تحت','da\' khattan taht'),2],[chip('ضع علامة','da\' \'alaama'),2],
+      [chip('حدد','haddid'),2],[chip('عرف','\'arrif'),3],[chip('وضح','wadd-dih'),3]],top:200,colors:['#18a058','#e06a1b','#6a45d8','#2c66cf']});
+  say(r.ok===r.total?`Perfect! You know all nine instruction words.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place.`);await w(3000);clear();
+  say(`Now the keywords! Tap a keyword card, then tap the answer it belongs to.`);await w(2600);
+  r=await sortGame(w,{bins:[`<span class="ar-font" style="font-size:26px">حراء</span> <small>Hira</small>`,`<span class="ar-font" style="font-size:26px">السخرية</span> <small>mocking</small>`,`<span class="ar-font" style="font-size:26px">مسؤول</span> <small>responsible</small>`],
+    items:[[chip('غار','ghaar'),0],[`⛰️🕳️`,0],[chip('احتقار','ihtiqaar'),1],[`😏👉`,1],[chip('يعلم … الصلاة','yu\'allim … as-salaah'),2],[`👨‍👧🕌`,2]],top:180,colors:['#e06a1b','#c2367a','#18a058']});
+  say(r.ok===r.total?`Perfect! Keyword spotted, answer found.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
+
+/* 11 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Toolkit · instruction words · أكمل',q:'أكمل ما يأتي',tr:'akmil maa ya\'tee',en:'"akmil maa ya\'tee": what does it ask you to do?',
+      o:['🧩 Fill the gap with the missing word','➖ Underline the right choice','✔️ Put a tick or a cross'],a:0,cols:1,
+      why:'أكمل (akmil) means complete: fill the gap.',whyNot:{1:'Underline is ضع خطا تحت (da\' khattan taht).',2:'Tick or cross is ضع علامة (da\' \'alaama).'}},
+    {src:'Toolkit · instruction words · ضع خطا تحت',q:'ضع خطا تحت المكمل الصحيح لكل مما يأتي',tr:'da\' khattan taht…',en:'"da\' khattan taht…": what does it ask you to do?',
+      o:['✍️ Write a list','➖ Underline the right choice','📖 Write a definition'],a:1,cols:1,
+      why:'ضع خطا تحت means put a line under: underline the right choice in the brackets.',whyNot:{0:'A list is دون (dawwin).',2:'A definition is عرف (\'arrif).'}},
+    {src:'Toolkit · instruction words · عرف',q:'عرف الوحي لغة وشرعا .',tr:'\'arrif al-wahy lughatan wa shar\'an',en:'"\'arrif…": what does it ask you to do?',
+      o:['🏷️ Choose a label','✔️ Put a tick or a cross','📖 Write what the word means'],a:2,cols:1,
+      why:'عرف (\'arrif) means define: write what the word means.',whyNot:{0:'Choosing a label is حدد (haddid).',1:'Tick or cross is ضع علامة (da\' \'alaama).'}},
+    {src:'Toolkit · instruction words · حدد',q:'حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول )',tr:'haddid…',en:'"haddid…": what does it ask you to do?',
+      o:['🏷️ Decide and write the label: responsible or not responsible','💡 Explain it in your own words','🧩 Fill the gap'],a:0,cols:1,
+      why:'حدد (haddid) means decide: write مسؤول or غير مسؤول.',whyNot:{1:'Explaining is وضح (wadd-dih).',2:'Filling the gap is أكمل (akmil).'}},
+    {src:'Toolkit · dotted lines · دون',q:'دون أسباب آفات اللسان : ...... ...... ...... ......',en:'"dawwin…" with four dotted lines: how many answers do you write?',
+      o:['1 answer','4 answers','5 answers'],a:1,cols:3,
+      why:'Count the dotted lines: four lines, four answers.',whyNot:{0:'There are four dotted lines, so one answer is not enough.',2:'Five is for خمسة. Here there are four dotted lines.'}},
+    {src:'Toolkit · section headings · الفقه',q:'السؤال الخامس : في مجال : الفقه',tr:'as-su\'aal al-khaamis: fee majaal: al-fiqh',en:'Question 5: in the area of "al-fiqh". What is it about?',
+      o:['🕌 Fiqh: the rules of worship, like prayer','👼 Belief: the angels','👅 Manners: the tongue'],a:0,cols:1,
+      why:'الفقه (al-fiqh) is Fiqh: Question 5 is about prayer.',whyNot:{1:'Belief is العقيدة (al-\'aqeeda), Question 2.',2:'Manners is التهذيب (at-tahdheeb), Question 6.'}},
+    {src:'Toolkit · section headings · الثقافة الإسلامية',q:'السؤال السابع : في مجال : الثقافة الإسلامية',tr:'as-su\'aal as-saabi\': fee majaal: ath-thaqaafa al-islaamiyya',en:'Question 7: in the area of "ath-thaqaafa al-islaamiyya". What is it about?',
+      o:['📜 The life of the Prophet ﷺ','🧩 Islamic culture: responsibility','🤲 Hadith: sincerity'],a:1,cols:1,
+      why:'الثقافة الإسلامية is Islamic culture: Question 7 is about responsibility.',whyNot:{0:'The life of the Prophet ﷺ is السيرة (as-seera), Question 4.',2:'Hadith is الحديث (al-hadeeth), Question 3.'}},
+    {src:'Worksheet · Q4 · (a) · 2',q:'كان النبي ﷺ يتعبد في غار ..........',en:'The Prophet ﷺ used to worship in the cave of ……',
+      o:['العلق','حراء','رمضان'],oe:['Al-Alaq','Hira','Ramadan'],otr:['al-\'alaq','hiraa\'','ramadaan'],a:1,cols:3,
+      why:'غار (ghaar) means cave: the cave of Hira (hiraa\').',whyNot:{0:'Al-Alaq is a surah: it goes with أول … سورة (the first … surah).',2:'Ramadan is a month, not a cave.'}},
+    {src:'Worksheet · Q6 · (b) · 2',q:'احتقار الناس بالهمز واللمز .',en:'Looking down on people with mocking gestures and digs.',
+      o:['الغيبة','النميمة','السخرية'],oe:['backbiting','spreading tales','mocking'],otr:['al-gheeba','an-nameema','as-sukhriyya'],a:2,cols:3,
+      why:'احتقار (ihtiqaar), looking down on people: mocking, as-sukhriyya.',whyNot:{0:'Backbiting goes with يكرهونه, what people hate to hear about themselves.',1:'Spreading tales goes with نقل, carrying talk.'}},
+    {src:'Worksheet · Q7 · (a) · 3',q:'أب يعلم أولاده الصلاة',en:'A father who teaches his children to pray',
+      o:['غير مسؤول','مسؤول'],oe:['not responsible','responsible'],otr:['ghayr mas\'ool','mas\'ool'],a:1,cols:3,
+      why:'Teaching your children to pray is looking after them: responsible (mas\'ool).',whyNot:{0:'غير means not. Teaching prayer is a good, caring thing, so he is responsible.'}}
+  ]);}},
+
+/* 12 */ {t:'You did it!',run:async w=>{
+  const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🧰 Toolkit ready!');pop(t);
+  const B=[['🧭','العقيدة · الفقه','6 question areas'],['✍️','اكتب · دون','write, write a list'],['🧩','أكمل','fill the gap'],['➖ ✔️','ضع خطا تحت','underline, tick or cross'],
+    ['🔎','<bdi>غار</bdi> → <bdi>حراء</bdi>','keyword → answer'],['📏','4 ····· = 4','dotted lines = answers'],['⬅','الطاعة','right to left, joined'],['ة ى أ','مسؤول','dots and hamza']];
+  B.forEach(([e,a,m],i)=>{const c=mk('is-card',`left:${30+(i%4)*228}px;top:${80+Math.floor(i/4)*200}px;width:212px;height:180px;text-align:center;padding:10px 8px`,
+    `<div style="font-size:40px">${e}</div><div class="ar-font" dir="${/→|·····/.test(a)?'ltr':'rtl'}" style="font-size:${a.length>12?22:28}px;font-weight:700;color:#5a3c00;margin:6px 0;line-height:1.3">${a}</div><div style="font-size:15px;font-weight:800;color:#626a80">${m}</div>`);pop(c,i*140);});
+  await w(1200);confetti(160);yay();
+  say(`${aw('ما شاء الله','maa shaa\' Allaah')}! You can find your way around the sheet, you know all nine instruction words, and you can spot a keyword. Now let's learn the answers, starting with Lesson 2!`);
+  await w(4400);}}
+  ]}));
+</script>
+</body>
+</html>

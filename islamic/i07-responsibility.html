@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#b8862b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Responsibility</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="islamic.js"></script>
+<script>
+/* Islamic Studies Lesson 7 · Islamic culture (الثقافة الإسلامية) · Worksheet Q7 (a) 1–3, (b), (c).
+   Responsible or irresponsible (مسؤول / غير مسؤول), the four kinds of personal responsibility (المسؤولية + an ending
+   in ـية) and responsibility towards religion (worship and dealings). Same pattern as the pilot, i02-angels.html. */
+const WS='Worksheet · Q7 · ';
+const MAS='#6a45d8';
+const KINDS=[
+  {e:'🕌',end:'الدينية',s:'ad-deeniyya',m:'religious',who:'religion',col:'#18a058',word:'Dad'},
+  {e:'🧍',end:'الشخصية',s:'ash-shakhsiyya',m:'personal',who:'me',col:'#2c66cf',word:'Shows'},
+  {e:'👨‍👩‍👧',end:'الأسرية',s:'al-usariyya',m:'family',who:'my family',col:'#e06a1b',word:'Us'},
+  {e:'🏙️',end:'المجتمعية',s:'al-mujtama\'iyya',m:'to society',who:'society',col:'#c2367a',word:'Manners'}];
+const bt=t=>`<span class="ar-font" style="font-size:26px">${t[0]}</span> <small>${t[1]}</small>`;
+
+Lesson.start(Object.assign({}, ISLAMIC, {
+  id:'i07', num:7, part:'Islamic culture · الثقافة الإسلامية', emoji:'🧩', title:'Responsibility',
+  intro:`Assalaamu alaykum! It's <b>Hudhud the Hoopoe</b> 🐦 Today: <b>responsibility</b>, Question 7 of your sheet. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Responsible or not?',run:async w=>{
+  say(`Question 7 is all about <b>responsibility</b>: doing your duties and looking after what you are in charge of. Two words open the door to the whole question.`);await w(3600);
+  const R=mk('is-card','left:500px;top:20px;width:410px;height:230px;text-align:center;border-color:#18a058',
+    `<div style="font-size:54px">🦸</div><div style="font-size:60px;font-weight:700;color:#18a058;line-height:1.2">${aw('مسؤول','mas\'ool')}</div><div style="font-size:20px;font-weight:800;color:#626a80">responsible</div>`);pop(R);point(R);
+  say(`${aw('مسؤول','mas\'ool')} means <b>responsible</b>: someone who does the right thing and looks after their duties.`);await w(3200);
+  const N=mk('is-card','left:50px;top:20px;width:410px;height:230px;text-align:center;border-color:#e04848',
+    `<div style="font-size:54px">🙈</div><div style="font-size:60px;font-weight:700;color:#e04848;line-height:1.2">${aw('غير','ghayr')} ${aw('مسؤول','mas\'ool')}</div><div style="font-size:20px;font-weight:800;color:#626a80">irresponsible</div>`);pop(N);point(N);
+  say(`${aw('غير مسؤول','ghayr mas\'ool')} means <b>irresponsible</b>. It's the same word with one extra word in front.`);await w(3200);
+  const g=N.querySelector('.aw');g.style.cssText+=';background:#ffe680;border-radius:10px;box-shadow:0 0 0 3px #ffd84d';
+  const ch=mk('is-chip','left:110px;top:270px',`<span class="ar-font" dir="rtl">غير</span><span>= not (like "un-" or "ir-")</span>`);pop(ch);point(ch);
+  say(`${aw('غير','ghayr')} means <b>not</b>. So ${aw('غير مسؤول','ghayr mas\'ool')} is <b>not responsible</b>. Write ${aw('غير','ghayr')} first, on the right.`);await w(3600);
+  const tip=mk('is-why','left:130px;top:350px;width:700px;text-align:center;font-size:19px',
+    `✍️ Writing tip: hamza <bdi class="ar-font" style="font-size:30px">ء</bdi> + waaw <bdi class="ar-font" style="font-size:30px">و</bdi> = <bdi class="ar-font" style="font-size:30px">ؤ</bdi> (a hamza hat on the waaw)<br>`+
+    `<span class="ar-font" dir="rtl" style="font-size:40px;color:#5a3c00">مسـ<span style="color:#e04848">ؤ</span>ول</span>`);pop(tip);point(tip);
+  say(`Writing tip: in ${aw('مسؤول','mas\'ool')}, the little hamza ${aw('ء','hamza')} sits on top of a ${aw('و','waaw')}, like a hat. Then comes another ${aw('و','waaw')} and a ${aw('ل','laam')}.`);await w(4200);unpoint();}},
+
+/* 1 */ {t:'Staying up late (Q7 a 1)',run:async w=>{
+  say(`Question 7 a says: ${ar('حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول )','Decide the type of action by writing the word responsible or irresponsible.')} You only ever write one of our two words.`);await w(3400);
+  await clueCard(w,{src:WS+'(a) · 1',kind:['حدد','haddid','decide: responsible or not?'],
+    q:`شاب ${kw('أسرف','asrafa')} ${kw('بالسهر','bis-sahar')} خلال شهر رمضان`,en:`A young man who ${kw('overdid')} ${kw('staying up late')} during the month of Ramadan`,
+    keys:[`${aw('أسرف','asrafa')} means he <b>overdid it</b>, he wasted. Too much of something is never a good sign.`,`${aw('بالسهر','bis-sahar')} means <b>staying up late</b>. Too much staying up late: no sleep, tired all day.`],
+    clue:`<span class="ar-font" dir="rtl">أسرف بالسهر</span> → 🌙😵 → irresponsible`,answer:[['غير','ghayr','not'],['مسؤول','mas\'ool','responsible']],blockSize:44,
+    why:`He is ${aw('غير مسؤول','ghayr mas\'ool')}: staying up far too late wastes time and harms his body.`});
+  await w(1200);}},
+
+/* 2 */ {t:'Energy drinks and prayer (Q7 a 2, 3)',run:async w=>{
+  await clueCard(w,{src:WS+'(a) · 2',kind:['حدد','haddid','decide: responsible or not?'],
+    q:`فتاة ${kw('تكثر','tukthir')} من ${kw('مشروبات الطاقة','mashroobaat at-taaqa')}`,en:`A girl who drinks ${kw('a lot of')} ${kw('energy drinks')}`,
+    keys:[`${aw('تكثر','tukthir')} means <b>a lot</b>, too much. Another "too much" warning!`,`${aw('مشروبات الطاقة','mashroobaat at-taaqa')} means <b>energy drinks</b>. Too many are bad for your heart and your sleep.`],
+    clue:`<span class="ar-font" dir="rtl">تكثر من مشروبات الطاقة</span> → 🥤🥤🥤 → irresponsible`,answer:[['غير','ghayr','not'],['مسؤول','mas\'ool','responsible']],blockSize:44,
+    why:`She is ${aw('غير مسؤول','ghayr mas\'ool')}: she is not looking after her health.`});
+  await w(1400);clear();
+  await clueCard(w,{src:WS+'(a) · 3',
+    q:`أب ${kw('يعلم','yu\'allim')} أولاده ${kw('الصلاة','as-salaah')}`,en:`A father who ${kw('teaches')} his children ${kw('to pray')}`,
+    keys:[`${aw('يعلم','yu\'allim')} means <b>teaches</b>. Teaching is a good deed.`,`${aw('الصلاة','as-salaah')} means <b>prayer</b>. Teaching prayer is the best thing to teach!`],
+    clue:`<span class="ar-font" dir="rtl">يعلم … الصلاة</span> → 👨‍👧🕌 → responsible`,answer:[['مسؤول','mas\'ool','responsible']],blockSize:44,
+    why:`He is ${aw('مسؤول','mas\'ool')}: he takes care of his family's religion. No ${aw('غير','ghayr')} this time!`});
+  await w(1200);}},
+
+/* 3 */ {t:'Sort the actions',run:async w=>{
+  const note=mk('','left:30px;top:10px;width:900px;text-align:center;font-size:17px;font-weight:800;color:#7a4a00',
+    `Arabic cards = worksheet keywords &nbsp;·&nbsp; <span style="color:#2c66cf">English cards = extra practice (not on the sheet)</span>`);pop(note);
+  say(`Sorting game! Tap a card, then tap ${aw('مسؤول','mas\'ool')} or ${aw('غير مسؤول','ghayr mas\'ool')}. The Arabic cards are from your sheet. The English ones are extra practice.`);await w(3400);
+  const r=await sortGame(w,{bins:[bt(['مسؤول','responsible']),bt(['غير مسؤول','irresponsible'])],
+    items:[[aw('أسرف بالسهر','asrafa bis-sahar'),1],[aw('تكثر من مشروبات الطاقة','tukthir min mashroobaat at-taaqa'),1],[aw('يعلم أولاده الصلاة','yu\'allim awlaadahu as-salaah'),0],
+      [`✏️ does homework on time`,0],[`📱 plays games all night`,1],[`🧹 tidies own room`,0],[`🗑️ drops litter in the park`,1]],
+    top:210,colors:['#18a058','#e04848']});
+  say(r.ok===r.total?`Perfect! Too much of something, or harming yourself or others: ${aw('غير مسؤول','ghayr mas\'ool')}. Doing your duties: ${aw('مسؤول','mas\'ool')}.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3400);}},
+
+/* 4 */ {t:'Circles of responsibility',run:async w=>{
+  say(`Question 7 b asks for the kinds of <b>personal responsibility</b>. Picture circles growing around you, like ripples in a pond.`);await w(3000);
+  const cx=270,cy=262,R=[66,130,192,252],order=[1,2,3,0];
+  const rings=[];
+  for(let k=0;k<4;k++){const K=KINDS[order[k]],r=R[k];
+    const c=mk('',`left:${cx-r}px;top:${cy-r}px;width:${2*r}px;height:${2*r}px;border-radius:50%;border:4px solid ${K.col};background:${K.col}22;z-index:${10-k}`,'');rings.push(c);}
+  const labels=[];
+  for(let k=0;k<4;k++){const K=KINDS[order[k]],r=R[k],ly=k?cy-(R[k-1]+r)/2-24:cy-38;
+    const l=mk('',`left:${cx-110}px;top:${ly}px;width:220px;text-align:center;z-index:12;line-height:1.1`,
+      `<div style="font-size:${k?22:30}px">${K.e} <span class="ar-font" dir="rtl" style="font-size:24px;font-weight:700;color:${K.col}">${K.end}</span></div><div style="font-size:13px;font-weight:800;color:#626a80">${K.who}</div>`);
+    l.style.visibility='hidden';labels.push(l);}
+  const lines=[`It starts with <b>me</b>: ${aw('الشخصية','ash-shakhsiyya')}, <b>personal</b>. Looking after my body, my time and my things.`,
+    `Then my <b>family</b>: ${aw('الأسرية','al-usariyya')}. Helping and respecting my parents, brothers and sisters.`,
+    `Then <b>society</b>, everyone around me: ${aw('المجتمعية','al-mujtama\'iyya')}. Neighbours, school, the street.`,
+    `And <b>religion</b> goes around everything: ${aw('الدينية','ad-deeniyya')}. Obeying Allah in all of it.`];
+  for(let k=0;k<4;k++){const c=rings[k];c.style.visibility='visible';
+    an(c,[{transform:'scale(.2)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:700,easing:'cubic-bezier(.4,1.4,.6,1)'});
+    labels[k].style.visibility='visible';pop(labels[k]);point(labels[k]);beep(480+k*80,.08);say(lines[k]);await w(3400);}
+  unpoint();
+  const m=mk('is-card','left:560px;top:20px;width:370px;text-align:center',
+    `<div style="font-size:17px;font-weight:800;color:#7a4a00">Write this word once…</div><div class="ar-font" dir="rtl" style="font-size:40px;font-weight:700;color:${MAS}">المسؤولية</div>`+
+    `<div style="font-size:15px;font-weight:800;color:#2c66cf">al-mas'ooliyya · responsibility</div>`);pop(m);point(m);
+  say(`Here's the trick: every answer starts with the same word, ${aw('المسؤولية','al-mas\'ooliyya')}, <b>responsibility</b>. Write it once, then learn just <b>four endings</b>.`);await w(3800);
+  const e=mk('is-card','left:560px;top:200px;width:370px;text-align:center',
+    `<div style="font-size:17px;font-weight:800;color:#7a4a00">…then add an ending</div><div class="ar-font" dir="rtl" style="font-size:28px;line-height:1.6">`+
+    KINDS.map(K=>`<span style="color:${K.col}">${K.end.slice(0,-2)}<b style="background:#ffe680;border-radius:6px">ية</b></span>`).join(' · ')+`</div>`);pop(e);point(e);
+  say(`And all four endings finish with the same sound: ${aw('ية','iyya')}, <b>iyya</b>. ${aw('الدينية','ad-deeniyya')}, ${aw('الشخصية','ash-shakhsiyya')}, ${aw('الأسرية','al-usariyya')}, ${aw('المجتمعية','al-mujtama\'iyya')}.`);await w(4600);
+  const t=mk('is-clue','left:560px;top:380px;width:370px;text-align:center;white-space:normal;font-size:20px',
+    `Remember: <b>D</b>ad <b>Sh</b>ows <b>U</b>s <b>M</b>anners<br><small style="color:#2c66cf">Deeniyya · Shakhsiyya · Usariyya · Mujtama'iyya</small>`);pop(t);point(t);
+  say(`Memory sentence: <b>Dad Shows Us Manners</b>. D for deeniyya, Sh for shakhsiyya, U for usariyya, M for mujtama'iyya.`);await w(4200);unpoint();}},
+
+/* 5 */ {t:'Four kinds (Q7 b)',run:async w=>{
+  const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(b)</div><div class="q" style="font-size:26px">${ar(
+    `دون ${kw('أقسام','aqsaam')} ${kw('المسؤولية الفردية','al-mas\'ooliyya al-fardiyya')}`,`Write down the ${kw('kinds')} of ${kw('personal responsibility')}`,'','blk')}</div>`);pop(q);
+  say(`Question 7 b: ${ar('دون أقسام المسؤولية الفردية','Write down the kinds of personal responsibility.')}`);await w(2600);
+  const k=mk('is-chip','left:50px;top:'+(q.offsetHeight+18)+'px',`<span class="ar-font" dir="rtl">دون</span><span>= write down a list</span>`);pop(k);point(k);
+  say(`${aw('دون','dawwin')} means <b>write down</b> a list.`);await w(2000);k.remove();
+  q.classList.add('lit');const K=q.querySelectorAll('.kw');point(K[0]);
+  say(`${aw('أقسام','aqsaam')} means <b>kinds</b> or parts.`);await w(2200);
+  point(K[1]);say(`${aw('المسؤولية الفردية','al-mas\'ooliyya al-fardiyya')} means <b>personal responsibility</b>. Kinds plus responsibility: write the four circles.`);await w(3200);unpoint();
+  const top=q.offsetHeight+24;
+  for(let i=0;i<4;i++){const K2=KINDS[i],y=top+i*92;
+    const ic=mk('',`left:850px;top:${y}px;width:80px;text-align:center;font-size:44px`,K2.e);pop(ic);
+    const lab=mk('',`left:850px;top:${y+56}px;width:80px;text-align:center;font-size:13px;font-weight:800;color:#7a4a00`,K2.word);pop(lab);
+    const bl=ansBlocks(30,y,810,[['المسؤولية','al-mas\'ooliyya','responsibility',MAS],[K2.end,K2.s,K2.m,K2.col]],{size:28,show:false});
+    await revealBlocks(w,bl,{say:false,wait:250});point(ic);
+    say(`${['One','Two','Three','Four'][i]}: ${aw('المسؤولية '+K2.end,'al-mas\'ooliyya '+K2.s)}, <b>${K2.m} responsibility</b>.`);await w(3000);}
+  unpoint();
+  say(`Purple is always the same word. Only the coloured ending changes. <b>Dad Shows Us Manners</b>!`);await w(3000);}},
+
+/* 6 */ {t:'Towards religion (Q7 c)',run:async w=>{
+  const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(c)</div><div class="q" style="font-size:28px">${ar(
+    `وضح المسؤولية ${kw('تجاه','tujaaha')} ${kw('الدين','ad-deen')} .`,`Explain responsibility ${kw('towards')} ${kw('religion')}.`,'','blk')}</div>`);pop(q);
+  say(`Question 7 c: ${ar('وضح المسؤولية تجاه الدين','Explain responsibility towards religion.')}`);await w(2600);
+  let cy=q.offsetHeight+18;
+  const k=mk('is-chip',`left:50px;top:${cy}px`,`<span class="ar-font" dir="rtl">وضح</span><span>= explain</span>`);pop(k);point(k);
+  say(`The instruction word is ${aw('وضح','wadd-dih')}. It means <b>explain</b>.`);await w(2200);
+  q.classList.add('dim','lit');const K=q.querySelectorAll('.kw');
+  point(K[0]);say(`${aw('تجاه','tujaaha')} means <b>towards</b>.`);await w(1800);
+  point(K[1]);say(`${aw('الدين','ad-deen')} means <b>religion</b>, the circle that goes around everything. So: how am I responsible to my religion?`);await w(3200);
+  q.classList.remove('dim');cy+=k.offsetHeight+12;
+  const cl=mk('is-clue',`left:50px;top:${cy}px`,`🔎 <span class="ar-font" dir="rtl">تجاه الدين</span> → 🕌 + 🛒 → worship and dealings`);pop(cl);point(cl);
+  say(`Two answers: what I do for <b>Allah</b>, and how I deal with <b>people</b>. Your turn. Think, then tap <b>Show me</b>.`);
+  let open=false;const b=btn('ex-btn green',`left:50px;top:${cy+cl.offsetHeight+14}px;width:220px;z-index:30`,'👀 Show me',()=>{open=true;});pop(b);point(b);
+  window.AUTOPLAY=()=>{open=true;};await w.until(()=>open);window.AUTOPLAY=null;b.remove();k.remove();cl.remove();
+  const A=[{e:'🕌',lab:'Pray',bl:[['في','fee','in'],['العبادات','al-\'ibaadaat','acts of worship'],['( الصلاة )','as-salaah','(prayer)']],
+      say:`One: ${aw('في العبادات ( الصلاة )','fil-\'ibaadaat, as-salaah')}: in <b>acts of worship</b>, like <b>prayer</b>.`},
+    {e:'🛒',lab:'Pay',bl:[['في','fee','in'],['المعاملات','al-mu\'aamalaat','dealings with people'],['( البيع والشراء )','al-bay\' wash-shiraa\'','(buying and selling)']],
+      say:`Two: ${aw('في المعاملات ( البيع والشراء )','fil-mu\'aamalaat, al-bay\' wash-shiraa\'')}: in <b>dealings with people</b>, like <b>buying and selling</b> honestly.`}];
+  const top=q.offsetHeight+24;
+  for(let i=0;i<2;i++){const y=top+i*108;
+    const ic=mk('',`left:850px;top:${y}px;width:80px;text-align:center;font-size:46px`,A[i].e);pop(ic);
+    const lab=mk('',`left:850px;top:${y+58}px;width:80px;text-align:center;font-size:14px;font-weight:800;color:#7a4a00`,A[i].lab);pop(lab);
+    const bl=ansBlocks(30,y,810,A[i].bl.map((b,j)=>[...b,[i?'#2c66cf':'#18a058',i?'#6a45d8':'#e06a1b','#b8860b'][j]]),{size:32,show:false});
+    await revealBlocks(w,bl,{say:false,wait:250});point(ic);say(A[i].say);await w(3600);}
+  unpoint();
+  const t=mk('is-why',`left:30px;top:${top+230}px;width:900px;text-align:center`,`💡 Memory: <b>Pray</b> 🕌 and <b>Pay</b> 🛒 &nbsp;·&nbsp; both answers start with <span class="ar-font" style="font-size:24px">في</span> (in) and have an example in brackets.`);pop(t);point(t);
+  say(`Remember: <b>Pray and Pay</b>. Both answers start with ${aw('في','fee')}, <b>in</b>, and put an example in brackets. Write the brackets too!`);await w(3800);unpoint();}},
+
+/* 7 */ {t:'Build the answers',run:async w=>{
+  say(`Now you build the answers with tiles. Remember: Arabic is written from <b>right to left</b>, so the first tile goes on the right.`);await w(3200);
+  let r=await buildAR(w,{src:WS+'(a) · 1',q:`Build the answer for ${aw('أسرف بالسهر','asrafa bis-sahar')}: <b>irresponsible</b>`,
+    tiles:[['مسؤول','mas\'ool'],['المسؤولية','al-mas\'ooliyya'],['غير','ghayr']],answer:['غير','مسؤول']});
+  say(r.ok?`Yes! ${aw('غير مسؤول','ghayr mas\'ool')}: not responsible.`:`Nearly! It's ${aw('غير مسؤول','ghayr mas\'ool')}: ${aw('غير','ghayr')} first, on the right.`);await w(2800);clear();
+  r=await buildAR(w,{src:WS+'(b) · 3',q:`Build the third kind: 👨‍👩‍👧 <b>family responsibility</b>`,
+    tiles:[['الأسرية','al-usariyya'],['المجتمعية','al-mujtama\'iyya'],['المسؤولية','al-mas\'ooliyya']],answer:['المسؤولية','الأسرية']});
+  say(r.ok?`Brilliant! ${aw('المسؤولية الأسرية','al-mas\'ooliyya al-usariyya')}.`:`Look again: ${aw('المسؤولية الأسرية','al-mas\'ooliyya al-usariyya')}. Responsibility first, then the ending.`);await w(2800);clear();
+  r=await buildAR(w,{src:WS+'(c) · 2',q:`Build the second answer: 🛒 <b>in dealings with people (buying and selling)</b>`,
+    tiles:[['والشراء','wash-shiraa\''],['في','fee'],['العبادات','al-\'ibaadaat'],['البيع','al-bay\''],['المعاملات','al-mu\'aamalaat']],answer:['في','المعاملات','البيع','والشراء']});
+  say(r.ok?`Excellent! In dealings: buying and selling. On paper, put brackets around ${aw('البيع والشراء','al-bay\' wash-shiraa\'')}.`:`Look again: ${aw('في المعاملات ( البيع والشراء )')}. In, dealings, buying, and selling.`);await w(3400);}},
+
+/* 8 */ {t:'Trace it',run:async w=>{
+  say(`Now trace the short answers with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
+  const W=[['مسؤول','mas\'ool','responsible'],['غير مسؤول','ghayr mas\'ool','irresponsible'],['الدينية','ad-deeniyya','religious']];
+  for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. ${a==='مسؤول'?`Remember the hamza hat on the ${aw('و','waaw')}! `:''}Press <b>Done</b> when you've finished.`);
+    const r=await traceAR(w,{word:a,tr:s,en:m});
+    say(r.ok?`Lovely writing! That's ${aw(a,s)}.`:r.tooMuch?`Try to stay on the grey letters, not colour the whole box.`:`Good try! Next time go over more of the letters.`);await w(2200);}
+  clear();
+  const p=mk('is-card','left:110px;top:90px;width:740px;text-align:center',`<div style="font-size:54px">📝</div><div style="font-size:24px;font-weight:800;color:#7a4a00">Now on paper!</div>`+
+    `<div style="font-size:19px;font-weight:700;margin-top:6px;line-height:1.5">1. Look at the word. &nbsp; 2. Cover it. &nbsp; 3. Write it. &nbsp; 4. Check it.</div>`+
+    `<div class="ar-font" dir="rtl" style="font-size:30px;margin-top:8px;color:#5a3c00;line-height:1.6">مسؤول · غير مسؤول<br>المسؤولية الدينية · المسؤولية الشخصية<br>المسؤولية الأسرية · المسؤولية المجتمعية</div>`);pop(p);
+  say(`The exam is written by hand, so practise on paper: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Write the four kinds of Question 7 b: Dad Shows Us Manners.`);await w(4200);}},
+
+/* 9 */ {t:'Which circle?',run:async w=>{
+  const note=mk('','left:30px;top:10px;width:900px;text-align:center;font-size:17px;font-weight:800;color:#2c66cf','Extra practice (not on the sheet): which kind of responsibility is it?');pop(note);
+  say(`One more game, just for practice. Each card is an everyday duty. Which circle does it belong to? Tap a card, then tap its ending.`);await w(3200);
+  const r=await sortGame(w,{bins:KINDS.map(K=>bt([K.end,K.who==='me'?'personal':K.who==='my family'?'family':K.who])),
+    items:[[`🕌 praying`,0],[`🌙 fasting`,0],[`🪥 clean teeth`,1],[`📚 homework`,1],
+      [`🧺 chores`,2],[`👵 grandma`,2],[`🗑️ no litter`,3],[`🤝 neighbours`,3]],
+    top:220,colors:KINDS.map(K=>K.col)});
+  say(r.ok===r.total?`Perfect! Me, my family, society, and religion around it all.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong circle. Press Replay to try again.`);await w(3000);}},
+
+/* 10 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Q7 · (a) · 1',q:'حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول ) : شاب أسرف بالسهر خلال شهر رمضان',en:'Write responsible or irresponsible: a young man who stayed up far too late during Ramadan.',
+      o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:1,cols:3,
+      why:'أسرف (overdid it): too much staying up late is irresponsible.',whyNot:{0:'He overdid it (أسرف). Too much is never responsible.'}},
+    {src:'Worksheet · Q7 · (a) · 2',q:'حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول ) : فتاة تكثر من مشروبات الطاقة',en:'Write responsible or irresponsible: a girl who drinks a lot of energy drinks.',
+      o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:1,cols:3,
+      why:'تكثر (a lot): too many energy drinks harm her health.',whyNot:{0:'She is not looking after her health: تكثر means too much.'}},
+    {src:'Worksheet · Q7 · (a) · 3',q:'حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول ) : أب يعلم أولاده الصلاة',en:'Write responsible or irresponsible: a father who teaches his children to pray.',
+      o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:0,cols:3,
+      why:'Teaching his children to pray is caring for his family: responsible.',whyNot:{1:'Teaching prayer is a good deed, so no غير (not).'}},
+    {src:'Practice · Q7 · (b) · the endings · الأسرية',q:'المسؤولية تجاه الأسرة هي المسؤولية ..........',en:'Responsibility towards the family is … responsibility.',
+      o:['الشخصية','الأسرية','المجتمعية'],oe:['personal','family','to society'],otr:['ash-shakhsiyya','al-usariyya','al-mujtama\'iyya'],a:1,cols:3,
+      why:'Family = al-usariyya (the U in Dad Shows Us Manners).',whyNot:{0:'Personal (shakhsiyya) is about me.',2:'Mujtama\'iyya is about society, everyone around me.'}},
+    {src:'Practice · Q7 · (b) · the endings · المجتمعية',q:'المسؤولية تجاه المجتمع هي المسؤولية ..........',en:'Responsibility towards society is … responsibility.',
+      o:['المجتمعية','الدينية','الأسرية'],oe:['to society','religious','family'],otr:['al-mujtama\'iyya','ad-deeniyya','al-usariyya'],a:0,cols:3,
+      why:'Society = al-mujtama\'iyya (the M in Dad Shows Us Manners).',whyNot:{1:'Deeniyya is about religion.',2:'Usariyya is about the family.'}},
+    {src:'Worksheet · Q7 · (b)',q:'دون أقسام المسؤولية الفردية',en:'Write down the kinds of personal responsibility.',
+      model:'1- المسؤولية الدينية<br>2- المسؤولية الشخصية<br>3- المسؤولية الأسرية<br>4- المسؤولية المجتمعية',
+      men:'1- Religious responsibility<br>2- Personal responsibility<br>3- Family responsibility<br>4- Responsibility to society',
+      mtr:'Dad Shows Us Manners: deeniyya, shakhsiyya, usariyya, mujtama\'iyya'},
+    {src:'Worksheet · Q7 · (c)',q:'وضح المسؤولية تجاه الدين .',en:'Explain responsibility towards religion.',
+      model:'1- في العبادات ( الصلاة )<br>2- في المعاملات ( البيع والشراء )',
+      men:'1- In acts of worship (prayer)<br>2- In dealings with people (buying and selling)',
+      mtr:'Pray and Pay: fil-\'ibaadaat (as-salaah), fil-mu\'aamalaat (al-bay\' wash-shiraa\')'}
+  ]);}},
+
+/* 11 */ {t:'You did it!',run:async w=>{
+  const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 7 done!');pop(t);
+  const B=[['🦸','مسؤول','responsible'],['🙈','غير مسؤول','irresponsible'],['🕌','المسؤولية<br>الدينية','religious'],['🧍','المسؤولية<br>الشخصية','personal'],
+    ['👨‍👩‍👧','المسؤولية<br>الأسرية','family'],['🏙️','المسؤولية<br>المجتمعية','society'],['🕌','في العبادات<br>( الصلاة )','worship: prayer'],['🛒','في المعاملات<br>( البيع والشراء )','dealings: buying and selling']];
+  B.forEach(([e,a,m],i)=>{const c=mk('is-card',`left:${30+(i%4)*228}px;top:${80+Math.floor(i/4)*200}px;width:212px;height:180px;text-align:center;padding:10px 8px`,
+    `<div style="font-size:40px">${e}</div><div class="ar-font" dir="rtl" style="font-size:${a.length>16?21:a.length>10?23:28}px;font-weight:700;color:#5a3c00;margin:6px 0;line-height:1.3">${a}</div><div style="font-size:15px;font-weight:800;color:#626a80">${m}</div>`);pop(c,i*140);});
+  await w(1200);confetti(160);yay();
+  say(`${aw('ما شاء الله','maa shaa\' Allaah')}! You know all of Question 7: responsible or not, the four kinds, and responsibility towards religion. Practise writing them on paper, and come back tomorrow to review!`);
+  await w(4200);}}
+  ]}));
+</script>
+</body>
+</html>

@@ -76,23 +76,25 @@ window.SUBJECTS = [
   {id:'arabic', name:'Arabic', native:'اللغة العربية', emoji:'✒️', grad:'#0f7a6e,#2bb39c', soon:true, units:[]},
   {id:'islamic', name:'Islamic Studies', native:'التربية الإسلامية', emoji:'🌙', page:'islamic.html', grad:'#8a5a00,#d9a441', guide:'Hudhud the Hoopoe',
     blurb:'2nd Term review · with Hudhud the Hoopoe',
-    quiz:{title:'Islamic Quest Quiz', desc:'Coming soon: spot the keyword, pick the answer, build it and write it, level by level.'},
-    guidePdf:{title:'Study Guide (PDF)', desc:'Coming soon: every question with its keyword, answer, sounds and English, plus tracing sheets.'},
+    quiz:{href:'islamic-quiz.html', title:'Islamic Quest Quiz', desc:'91 questions in 6 levels plus a Final Boss: spot the keyword, pick the answer, build it, spell it and write it.',
+      modes:[['i2','👼','Q2'],['i3','🤲','Q3'],['i4','📜','Q4'],['i5','🕌','Q5'],['i6','👅','Q6'],['i7','🧩','Q7'],['iboss','👑','Final Boss']]},
+    trainer:{href:'islamic-trainer.html', title:'Memory Trainer', desc:'Ten answers a day: spot the keyword, remember the answer, write it. The hard ones come back sooner.'},
+    guidePdf:{href:'islamic-study-guide.pdf', title:'Study Guide (PDF)', desc:'Every question with its keyword, answer, sounds and English, the hadiths, a cheat sheet and tracing sheets.'},
     units:[
       {tag:'Start here', name:'How to answer the exam', color:'#b8862b', soft:'#f3e3c0', les:[
-        ['i01',null,'🧰','Exam toolkit: instruction words and keywords']]},
+        ['i01','islamic/i01-exam-toolkit.html','🧰','Exam toolkit: instruction words and keywords']]},
       {tag:'Q2', name:'العقيدة · Belief', color:'#d9a441', soft:'#f6e7c5', les:[
         ['i02','islamic/i02-angels.html','👼','The angels (and Hadith 1)']]},
       {tag:'Q3', name:'الحديث · Hadith', color:'#17935b', soft:'#bfe7d2', les:[
-        ['i03',null,'🤲','Sincerity, intention and Hijra']]},
+        ['i03','islamic/i03-sincerity.html','🤲','Sincerity, intention and Hijra']]},
       {tag:'Q4', name:'السيرة · Life of the Prophet ﷺ', color:'#2c66cf', soft:'#c6d8f6', les:[
-        ['i04',null,'📜','The first revelation in the cave of Hira']]},
+        ['i04','islamic/i04-first-revelation.html','📜','The first revelation in the cave of Hira']]},
       {tag:'Q5', name:'الفقه · Fiqh', color:'#6a45d8', soft:'#ddd3fb', les:[
-        ['i05',null,'🕌','Prayer: required acts and rulings (and Hadith 3)']]},
+        ['i05','islamic/i05-prayer.html','🕌','Prayer: required acts and rulings (and Hadith 3)']]},
       {tag:'Q6', name:'التهذيب · Manners', color:'#e06a1b', soft:'#f7d3b5', les:[
-        ['i06',null,'👅','Sins of the tongue (and Hadith 2)']]},
+        ['i06','islamic/i06-tongue.html','👅','Sins of the tongue (and Hadith 2)']]},
       {tag:'Q7', name:'الثقافة الإسلامية · Islamic culture', color:'#d6336c', soft:'#f6c9da', les:[
-        ['i07',null,'🧩','Responsibility']]}]},
+        ['i07','islamic/i07-responsibility.html','🧩','Responsibility']]}]},
 ];
 /* Every lesson by id: {id, href, e, t, num, subject, unit} */
 window.LESSONS = {};
@@ -158,4 +160,6 @@ function renderSubject(id,ov){
   const best=q.modes&&Object.keys(qb).some(m=>q.modes.some(x=>x[0]===m))?'Your best: '+q.modes.map(([m,e,n])=>`<span title="${n}">${e} ${qb[m]?'⭐'.repeat(qb[m].stars)+'☆'.repeat(3-qb[m].stars):'–'}</span>`).join(' · '):'';
   document.getElementById('practise').innerHTML=
     (q.href?`<a class="card c2" href="${q.href}">`:`<div class="card c2 soon">`)+`<span class="e">🎮</span><div><h3>${q.title}</h3><p>${q.desc}</p>${best?`<p class="qbest">${best}</p>`:''}</div>`+(q.href?'</a>':'</div>')+
+    (S.trainer?`<a class="card c1" href="${S.trainer.href}"><span class="e">🧠</span><div><h3>${S.trainer.title}</h3><p>${S.trainer.desc}</p>`+
+      (ov?.trainer?`<p class="qbest">🧠 ${ov.trainer.mastered} of ${ov.trainer.total||46} answers mastered</p>`:'')+`</div></a>`:'')+
     (g.href?`<a class="card c3" href="${g.href}">`:`<div class="card c3 soon">`)+`<span class="e">📄</span><div><h3>${g.title}</h3><p>${g.desc}</p></div>`+(g.href?'</a>':'</div>');}

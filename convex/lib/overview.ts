@@ -30,6 +30,14 @@ export async function overviewFor(ctx: QueryCtx, profileId: Id<"profiles">) {
     .map(([lessonId, e]) => ({ lessonId, wrong: e.wrong, lastAt: e.lastAt }))
     .sort((a, b) => b.wrong - a.wrong || b.lastAt - a.lastAt);
 
+  // Islamic Studies Memory Trainer (islamic-trainer.html): saved like a quiz level, mode "itrainer"
+  const tr = await ctx.db.query("quizState").withIndex("by_profile_mode", (q) => q.eq("profileId", profileId).eq("mode", "itrainer")).unique();
+  let trainer: { mastered: number; seen: number; total: number } | null = null;
+  try {
+    const st = tr ? JSON.parse(tr.state) : null;
+    if (st) trainer = { mastered: Number(st.mastered) || 0, seen: Number(st.seen) || 0, total: Number(st.total) || 0 };
+  } catch (e) { trainer = null; }
+
   const lastActive = Math.max(0, ...lessons.map((l) => l.updatedAt), ...answers.map((a) => a.at), ...runs.map((r) => r.at));
   return {
     lessons: lessons.map((l) => ({ lessonId: l.lessonId, lastScene: l.lastScene, done: l.done })),
@@ -38,6 +46,7 @@ export async function overviewFor(ctx: QueryCtx, profileId: Id<"profiles">) {
     answered: answers.length,
     correct: answers.filter((a) => a.correct).length,
     lastActive: lastActive || null,
+    trainer,
   };
 }
 

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Islamic Quest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#8a5a00">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+
+<title>Islamic Quest: Grade 7 Exam Quiz</title>
+<style>
+:root{
+  --ink:#1f2433; --muted:#626a80; --line:#e3e6ef; --bg:#f4f2ff;
+  --p:#b8862b; --pl:#fbf0d9; --pd:#7a4a00; --ok:#18a058; --okl:#e3f7ec; --bad:#e04848; --badl:#fde8e8; --y:#ffd84d;
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif; color:var(--ink); background:var(--bg); min-height:100vh;
+  background-image:radial-gradient(circle at 10% 10%,#e3dcff 0,transparent 35%),radial-gradient(circle at 90% 80%,#d9ecff 0,transparent 40%)}
+button{font:inherit; color:inherit; cursor:pointer}
+.wrap{max-width:780px; margin:0 auto; padding:18px 16px 60px}
+.hidden{display:none!important}
+
+/* ---------- menu ---------- */
+.hero{background:linear-gradient(135deg,#5a3a00,#8a5a00 45%,#d9a441); color:#fff; border-radius:26px; padding:26px 26px 22px; position:relative; overflow:hidden}
+.hero h1{margin:0; font-size:clamp(30px,6vw,46px); font-weight:800; letter-spacing:-.01em}
+.hero p{margin:6px 0 0; opacity:.92; font-size:17px}
+.hero .atom{position:absolute; right:-10px; top:-10px; font-size:120px; opacity:.14; transform:rotate(15deg)}
+.modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:18px}
+.mode{border:none; text-align:left; border-radius:20px; padding:18px; color:#fff; box-shadow:0 6px 0 rgba(0,0,0,.15); transition:transform .12s, box-shadow .12s; position:relative}
+.mode:hover{transform:translateY(-3px); box-shadow:0 9px 0 rgba(0,0,0,.15)}
+.mode:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.mode .lv{font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.9}
+.mode h3{margin:4px 0 4px; font-size:21px; padding-right:38px}
+.mode .meta{font-size:14px; opacity:.95}
+.mode .best{margin-top:10px; font-size:13px; font-weight:700; background:rgba(255,255,255,.22); display:inline-block; padding:3px 10px; border-radius:20px}
+.mode .emo{position:absolute; right:14px; top:12px; font-size:34px}
+.mode.soon{opacity:.5;cursor:default;filter:grayscale(.3)} .mode.soon:hover{transform:none}
+.l2c{background:linear-gradient(140deg,#b8862b,#e0b45a)} .l3c{background:linear-gradient(140deg,#17935b,#45c288)} .l4c{background:linear-gradient(140deg,#2c66cf,#5aa0f0)}
+.l5c{background:linear-gradient(140deg,#6a45d8,#9b7cf0)} .l6c{background:linear-gradient(140deg,#e06a1b,#f5a54a)} .l7c{background:linear-gradient(140deg,#d6336c,#f07aa0)}
+.ibc{background:linear-gradient(140deg,#5a3a00,#b0207a)}
+.menu-foot{display:flex; justify-content:space-between; align-items:center; margin-top:16px; color:var(--muted); font-size:14px; flex-wrap:wrap; gap:10px}
+.resume{margin-top:16px;background:#fff;border-radius:20px;padding:12px 16px 6px;box-shadow:0 6px 18px rgba(80,50,180,.08)}
+.resume h3{margin:0 0 6px;font-size:17px;color:#4a2ea6}
+.rrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:2px solid var(--line)}
+.rrow .rt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.rrow .rt span{font-size:13.5px;color:var(--muted);font-weight:700}
+.rrow .go{width:auto;margin:0;padding:10px 16px;font-size:16px;flex:none}
+.rx{border:2px solid var(--line);background:#fff;border-radius:12px;width:40px;height:40px;font-weight:800;color:var(--muted);flex:none}
+.pill{border:2px solid var(--line); background:#fff; border-radius:30px; padding:7px 14px; font-weight:700; font-size:14px}
+.trb.on{background:#fff4dc;border-color:#d9a441;color:#7a4a00}
+
+/* ---------- HUD ---------- */
+.hud{display:flex; align-items:center; gap:8px; margin-bottom:12px}
+.hud .home{background:#fff; border:2px solid var(--line); border-radius:14px; padding:6px 10px; font-weight:800}
+.bar{flex:1; height:16px; background:#fff; border-radius:20px; overflow:hidden; border:2px solid var(--line)}
+.bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#b8862b,#e0b45a); border-radius:20px; transition:width .4s}
+.stat{background:#fff; border:2px solid var(--line); border-radius:14px; padding:5px 10px; font-weight:800; font-size:15px; white-space:nowrap}
+.hud .trb{border-radius:14px;padding:5px 9px;font-size:14px;white-space:nowrap}
+.streak.hot{background:#fff3d6; border-color:#f2b200; animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@media(max-width:420px){.hud{gap:5px}.stat{padding:5px 7px;font-size:14px}}
+
+/* ---------- card ---------- */
+.card{background:#fff; border-radius:24px; padding:20px 20px 18px; box-shadow:0 10px 30px rgba(60,40,140,.10); position:relative}
+.qtop{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
+.tag{font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px}
+.tl2{background:#fbf0d9;color:#8a5a00} .tl3{background:#e4f6ec;color:#17935b} .tl4{background:#e5eefc;color:#2c66cf} .tl5{background:#efe9ff;color:#6a45d8} .tl6{background:#fdeedf;color:#c4520e} .tl7{background:#fde4ee;color:#b0245a}
+.tt{background:var(--pl); color:var(--p)}
+.qnum{margin-left:auto; color:var(--muted); font-weight:700; font-size:14px}
+.prompt{font-size:21px; font-weight:700; line-height:1.35; margin:4px 0 6px}
+.hear{border:2px solid #f0d9a8;background:#fff8e6;border-radius:12px;padding:2px 9px;font-size:17px;margin-left:6px;vertical-align:middle}
+.hint{color:var(--muted); font-size:14.5px; margin-bottom:12px}
+.passage{background:#f5f9ff;border:2.5px solid #c6d8f6;border-radius:16px;padding:10px 14px;margin:0 0 12px;font-size:15.5px;line-height:1.5}
+.passage summary{cursor:pointer;font-weight:800;color:var(--p)}
+.passage p{margin:6px 0 0}
+
+
+/* options */
+.opts{display:grid; gap:10px}
+.opts.grid2{grid-template-columns:1fr 1fr}
+@media(max-width:560px){.opts.grid2.text{grid-template-columns:1fr}}
+.opt{display:flex; align-items:center; gap:12px; text-align:left; background:#fff; border:2.5px solid var(--line); border-radius:16px; padding:12px 14px; font-size:17px; font-weight:600; transition:transform .1s, border-color .15s, background .15s; box-shadow:0 3px 0 var(--line)}
+.opt:hover:not(:disabled){border-color:#e0b45a; transform:translateY(-1px)}
+.opt .k{flex:none; width:32px; height:32px; border-radius:10px; background:var(--pl); color:var(--p); display:flex; align-items:center; justify-content:center; font-weight:800}
+.opt.ok{border-color:var(--ok); background:var(--okl); box-shadow:0 3px 0 #9fdcbb}
+.opt.ok .k{background:var(--ok); color:#fff}
+.opt.bad{border-color:var(--bad); background:var(--badl); box-shadow:0 3px 0 #f2b0b0; animation:shake .35s}
+.opt.bad .k{background:var(--bad); color:#fff}
+.opt:disabled{cursor:default}
+.tf .opt{justify-content:center; font-size:22px; padding:18px}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* match */
+.match{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px}
+.mcol{display:flex; flex-direction:column; gap:9px}
+.mi{border:2.5px solid var(--line); background:#fff; border-radius:14px; padding:10px 12px; font-size:15.5px; font-weight:600; text-align:left; min-height:48px; display:flex; align-items:center; gap:8px; box-shadow:0 3px 0 var(--line)}
+.mi.sel{border-color:var(--p); background:var(--pl)}
+.mi .dot{flex:none; width:14px; height:14px; border-radius:50%; background:var(--line)}
+.mi.ok{border-color:var(--ok); background:var(--okl)} .mi.bad{border-color:var(--bad); background:var(--badl)}
+.mi .fix{display:block; font-size:12.5px; color:var(--ok); font-weight:700}
+
+/* footer / feedback */
+.actions{display:flex; justify-content:flex-end; margin-top:16px; gap:10px}
+.go{border:none; border-radius:16px; padding:13px 26px; font-size:18px; font-weight:800; color:#fff; background:var(--p); box-shadow:0 5px 0 var(--pd); transition:transform .1s}
+.go:active{transform:translateY(3px); box-shadow:0 2px 0 var(--pd)}
+.go:disabled{background:#c9c3df; box-shadow:0 5px 0 #aea7c9; cursor:not-allowed}
+.go.green{background:var(--ok); box-shadow:0 5px 0 #0f7a41}
+.fb{margin-top:14px; border-radius:18px; padding:14px 16px; animation:pop .3s}
+.fb.ok{background:var(--okl); border:2.5px solid #9fdcbb}
+.fb.bad{background:#fff4e5; border:2.5px solid #f6c37a}
+.fb h3{margin:0 0 4px; font-size:20px}
+.fb.ok h3{color:var(--ok)} .fb.bad h3{color:#c26a00}
+.fb p{margin:0; font-size:16px; line-height:1.45}
+.fb .not{margin:0 0 6px;font-weight:700}
+.fw{color:#8a4b00;font-weight:800}
+.plus{position:absolute; right:22px; top:16px; font-weight:800; color:var(--ok); font-size:22px; animation:float 1.1s forwards}
+@keyframes float{to{transform:translateY(-40px); opacity:0}}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+
+/* end */
+.end{text-align:center}
+.stars{font-size:64px; letter-spacing:8px; margin:6px 0}
+.stars span{display:inline-block; animation:pop .5s backwards; filter:grayscale(1); opacity:.35}
+.stars span.on{filter:none; opacity:1}
+.bigscore{font-size:46px; font-weight:800; color:var(--p)}
+.endgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0}
+.endgrid div{background:#f7f6fd; border-radius:16px; padding:10px; font-weight:700; color:var(--muted); font-size:14px}
+.endgrid b{display:block; font-size:26px; color:var(--ink)}
+.endbtns{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.revise{background:#f7f6fd; border-radius:16px; padding:12px 14px; margin:0 0 16px; text-align:left}
+.revise h4{margin:0 0 8px; font-size:16px}
+.revise a{display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--line); border-radius:12px; padding:9px 12px; margin-top:6px; color:var(--ink); text-decoration:none; font-weight:700; font-size:15px}
+.revise .n{flex:none; background:var(--pl); color:var(--pd); border-radius:8px; padding:2px 8px; font-size:13px; font-weight:800}
+.revise .c{margin-left:auto; flex:none; color:var(--muted); font-size:13px}
+.ghostbtn{border:2.5px solid var(--line); background:#fff; border-radius:16px; padding:12px 20px; font-size:17px; font-weight:800; box-shadow:0 4px 0 var(--line)}
+canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:100}
+
+/* build the sentence (tiles) */
+.slot{display:flex;flex-direction:row-reverse;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;min-height:66px;border:3px dashed #d9a441;border-radius:16px;background:#fffaf0;padding:8px;margin-bottom:12px;font-size:32px;font-weight:800;color:var(--pd)}
+.slot i{font-size:15px;font-style:normal;color:#8a9ab5;font-weight:700}
+.slot.ok{border-style:solid;border-color:var(--ok);background:var(--okl)} .slot.bad{border-style:solid;border-color:var(--bad);background:var(--badl)}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tile{min-width:54px;min-height:56px;padding:4px 14px;border:3px solid var(--p);border-radius:14px;background:#fff;font-size:26px;font-weight:700;color:var(--pd);box-shadow:0 4px 0 #f3e3c0;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.tile:disabled{opacity:.35}
+/* put in order */
+.ord{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.ord .row{display:flex;align-items:center;gap:10px;min-height:48px;border:2.5px dashed var(--line);border-radius:14px;padding:6px 12px;font-size:19px;font-weight:800}
+.ord .row .n{flex:none;width:28px;height:28px;border-radius:8px;background:var(--pl);color:var(--pd);display:flex;align-items:center;justify-content:center;font-size:15px}
+.ord .row.ok{border-style:solid;border-color:var(--ok);background:var(--okl)} .ord .row.bad{border-style:solid;border-color:var(--bad);background:var(--badl)}
+/* ---------- Arabic ---------- */
+.ax,.aw,.arf{font-family:"Geeza Pro","Noto Naskh Arabic","Noto Sans Arabic","Traditional Arabic","Segoe UI","DejaVu Sans",sans-serif;unicode-bidi:isolate}
+.ax.en{background:#fff1d6;border-radius:6px;box-shadow:0 0 0 2px #fff1d6;color:#7a4a00;font-family:inherit}
+.prompt .ax:not(.en){font-size:1.35em;line-height:1.6}
+.opt .ax:not(.en){font-size:1.35em}
+.tiles{flex-direction:row-reverse}
+.ord .row{flex-direction:row}
+body.snd-mode .ax[data-tr]:not(.en),body.snd-mode .aw[data-tr]{display:inline-flex;flex-direction:column;align-items:center;vertical-align:top;line-height:1.3}
+body.snd-mode .ax[data-tr]:not(.en)::after,body.snd-mode .aw[data-tr]::after{content:attr(data-tr);direction:ltr;unicode-bidi:isolate;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;
+  font-size:13px;font-weight:800;color:#2c66cf;line-height:1.15;margin-top:1px;white-space:normal;text-align:center}
+.tile .s{font-size:12px;font-weight:800;color:#2c66cf;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;display:none}
+body.snd-mode .tile .s{display:block}
+.prompt-ar{direction:rtl;text-align:right}
+.prompt-ar .ax.en{direction:ltr}
+.prompt.en-on{text-align:left}
+/* spot the keyword */
+.spot{direction:rtl;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;margin:4px 0 8px}
+.sw{border:2.5px solid var(--line);background:#fff;border-radius:14px;padding:6px 12px;font-size:27px;font-weight:700;box-shadow:0 3px 0 var(--line);display:inline-flex;flex-direction:column;align-items:center;line-height:1.3}
+.sw .s{font-size:12px;font-weight:800;color:#2c66cf;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;display:none}
+body.snd-mode .sw .s{display:block}
+.sw.key{background:#ffe680;border-color:#e0a800;box-shadow:0 3px 0 #e0a800}
+.sw.bad{background:var(--badl);border-color:var(--bad);animation:shake .35s}
+.sw:disabled{cursor:default;color:var(--ink)}
+/* write it on paper */
+.paper{background:#fffaf0;border:3px dashed #d9a441;border-radius:18px;padding:14px 16px;text-align:center;font-weight:700;font-size:16px;line-height:1.5}
+.paper .big{font-size:42px}
+.model{margin-top:12px;background:var(--okl);border:2.5px solid #9fdcbb;border-radius:16px;padding:12px 16px;direction:rtl;text-align:right;font-size:22px;font-weight:700;line-height:1.7}
+.model .en2{direction:ltr;text-align:left;font-size:15px;color:#0f7a40;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;margin-top:6px;line-height:1.4}
+.selfmark{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.spoten{display:none;font-size:15px;font-weight:700;color:#7a4a00;margin-bottom:6px} body.en-mode .spoten{display:block}
+.clue{margin:8px 0 0;font-size:15px;font-weight:700;color:#7a4a00;background:#fff8e6;border-radius:12px;padding:6px 10px}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+
+  <!-- MENU -->
+  <section id="menu">
+    <div class="hero">
+      <div class="atom">🐦</div>
+      <h1>Islamic Quest 🌙</h1>
+      <p>Grade 7 Islamic Studies revision. A level for every question of your sheet: spot the keyword, pick the answer, build it, spell it and write it. Stuck? Tap <b>🇬🇧 English</b> or <b>🔤 Sounds</b>.</p>
+    </div>
+    <div class="resume" id="resume"></div>
+    <div class="modes" id="modes"></div>
+    <div class="menu-foot">
+      <a class="pill" href="islamic.html" style="text-decoration:none;color:inherit">🏠 Islamic lessons</a>
+      <button class="pill trb" id="trMenu">🇬🇧 English</button>
+      <button class="pill sdb" id="sndMenu">🔤 Sounds</button>
+      <button class="pill" id="soundBtn">🔊 Sound: on</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="hidden">
+    <div class="hud">
+      <button class="home" id="homeBtn" title="Back to menu">✕</button>
+      <div class="bar"><i id="prog"></i></div>
+      <button class="stat trb" id="trHud" title="Show the Arabic in English">🇬🇧</button>
+      <button class="stat sdb" id="sndHud" title="Show how the Arabic sounds">🔤</button>
+      <div class="stat streak" id="streak">🔥 0</div>
+      <div class="stat" id="score">⭐ 0</div>
+    </div>
+    <div class="card" id="card"></div>
+  </section>
+
+  <!-- END -->
+  <section id="end" class="hidden">
+    <div class="card end" id="endCard"></div>
+  </section>
+</div>
+
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+/* ================= Arabic with its English and its sounds =================
+   T(arabic, english, sounds): the 🇬🇧 button swaps it to English; the 🔤 button shows the sounds under it.
+   W(arabic, sounds): an Arabic word inside an English explanation (stays Arabic). */
+const escA=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const T=(a,en,tr)=>en==null?a:`<span class="ax" dir="rtl" lang="ar" data-en="${escA(en)}"${tr?` data-tr="${escA(tr)}"`:''}>${a}</span>`;
+const W=(a,tr)=>`<span class="aw" dir="rtl" lang="ar"${tr?` data-tr="${escA(tr)}"`:''}>${a}</span>`;
+let EN=false,SND=store.get('isl_sounds_q',true);
+function applyEN(root){if(!root||root.nodeType!==1)return;
+  [...(root.matches('.ax')?[root]:[]),...root.querySelectorAll('.ax')].forEach(e=>{if(e.dataset.ar==null)e.dataset.ar=e.innerHTML;const want=EN?e.dataset.en:e.dataset.ar;if(e.innerHTML!==want)e.innerHTML=want;
+    e.classList.toggle('en',EN);e.dir=EN?'ltr':'rtl';});
+  document.querySelectorAll('.prompt').forEach(p=>p.classList.toggle('en-on',EN));}
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(EN&&n.nodeType===1)applyEN(n);}))).observe(document.body,{childList:true,subtree:true});
+function trUI(){$('#trMenu').textContent=EN?'🇰🇼 العربية':'🇬🇧 English';$('#trHud').textContent=EN?'🇰🇼':'🇬🇧';
+  $('#trHud').title=EN?'Back to Arabic':'Show the Arabic in English';document.querySelectorAll('.trb').forEach(b=>b.classList.toggle('on',EN));
+  document.querySelectorAll('.sdb').forEach(b=>b.classList.toggle('on',SND));document.body.classList.toggle('snd-mode',SND);document.body.classList.toggle('en-mode',EN);}
+function setEN(on){EN=on;trUI();applyEN(document.body);}
+function setSND(on){SND=on;store.set('isl_sounds_q',on);trUI();}
+$('#trMenu').onclick=$('#trHud').onclick=()=>{sfx.tap();setEN(!EN);};
+$('#sndMenu').onclick=$('#sndHud').onclick=()=>{sfx.tap();setSND(!SND);};
+
+/* ================= hear it in Arabic ================= */
+const HAS_TTS='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+function arVoice(){if(!HAS_TTS)return null;const sc=v=>(/premium/i.test(v.voiceURI+v.name)?200:/enhanced/i.test(v.voiceURI+v.name)?100:0)+(/ar[-_]SA/i.test(v.lang)?50:0)+(/Maged|Majed|Tarik|Laila|Mariam|Google/i.test(v.name)?10:0);
+  return speechSynthesis.getVoices().filter(v=>/^ar([-_]|$)/i.test(v.lang)).sort((a,b)=>sc(b)-sc(a))[0]||null;}
+function hearAR(html){if(!HAS_TTS)return;const d=el('div','',html);const t=d.textContent.replace(/ﷺ/g,' صلى الله عليه وسلم ').replace(/[.…]{2,}|_{2,}/g,'، ').replace(/[()√×–]/g,' ').replace(/\s+/g,' ').trim();if(!t)return;
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=arVoice();if(v){u.voice=v;u.lang=v.lang;}else u.lang='ar-SA';u.rate=.85;speechSynthesis.speak(u);}
+if(HAS_TTS){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{};}
+
+/* ================= sound ================= */
+let soundOn=store.get('sq_sound',true), actx=null;
+function tone(f,t0,dur,type='sine',vol=.18){if(!soundOn)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+  const t=actx.currentTime+t0;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.start(t);o.stop(t+dur);}catch(e){}}
+const sfx={ok(){tone(660,0,.12,'triangle');tone(990,.1,.22,'triangle');},bad(){tone(200,0,.25,'sawtooth',.08);tone(150,.12,.3,'sawtooth',.08);},
+  tap(){tone(520,0,.05,'sine',.08);},win(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,'triangle'));}};
+
+/* ================= confetti ================= */
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];
+function resize(){cv.width=innerWidth;cv.height=innerHeight;}addEventListener('resize',resize);resize();
+function confetti(n=80,x=innerWidth/2,y=innerHeight/3){const cols=['#b8862b','#ffffff','#18a058','#e0b45a','#ffd84d','#6a45d8'];
+  for(let i=0;i<n;i++)parts.push({x,y,vx:(Math.random()-.5)*12,vy:Math.random()*-11-3,r:Math.random()*6+4,c:cols[i%cols.length],a:Math.random()*6,va:(Math.random()-.5)*.3,life:120});
+  if(parts.length===n)requestAnimationFrame(loop);}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;p.life--;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.globalAlpha=Math.max(0,Math.min(1,p.life/40));cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cx.restore();});
+  parts=parts.filter(p=>p.life>0&&p.y<cv.height+40);if(parts.length)requestAnimationFrame(loop);else cx.clearRect(0,0,cv.width,cv.height);}
+
+/* ================= question bank =================
+   Every question has a permanent id (i2-01 …): progress is saved against it, so never renumber; add new ones at the end of their level.
+   Keep q: on the same line as id:, in backticks (the parent page reads the wording from this file).
+   lv: the worksheet question it belongs to (2–7); l: the lesson that teaches it; src: 'Worksheet …' for the sheet's own questions.
+   q: the question in Arabic, en: its English, tr: sounds (optional). why: the explanation (English, Arabic words with W()).
+   mcq/tf: o (Arabic choices), oe (English), otr (sounds), a, whyNot = {option: why it is wrong}. tf choices are ['√','×'].
+   spot: words [[arabic, sounds]], keys = the indexes of the keyword(s) to tap. clue: the keyword → answer reminder shown after.
+   tiles: tiles [[arabic, sounds]] (with 1–2 wrong ones), answer = the right list. spell: letters (with wrong ones), answer = the word.
+   match: pairs [[left, right]] (both may be T(...)). write: model (Arabic, <br> between lines), men (English); the student
+   writes it on paper and marks it. */
+const TF=['√','×'],TFE=['true','false'],TFT=['saheeh','khata\''];
+const BANK=[
+/* ---------- Q2 · Belief: the angels (i02) ---------- */
+{id:'i2-01',lv:2,l:'i02',src:'Worksheet · Q2 · (a) · جبريل',type:'mcq',q:`اكتب وظيفة جبريل`,en:'Write the job of Jibreel.',
+  o:['ملك الوحي','قبض الأرواح','موكل بالأرزاق والنبات والمطر'],oe:['the angel of revelation','taking the souls','in charge of provisions, plants and rain'],otr:['malak al-wahy','qabd al-arwaah','muwakkal bil-arzaaq wan-nabaat wal-matar'],a:0,
+  whyNot:{1:'that is the job of the Angel of Death.',2:'that is the job of Mikail.'},why:`Jibreel brings the message 📜 from Allah to the prophets: ${W('ملك الوحي','malak al-wahy')}.`},
+{id:'i2-02',lv:2,l:'i02',src:'Worksheet · Q2 · (a) · ميكائيل',type:'mcq',q:`اكتب وظيفة ميكائيل`,en:'Write the job of Mikail.',
+  o:['ملك الوحي','موكل بالأرزاق والنبات والمطر','قبض الأرواح'],oe:['the angel of revelation','in charge of provisions, plants and rain','taking the souls'],otr:['malak al-wahy','muwakkal bil-arzaaq wan-nabaat wal-matar','qabd al-arwaah'],a:1,
+  whyNot:{0:'that is Jibreel.',2:'that is the Angel of Death.'},why:`Mikail looks after rain 🌧️, plants 🌱 and food 🍞: ${W('موكل بالأرزاق والنبات والمطر')}.`},
+{id:'i2-03',lv:2,l:'i02',src:'Worksheet · Q2 · (a) · ملك الموت',type:'mcq',q:`اكتب وظيفة ملك الموت`,en:'Write the job of the Angel of Death.',
+  o:['موكل بالأرزاق والنبات والمطر','قبض الأرواح','ملك الوحي'],oe:['in charge of provisions, plants and rain','taking the souls','the angel of revelation'],otr:['muwakkal bil-arzaaq wan-nabaat wal-matar','qabd al-arwaah','malak al-wahy'],a:1,
+  whyNot:{0:'that is Mikail.',2:'that is Jibreel.'},why:`The Angel of Death takes the souls: ${W('قبض الأرواح','qabd al-arwaah')}.`},
+{id:'i2-04',lv:2,l:'i02',src:'Worksheet · Q2 · (a)',type:'match',q:`اكتب وظيفة كل ملك في الجدول التالي`,en:'Write the job of each angel in the following table.',
+  pairs:[[T('جبريل','Jibreel','jibreel'),T('ملك الوحي','the angel of revelation','malak al-wahy')],[T('ميكائيل','Mikail','meekaa\'eel'),T('موكل بالأرزاق والنبات والمطر','in charge of provisions, plants and rain','muwakkal bil-arzaaq wan-nabaat wal-matar')],[T('ملك الموت','the Angel of Death','malak al-mawt'),T('قبض الأرواح','taking the souls','qabd al-arwaah')]],
+  why:`The keyword ${W('وظيفة','wadheefa')} means <b>job</b>: 📜 Jibreel, 🌧️ Mikail, ⏳ the Angel of Death.`},
+{id:'i2-05',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 1',type:'mcq',q:`خلق الله تعالى الملائكة الكرام من ..........`,en:'Allah the Exalted created the noble angels from ……',
+  o:['نار','نور','طين'],oe:['fire','light','clay'],otr:['naar','noor','teen'],a:1,whyNot:{0:'fire is what the jinn were made from.',2:'clay is what people were made from.'},
+  why:`Keyword ${W('الملائكة','al-malaa\'ika')} + ${W('من','min')}: angels from ${W('نور','noor')} 💡. Light has the round ${W('و')}, like a bulb.`},
+{id:'i2-06',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 2',type:'mcq',q:`فطرت الملائكة وجبلت على ..........`,en:'The angels were made by nature to ……',
+  o:['الإيمان','الطاعة','نور'],oe:['faith','obedience','light'],otr:['al-eemaan','at-taa\'a','noor'],a:1,whyNot:{0:`faith goes with ${W('ركن من أركان')} (a pillar of).`,2:`light is what angels are made <b>from</b> (${W('من')}), not what they are made to do (${W('على')}).`},
+  why:`Keyword ${W('فطرت','futirat')} / ${W('جبلت','jubilat')} (made by nature): angels always obey, ${W('الطاعة','at-taa\'a')}.`},
+{id:'i2-07',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 3',type:'mcq',q:`الإيمان بالملائكة ركن من أركان ..........`,en:'Believing in the angels is one of the pillars of ……',
+  o:['الطاعة','طين','الإيمان'],oe:['obedience','clay','faith'],otr:['at-taa\'a','teen','al-eemaan'],a:2,whyNot:{0:`obedience goes with ${W('فطرت / جبلت')}.`,1:'clay is what people were made from.'},
+  why:`Keyword ${W('ركن من أركان','rukn min arkaan')}: one of the six pillars of ${W('الإيمان','al-eemaan')}, faith. The question starts with the same word!`},
+{id:'i2-08',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 4',type:'mcq',q:`خلق الله تعالى الإنسان من ..........`,en:'Allah the Exalted created mankind from ……',
+  o:['طين','نور','نار'],oe:['clay','light','fire'],otr:['teen','noor','naar'],a:0,whyNot:{1:'light is for the angels.',2:'fire is for the jinn.'},
+  why:`Keyword ${W('الإنسان','al-insaan')} + ${W('من','min')}: people from ${W('طين','teen')} 🟫 clay.`},
+{id:'i2-09',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 1',type:'spot',q:`خلق الله تعالى الملائكة الكرام من ..........`,en:'Allah the Exalted created the noble angels from ……',
+  words:[['خلق','khalaqa'],['الله','Allaah'],['تعالى','ta\'aalaa'],['الملائكة','al-malaa\'ika'],['الكرام','al-kiraam'],['من','min']],keys:[3],
+  clue:'الملائكة + من → 💡 نور',why:`${W('الملائكة','al-malaa\'ika')} (the angels) tells you the answer: angels are made from ${W('نور','noor')}.`},
+{id:'i2-10',lv:2,l:'i02',src:'Worksheet · Q2 · (b)',type:'spot',q:`دون أربعة من ثمرات الإيمان بالملائكة .`,en:'Write down four of the benefits of believing in the angels.',
+  words:[['دون','dawwin'],['أربعة','arba\'a'],['من','min'],['ثمرات','thamaraat'],['الإيمان','al-eemaan'],['بالملائكة','bil-malaa\'ika']],keys:[3,5],
+  clue:'ثمرات + الملائكة → Lovely Manners Get Thanks',why:`${W('ثمرات','thamaraat')} (benefits) + ${W('بالملائكة','bil-malaa\'ika')} (the angels): write the four benefits of believing in the angels.`},
+{id:'i2-11',lv:2,l:'i02',src:'Worksheet · Q2 · (b) · 1',type:'tiles',q:`ابن الثمرة الأولى : محبة الملائكة …`,en:'Build the first benefit: loving the angels because they obey Allah.',
+  tiles:[['محبة','mahabbat'],['الملائكة','al-malaa\'ika'],['لطاعتهم','li-taa\'atihim'],['لله','lillaah'],['بأخلاق','bi-akhlaaq']],answer:['محبة','الملائكة','لطاعتهم','لله'],
+  why:`${W('محبة الملائكة لطاعتهم لله')}: ❤️ loving the angels because they obey Allah (the L of Lovely Manners Get Thanks).`},
+{id:'i2-12',lv:2,l:'i02',src:'Worksheet · Q2 · (a) · ميكائيل',type:'tiles',q:`ابن وظيفة ميكائيل`,en:'Build the job of Mikail.',
+  tiles:[['موكل','muwakkal'],['بالأرزاق','bil-arzaaq'],['والنبات','wan-nabaat'],['والمطر','wal-matar'],['الأرواح','al-arwaah']],answer:['موكل','بالأرزاق','والنبات','والمطر'],
+  why:`${W('موكل بالأرزاق والنبات والمطر')}: in charge of food 🍞, plants 🌱 and rain 🌧️.`},
+{id:'i2-13',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 1',type:'spell',q:`اكتب بالحروف : الملائكة من …`,en:'Spell it with the letters: the angels are made from … (light)',
+  letters:['ن','و','ر','ا'],answer:'نور',why:`${W('نور','noor')} is made of ${W('ن + و + ر')}. The letters join up by themselves. Light has the round ${W('و')}.`},
+{id:'i2-14',lv:2,l:'i02',src:'Worksheet · Q2 · (c) · 4',type:'spell',q:`اكتب بالحروف : الإنسان من …`,en:'Spell it with the letters: mankind is made from … (clay)',
+  letters:['ط','ي','ن','ر'],answer:'طين',why:`${W('طين','teen')} is made of ${W('ط + ي + ن')}: clay 🟫.`},
+{id:'i2-15',lv:2,l:'i02',type:'mcq',q:`أي هذه من ثمرات الإيمان بالملائكة ؟`,en:'Which of these is a benefit of believing in the angels?',
+  o:['صحة الأعمال','التخلق بأخلاق الملائكة','النجاة من الفتن'],oe:['deeds are accepted','taking on the good manners of the angels','being saved from trials'],otr:['sihhat al-a\'maal','at-takhalluq bi-akhlaaq al-malaa\'ika','an-najaat min al-fitan'],a:1,
+  whyNot:{0:`that is a benefit of <b>sincerity</b> (${W('ثمرات الإخلاص')}).`,2:`that is a benefit of <b>sincerity</b> (${W('ثمرات الإخلاص')}).`},
+  why:`The angels' list: Lovely (love them), <b>Manners</b> (${W('التخلق بأخلاق الملائكة')}), Get (greatness of Allah), Thanks.`},
+{id:'i2-16',lv:2,l:'i02',src:'Worksheet · Q2 · (b)',type:'write',q:`دون أربعة من ثمرات الإيمان بالملائكة .`,en:'Write down four of the benefits of believing in the angels.',
+  model:'1- محبة الملائكة لطاعتهم لله<br>2- التخلق بأخلاق الملائكة<br>3- العلم بعظمة الله وقوته<br>4- شكر الله تعالى على عنايته ببني آدم',
+  men:'1- Loving the angels because they obey Allah · 2- Taking on the good manners of the angels · 3- Knowing the greatness and power of Allah · 4- Thanking Allah the Exalted for His care for the children of Adam',
+  why:'Memory sentence: <b>L</b>ovely <b>M</b>anners <b>G</b>et <b>T</b>hanks: love ❤️, manners 🪞, greatness 🌌, thanks 🙏.'},
+{id:'i2-17',lv:2,l:'i02',src:'Hadith 1',type:'match',q:`الحديث الأول : مم خلق كل منهم ؟`,en:'Hadith 1: what was each one created from?',
+  pairs:[[T('الملائكة','the angels','al-malaa\'ika'),T('نور','light','noor')],[T('الجان','the jinn','al-jaann'),T('نار','fire','naar')],[T('آدم','Adam','aadam'),T('طين','clay','teen')]],
+  why:`The Prophet ﷺ said: angels from ${W('نور','noor')} 💡, jinn from ${W('نار','naar')} 🔥, and Adam from what was described to you: clay 🟫.`},
+{id:'i2-18',lv:2,l:'i02',src:'Hadith 1',type:'tf',q:`خلقت الملائكة من طين`,en:'The angels were created from clay.',o:TF,oe:TFE,otr:TFT,a:1,
+  whyNot:{0:`Hadith 1 says the angels were created from ${W('نور','noor')}, light.`},why:`False ×: angels from light (${W('نور')}); clay (${W('طين')}) is for Adam.`},
+/* ---------- Q3 · Hadith: sincerity (i03) ---------- */
+{id:'i3-01',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 1',type:'mcq',q:`ترك بلد الشرك إلى بلد الإسلام`,en:'Leaving the land of shirk for the land of Islam:',
+  o:['النية','الهجرة','الإخلاص'],oe:['intention','Hijra (migration)','sincerity'],otr:['an-niyya','al-hijra','al-ikhlaas'],a:1,
+  whyNot:{0:'intention (niyya) is what you mean to do in your heart.',2:'sincerity (ikhlas) is doing it only for Allah.'},why:`Keyword ${W('ترك بلد','tark balad')} (leaving a land) → ${W('الهجرة','al-hijra')}, migration 🧳.`},
+{id:'i3-02',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 2',type:'mcq',q:`من الوسائل التي تعين على الإخلاص`,en:'One of the things that help sincerity:',
+  o:['مصاحبة الأخيار','كثرة المال','الرياء'],oe:['keeping company with good people','lots of money','showing off'],otr:['musaahabat al-akhyaar','kathrat al-maal','ar-riyaa\''],a:0,
+  whyNot:{1:'money does not make you sincere.',2:'showing off (riyaa\') is the opposite of sincerity.'},why:`Keyword ${W('تعين','tu\'een')} (help): good friends help you stay sincere, ${W('مصاحبة الأخيار')}.`},
+{id:'i3-03',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 3',type:'mcq',q:`من شروط صحة العمل أن يكون`,en:'One of the conditions for a deed to be accepted is that it is:',
+  o:['خالصا لله','موافقا لسنة النبي','خالصا لله وموافقا لسنة النبي'],oe:['purely for Allah','following the Sunnah of the Prophet','purely for Allah and following the Sunnah of the Prophet'],otr:['khaalisan lillaah','muwaafiqan li-sunnat an-nabee','khaalisan lillaah wa muwaafiqan li-sunnat an-nabee'],a:2,
+  whyNot:{0:'that is only one of the two conditions.',1:'that is only one of the two conditions.'},why:`Keyword ${W('شروط','shuroot')}: conditions, more than one. A deed needs <b>both</b>: for Allah <b>and</b> following the Sunnah.`},
+{id:'i3-04',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 4',type:'mcq',q:`معنى ( يصيبها )`,en:'The meaning of (yuseebuhaa):',
+  o:['يحصل عليها','يحبها','يبتعد عنها'],oe:['gets it','loves it','keeps away from it'],otr:['yahsulu \'alayhaa','yuhibbuhaa','yabta\'idu \'anhaa'],a:0,
+  whyNot:{1:'that means "loves it".',2:'that means the opposite: "keeps away from it".'},why:`${W('يصيبها','yuseebuhaa')} = ${W('يحصل عليها','yahsulu \'alayhaa')}: gets it 🎯.`},
+{id:'i3-05',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 1',type:'spot',q:`ترك بلد الشرك إلى بلد الإسلام`,en:'Leaving the land of shirk for the land of Islam',
+  words:[['ترك','tark'],['بلد','balad'],['الشرك','ash-shirk'],['إلى','ilaa'],['بلد','balad'],['الإسلام','al-islaam']],keys:[0],
+  clue:'ترك بلد → 🧳 الهجرة',why:`${W('ترك','tark')} means <b>leaving</b>: leaving a land is ${W('الهجرة','al-hijra')}.`},
+{id:'i3-06',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 3',type:'spot',q:`من شروط صحة العمل أن يكون`,en:'One of the conditions for a deed to be accepted is that it is',
+  words:[['من','min'],['شروط','shuroot'],['صحة','sihhat'],['العمل','al-\'amal'],['أن','an'],['يكون','yakoon']],keys:[1],
+  clue:'شروط → two conditions → خالصا لله وموافقا لسنة النبي',why:`${W('شروط','shuroot')} = conditions (plural), so choose the answer with <b>both</b> parts.`},
+{id:'i3-07',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 3',type:'tiles',q:`ابن الإجابة : من شروط صحة العمل أن يكون …`,en:'Build the answer: a condition for a deed to be accepted is that it is …',
+  tiles:[['خالصا','khaalisan'],['لله','lillaah'],['وموافقا','wa muwaafiqan'],['لسنة','li-sunnat'],['النبي','an-nabee'],['الرياء','ar-riyaa\'']],answer:['خالصا','لله','وموافقا','لسنة','النبي'],
+  why:`${W('خالصا لله وموافقا لسنة النبي')}: purely for Allah AND following the Sunnah of the Prophet ﷺ.`},
+{id:'i3-08',lv:3,l:'i03',type:'mcq',q:`أي هذه من ثمرات الإخلاص ؟`,en:'Which of these is a benefit of sincerity?',
+  o:['العصمة من الشيطان','العلم بعظمة الله وقوته','محبة الملائكة لطاعتهم لله'],oe:['protection from Shaytan','knowing the greatness and power of Allah','loving the angels because they obey Allah'],otr:['al-\'isma min ash-shaytaan','al-\'ilm bi-\'azamat Allaah wa quwwatih','mahabbat al-malaa\'ika li-taa\'atihim lillaah'],a:0,
+  whyNot:{1:'that is a benefit of believing in the <b>angels</b>.',2:'that is a benefit of believing in the <b>angels</b>.'},why:`${W('ثمرات الإخلاص')}: valid deeds, saved from trials, <b>protection from Shaytan</b>, the Prophet's intercession.`},
+{id:'i3-09',lv:3,l:'i03',src:'Worksheet · Q3 · (b) · 2',type:'tiles',q:`ابن الثمرة : النجاة …`,en:'Build the benefit: being saved from trials.',
+  tiles:[['النجاة','an-najaat'],['من','min'],['الفتن','al-fitan'],['الشيطان','ash-shaytaan']],answer:['النجاة','من','الفتن'],why:`${W('النجاة من الفتن','an-najaat min al-fitan')}: being saved from trials 🛟.`},
+{id:'i3-10',lv:3,l:'i03',src:'Worksheet · Q3 · (b) · 3',type:'tiles',q:`ابن الثمرة : العصمة …`,en:'Build the benefit: protection from Shaytan.',
+  tiles:[['العصمة','al-\'isma'],['من','min'],['الشيطان','ash-shaytaan'],['الفتن','al-fitan']],answer:['العصمة','من','الشيطان'],why:`${W('العصمة من الشيطان','al-\'isma min ash-shaytaan')}: protection from Shaytan 🛡️.`},
+{id:'i3-11',lv:3,l:'i03',src:'Worksheet · Q3 · (a) · 1',type:'spell',q:`اكتب بالحروف : ترك بلد الشرك إلى بلد الإسلام`,en:'Spell it: leaving the land of shirk for the land of Islam (Hijra)',
+  letters:['ا','ل','ه','ج','ر','ة','ح'],answer:'الهجرة',why:`${W('الهجرة','al-hijra')} is made of ${W('ا ل ه ج ر ة')}. It starts with ${W('ال')} and ends with ${W('ة')}.`},
+{id:'i3-12',lv:3,l:'i03',src:'Worksheet · Q3 · (b)',type:'write',q:`اكتب ثمرات الإخلاص :`,en:'Write the benefits of sincerity.',
+  model:'1- صحة الأعمال<br>2- النجاة من الفتن<br>3- العصمة من الشيطان<br>4- نيل شفاعة النبي ﷺ',men:'1- Deeds are valid (accepted) · 2- Being saved from trials · 3- Protection from Shaytan · 4- Earning the intercession of the Prophet ﷺ',
+  why:`Keyword ${W('ثمرات','thamaraat')} + ${W('الإخلاص','al-ikhlaas')}: four benefits of sincerity, not the angels' list.`},
+{id:'i3-13',lv:3,l:'i03',type:'match',q:`صل كل كلمة بمعناها`,en:'Match each word to its meaning.',
+  pairs:[[T('النية','intention','an-niyya'),'intention 💭'],[T('الهجرة','Hijra','al-hijra'),'migration 🧳'],[T('الإخلاص','sincerity','al-ikhlaas'),'doing it only for Allah 🤲'],[T('الرياء','showing off','ar-riyaa\''),'showing off 🎭']],
+  why:`${W('الرياء','ar-riyaa\'')} (showing off) is the opposite of ${W('الإخلاص','al-ikhlaas')} (sincerity).`},
+{id:'i3-14',lv:3,l:'i03',type:'mcq',q:`( صحة الأعمال ) هي إجابة أي سؤال ؟`,en:'"Deeds are valid" is the answer to which question?',
+  o:['اكتب ثمرات الإخلاص','دون أربعة من ثمرات الإيمان بالملائكة','دون أسباب آفات اللسان'],oe:['Write the benefits of sincerity','Write down four benefits of believing in the angels','Write down the causes of the sins of the tongue'],a:0,
+  whyNot:{1:'the angels\' benefits are Lovely Manners Get Thanks.',2:'the causes of the sins of the tongue are another list (Q6).'},why:`${W('صحة الأعمال')} is the first of the ${W('ثمرات الإخلاص')}: sincere deeds are accepted.`},
+{id:'i3-15',lv:3,l:'i03',type:'tf',q:`الرياء من الوسائل التي تعين على الإخلاص`,en:'Showing off is one of the things that help sincerity.',o:TF,oe:TFE,otr:TFT,a:1,
+  whyNot:{0:'showing off is the opposite of sincerity.'},why:`False ×: ${W('الرياء','ar-riyaa\'')} spoils sincerity. What helps is ${W('مصاحبة الأخيار')}, good friends.`},
+/* ---------- Q4 · Life of the Prophet ﷺ: the first revelation (i04) ---------- */
+{id:'i4-01',lv:4,l:'i04',src:'Worksheet · Q4 · (a) · 1',type:'mcq',q:`أول ما نزل من القرآن أول آيات من سورة ..........`,en:'The first part of the Qur\'an revealed was the first verses of Surah ……',
+  o:['العلق','الفاتحة','البقرة'],oe:['Al-\'Alaq','Al-Fatiha','Al-Baqara'],otr:['al-\'alaq','al-faatiha','al-baqara'],a:0,
+  whyNot:{1:'Al-Fatiha is the first surah in the Qur\'an book, but not the first revealed.',2:'Al-Baqara was revealed later, in Madinah.'},why:`Keyword ${W('أول','awwal')} (first) + ${W('سورة')}: the first verses revealed were from Surah ${W('العلق','al-\'alaq')}.`},
+{id:'i4-02',lv:4,l:'i04',src:'Worksheet · Q4 · (a) · 2',type:'mcq',q:`كان النبي ﷺ يتعبد في غار ..........`,en:'The Prophet ﷺ used to worship in the cave of ……',
+  o:['ثور','حراء','العلق'],oe:['Thawr','Hira','Al-\'Alaq'],otr:['thawr','hiraa\'','al-\'alaq'],a:1,
+  whyNot:{0:'the cave of Thawr is where he hid during the Hijra.',2:'Al-\'Alaq is the surah, not the cave.'},why:`Keyword ${W('غار','ghaar')} (cave) → ${W('حراء','hiraa\'')} ⛰️.`},
+{id:'i4-03',lv:4,l:'i04',src:'Worksheet · Q4 · (a) · 3',type:'mcq',q:`الملك الذي نزل على النبي ﷺ هو : ..........`,en:'The angel who came down to the Prophet ﷺ is ……',
+  o:['ميكائيل','جبريل عليه السلام','ملك الموت'],oe:['Mikail','Jibreel, peace be upon him','the Angel of Death'],otr:['meekaa\'eel','jibreel \'alayhis-salaam','malak al-mawt'],a:1,
+  whyNot:{0:'Mikail looks after rain, plants and provisions.',2:'the Angel of Death takes the souls.'},why:`Keyword ${W('الملك','al-malak')} (the angel) + ${W('نزل','nazala')} (came down): ${W('جبريل عليه السلام')}, the angel of revelation.`},
+{id:'i4-04',lv:4,l:'i04',src:'Worksheet · Q4 · (b) · 1',type:'tf',q:`نزل الوحي على النبي ﷺ عند بلوغه أربعين سنة`,en:'Revelation came to the Prophet ﷺ when he reached forty.',o:TF,oe:TFE,otr:TFT,a:0,
+  whyNot:{1:'he was forty years old when the revelation began.'},why:`True √: keyword ${W('أربعين','arba\'een')}, forty 4️⃣0️⃣.`},
+{id:'i4-05',lv:4,l:'i04',src:'Worksheet · Q4 · (b) · 2',type:'tf',q:`كان الوحي ينزل على النبي في صورة واحدة`,en:'Revelation always came to the Prophet in one single form.',o:TF,oe:TFE,otr:TFT,a:1,
+  whyNot:{0:'revelation came in different forms, for example Jibreel sometimes came looking like a man.'},why:`False ×: keyword ${W('صورة واحدة','soora waahida')}, one form. It came in <b>different</b> forms.`},
+{id:'i4-06',lv:4,l:'i04',src:'Worksheet · Q4 · (b) · 3',type:'tf',q:`كان نزول الوحي على النبي ﷺ في شهر رمضان`,en:'Revelation first came to the Prophet ﷺ in the month of Ramadan.',o:TF,oe:TFE,otr:TFT,a:0,
+  whyNot:{1:'the revelation began in Ramadan.'},why:`True √: keyword ${W('رمضان','ramadaan')} 🌙.`},
+{id:'i4-07',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 2',type:'mcq',q:`ما حال النبي ﷺ بعد نزول الوحي ؟`,en:'How was the Prophet ﷺ after the revelation came?',
+  o:['أصبح مستعدا لقبول الوحي','ملك الوحي','يطلق على الإعلام في خفاء وسرعة'],oe:['he became ready to receive the revelation','the angel of revelation','telling something secretly and quickly'],otr:['asbaha musta\'iddan li-qabool al-wahy','malak al-wahy','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a'],a:0,
+  whyNot:{1:'that is the answer about an-Naamoos.',2:'that is the meaning of wahy in language.'},why:`Keyword ${W('حال','haal')} (how he was) + ${W('بعد','ba\'d')} (after): ${W('أصبح مستعدا لقبول الوحي')}.`},
+{id:'i4-08',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 3',type:'mcq',q:`ما المقصود بالناموس من كلام ورقة بن نوفل ؟`,en:'What did Waraqa ibn Nawfal mean by "an-Naamoos"?',
+  o:['غار حراء','ملك الوحي ( جبريل عليه السلام )','سورة العلق'],oe:['the cave of Hira','the angel of revelation (Jibreel, peace be upon him)','Surah Al-\'Alaq'],otr:['ghaar hiraa\'','malak al-wahy (jibreel \'alayhis-salaam)','soorat al-\'alaq'],a:1,
+  whyNot:{0:'Hira is the cave.',2:'Al-\'Alaq is the surah.'},why:`Keyword ${W('الناموس','an-naamoos')}: Waraqa meant Jibreel, the angel of revelation.`},
+{id:'i4-09',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 1',type:'match',q:`عرف الوحي لغة وشرعا`,en:'Define revelation in language and in Islamic law.',
+  pairs:[[T('لغة','in language','lugha'),T('يطلق على الإعلام في خفاء وسرعة','telling someone something secretly and quickly','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a')],[T('شرعا','in Islamic law','shar\'an'),T('إعلام الله تعالى أنبياءه ورسله بما يريد أن يبلغه إليهم','Allah telling His prophets and messengers what He wants to pass on to them')],[T('الناموس','an-Naamoos','an-naamoos'),T('ملك الوحي','the angel of revelation','malak al-wahy')]],
+  why:`${W('لغة','lugha')} 🤫⚡ secret and quick; ${W('شرعا','shar\'an')} 📨 Allah → His prophets.`},
+{id:'i4-10',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 1 · لغة',type:'tiles',q:`ابن التعريف : الوحي لغة …`,en:'Build the definition: revelation in language …',
+  tiles:[['يطلق','yutlaqu'],['على','\'alaa'],['الإعلام','al-i\'laam'],['في','fee'],['خفاء','khafaa\''],['وسرعة','wa sur\'a'],['أنبياءه','anbiyaa\'ahu']],answer:['يطلق','على','الإعلام','في','خفاء','وسرعة'],
+  why:`${W('يطلق على الإعلام في خفاء وسرعة')}: telling something secretly 🤫 and quickly ⚡.`},
+{id:'i4-11',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 2',type:'tiles',q:`ابن الإجابة : ما حال النبي ﷺ بعد نزول الوحي ؟`,en:'Build the answer: how was the Prophet ﷺ after the revelation came?',
+  tiles:[['أصبح','asbaha'],['مستعدا','musta\'iddan'],['لقبول','li-qabool'],['الوحي','al-wahy'],['ملك','malak']],answer:['أصبح','مستعدا','لقبول','الوحي'],why:`${W('أصبح مستعدا لقبول الوحي')}: he became ready to receive the revelation.`},
+{id:'i4-12',lv:4,l:'i04',src:'Worksheet · Q4 · (a) · 2',type:'spell',q:`اكتب بالحروف : كان النبي ﷺ يتعبد في غار …`,en:'Spell it: the Prophet ﷺ used to worship in the cave of … (Hira)',
+  letters:['ح','ر','ا','ء','ج'],answer:'حراء',why:`${W('حراء','hiraa\'')} is made of ${W('ح ر ا ء')}: it ends with a hamza ${W('ء')} on its own.`},
+{id:'i4-13',lv:4,l:'i04',src:'Worksheet · Q4 · (a) · 1',type:'spell',q:`اكتب بالحروف : أول آيات من سورة …`,en:'Spell it: the first verses were from Surah … (Al-\'Alaq)',
+  letters:['ا','ل','ع','ل','ق','غ'],answer:'العلق',why:`${W('العلق','al-\'alaq')} is made of ${W('ا ل ع ل ق')}.`},
+{id:'i4-14',lv:4,l:'i04',src:'Worksheet · Q4 · (b) · 2',type:'spot',q:`كان الوحي ينزل على النبي في صورة واحدة`,en:'Revelation always came to the Prophet in one single form',
+  words:[['كان','kaana'],['الوحي','al-wahy'],['ينزل','yanzil'],['على','\'alaa'],['النبي','an-nabee'],['في','fee'],['صورة','soora'],['واحدة','waahida']],keys:[6,7],
+  clue:'صورة واحدة → one form? No! → ×',why:`${W('صورة واحدة','soora waahida')} (one form) is wrong: revelation came in different forms, so ×.`},
+{id:'i4-15',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 1',type:'write',q:`عرف الوحي لغة وشرعا .`,en:'Define revelation (al-wahy) in language and in Islamic law.',
+  model:'لغة : يطلق على الإعلام في خفاء وسرعة<br>شرعا : إعلام الله تعالى أنبياءه ورسله بما يريد أن يبلغه إليهم',men:'In language: telling someone something secretly and quickly · In Islamic law: Allah the Exalted telling His prophets and messengers what He wants to pass on to them',
+  why:`Two parts: ${W('لغة')} 🤫⚡ and ${W('شرعا')} 📨.`},
+{id:'i4-16',lv:4,l:'i04',src:'Worksheet · Q4 · (c) · 1 · شرعا',type:'tiles',q:`ابن التعريف : الوحي شرعا …`,en:'Build the definition: revelation in Islamic law …',
+  tiles:[['إعلام','i\'laam'],['الله','Allaah'],['تعالى','ta\'aalaa'],['أنبياءه','anbiyaa\'ahu'],['ورسله','wa rusulahu'],['بما','bimaa'],['يريد','yureedu'],['أن','an'],['يبلغه','yuballighahu'],['إليهم','ilayhim'],['خفاء','khafaa\'']],
+  answer:['إعلام','الله','تعالى','أنبياءه','ورسله','بما','يريد','أن','يبلغه','إليهم'],why:`${W('إعلام الله تعالى أنبياءه ورسله بما يريد أن يبلغه إليهم')}: Allah telling His prophets and messengers 📨.`},
+/* ---------- Q5 · Fiqh: prayer (i05) ---------- */
+{id:'i5-01',lv:5,l:'i05',src:'Worksheet · Q5 · (b) · 1',type:'tf',q:`من سنن الصلاة القولية الاستعاذة`,en:'Saying "a\'oodhu billaah" is one of the spoken sunnahs of prayer.',o:TF,oe:TFE,otr:TFT,a:0,
+  whyNot:{1:'al-isti\'aadha is a spoken sunnah of prayer.'},why:`True √: ${W('الاستعاذة','al-isti\'aadha')} (a'oodhu billaah) is a <b>spoken sunnah</b>.`},
+{id:'i5-02',lv:5,l:'i05',src:'Worksheet · Q5 · (b) · 2',type:'tf',q:`من واجبات الصلاة الالتفات بلا حاجة`,en:'Turning around without need is one of the required acts of prayer.',o:TF,oe:TFE,otr:TFT,a:1,
+  whyNot:{0:'turning around without need is disliked (makrooh), not required.'},why:`False ×: keyword ${W('الالتفات','al-iltifaat')} (turning around). It is <b>disliked</b> in prayer, not a wajib.`},
+{id:'i5-03',lv:5,l:'i05',src:'Worksheet · Q5 · (b) · 3',type:'tf',q:`من مبطلات الصلاة القهقهة`,en:'Laughing out loud breaks the prayer.',o:TF,oe:TFE,otr:TFT,a:0,
+  whyNot:{1:'laughing out loud does break the prayer.'},why:`True √: keyword ${W('القهقهة','al-qahqaha')} 😆, laughing out loud, breaks the prayer.`},
+{id:'i5-04',lv:5,l:'i05',src:'Worksheet · Q5 · (c) · 1',type:'mcq',q:`عرف : الواجب`,en:'Define: al-waajib (required).',
+  o:['ما يثاب فاعله ويأثم تاركه','ما يثاب فاعلها ولا يأثم تاركها','ما يثاب تاركه ولا يأثم فاعله'],oe:['what its doer is rewarded for and its leaver is sinful','what its doer is rewarded for and its leaver is not sinful','what its leaver is rewarded for and its doer is not sinful'],a:0,
+  whyNot:{1:'that is the sunnah.',2:'that is the makrooh (disliked).'},why:`Required: do it ⭐ rewarded, leave it ⚠️ sinful: ${W('ما يثاب فاعله ويأثم تاركه')}.`},
+{id:'i5-05',lv:5,l:'i05',src:'Worksheet · Q5 · (c) · 2',type:'mcq',q:`عرف : السنة`,en:'Define: as-sunna (recommended).',
+  o:['ما يثاب تاركه ولا يأثم فاعله','ما يثاب فاعلها ولا يأثم تاركها','ما يثاب فاعله ويأثم تاركه'],oe:['what its leaver is rewarded for and its doer is not sinful','what its doer is rewarded for and its leaver is not sinful','what its doer is rewarded for and its leaver is sinful'],a:1,
+  whyNot:{0:'that is the makrooh.',2:'that is the wajib.'},why:`Sunnah: do it ⭐ rewarded, leave it ✔️ no sin. ${W('السنة')} is feminine, so ${W('فاعلها')} and ${W('تاركها')} end in ${W('ـها')}.`},
+{id:'i5-06',lv:5,l:'i05',src:'Worksheet · Q5 · (c) · 3',type:'mcq',q:`عرف : المكروه`,en:'Define: al-makrooh (disliked).',
+  o:['ما يثاب فاعله ويأثم تاركه','ما يثاب فاعلها ولا يأثم تاركها','ما يثاب تاركه ولا يأثم فاعله'],oe:['what its doer is rewarded for and its leaver is sinful','what its doer is rewarded for and its leaver is not sinful','what its leaver is rewarded for and its doer is not sinful'],a:2,
+  whyNot:{0:'that is the wajib.',1:'that is the sunnah.'},why:`Disliked: <b>leave</b> it ⭐ rewarded, do it ✔️ no sin: ${W('ما يثاب تاركه ولا يأثم فاعله')}.`},
+{id:'i5-07',lv:5,l:'i05',src:'Worksheet · Q5 · (c) · 1',type:'tiles',q:`ابن تعريف الواجب`,en:'Build the definition of al-waajib.',
+  tiles:[['ما','maa'],['يثاب','yuthaabu'],['فاعله','faa\'iluhu'],['ويأثم','wa ya\'thamu'],['تاركه','taarikuh'],['ولا','wa laa']],answer:['ما','يثاب','فاعله','ويأثم','تاركه'],
+  why:`${W('ما يثاب فاعله ويأثم تاركه')}: the doer is rewarded, the leaver is sinful.`},
+{id:'i5-08',lv:5,l:'i05',src:'Worksheet · Q5 · (c) · 2',type:'tiles',q:`ابن تعريف السنة`,en:'Build the definition of as-sunna.',
+  tiles:[['ما','maa'],['يثاب','yuthaabu'],['فاعلها','faa\'iluhaa'],['فاعله','faa\'iluhu'],['ولا','wa laa'],['يأثم','ya\'thamu'],['تاركها','taarikuhaa']],answer:['ما','يثاب','فاعلها','ولا','يأثم','تاركها'],
+  why:`${W('ما يثاب فاعلها ولا يأثم تاركها')}: ${W('السنة')} is feminine, so ${W('ـها')} endings.`},
+{id:'i5-09',lv:5,l:'i05',src:'Worksheet · Q5 · (c) · 3',type:'tiles',q:`ابن تعريف المكروه`,en:'Build the definition of al-makrooh.',
+  tiles:[['ما','maa'],['يثاب','yuthaabu'],['تاركه','taarikuhu'],['ولا','wa laa'],['يأثم','ya\'thamu'],['فاعله','faa\'iluh'],['ويأثم','wa ya\'thamu']],answer:['ما','يثاب','تاركه','ولا','يأثم','فاعله'],
+  why:`${W('ما يثاب تاركه ولا يأثم فاعله')}: the one who <b>leaves</b> it is rewarded.`},
+{id:'i5-10',lv:5,l:'i05',src:'Worksheet · Q5 · (a)',type:'mcq',q:`أي هذه من واجبات الصلاة ؟`,en:'Which of these is one of the required acts of prayer?',
+  o:['الاستعاذة','التسميع','الالتفات بلا حاجة'],oe:['saying a\'oodhu billaah','saying "Sami\'a Allaahu liman hamidah"','turning around without need'],otr:['al-isti\'aadha','at-tasmee\'','al-iltifaat bilaa haaja'],a:1,
+  whyNot:{0:'al-isti\'aadha is a sunnah, not a wajib.',2:'turning around without need is disliked.'},why:`${W('التسميع','at-tasmee\'')} is one of the five wajibat (from ${W('سمع')}, to hear).`},
+{id:'i5-11',lv:5,l:'i05',src:'Worksheet · Q5 · (a)',type:'match',q:`صل كل واجب بمعناه`,en:'Match each required act to what it is.',
+  pairs:[[T('تكبيرات الانتقال','takbeeraat al-intiqaal','takbeeraat al-intiqaal'),'saying "Allahu akbar" when moving 🔄'],[T('التسميع','at-tasmee\'','at-tasmee\''),'"Sami\'a Allaahu liman hamidah" 👂'],[T('التحميد','at-tahmeed','at-tahmeed'),'"Rabbanaa wa lakal-hamd" 🙌'],[T('التشهد الأول','the first tashahhud','at-tashahhud al-awwal'),'the first tashahhud ☝️']],
+  why:`${W('التسميع')} comes from ${W('سمع')} (hear); ${W('التحميد')} from ${W('حمد')} (praise).`},
+{id:'i5-12',lv:5,l:'i05',src:'Worksheet · Q5 · (a)',type:'write',q:`اكتب خمسة من واجبات الصلاة :`,en:'Write five of the required acts of prayer.',
+  model:'1- تكبيرات الانتقال<br>2- التحميد<br>3- التسميع<br>4- التشهد الأول<br>5- الجلوس للتشهد الأول',men:'1- Allahu akbar when moving · 2- Rabbanaa wa lakal-hamd · 3- Sami\'a Allaahu liman hamidah · 4- the first tashahhud · 5- sitting for the first tashahhud',
+  why:`Keyword ${W('واجبات الصلاة','waajibaat as-salaah')} and five dotted lines: write five.`},
+{id:'i5-13',lv:5,l:'i05',src:'Worksheet · Q5 · (b) · 2',type:'spot',q:`من واجبات الصلاة الالتفات بلا حاجة`,en:'Turning around without need is one of the required acts of prayer',
+  words:[['من','min'],['واجبات','waajibaat'],['الصلاة','as-salaah'],['الالتفات','al-iltifaat'],['بلا','bilaa'],['حاجة','haaja']],keys:[3],
+  clue:'الالتفات → 🔄 turning around → disliked → ×',why:`${W('الالتفات','al-iltifaat')} (turning around) is disliked, so the statement is false ×.`},
+{id:'i5-14',lv:5,l:'i05',src:'Hadith 3',type:'mcq',q:`الحديث الثالث : ما بال أقوام يرفعون أبصارهم إلى السماء في صلاتهم . ماذا نتعلم ؟`,en:'Hadith 3: "What is wrong with people who raise their eyes to the sky in their prayer?" What do we learn?',
+  o:['Keep your eyes down in prayer','Look up at the sky in prayer','Close your eyes and turn around'],a:0,
+  whyNot:{1:'that is exactly what the Prophet ﷺ warned against.',2:'turning around without need is disliked too.'},why:`${W('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')}: raising their eyes to the sky. Keep your eyes on the place of prostration.`},
+{id:'i5-15',lv:5,l:'i05',src:'Worksheet · Q5 · (a) · 2',type:'spell',q:`اكتب بالحروف : التحميد`,en:'Spell it: at-tahmeed (saying Rabbanaa wa lakal-hamd)',
+  letters:['ا','ل','ت','ح','م','ي','د','س'],answer:'التحميد',why:`${W('التحميد','at-tahmeed')} is made of ${W('ا ل ت ح م ي د')}, from ${W('حمد')}, praise.`},
+/* ---------- Q6 · Manners: sins of the tongue (i06) ---------- */
+{id:'i6-01',lv:6,l:'i06',src:'Worksheet · Q6 · (b) · 1',type:'mcq',q:`ذكر الناس بما يكرهونه بالقول أو الفعل .`,en:'Mentioning people with what they hate, by words or actions.',
+  o:['الغيبة','السخرية','النميمة'],oe:['backbiting','mocking','spreading tales'],otr:['al-gheeba','as-sukhriyya','an-nameema'],a:0,
+  whyNot:{1:'mocking is looking down on people (احتقار).',2:'spreading tales is carrying talk (نقل).'},why:`Keyword ${W('يكرهونه','yakrahoonahu')} (they hate it) → ${W('الغيبة','al-gheeba')} 🙈.`},
+{id:'i6-02',lv:6,l:'i06',src:'Worksheet · Q6 · (b) · 2',type:'mcq',q:`احتقار الناس بالهمز واللمز .`,en:'Looking down on people with mocking gestures and digs.',
+  o:['النميمة','الغيبة','السخرية'],oe:['spreading tales','backbiting','mocking'],otr:['an-nameema','al-gheeba','as-sukhriyya'],a:2,
+  whyNot:{0:'spreading tales is carrying talk (نقل).',1:'backbiting is mentioning what people hate (يكرهونه).'},why:`Keyword ${W('احتقار','ihtiqaar')} (looking down on) → ${W('السخرية','as-sukhriyya')} 😏.`},
+{id:'i6-03',lv:6,l:'i06',src:'Worksheet · Q6 · (b) · 3',type:'mcq',q:`نقل الكلام للإفساد بين الناس .`,en:'Carrying talk to make trouble between people.',
+  o:['السخرية','النميمة','الغيبة'],oe:['mocking','spreading tales','backbiting'],otr:['as-sukhriyya','an-nameema','al-gheeba'],a:1,
+  whyNot:{0:'mocking is looking down on people (احتقار).',2:'backbiting is mentioning what people hate (يكرهونه).'},why:`Keyword ${W('نقل','naql')} (carrying) → ${W('النميمة','an-nameema')} 📨.`},
+{id:'i6-04',lv:6,l:'i06',src:'Worksheet · Q6 · (c) · 1',type:'tf',q:`حرم الإسلام الغيبة في حال تغيير المنكر .`,en:'Islam forbids backbiting when it is done to stop a wrong.',o:TF,oe:TFE,otr:TFT,a:1,
+  whyNot:{0:'telling someone who can stop a wrong is allowed.'},why:`False ×: keyword ${W('تغيير المنكر','taghyeer al-munkar')} (stopping a wrong). Telling someone who can stop the wrong is allowed.`},
+{id:'i6-05',lv:6,l:'i06',src:'Worksheet · Q6 · (c) · 2',type:'tf',q:`الحسد والكبر سبب لانتشار آفات اللسان .`,en:'Envy and arrogance are a cause of the spread of the sins of the tongue.',o:TF,oe:TFE,otr:TFT,a:0,
+  whyNot:{1:'envy and arrogance are one of the four causes (Q6 a).'},why:`True √: ${W('الحسد والكبر','al-hasad wal-kibr')} is one of the four causes.`},
+{id:'i6-06',lv:6,l:'i06',src:'Worksheet · Q6 · (c) · 3',type:'tf',q:`تقتصر الغيبة على القول .`,en:'Backbiting is only done with words.',o:TF,oe:TFE,otr:TFT,a:1,
+  whyNot:{0:'the definition says by words OR actions.'},why:`False ×: keyword ${W('تقتصر','taqtasir')} (only). Backbiting is ${W('بالقول أو الفعل')}, by words <b>or actions</b>.`},
+{id:'i6-07',lv:6,l:'i06',src:'Worksheet · Q6 · (b)',type:'match',q:`اكتب المصطلح الصحيح للعبارات الآتية`,en:'Write the correct term for each description.',
+  pairs:[[T('ذكر الناس بما يكرهونه','mentioning people with what they hate'),T('الغيبة','backbiting','al-gheeba')],[T('احتقار الناس بالهمز واللمز','looking down on people'),T('السخرية','mocking','as-sukhriyya')],[T('نقل الكلام للإفساد','carrying talk to make trouble'),T('النميمة','spreading tales','an-nameema')]],
+  why:`${W('يكرهونه')} → 🙈 ${W('الغيبة')} · ${W('احتقار')} → 😏 ${W('السخرية')} · ${W('نقل')} → 📨 ${W('النميمة')}.`},
+{id:'i6-08',lv:6,l:'i06',src:'Worksheet · Q6 · (b) · 1',type:'spot',q:`ذكر الناس بما يكرهونه بالقول أو الفعل .`,en:'Mentioning people with what they hate, by words or actions.',
+  words:[['ذكر','dhikr'],['الناس','an-naas'],['بما','bimaa'],['يكرهونه','yakrahoonahu'],['بالقول','bil-qawl'],['أو','aw'],['الفعل','al-fi\'l']],keys:[3],
+  clue:'يكرهونه → 🙈 الغيبة',why:`${W('يكرهونه','yakrahoonahu')} (they hate it) → backbiting, ${W('الغيبة')}.`},
+{id:'i6-09',lv:6,l:'i06',src:'Worksheet · Q6 · (b) · 3',type:'spot',q:`نقل الكلام للإفساد بين الناس .`,en:'Carrying talk to make trouble between people.',
+  words:[['نقل','naql'],['الكلام','al-kalaam'],['للإفساد','lil-ifsaad'],['بين','bayna'],['الناس','an-naas']],keys:[0],
+  clue:'نقل → 📨 النميمة',why:`${W('نقل','naql')} (carrying talk) → ${W('النميمة')}.`},
+{id:'i6-10',lv:6,l:'i06',src:'Worksheet · Q6 · (a) · 1',type:'tiles',q:`ابن السبب الأول : عدم …`,en:'Build the first cause: forgetting that Allah is watching.',
+  tiles:[['عدم','\'adam'],['مراقبة','muraaqabat'],['الله','Allaah'],['سوء','soo\'']],answer:['عدم','مراقبة','الله'],why:`${W('عدم مراقبة الله')}: forgetting that Allah is watching 👁️.`},
+{id:'i6-11',lv:6,l:'i06',src:'Worksheet · Q6 · (a) · 4',type:'tiles',q:`ابن السبب الرابع : الغفلة …`,en:'Build the fourth cause: forgetting about reward and punishment.',
+  tiles:[['الغفلة','al-ghafla'],['عن','\'an'],['الجزاء','al-jazaa\''],['التربية','at-tarbiya']],answer:['الغفلة','عن','الجزاء'],why:`${W('الغفلة عن الجزاء')}: forgetting about reward and punishment ⚖️.`},
+{id:'i6-12',lv:6,l:'i06',src:'Worksheet · Q6 · (a)',type:'mcq',q:`أي هذه من أسباب آفات اللسان ؟`,en:'Which of these is a cause of the sins of the tongue?',
+  o:['مصاحبة الأخيار','سوء التربية','صحة الأعمال'],oe:['keeping company with good people','a bad upbringing','deeds are valid'],otr:['musaahabat al-akhyaar','soo\' at-tarbiya','sihhat al-a\'maal'],a:1,
+  whyNot:{0:'good friends help sincerity (Q3).',2:'that is a benefit of sincerity (Q3).'},why:`${W('سوء التربية','soo\' at-tarbiya')}, a bad upbringing, is one of the four causes.`},
+{id:'i6-13',lv:6,l:'i06',src:'Worksheet · Q6 · (a)',type:'write',q:`دون أسباب آفات اللسان :`,en:'Write down the causes of the sins of the tongue.',
+  model:'1- عدم مراقبة الله<br>2- سوء التربية<br>3- الحسد والكبر<br>4- الغفلة عن الجزاء',men:'1- Forgetting that Allah is watching · 2- A bad upbringing · 3- Envy and arrogance · 4- Forgetting about reward and punishment',
+  why:`Keyword ${W('أسباب','asbaab')} (causes) + ${W('آفات اللسان','aafaat al-lisaan')}: four causes.`},
+{id:'i6-14',lv:6,l:'i06',src:'Hadith 2',type:'mcq',q:`الحديث الثاني : ذا الوجهين ، الذي يأتي هؤلاء بوجه وهؤلاء بوجه . من هو ؟`,en:'Hadith 2: "the two-faced one, who comes to some people with one face and to others with another face". Who is he?',
+  o:['the two-faced person','a person with two friends','a person who prays twice'],a:0,
+  whyNot:{1:'the hadith is about showing a different face to different people.',2:'the hadith is not about prayer.'},why:`${W('ذا الوجهين','dhal-wajhayn')}: the two-faced person 🎭, among the worst people on the Day of Resurrection.`},
+{id:'i6-15',lv:6,l:'i06',src:'Worksheet · Q6 · (b) · 1',type:'spell',q:`اكتب بالحروف : ذكر الناس بما يكرهونه`,en:'Spell it: mentioning people with what they hate (backbiting)',
+  letters:['ا','ل','غ','ي','ب','ة','ع'],answer:'الغيبة',why:`${W('الغيبة','al-gheeba')} is made of ${W('ا ل غ ي ب ة')}, with the dot on top: ${W('غ')}.`},
+/* ---------- Q7 · Islamic culture: responsibility (i07) ---------- */
+{id:'i7-01',lv:7,l:'i07',src:'Worksheet · Q7 · (a) · 1',type:'mcq',q:`شاب أسرف بالسهر خلال شهر رمضان`,en:'A young man who stayed up far too late in Ramadan.',
+  o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:1,whyNot:{0:'wasting the nights is not responsible.'},
+  why:`Keyword ${W('أسرف','asrafa')} (overdid it) → ${W('غير مسؤول','ghayr mas\'ool')}.`},
+{id:'i7-02',lv:7,l:'i07',src:'Worksheet · Q7 · (a) · 2',type:'mcq',q:`فتاة تكثر من مشروبات الطاقة`,en:'A girl who drinks a lot of energy drinks.',
+  o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:1,whyNot:{0:'too many energy drinks harm the body.'},
+  why:`Keyword ${W('تكثر','tukthir')} (too much) → ${W('غير مسؤول','ghayr mas\'ool')}.`},
+{id:'i7-03',lv:7,l:'i07',src:'Worksheet · Q7 · (a) · 3',type:'mcq',q:`أب يعلم أولاده الصلاة`,en:'A father who teaches his children to pray.',
+  o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:0,whyNot:{1:'teaching his children to pray is very responsible.'},
+  why:`Keyword ${W('يعلم … الصلاة','yu\'allimu … as-salaah')} (teaches prayer) → ${W('مسؤول','mas\'ool')} 👍.`},
+{id:'i7-04',lv:7,l:'i07',src:'Worksheet · Q7 · (b)',type:'match',q:`أقسام المسؤولية الفردية`,en:'The kinds of personal responsibility.',
+  pairs:[[T('المسؤولية الدينية','religious responsibility','al-mas\'ooliyya ad-deeniyya'),'religion 🕌'],[T('المسؤولية الشخصية','personal responsibility','al-mas\'ooliyya ash-shakhsiyya'),'myself 🧍'],[T('المسؤولية الأسرية','family responsibility','al-mas\'ooliyya al-usariyya'),'family 👨‍👩‍👧'],[T('المسؤولية المجتمعية','responsibility to society','al-mas\'ooliyya al-mujtama\'iyya'),'society 🏙️']],
+  why:`Write ${W('المسؤولية')} once, then learn the four endings: ${W('الدينية')}, ${W('الشخصية')}, ${W('الأسرية')}, ${W('المجتمعية')}.`},
+{id:'i7-05',lv:7,l:'i07',src:'Worksheet · Q7 · (b) · 4',type:'tiles',q:`ابن : المسؤولية نحو المجتمع`,en:'Build: responsibility to society.',
+  tiles:[['المسؤولية','al-mas\'ooliyya'],['المجتمعية','al-mujtama\'iyya'],['الأسرية','al-usariyya']],answer:['المسؤولية','المجتمعية'],why:`${W('المسؤولية المجتمعية')}: society 🏙️.`},
+{id:'i7-06',lv:7,l:'i07',src:'Worksheet · Q7 · (c) · 2',type:'tiles',q:`ابن الإجابة الثانية : المسؤولية تجاه الدين …`,en:'Build the second answer: responsibility towards religion …',
+  tiles:[['في','fee'],['المعاملات','al-mu\'aamalaat'],['( البيع والشراء )','(al-bay\' wash-shiraa\')'],['العبادات','al-\'ibaadaat']],answer:['في','المعاملات','( البيع والشراء )'],why:`${W('في المعاملات ( البيع والشراء )')}: in dealings with people, like buying and selling 🛒.`},
+{id:'i7-07',lv:7,l:'i07',src:'Worksheet · Q7 · (c)',type:'mcq',q:`وضح المسؤولية تجاه الدين .`,en:'Explain responsibility towards religion.',
+  o:['في العبادات ( الصلاة ) وفي المعاملات ( البيع والشراء )','المسؤولية الأسرية','مشروبات الطاقة'],oe:['in worship (prayer) and in dealings (buying and selling)','family responsibility','energy drinks'],a:0,
+  whyNot:{1:'that is one of the kinds of personal responsibility (Q7 b).',2:'that is from Q7 (a).'},why:`Two parts: ${W('في العبادات ( الصلاة )')} 🕌 and ${W('في المعاملات ( البيع والشراء )')} 🛒.`},
+{id:'i7-08',lv:7,l:'i07',src:'Worksheet · Q7 · (b)',type:'write',q:`دون أقسام المسؤولية الفردية :`,en:'Write down the kinds of personal responsibility.',
+  model:'1- المسؤولية الدينية<br>2- المسؤولية الشخصية<br>3- المسؤولية الأسرية<br>4- المسؤولية المجتمعية',men:'1- Religious · 2- Personal · 3- Family · 4- Society',
+  why:`Each one starts with ${W('المسؤولية')} and ends in ${W('ـية')}.`},
+{id:'i7-09',lv:7,l:'i07',src:'Worksheet · Q7 · (c)',type:'write',q:`وضح المسؤولية تجاه الدين .`,en:'Explain responsibility towards religion.',
+  model:'1- في العبادات ( الصلاة )<br>2- في المعاملات ( البيع والشراء )',men:'1- In acts of worship (prayer) · 2- In dealings with people (buying and selling)',
+  why:`Worship 🕌 and dealings 🛒, each with its example in brackets.`},
+{id:'i7-10',lv:7,l:'i07',src:'Worksheet · Q7 · (a)',type:'spell',q:`اكتب بالحروف : مسؤول`,en:'Spell it: mas\'ool (responsible)',
+  letters:['م','س','ؤ','و','ل','ء','أ'],answer:'مسؤول',why:`${W('مسؤول','mas\'ool')} is made of ${W('م س ؤ و ل')}: the hamza sits on a ${W('و')}: ${W('ؤ')}.`},
+{id:'i7-11',lv:7,l:'i07',src:'Worksheet · Q7 · (a) · 1',type:'spot',q:`شاب أسرف بالسهر خلال شهر رمضان`,en:'A young man who stayed up far too late in Ramadan',
+  words:[['شاب','shaabb'],['أسرف','asrafa'],['بالسهر','bis-sahar'],['خلال','khilaal'],['شهر','shahr'],['رمضان','ramadaan']],keys:[1],
+  clue:'أسرف → overdid it → غير مسؤول',why:`${W('أسرف','asrafa')} means he overdid it, so: ${W('غير مسؤول')}.`},
+{id:'i7-12',lv:7,l:'i07',type:'mcq',q:`ما معنى ( غير ) في ( غير مسؤول ) ؟`,en:'What does ghayr mean in "ghayr mas\'ool"?',
+  o:['not','very','always'],a:0,whyNot:{1:'"very" would make it more responsible, not less.',2:'it does not mean "always".'},why:`${W('غير','ghayr')} = not: ${W('غير مسؤول')} = not responsible.`},
+];
+const LESSONS={i01:['i01-exam-toolkit','Exam toolkit: instruction words and keywords'],i02:['i02-angels','The angels'],i03:['i03-sincerity','Sincerity, intention and Hijra'],
+  i04:['i04-first-revelation','The first revelation in the cave of Hira'],i05:['i05-prayer','Prayer: required acts and rulings'],i06:['i06-tongue','Sins of the tongue'],i07:['i07-responsibility','Responsibility']};
+
+/* ================= modes ================= */
+const MODES=[
+  {id:'i2',cls:'l2c',lv:'Q2 · العقيدة',name:'The angels',emo:'👼',pick:()=>BANK.filter(q=>q.lv===2)},
+  {id:'i3',cls:'l3c',lv:'Q3 · الحديث',name:'Sincerity & Hijra',emo:'🤲',pick:()=>BANK.filter(q=>q.lv===3)},
+  {id:'i4',cls:'l4c',lv:'Q4 · السيرة',name:'The first revelation',emo:'📜',pick:()=>BANK.filter(q=>q.lv===4)},
+  {id:'i5',cls:'l5c',lv:'Q5 · الفقه',name:'Prayer',emo:'🕌',pick:()=>BANK.filter(q=>q.lv===5)},
+  {id:'i6',cls:'l6c',lv:'Q6 · التهذيب',name:'Sins of the tongue',emo:'👅',pick:()=>BANK.filter(q=>q.lv===6)},
+  {id:'i7',cls:'l7c',lv:'Q7 · الثقافة الإسلامية',name:'Responsibility',emo:'🧩',pick:()=>BANK.filter(q=>q.lv===7)},
+  {id:'iboss',cls:'ibc',lv:'Final Boss',name:'Mixed Challenge',emo:'👑',boss:true,
+    pick:()=>{const lv=[...new Set(BANK.map(q=>q.lv))];const per=Math.ceil(25/lv.length);return shuffle(lv.flatMap(c=>shuffle(BANK.filter(q=>q.lv===c)).slice(0,per))).slice(0,25);}},
+];
+const RETRY='iretry'; /* "Practise my mistakes" (each quiz has its own: retry, mretry, fretry, iretry) */
+const MYMODES=new Set([...MODES.map(m=>m.id),RETRY]);
+const TYPE={mcq:'🎯 Pick one',tf:'⚡ √ or ×',match:'🔗 Match up',tiles:'🧩 Build the answer',spell:'🔤 Spell it',spot:'🔎 Spot the keyword',write:'✍️ Write it'};
+const LVL={2:'Q2 · Belief',3:'Q3 · Hadith',4:'Q4 · Seerah',5:'Q5 · Fiqh',6:'Q6 · Manners',7:'Q7 · Culture'};
+const PRAISE=[`${W('ما شاء الله')} Well done!`,'Excellent!','Brilliant! 🌟',`${W('أحسنت')} Well done!`,'Perfect!','Super! 🔥',`${W('ممتاز')} Excellent!`];
+const OOPS=['Nearly! Here\'s why:','Not quite. Learn this one:','Good try! Here\'s why:','Keep going! Remember:'];
+const pickr=a=>a[Math.floor(Math.random()*a.length)];
+
+/* ---------- continuing a level (saved after every answer through src/account.js) ---------- */
+function savedRuns(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const all=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes||{};
+  return Object.fromEntries(Object.entries(all).filter(([m])=>MYMODES.has(m)));}catch(e){return{};}}
+function saveRun(i){track('quizState',S.mode,{ids:S.qs.map(q=>q.id),i,score:S.score,streak:S.streak,best:S.best,right:S.right,wrong:S.wrong.map(q=>q.id)});}
+function resumeRun(mode,st){const byId=Object.fromEntries(BANK.map(q=>[q.id,q]));const qs=st.ids.map(id=>byId[id]).filter(Boolean);if(!qs.length)return;
+  S={mode,qs,i:Math.min(st.i,qs.length),score:st.score,streak:st.streak,best:st.best,right:st.right,wrong:st.wrong.map(id=>byId[id]).filter(Boolean)};
+  if(S.i>=qs.length){endGame();return;}show('game');renderQ();}
+const modeName=id=>{const m=MODES.find(x=>x.id===id);return m?`${m.emo} ${m.lv}: ${m.name}`:'🔁 Practise my mistakes';};
+function renderResume(){const box=$('#resume'),runs=Object.entries(savedRuns()).sort((a,b)=>(b[1].at||0)-(a[1].at||0));box.innerHTML='';
+  if(!runs.length){box.style.display='none';return;}box.style.display='';
+  box.appendChild(el('h3','','▶ Continue where you left off'));
+  runs.forEach(([mode,st])=>{const n=(st.ids||[]).length;const row=el('div','rrow',`<div class="rt"><b>${modeName(mode)}</b><span>${st.i>=n?'All answered: see your results':`Question ${st.i+1} of ${n}`} · ${st.score} pts</span></div>`);
+    const go=el('button','go','Continue ▶');go.onclick=()=>resumeRun(mode,st);
+    const x=el('button','rx','✕');x.title='Forget this level';x.setAttribute('aria-label','Forget this unfinished level');x.onclick=()=>{track('quizState',mode,null);renderMenu();};
+    row.appendChild(go);row.appendChild(x);box.appendChild(row);});}
+addEventListener('g7-resume',()=>{if(!$('#menu').classList.contains('hidden'))renderMenu();});
+function renderMenu(){
+  renderResume();
+  const box=$('#modes');box.innerHTML='';
+  MODES.forEach(m=>{const qs=m.pick(),ready=m.boss?MODES.every(x=>x.boss||x.pick().length>0):qs.length>0;const n=m.boss?25:qs.length;const best=store.get('sq_best_'+m.id,null);
+    const b=el('button','mode '+m.cls+(ready?'':' soon'),`<div class="emo">${m.emo}</div><div class="lv">${m.lv}</div><h3>${m.name}</h3><div class="meta">${ready?`${n} questions${m.boss?' from every level':''}`:'Coming soon'}</div>`+
+      (best?`<div class="best">Best: ${'⭐'.repeat(best.stars)}${'☆'.repeat(3-best.stars)} · ${best.pct}%</div>`:''));
+    if(ready)b.onclick=()=>start(m.id,m.boss?m.pick():shuffle(m.pick()));else b.disabled=true;box.appendChild(b);});
+  $('#soundBtn').textContent=soundOn?'🔊 Sound: on':'🔇 Sound: off';
+}
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;store.set('sq_sound',soundOn);renderMenu();};
+$('#homeBtn').onclick=()=>{if(confirm('Leave this level? You can continue it later from the menu.'))show('menu');};
+function show(id){['menu','game','end'].forEach(s=>$('#'+s).classList.toggle('hidden',s!==id));if(id==='menu')renderMenu();scrollTo(0,0);}
+
+/* ================= game state ================= */
+let S;
+/* Progress saving: handed to src/account.js, which may load after this script. */
+function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
+function start(mode,qs){S={mode,qs,i:0,score:0,streak:0,best:0,right:0,wrong:[]};saveRun(0);show('game');renderQ();}
+function hud(){$('#prog').style.width=(S.i/S.qs.length*100)+'%';const st=$('#streak');st.textContent='🔥 '+S.streak;st.classList.toggle('hot',S.streak>=3);$('#score').textContent='⭐ '+S.score;}
+
+function renderQ(){
+  hud();const q=S.qs[S.i];const card=$('#card');card.innerHTML='';
+  card.appendChild(el('div','qtop',`<span class="tag tl${q.lv}">${LVL[q.lv]}</span><span class="tag tt">${TYPE[q.type]}</span><span class="qnum">${S.i+1} / ${S.qs.length}</span>`));
+  if(q.src)card.appendChild(el('div','hint',`📄 ${q.src}`));
+  if(q.type!=='spot'){const pr=el('div','prompt prompt-ar'+(EN?' en-on':''),T(q.q,q.en,q.tr));
+    if(HAS_TTS){const h=el('button','hear','🔈');h.title='Hear it in Arabic';h.setAttribute('aria-label','Hear the question in Arabic');h.onclick=()=>hearAR(q.q);pr.appendChild(h);}
+    card.appendChild(pr);}
+  const body=el('div','body');card.appendChild(body);
+  const actions=el('div','actions');const checkBtn=el('button','go','Check ✔');actions.appendChild(checkBtn);card.appendChild(actions);
+  let api=null;
+  api=R[q.type](q,body,()=>{if(api)checkBtn.disabled=!api.ready();},(ok,note)=>finish(ok,note));
+  checkBtn.disabled=!api.ready();
+  if(api.instant)actions.classList.add('hidden');
+  checkBtn.onclick=()=>{if(!api.ready())return;const r=api.check();if(r==null)return;finish(r.ok,r.note);};
+  function finish(ok,note){
+    actions.classList.remove('hidden');checkBtn.disabled=false;
+    if(api.lock)api.lock();
+    if(ok){S.streak++;S.best=Math.max(S.best,S.streak);S.right++;const pts=100+Math.min(50,(S.streak-1)*10);S.score+=pts;sfx.ok();
+      card.appendChild(el('div','plus','+'+pts));if(S.streak%5===0)confetti(70);else confetti(25,innerWidth/2,innerHeight/2);}
+    else{S.streak=0;S.wrong.push(q);sfx.bad();}
+    track('answer',{questionId:q.id,lessonId:q.l,source:'quiz',correct:ok});saveRun(S.i+1);
+    hud();
+    const fb=el('div','fb '+(ok?'ok':'bad'),`<h3>${ok?'✅ '+pickr(PRAISE):'💡 '+pickr(OOPS)}</h3>${!ok&&note?`<p class="not">❌ ${note}</p>`:''}<p>${q.why}</p>`);
+    card.insertBefore(fb,actions);
+    checkBtn.textContent=S.i===S.qs.length-1?'See my results 🏁':'Next ➜';checkBtn.classList.add('green');
+    checkBtn.onclick=()=>{S.i++;if(S.i>=S.qs.length)endGame();else{renderQ();scrollTo({top:0,behavior:'smooth'});}};
+    fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+/* ================= question renderers =================
+   Each returns {ready(), check() -> {ok, note}, lock()?, instant?}; instant ones call done(ok, note) themselves. */
+const R={};
+R.mcq=(q,body,upd,done)=>{
+  const tf=q.type==='tf';const box=el('div','opts'+(tf?' tf grid2':' text'));body.appendChild(box);
+  const btns=q.o.map((t,i)=>{const lab=tf?`<span>${t}</span> <span style="font-size:15px;color:var(--muted)">${q.oe[i]}</span>`:T(t,q.oe&&q.oe[i],q.otr&&q.otr[i]);
+    const b=el('button','opt',tf?lab:`<span class="k">${'ABCD'[i]}</span><span>${lab}</span>`);b.dataset.i=i;box.appendChild(b);return b;});
+  btns.forEach((b,i)=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);btns[q.a].classList.add('ok');if(i!==q.a)b.classList.add('bad');
+    const w=q.whyNot&&q.whyNot[i];done(i===q.a,w?(tf?w:`<b>${'ABCD'[i]} is not right:</b> ${w}`):'');});
+  return{instant:true,ready:()=>false};
+};
+R.tf=R.mcq;
+/* tap the keyword: the question's words are buttons (right to left) */
+R.spot=(q,body,upd,done)=>{
+  body.appendChild(el('div','hint','🔎 <b>Tap the keyword</b>: the word that tells you the answer.'));
+  const box=el('div','spot');body.appendChild(box);
+  const btns=q.words.map(([a,s],i)=>{const b=el('button','sw',`<span class="arf" dir="rtl">${a}</span><span class="s">${s}</span>`);b.dataset.i=i;box.appendChild(b);return b;});
+  body.appendChild(el('div','spoten','🇬🇧 '+q.en));
+  btns.forEach((b,i)=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);q.keys.forEach(k=>btns[k].classList.add('key'));const ok=q.keys.includes(i);if(!ok)b.classList.add('bad');
+    if(q.clue)body.appendChild(el('div','clue','🔎 '+q.clue));
+    done(ok,ok?'':`the keyword is ${q.keys.map(k=>W(q.words[k][0],q.words[k][1])).join(' + ')}.`);});
+  return{instant:true,ready:()=>false};
+};
+/* tap Arabic word tiles in order (they fill right to left) */
+R.tiles=(q,body,upd)=>{
+  let seq=[],locked=false;const slot=el('div','slot arf');slot.dir='rtl';body.appendChild(slot);const tl=el('div','tiles');body.appendChild(tl);
+  const paint=()=>{slot.innerHTML=seq.length?seq.map(i=>`<span>${q.tiles[i][0]}</span>`).join(''):'<i>Tap the words in order ⬅ (Arabic goes right to left)</i>';
+    btns.forEach((b,i)=>b.disabled=locked||seq.includes(i));};
+  const btns=q.tiles.map(([a,s],i)=>{const b=el('button','tile arf',`<span dir="rtl">${a}</span><span class="s">${s}</span>`);b.dataset.i=i;b.onclick=()=>{if(locked||seq.includes(i))return;sfx.tap();seq.push(i);paint();upd();};return b;});
+  shuffle(btns).forEach(b=>tl.appendChild(b));
+  const del=el('button','tile','⌫');del.onclick=()=>{if(locked)return;seq.pop();paint();upd();};tl.appendChild(del);paint();
+  return{ready:()=>seq.length>0,lock(){locked=true;tl.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){const got=seq.map(i=>q.tiles[i][0]);const ok=got.length===q.answer.length&&got.every((t,k)=>t===q.answer[k]);slot.classList.add(ok?'ok':'bad');
+      if(!ok)slot.insertAdjacentHTML('beforeend',`<span style="font-size:20px;color:#0f7a40;flex-basis:100%;text-align:center">✔ ${q.answer.join(' ')}</span>`);return{ok};}};
+};
+/* spell a word with letter tiles: the letters join up by themselves, like handwriting */
+R.spell=(q,body,upd)=>{
+  let seq=[],locked=false;const slot=el('div','slot arf');slot.dir='rtl';slot.style.fontSize='46px';body.appendChild(slot);const tl=el('div','tiles');body.appendChild(tl);
+  const paint=()=>{slot.innerHTML=seq.length?`<span>${seq.map(i=>q.letters[i]).join('')}</span>`:'<i>Tap the letters in order ⬅ (right to left)</i>';btns.forEach((b,i)=>b.disabled=locked||seq.includes(i));};
+  const btns=q.letters.map((a,i)=>{const b=el('button','tile arf',`<span style="font-size:32px">${a}</span>`);b.dataset.i=i;b.onclick=()=>{if(locked||seq.includes(i))return;sfx.tap();seq.push(i);paint();upd();};return b;});
+  shuffle(btns).forEach(b=>tl.appendChild(b));
+  const del=el('button','tile','⌫');del.onclick=()=>{if(locked)return;seq.pop();paint();upd();};tl.appendChild(del);paint();
+  return{ready:()=>seq.length>0,lock(){locked=true;tl.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){const ok=seq.map(i=>q.letters[i]).join('')===q.answer;slot.classList.add(ok?'ok':'bad');
+      if(!ok)slot.insertAdjacentHTML('beforeend',`<span style="font-size:26px;color:#0f7a40;flex-basis:100%;text-align:center">✔ ${q.answer}</span>`);return{ok};}};
+};
+/* write it on paper, then compare with the model answer and mark it */
+R.write=(q,body,upd,done)=>{
+  const p=el('div','paper','<div class="big">📝</div>Write your answer <b>on paper</b> (in Arabic). Then tap <b>Show the answer</b> and check every word.');body.appendChild(p);
+  const sh=el('button','go','👀 Show the answer');const row=el('div','selfmark');row.appendChild(sh);body.appendChild(row);
+  sh.onclick=()=>{sfx.tap();row.innerHTML='';body.insertBefore(el('div','model arf',`${q.model}<div class="en2">${q.men}</div>`),row);
+    const y=el('button','go green','✔ I got it right'),n=el('button','ghostbtn','✗ Not yet');
+    y.onclick=()=>{y.disabled=n.disabled=true;done(true,'');};n.onclick=()=>{y.disabled=n.disabled=true;done(false,'practise it again: look, cover, write, check.');};row.append(y,n);};
+  return{instant:true,ready:()=>false};
+};
+const PAIRC=['#b8862b','#6a45d8','#17935b','#e04848','#d4329a','#2c66cf','#0aa5a5'];
+R.match=(q,body,upd)=>{
+  const wrap=el('div','match');body.appendChild(wrap);const L=el('div','mcol'),Rc=el('div','mcol');wrap.append(L,Rc);
+  const lefts=q.pairs.map((p,i)=>({i,t:p[0]}));const rights=shuffle(q.pairs.map((p,i)=>({i,t:p[1]})));
+  const link={};let selL=null;
+  const lb=lefts.map(o=>{const b=el('button','mi',`<span class="dot"></span><span>${o.t}</span>`);L.appendChild(b);return b;});
+  const rb=rights.map(o=>{const b=el('button','mi',`<span class="dot"></span><span>${o.t}</span>`);b.dataset.i=o.i;Rc.appendChild(b);return b;});
+  function paint(){lb.forEach((b,li)=>{const linked=link[li]!=null;b.classList.toggle('sel',selL===li);b.querySelector('.dot').style.background=linked?PAIRC[li%PAIRC.length]:'';b.style.borderColor=linked?PAIRC[li%PAIRC.length]:'';});
+    rb.forEach((b,ri)=>{const li=Object.keys(link).find(k=>link[k]===ri);b.querySelector('.dot').style.background=li!=null?PAIRC[li%PAIRC.length]:'';b.style.borderColor=li!=null?PAIRC[li%PAIRC.length]:'';});upd();}
+  lb.forEach((b,li)=>b.onclick=()=>{sfx.tap();if(link[li]!=null&&selL!==li){delete link[li];}selL=selL===li?null:li;paint();});
+  rb.forEach((b,ri)=>b.onclick=()=>{if(selL==null){const li=Object.keys(link).find(k=>link[k]===ri);if(li!=null){delete link[li];sfx.tap();paint();}return;}
+    sfx.tap();Object.keys(link).forEach(k=>{if(link[k]===ri)delete link[k];});link[selL]=ri;
+    selL=lb.findIndex((_,k)=>link[k]==null);if(selL<0)selL=null;paint();});
+  selL=0;paint();
+  return{ready:()=>Object.keys(link).length===lefts.length,
+    lock(){lb.concat(rb).forEach(b=>b.disabled=true);},
+    check(){let ok=true;lb.forEach((b,li)=>{const good=rights[link[li]].i===lefts[li].i;b.style.borderColor='';b.classList.remove('sel');b.classList.add(good?'ok':'bad');
+      if(!good){ok=false;b.querySelector('span:last-child').insertAdjacentHTML('beforeend',`<span class="fix">✔ ${q.pairs[li][1]}</span>`);}});return{ok};}};
+};
+
+/* ================= end ================= */
+function revise(){const cnt={};S.wrong.forEach(q=>{if(LESSONS[q.l])cnt[q.l]=(cnt[q.l]||0)+1;});
+  const ids=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b));if(!ids.length)return'';
+  return `<div class="revise"><h4>📖 Lessons to revise</h4>`+ids.map(id=>`<a href="islamic/${LESSONS[id][0]}.html"><span class="n">Lesson ${+id.slice(1)}</span>${LESSONS[id][1]}<span class="c">${cnt[id]} mistake${cnt[id]>1?'s':''}</span></a>`).join('')+'</div>';}
+function endGame(){
+  hud();const n=S.qs.length,pct=Math.round(S.right/n*100);const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  track('quizRun',{mode:S.mode,right:S.right,total:n,score:S.score,stars});track('quizState',S.mode,null);
+  const key='sq_best_'+S.mode;const prev=store.get(key,null);if(S.mode!==RETRY&&(!prev||pct>prev.pct))store.set(key,{pct,stars});
+  const msg=stars===3?`${W('ما شاء الله')} You're exam-ready! 🏆`:stars===2?'Very good! A little more practice and you\'ll ace it!':stars===1?'Good start! Practise your mistakes to level up.':'Keep going! Every try makes it stick! 💪';
+  const c=$('#endCard');c.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">Level complete</div>
+    <div class="stars">${[0,1,2].map(i=>`<span class="${i<stars?'on':''}" style="animation-delay:${i*.2}s">⭐</span>`).join('')}</div>
+    <div class="bigscore">${S.score} pts</div><p style="font-size:18px;font-weight:700">${msg}</p>
+    <div class="endgrid"><div><b>${S.right}/${n}</b>correct</div><div><b>${pct}%</b>accuracy</div><div><b>🔥 ${S.best}</b>best streak</div></div>
+    ${revise()}<div class="endbtns"></div>`;
+  const bt=c.querySelector('.endbtns');
+  if(S.wrong.length){const r=el('button','go',`🔁 Practise my ${S.wrong.length} mistake${S.wrong.length>1?'s':''}`);r.onclick=()=>start(RETRY,shuffle(S.wrong));bt.appendChild(r);}
+  const again=el('button','ghostbtn','▶ Play again');const mode=S.mode;again.onclick=()=>{const m=MODES.find(x=>x.id===mode);start(mode,m?(m.boss?m.pick():shuffle(m.pick())):shuffle(S.qs));};bt.appendChild(again);
+  const home=el('button','ghostbtn','🏠 Menu');home.onclick=()=>show('menu');bt.appendChild(home);
+  show('end');sfx.win();if(stars>=2){confetti(150);setTimeout(()=>confetti(120,innerWidth*.25,innerHeight*.4),400);setTimeout(()=>confetti(120,innerWidth*.75,innerHeight*.4),800);}
+}
+trUI();renderMenu();
+</script>
+</body>
+</html>

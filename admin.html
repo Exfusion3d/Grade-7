@@ -173,6 +173,7 @@ function renderStudents() {
       <div class="small muted">Last active: ${ago(s.lastActive)}</div>
       <div class="small">${bySubject}</div>
       <div class="small">${quizLine}</div>
+      ${s.trainer ? `<div class="small">🧠 Islamic Memory Trainer: <b>${s.trainer.mastered} of ${s.trainer.total || 46}</b> answers mastered (${s.trainer.seen} started)</div>` : ""}
       <div class="small">${s.answered ? (rev || '<span class="tag good">Nothing to revise</span>') : '<span class="muted">No answers yet</span>'}</div>
       <div class="btns"><button class="b main" data-act="detail" data-id="${s.id}">See details</button><button class="b" data-act="pw" data-id="${s.id}">Reset password</button><button class="b danger" data-act="remove" data-id="${s.id}">Remove</button></div>
     </div>`;
