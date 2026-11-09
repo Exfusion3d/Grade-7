@@ -53,7 +53,8 @@ body.snd-mode .ax:not(.en) .kw[data-tr]::after{content:attr(data-tr);direction:l
   font-size:max(12px,.45em);font-weight:800;color:#2c66cf;line-height:1.1}
 /* keywords and the "keyword only" view */
 .kw{border-radius:7px;padding:0 4px;transition:background .3s,color .3s}
-.lit .kw{background:#ffe680;box-shadow:0 0 0 2px #ffd84d}
+.lit .kw,.ex-q .kw,#text .kw{background:#ffe680;box-shadow:0 0 0 2px #ffd84d}
+#text .kw{border-radius:5px}
 .dim .q{color:#c8c2d6}.dim .q .kw{color:#1f2433}
 .is-card{position:absolute;background:#fff;border:3px solid #f0d9a8;border-radius:18px;padding:10px 16px;box-shadow:0 5px 0 #f3e3c0}
 .is-card .src{font-size:12px;font-weight:800;letter-spacing:.06em;color:#a0742a;text-transform:uppercase}
@@ -165,10 +166,76 @@ stage.addEventListener('click',e=>{const f=e.target.closest('.ax,.aw,.is-b');if(
 
 /* ---------- exam checks in Arabic with translations ----------
    examCheck items: q is the Arabic question (literal string), en its English; o the Arabic choices, oe their English;
-   tr / otr optional sounds. Written questions: model (Arabic), men (English), mtr (sounds). src stays a literal string. */
+   tr / otr optional sounds. Written questions: model (Arabic), men (English), mtr (sounds). src stays a literal string.
+   The keywords taught in the lessons light up in yellow in the question (with their sounds), so the student links the
+   exam question to the clue card. They come from EXAM_KEYS (by src) or from the item's own keys: [[arabic, sounds]] and
+   ekeys: [english words]. */
+const EXAM_KEYS={
+  'Worksheet · Q2 · (a) · جبريل':[[['وظيفة','wadheefa'],['جبريل','jibreel']],['job','Jibreel']],
+  'Worksheet · Q2 · (a) · ميكائيل':[[['وظيفة','wadheefa'],['ميكائيل','meekaa\'eel']],['job','Mikail']],
+  'Worksheet · Q2 · (a) · ملك الموت':[[['وظيفة','wadheefa'],['ملك الموت','malak al-mawt']],['job','Angel of Death']],
+  'Worksheet · Q2 · (b)':[[['ثمرات','thamaraat'],['بالملائكة','bil-malaa\'ika']],['benefits','the angels']],
+  'Worksheet · Q2 · (c) · 1':[[['الملائكة','al-malaa\'ika'],['من','min']],['angels','from']],
+  'Worksheet · Q2 · (c) · 2':[[['فطرت','futirat'],['وجبلت','wa jubilat']],['made by nature']],
+  'Worksheet · Q2 · (c) · 3':[[['ركن من أركان','rukn min arkaan']],['one of the pillars of']],
+  'Worksheet · Q2 · (c) · 4':[[['الإنسان','al-insaan'],['من','min']],['mankind','from']],
+  'Worksheet · Q3 · (a) · 1':[[['ترك بلد','tark balad']],['Leaving the land']],
+  'Worksheet · Q3 · (a) · 2':[[['الوسائل','al-wasaa\'il'],['تعين','tu\'een'],['الإخلاص','al-ikhlaas']],['things','help','sincerity']],
+  'Worksheet · Q3 · (a) · 3':[[['شروط','shuroot']],['condition']],
+  'Worksheet · Q3 · (a) · 4':[[['يصيبها','yuseebuhaa']],['yuseebuhaa']],
+  'Worksheet · Q3 · (b)':[[['ثمرات','thamaraat'],['الإخلاص','al-ikhlaas']],['benefits','sincerity']],
+  'Worksheet · Q4 · (a) · 1':[[['أول','awwal'],['سورة','soora']],['first','Surah']],
+  'Worksheet · Q4 · (a) · 2':[[['غار','ghaar']],['cave']],
+  'Worksheet · Q4 · (a) · 3':[[['الملك','al-malak']],['angel']],
+  'Worksheet · Q4 · (b) · 1':[[['أربعين','arba\'een']],['forty']],
+  'Worksheet · Q4 · (b) · 2':[[['صورة واحدة','soora waahida']],['one single form']],
+  'Worksheet · Q4 · (b) · 3':[[['رمضان','ramadaan']],['Ramadan']],
+  'Worksheet · Q4 · (c) · 1':[[['لغة','lugha'],['وشرعا','wa shar\'an']],['in language','in Islamic law']],
+  'Worksheet · Q4 · (c) · 2':[[['حال','haal'],['بعد نزول الوحي','ba\'da nuzool al-wahy']],['How','after the revelation came']],
+  'Worksheet · Q4 · (c) · 3':[[['بالناموس','bin-naamoos'],['ورقة بن نوفل','waraqa ibn nawfal']],['an-Naamoos','Waraqa ibn Nawfal']],
+  'Worksheet · Q5 · (a)':[[['واجبات','waajibaat'],['الصلاة','as-salaah']],['required acts','prayer']],
+  'Worksheet · Q5 · (b) · 1':[[['سنن','sunan'],['القولية','al-qawliyya'],['الاستعاذة','al-isti\'aadha']],['spoken sunnahs']],
+  'Worksheet · Q5 · (b) · 2':[[['واجبات','waajibaat'],['الالتفات بلا حاجة','al-iltifaat bilaa haaja']],['Turning around without need','required acts']],
+  'Worksheet · Q5 · (b) · 3':[[['مبطلات','mubtilaat'],['القهقهة','al-qahqaha']],['Laughing out loud','breaks']],
+  'Worksheet · Q5 · (c) · 1':[[['الواجب','al-waajib']],['al-waajib']],
+  'Worksheet · Q5 · (c) · 2':[[['السنة','as-sunna']],['as-sunna']],
+  'Worksheet · Q5 · (c) · 3':[[['المكروه','al-makrooh']],['al-makrooh']],
+  'Hadith 3 · الحديث الثالث':[[['أبصارهم إلى السماء','absaarahum ilas-samaa\'']],['their eyes to the sky']],
+  'Worksheet · Q6 · (a)':[[['أسباب','asbaab'],['آفات اللسان','aafaat al-lisaan']],['causes','sins of the tongue']],
+  'Worksheet · Q6 · (b) · 1':[[['يكرهونه','yakrahoonahu']],['they hate']],
+  'Worksheet · Q6 · (b) · 2':[[['احتقار','ihtiqaar'],['بالهمز واللمز','bil-hamz wal-lamz']],['ooking down on','mocking gestures and digs']],
+  'Worksheet · Q6 · (b) · 3':[[['نقل الكلام','naql al-kalaam'],['للإفساد','lil-ifsaad']],['carrying talk','to make trouble']],
+  'Worksheet · Q6 · (c) · 1':[[['حرم','harrama'],['تغيير المنكر','taghyeer al-munkar']],['forbids','to stop a wrong']],
+  'Worksheet · Q6 · (c) · 2':[[['الحسد والكبر','al-hasad wal-kibr']],['Envy and arrogance']],
+  'Worksheet · Q6 · (c) · 3':[[['تقتصر','taqtasir'],['القول','al-qawl']],['only','words']],
+  'Worksheet · Q7 · (a) · 1':[[['أسرف','asrafa'],['بالسهر','bis-sahar']],['stayed up far too late']],
+  'Worksheet · Q7 · (a) · 2':[[['تكثر','tukthir'],['مشروبات الطاقة','mashroobaat at-taaqa']],['a lot of','energy drinks']],
+  'Worksheet · Q7 · (a) · 3':[[['يعلم','yu\'allim'],['الصلاة','as-salaah']],['teaches','to pray']],
+  'Worksheet · Q7 · (b)':[[['أقسام','aqsaam'],['المسؤولية الفردية','al-mas\'ooliyya al-fardiyya']],['kinds','personal responsibility']],
+  'Worksheet · Q7 · (c)':[[['تجاه','tujaah'],['الدين','ad-deen']],['towards','religion']],
+  'Practice · Q7 · (b) · the endings · الأسرية':[[['الأسرة','al-usra']],['the family']],
+  'Practice · Q7 · (b) · the endings · المجتمعية':[[['المجتمع','al-mujtama\'']],['society']],
+  'Toolkit · instruction words · أكمل':[[['أكمل','akmil']],[]],
+  'Toolkit · instruction words · ضع خطا تحت':[[['ضع خطا تحت','da\' khattan taht']],[]],
+  'Toolkit · instruction words · عرف':[[['عرف','\'arrif']],[]],
+  'Toolkit · instruction words · حدد':[[['حدد','haddid']],[]],
+  'Toolkit · dotted lines · دون':[[['دون','dawwin'],['......','4 lines']],['four dotted lines']],
+  'Toolkit · section headings · الفقه':[[['الفقه','al-fiqh']],[]],
+  'Toolkit · section headings · الثقافة الإسلامية':[[['الثقافة الإسلامية','ath-thaqaafa al-islaamiyya']],[]],
+};
+/* Light up the first appearance of each keyword in a plain-text question (longest keywords first, never overlapping). */
+function markKeys(text,keys){if(!keys||!keys.length)return text;const used=[];
+  [...keys].sort((a,b)=>b[0].length-a[0].length).forEach(([k,tr])=>{let from=0,i;
+    while((i=text.indexOf(k,from))>=0&&used.some(u=>i<u.e&&i+k.length>u.s))from=i+1;
+    if(i>=0)used.push({s:i,e:i+k.length,tr});});
+  used.sort((a,b)=>b.s-a.s).forEach(u=>{text=text.slice(0,u.s)+kw(text.slice(u.s,u.e),u.tr)+text.slice(u.e);});
+  return text;}
+function examQ(it){const K=EXAM_KEYS[it.src]||[];const keys=it.keys||K[0],ekeys=it.ekeys||K[1];
+  if(it.en==null)return it.q;
+  return ar(markKeys(it.q,keys),markKeys(it.en,(ekeys||[]).map(e=>[e])),it.tr,'blk');}
 {const ask0=ask,reveal0=reveal;
-  ask=(w,it)=>ask0(w,Object.assign({},it,{q:it.en!=null?ar(it.q,it.en,it.tr,'blk'):it.q,o:it.o.map((t,i)=>it.oe&&it.oe[i]!=null?ar(t,it.oe[i],it.otr&&it.otr[i]):t)}));
-  reveal=(w,it)=>reveal0(w,Object.assign({},it,{q:it.en!=null?ar(it.q,it.en,it.tr,'blk'):it.q,model:it.men!=null?ar(it.model,it.men,it.mtr):it.model}));}
+  ask=(w,it)=>ask0(w,Object.assign({},it,{q:examQ(it),o:it.o.map((t,i)=>it.oe&&it.oe[i]!=null?ar(t,it.oe[i],it.otr&&it.otr[i]):t)}));
+  reveal=(w,it)=>reveal0(w,Object.assign({},it,{q:examQ(it),model:it.men!=null?ar(it.model,it.men,it.mtr):it.model}));}
 
 /* ---------- small helpers ---------- */
 const clear=keep=>[...stage.children].forEach(e=>{if(!keep||!keep.includes(e))e.remove();});

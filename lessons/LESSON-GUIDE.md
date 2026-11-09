@@ -60,7 +60,8 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
   explained in English (stays Arabic). Mark question keywords with `kw(arabic, sounds)` inside `q` and `kw(english)` inside `en`.
   Teach every worksheet question with `clueCard(w,{src,q,en,kind,keys,clue,answer,why})` (`answer: [[arabic, sounds, meaning]]`
   blocks), then let the student `buildAR` and `traceAR` the answers. Exam check items: `q`/`o`/`model` in Arabic with `en`, `oe`,
-  `otr` (sounds) and `men`. Style reference: `islamic/i02-angels.html`. Test with and without `QS=en=1`.
+  `otr` (sounds) and `men`. The keywords taught for a question light up in yellow in its Exam check: add its `src` to
+  `EXAM_KEYS` in `islamic.js` (`[[[arabic, sounds]…], [english…]]`, the same keywords as its clue card), or give the item `keys`/`ekeys`. Style reference: `islamic/i02-angels.html`. Test with and without `QS=en=1`.
 - `w(ms)` — wait at least ms AND until the voice finishes the current line. Always `await w(...)` after `say(...)`
   before the next `say` (typical 2500–4000 ms). Cancel-safe when the student changes scene.
 - `w.until(()=>cond)` — wait for an interactive condition (e.g. a button was tapped).
