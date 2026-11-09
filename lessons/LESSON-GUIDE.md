@@ -55,6 +55,12 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
   literal strings. Also: `conjCard(x,y,wd,{verb,en,rows:[[pronoun,form,ending,english]]})` (rows appear with
   `show(i,w)`), `buildSentence(w,{q,tiles,answer})` (tap words in order), `endF(form,ending)` (ending in red),
   `clear(keep)`. Test French lessons in both modes: `QS=en=1` runs the tester with English on (shots end in `-en`).
+- **Islamic Studies (`islamic.js`, tutor Hudhud the Hoopoe 🐦):** write every Arabic string as `ar(arabic, english, sounds)`
+  (spoken with an Arabic voice; 🇬🇧 swaps it to English; 🔤 shows the sounds under it). `aw(arabic, sounds)` is an Arabic word
+  explained in English (stays Arabic). Mark question keywords with `kw(arabic, sounds)` inside `q` and `kw(english)` inside `en`.
+  Teach every worksheet question with `clueCard(w,{src,q,en,kind,keys,clue,answer,why})` (`answer: [[arabic, sounds, meaning]]`
+  blocks), then let the student `buildAR` and `traceAR` the answers. Exam check items: `q`/`o`/`model` in Arabic with `en`, `oe`,
+  `otr` (sounds) and `men`. Style reference: `islamic/i02-angels.html`. Test with and without `QS=en=1`.
 - `w(ms)` — wait at least ms AND until the voice finishes the current line. Always `await w(...)` after `say(...)`
   before the next `say` (typical 2500–4000 ms). Cancel-safe when the student changes scene.
 - `w.until(()=>cond)` — wait for an interactive condition (e.g. a button was tapped).

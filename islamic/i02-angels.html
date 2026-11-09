@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#b8862b">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>The angels</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="islamic.js"></script>
+<script>
+/* Islamic Studies Lesson 2 · Belief (العقيدة) · Worksheet Q2 (a), (b), (c) and Hadith 1.
+   The pilot of the Islamic lessons. The student does not read Arabic well, so every question is taught with a clue card
+   (clueCard in islamic.js): find the keyword, picture the answer, see the answer as coloured blocks with its sounds,
+   then build it and trace it. */
+const WS='Worksheet · Q2 · ';
+const ANGELS=[
+  {n:'جبريل',ns:'Jibreel',e:'📜',job:[['ملك','malak','angel'],['الوحي','al-wahy','of revelation']],
+   jobEn:'the angel of revelation',trick:`Jibreel brings the <b>message</b> 📜 from Allah to the prophets.`},
+  {n:'ميكائيل',ns:'Meekaa\'eel',e:'🌧️',job:[['موكل','muwakkal','in charge of'],['بالأرزاق','bil-arzaaq','provisions'],['والنبات','wan-nabaat','and plants'],['والمطر','wal-matar','and rain']],
+   jobEn:'in charge of provisions, plants and rain',trick:`Mikail looks after <b>rain</b> 🌧️, which grows <b>plants</b> 🌱, which give us <b>food</b> 🍞.`},
+  {n:'ملك الموت',ns:'malak al-mawt',e:'⏳',job:[['قبض','qabd','taking'],['الأرواح','al-arwaah','the souls']],
+   jobEn:'taking the souls',trick:`The Angel of Death takes the <b>souls</b> when a life ends.`}];
+const FRUITS=[
+  {e:'❤️',word:'Lovely',a:'محبة الملائكة لطاعتهم لله',bl:[['محبة','mahabbat','love of'],['الملائكة','al-malaa\'ika','the angels'],['لطاعتهم','li-taa\'atihim','for their obeying'],['لله','lillaah','Allah']],en:'loving the angels because they obey Allah'},
+  {e:'🪞',word:'Manners',a:'التخلق بأخلاق الملائكة',bl:[['التخلق','at-takhalluq','taking on'],['بأخلاق','bi-akhlaaq','the manners of'],['الملائكة','al-malaa\'ika','the angels']],en:'taking on the good manners of the angels'},
+  {e:'🌌',word:'Get',a:'العلم بعظمة الله وقوته',bl:[['العلم','al-\'ilm','knowing'],['بعظمة','bi-\'azamat','the greatness of'],['الله','Allaah','Allah'],['وقوته','wa quwwatih','and His power']],en:'knowing the greatness and power of Allah'},
+  {e:'🙏',word:'Thanks',a:'شكر الله تعالى على عنايته ببني آدم',bl:[['شكر','shukr','thanking'],['الله','Allaah','Allah'],['تعالى','ta\'aalaa','the Exalted'],['على','\'alaa','for'],['عنايته','\'inaayatihi','His care'],['ببني آدم','bi-banee Aadam','for the children of Adam']],en:'thanking Allah the Exalted for His care for the children of Adam'}];
+
+Lesson.start(Object.assign({}, ISLAMIC, {
+  id:'i02', num:2, part:'Belief · العقيدة', emoji:'👼', title:'The angels',
+  intro:`Assalaamu alaykum! I'm <b>Hudhud the Hoopoe</b> 🐦 Today: the <b>angels</b>, Question 2 of your sheet. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Meet Hudhud',run:async w=>{
+  const hi=mk('ar-font','left:0;top:6px;width:960px;text-align:center;font-size:64px;color:#8a4b00',aw('السلام عليكم','assalaamu \'alaykum'));pop(hi);
+  say(`${aw('السلام عليكم','assalaamu alaykum')}! I'm <b>Hudhud the Hoopoe</b>. In the Qur'an, a hoopoe brought important news to Prophet Sulaiman. I'll bring you the news you need for your exam.`);
+  await w(3600);
+  const steps=[['🔎','Spot the keyword','Find the one or two words that tell you the answer.'],['🧠','Remember the answer','See it in colours, hear it and picture it.'],['✍️','Write it','Build it, trace it, then write it on paper.']];
+  const els=steps.map(([e,t,d],i)=>mk('is-card',`left:${30+i*306}px;top:168px;width:286px;height:170px;text-align:center`,
+    `<div style="font-size:52px">${e}</div><div style="font-size:23px;font-weight:800;color:#7a4a00">${i+1}. ${t}</div><div style="font-size:16px;font-weight:700;color:#626a80;margin-top:4px">${d}</div>`));
+  for(let i=0;i<3;i++){pop(els[i]);point(els[i]);beep(520+i*90,.08);say([`You don't need to understand every Arabic word. First, <b>spot the keyword</b>.`,`Then <b>remember the answer</b>: I'll show it in colours, say it, and give you a picture for it.`,`Then <b>write it</b>: build it with tiles, trace it with your finger, and write it on paper.`][i]);await w(3200);}
+  unpoint();
+  const tb=mk('','left:110px;top:372px;width:740px;padding:12px 18px;border-radius:18px;background:#fff4dc;border:3px solid #d9a441;font-size:19px;font-weight:800;color:#7a4a00;text-align:center;line-height:1.5',
+    `<span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🇬🇧</span> turns all the Arabic into English. &nbsp; <span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🔤</span> shows how the Arabic sounds.<br>👆 Tap any Arabic on the screen to hear it again.`);pop(tb);point(tb);
+  say(`Two buttons help you at the top. The <b>English</b> button turns all the Arabic into English. The <b>Sounds</b> button shows how the Arabic sounds, in English letters. Tap any Arabic to hear it.`);
+  await w(4200);unpoint();
+  say(`Today is all about the ${aw('ملائكة','malaa\'ika')}, the <b>angels</b>: Question 2 of your sheet. ${aw('هيا بنا','hayyaa binaa')}! Let's go!`);await w(3000);}},
+
+/* 1 */ {t:'Light, fire and clay (Hadith 1)',run:async w=>{
+  say(`Let's start with the <b>first hadith</b> you learn by heart. It tells us what the angels, the jinn and Adam were made from.`);await w(3000);
+  const h=mk('is-card','left:30px;top:10px;width:900px',`<div class="src">Hadith 1 · الحديث الأول</div><div class="q" style="font-size:27px">${ar(
+    `خلقت ${kw('الملائكة','al-malaa\'ika')} من ${kw('نور','noor')} وخلق ${kw('الجان','al-jaann')} من مارج من ${kw('نار','naar')} وخلق ${kw('آدم','aadam')} مما وصف لكم`,
+    `The ${kw('angels')} were created from ${kw('light')}, the ${kw('jinn')} were created from a smokeless flame of ${kw('fire')}, and ${kw('Adam')} was created from what has been described to you (clay).`,'','blk')}</div>`);pop(h);
+  say(`The Prophet ﷺ said: ${ar('خلقت الملائكة من نور وخلق الجان من مارج من نار وخلق آدم مما وصف لكم','The angels were created from light, the jinn from a smokeless flame of fire, and Adam from what has been described to you.')}`);
+  await w(4000);h.classList.add('lit');
+  const C=[{x:650,e:'👼',who:['الملائكة','al-malaa\'ika','angels'],from:['نور','noor','light'],pic:'💡',col:'#f2c200'},
+    {x:350,e:'🔥',who:['الجان','al-jaann','jinn'],from:['نار','naar','fire'],pic:'🔥',col:'#e06a1b'},
+    {x:50,e:'🧍',who:['آدم','aadam','Adam'],from:['طين','teen','clay'],pic:'🟫',col:'#8a5a2b'}];
+  for(const c of C){
+    const card=mk('is-card',`left:${c.x}px;top:${h.offsetHeight+28}px;width:260px;height:250px;text-align:center;border-color:${c.col}`,
+      `<div style="font-size:24px;font-weight:800">${aw(c.who[0],c.who[1])} <span style="font-size:16px;color:#626a80">${c.who[2]}</span></div><div class="pic" style="font-size:64px;margin:6px 0">${c.pic}</div>`+
+      `<div style="font-size:18px;font-weight:800;color:#626a80">made from</div><div class="ar-font" style="font-size:40px;font-weight:700;color:${c.col}" dir="rtl">${c.from[0]}</div><div style="font-size:16px;font-weight:800;color:#2c66cf">${c.from[1]} · ${c.from[2]}</div>`);
+    pop(card);point(card);const p=card.querySelector('.pic');
+    if(c.pic==='💡')loop(p,[{filter:'drop-shadow(0 0 2px #ffd000)'},{filter:'drop-shadow(0 0 18px #ffc400)'}],700,{direction:'alternate'});
+    else if(c.pic==='🔥')loop(p,[{transform:'scale(1)'},{transform:'scale(1.15) translateY(-4px)'}],380,{direction:'alternate'});
+    else loop(p,[{transform:'scale(1,1)'},{transform:'scale(1.15,.85)'}],900,{direction:'alternate'});
+    say(`${aw(c.who[0],c.who[1])}, the <b>${c.who[2]}</b>, were made from ${aw(c.from[0],c.from[1])}: <b>${c.from[2]}</b>.`+(c.e==='🧍'?` The hadith says "what has been described to you": that is <b>clay</b>.`:''));await w(2800);}
+  unpoint();
+  const tip=mk('is-why','left:130px;top:440px;width:700px;text-align:center;white-space:nowrap',`💡 light <span class="ar-font" dir="rtl" style="font-size:26px">نور</span> has a round <span class="ar-font" style="font-size:26px">و</span> &nbsp;·&nbsp; 🔥 fire <span class="ar-font" dir="rtl" style="font-size:26px">نار</span> has a tall <span class="ar-font" style="font-size:26px">ا</span>`);pop(tip);
+  say(`Watch out! ${aw('نور','noor')} and ${aw('نار','naar')} look alike. Light has a round ${aw('و','waaw')}, like a bulb. Fire has a tall ${aw('ا','alif')}, like a flame.`);await w(4400);}},
+
+/* 2 */ {t:'Who does what? (Q2 a)',run:async w=>{
+  const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:26px">${ar(
+    `اكتب ${kw('وظيفة','wadheefa')} كل ملك في الجدول التالي`,`Write the ${kw('job')} of each angel in the following table`,'','blk')}</div>`);pop(q);
+  say(`Question 2 a says: ${ar('اكتب وظيفة كل ملك في الجدول التالي','Write the job of each angel in the following table.')}`);await w(2600);
+  q.classList.add('lit');point(q.querySelector('.kw'));
+  say(`The keyword is ${aw('وظيفة','wadheefa')}: it means <b>job</b>. So when you see an angel's <b>name</b> and the word <b>job</b>, write what that angel does.`);await w(3600);unpoint();
+  const top=q.offsetHeight+22;
+  for(let i=0;i<3;i++){const A=ANGELS[i],y=top+i*130;
+    const nm=mk('is-card',`left:720px;top:${y}px;width:210px;height:112px;text-align:center`,
+      `<div style="font-size:40px">${A.e}</div><div class="ar-font" dir="rtl" style="font-size:30px;font-weight:700;color:#5a3c00;line-height:1.1">${A.n}</div><div style="font-size:14px;font-weight:800;color:#2c66cf">${A.ns}</div>`);pop(nm);point(nm);
+    say(`${aw(A.n,A.ns)}.`);await w(1000);
+    const bl=ansBlocks(30,y+8,670,A.job.map(b=>[...b]),{size:30,show:false});
+    await revealBlocks(w,bl,{say:false,wait:350});
+    say(`${aw(A.n,A.ns)}: ${aw(A.job.map(b=>b[0]).join(' '),A.job.map(b=>b[1]).join(' '))}, ${A.jobEn}. ${A.trick}`);await w(4200);}
+  unpoint();}},
+
+/* 3 */ {t:'Made from… (Q2 c 1 and 4)',run:async w=>{
+  say(`Now Question 2 c: ${ar('أكمل ما يأتي','Complete the following')}. Fill the gaps. The hadith already gave you two of the answers!`);await w(3000);
+  await clueCard(w,{src:WS+'(c) · 1',kind:['أكمل','akmil','complete: fill the gap'],
+    q:`خلق الله تعالى ${kw('الملائكة','al-malaa\'ika')} الكرام ${kw('من','min')} ..........`,en:`Allah the Exalted created the noble ${kw('angels')} ${kw('from')} ……`,
+    keys:[`${aw('الملائكة','al-malaa\'ika')} means <b>the angels</b>.`,`${aw('من','min')} means <b>from</b>. Angels made <b>from</b>… what?`],
+    clue:`<span class="ar-font" dir="rtl">الملائكة + من</span> → 👼💡 → light`,answer:[['نور','noor','light']],blockSize:44,
+    why:`Remember the hadith: angels from ${aw('نور','noor')} 💡 light.`});
+  await w(1400);clear();
+  await clueCard(w,{src:WS+'(c) · 4',
+    q:`خلق الله تعالى ${kw('الإنسان','al-insaan')} ${kw('من','min')} ..........`,en:`Allah the Exalted created ${kw('mankind')} ${kw('from')} ……`,
+    keys:[`${aw('الإنسان','al-insaan')} means <b>mankind</b>, people, like Adam.`,`And ${aw('من','min')}, <b>from</b>. People made from… what?`],
+    clue:`<span class="ar-font" dir="rtl">الإنسان + من</span> → 🧍🟫 → clay`,answer:[['طين','teen','clay']],blockSize:44,
+    why:`Adam, the first human, was made from ${aw('طين','teen')} 🟫 clay. Angels → light, people → clay.`});
+  await w(1200);}},
+
+/* 4 */ {t:'Made to obey (Q2 c 2 and 3)',run:async w=>{
+  await clueCard(w,{src:WS+'(c) · 2',kind:['أكمل','akmil','complete: fill the gap'],
+    q:`${kw('فطرت','futirat')} الملائكة ${kw('وجبلت','wa jubilat')} على ..........`,en:`The angels were ${kw('made by nature')} to ……`,
+    keys:[`${aw('فطرت','futirat')} and ${aw('جبلت','jubilat')} both mean <b>made by nature</b>, born that way.`],
+    clue:`<span class="ar-font" dir="rtl">فطرت / جبلت</span> → 👼🙇 → obedience`,answer:[['الطاعة','at-taa\'a','obedience']],blockSize:44,
+    why:`Angels never disobey Allah: they are made for ${aw('الطاعة','at-taa\'a')}, <b>obedience</b>.`});
+  await w(1400);clear();
+  await clueCard(w,{src:WS+'(c) · 3',
+    q:`الإيمان بالملائكة ${kw('ركن من أركان','rukn min arkaan')} ..........`,en:`Believing in the angels is ${kw('one of the pillars of')} ……`,
+    keys:[`${aw('ركن من أركان','rukn min arkaan')} means <b>one of the pillars of</b>. Which pillars have the angels in them?`],
+    clue:`<span class="ar-font" dir="rtl">ركن من أركان</span> → 🏛️ 6 pillars → faith`,answer:[['الإيمان','al-eemaan','faith']],blockSize:44,
+    why:`Believing in the angels is one of the six pillars of ${aw('الإيمان','al-eemaan')}, <b>faith</b>. The question starts with the same word!`});
+  await w(1200);}},
+
+/* 5 */ {t:'Four benefits (Q2 b)',run:async w=>{
+  const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(b)</div><div class="q" style="font-size:26px">${ar(
+    `دون أربعة من ${kw('ثمرات','thamaraat')} الإيمان ${kw('بالملائكة','bil-malaa\'ika')} .`,`Write down four of the ${kw('benefits')} of believing in ${kw('the angels')}.`,'','blk')}</div>`);pop(q);
+  say(`Question 2 b: ${ar('دون أربعة من ثمرات الإيمان بالملائكة','Write down four of the benefits of believing in the angels.')}`);await w(2800);
+  q.classList.add('lit');const K=q.querySelectorAll('.kw');point(K[0]);
+  say(`${aw('ثمرات','thamaraat')} means <b>fruits</b> 🍎. Here it means <b>benefits</b>: the good things you get. Watch out: another question asks for the ${aw('ثمرات','thamaraat')} of sincerity.`);await w(3800);
+  point(K[1]);say(`So look at the next keyword: ${aw('بالملائكة','bil-malaa\'ika')}, in <b>the angels</b>. Fruits plus angels: write these four answers.`);await w(3000);unpoint();
+  const tip=mk('is-clue','left:250px;top:150px;width:460px;text-align:center;white-space:normal',`Remember: <b>L</b>ovely <b>M</b>anners <b>G</b>et <b>T</b>hanks`);pop(tip);
+  say(`Here's a memory sentence: <b>Lovely Manners Get Thanks</b>. Love, manners, greatness, thanks.`);await w(3000);
+  tip.remove();
+  for(let i=0;i<4;i++){const F=FRUITS[i],y=150+i*92;
+    const ic=mk('',`left:860px;top:${y}px;width:70px;text-align:center;font-size:46px`,F.e);pop(ic);
+    const lab=mk('',`left:860px;top:${y+56}px;width:70px;text-align:center;font-size:13px;font-weight:800;color:#7a4a00`,F.word);pop(lab);
+    const bl=ansBlocks(30,y,820,F.bl.map(b=>[...b]),{size:24,show:false});
+    await revealBlocks(w,bl,{say:false,wait:200});point(ic);
+    say(`${['One','Two','Three','Four'][i]}: ${aw(F.a)}: ${F.en}.`);await w(3600);}
+  unpoint();}},
+
+/* 6 */ {t:'Build the answers',run:async w=>{
+  say(`Now you build the answers with tiles. Remember: Arabic is written from <b>right to left</b>, so the first tile goes on the right.`);await w(3200);
+  let r=await buildAR(w,{src:WS+'(a)',q:`Build Jibreel's job: ${aw('جبريل','Jibreel')} → <b>the angel of revelation</b>`,
+    tiles:[['الوحي','al-wahy'],['المطر','al-matar'],['ملك','malak'],['قبض','qabd']],answer:['ملك','الوحي']});
+  say(r.ok?`Yes! ${aw('ملك الوحي','malak al-wahy')}: the angel of revelation.`:`Nearly! It's ${aw('ملك الوحي','malak al-wahy')}: ${aw('ملك','malak')} first, on the right.`);await w(3000);clear();
+  r=await buildAR(w,{src:WS+'(b) · 1',q:`Build the first benefit: ❤️ <b>loving the angels because they obey Allah</b>`,
+    tiles:[['لله','lillaah'],['الملائكة','al-malaa\'ika'],['محبة','mahabbat'],['لطاعتهم','li-taa\'atihim'],['بأخلاق','bi-akhlaaq']],answer:['محبة','الملائكة','لطاعتهم','لله']});
+  say(r.ok?`Brilliant! ${aw('محبة الملائكة لطاعتهم لله')}.`:`Look again: ${aw('محبة الملائكة لطاعتهم لله')}. Love, angels, obeying, Allah.`);await w(3000);}},
+
+/* 7 */ {t:'Trace it',run:async w=>{
+  say(`Now trace the short answers with your finger. Go over the grey letters. Arabic letters join up, so try to keep your finger moving from <b>right to left</b>.`);await w(3400);
+  const W=[['نور','noor','light'],['طين','teen','clay'],['الطاعة','at-taa\'a','obedience']];
+  for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. Press <b>Done</b> when you've finished.`);
+    const r=await traceAR(w,{word:a,tr:s,en:m});
+    say(r.ok?`Lovely writing! That's ${aw(a,s)}.`:r.tooMuch?`Try to stay on the grey letters, not colour the whole box.`:`Good try! Next time go over more of the letters.`);await w(2200);}
+  clear();
+  const p=mk('is-card','left:130px;top:120px;width:700px;text-align:center',`<div style="font-size:54px">📝</div><div style="font-size:24px;font-weight:800;color:#7a4a00">Now on paper!</div>`+
+    `<div style="font-size:19px;font-weight:700;margin-top:6px;line-height:1.5">1. Look at the word. &nbsp; 2. Cover it. &nbsp; 3. Write it. &nbsp; 4. Check it.</div>`+
+    `<div class="ar-font" dir="rtl" style="font-size:44px;margin-top:8px;color:#5a3c00">نور · طين · الطاعة · الإيمان</div>`);pop(p);
+  say(`The exam is written by hand, so practise on paper too: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Do the four answers of Question 2 c.`);await w(4000);}},
+
+/* 8 */ {t:'Keyword match',run:async w=>{
+  say(`Keyword game! Each card has a <b>keyword</b> from a question. Tap a card, then tap the answer it belongs to.`);await w(2800);
+  const r=await sortGame(w,{bins:[`<span class="ar-font" style="font-size:26px">نور</span> <small>light</small>`,`<span class="ar-font" style="font-size:26px">طين</span> <small>clay</small>`,
+      `<span class="ar-font" style="font-size:26px">الطاعة</span> <small>obedience</small>`,`<span class="ar-font" style="font-size:26px">الإيمان</span> <small>faith</small>`],
+    items:[[`${aw('الملائكة … من','al-malaa\'ika … min')}`,0],[`${aw('الإنسان … من','al-insaan … min')}`,1],[`${aw('فطرت … جبلت','futirat … jubilat')}`,2],[`${aw('ركن من أركان','rukn min arkaan')}`,3],
+      [`👼💡`,0],[`🧍🟫`,1]],top:170,colors:['#f2c200','#b8862b','#18a058','#2c66cf']});
+  say(r.ok===r.total?`Perfect! You matched every keyword to its answer.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  await examCheck(w,[
+    {src:'Worksheet · Q2 · (a) · جبريل',q:'اكتب وظيفة جبريل',en:'Write the job of Jibreel.',
+      o:['ملك الوحي','قبض الأرواح','موكل بالأرزاق والنبات والمطر'],oe:['the angel of revelation','taking the souls','in charge of provisions, plants and rain'],otr:['malak al-wahy','qabd al-arwaah','muwakkal bil-arzaaq wan-nabaat wal-matar'],a:0,cols:1,
+      why:'Jibreel brings the message (wahy) from Allah to the prophets.',whyNot:{1:'That is the Angel of Death.',2:'That is Mikail.'}},
+    {src:'Worksheet · Q2 · (a) · ميكائيل',q:'اكتب وظيفة ميكائيل',en:'Write the job of Mikail.',
+      o:['ملك الوحي','موكل بالأرزاق والنبات والمطر','قبض الأرواح'],oe:['the angel of revelation','in charge of provisions, plants and rain','taking the souls'],otr:['malak al-wahy','muwakkal bil-arzaaq wan-nabaat wal-matar','qabd al-arwaah'],a:1,cols:1,
+      why:'Mikail: rain, plants and provisions (food).',whyNot:{0:'That is Jibreel.',2:'That is the Angel of Death.'}},
+    {src:'Worksheet · Q2 · (a) · ملك الموت',q:'اكتب وظيفة ملك الموت',en:'Write the job of the Angel of Death.',
+      o:['موكل بالأرزاق والنبات والمطر','ملك الوحي','قبض الأرواح'],oe:['in charge of provisions, plants and rain','the angel of revelation','taking the souls'],otr:['muwakkal bil-arzaaq wan-nabaat wal-matar','malak al-wahy','qabd al-arwaah'],a:2,cols:1,
+      why:'The Angel of Death takes the souls.',whyNot:{0:'That is Mikail.',1:'That is Jibreel.'}},
+    {src:'Worksheet · Q2 · (c) · 1',q:'خلق الله تعالى الملائكة الكرام من ..........',en:'Allah the Exalted created the noble angels from ……',
+      o:['نار','نور','طين'],oe:['fire','light','clay'],otr:['naar','noor','teen'],a:1,cols:3,
+      why:'Angels from light (noor). The loop of و is the light bulb.',whyNot:{0:'Fire (naar) is what the jinn were made from.',2:'Clay is what people were made from.'}},
+    {src:'Worksheet · Q2 · (c) · 2',q:'فطرت الملائكة وجبلت على ..........',en:'The angels were made by nature to ……',
+      o:['الإيمان','الطاعة','نور'],oe:['faith','obedience','light'],otr:['al-eemaan','at-taa\'a','noor'],a:1,cols:3,
+      why:'Angels are made for obedience (at-taa\'a): they never disobey Allah.',whyNot:{0:'Faith goes with "a pillar of" (ركن من أركان).',2:'Light is what angels are made from (من), not what they are made to do (على).'}},
+    {src:'Worksheet · Q2 · (c) · 3',q:'الإيمان بالملائكة ركن من أركان ..........',en:'Believing in the angels is one of the pillars of ……',
+      o:['الطاعة','طين','الإيمان'],oe:['obedience','clay','faith'],otr:['at-taa\'a','teen','al-eemaan'],a:2,cols:3,
+      why:'One of the six pillars of faith (al-eemaan).',whyNot:{0:'Obedience goes with فطرت / جبلت (made by nature).',1:'Clay is what people were made from.'}},
+    {src:'Worksheet · Q2 · (c) · 4',q:'خلق الله تعالى الإنسان من ..........',en:'Allah the Exalted created mankind from ……',
+      o:['طين','نور','نار'],oe:['clay','light','fire'],otr:['teen','noor','naar'],a:0,cols:3,
+      why:'People (al-insaan) from clay (teen).',whyNot:{1:'Light is for the angels.',2:'Fire is for the jinn.'}},
+    {src:'Worksheet · Q2 · (b)',q:'دون أربعة من ثمرات الإيمان بالملائكة .',en:'Write down four of the benefits of believing in the angels.',
+      model:'1- محبة الملائكة لطاعتهم لله<br>2- التخلق بأخلاق الملائكة<br>3- العلم بعظمة الله وقوته<br>4- شكر الله تعالى على عنايته ببني آدم',
+      men:'1- Loving the angels because they obey Allah<br>2- Taking on the good manners of the angels<br>3- Knowing the greatness and power of Allah<br>4- Thanking Allah the Exalted for His care for the children of Adam',
+      mtr:'Lovely Manners Get Thanks'}
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 2 done!');pop(t);
+  const B=[['👼💡','نور','angels: light'],['🧍🟫','طين','people: clay'],['🙇','الطاعة','made to obey'],['🏛️','الإيمان','pillar of faith'],
+    ['📜','ملك الوحي','Jibreel'],['🌧️','موكل بالأرزاق والنبات والمطر','Mikail'],['⏳','قبض الأرواح','Angel of Death'],['🍎','LMGT','Lovely Manners Get Thanks']];
+  B.forEach(([e,a,m],i)=>{const c=mk('is-card',`left:${30+(i%4)*228}px;top:${80+Math.floor(i/4)*200}px;width:212px;height:180px;text-align:center;padding:10px 8px`,
+    `<div style="font-size:40px">${e}</div><div class="ar-font" dir="rtl" style="font-size:${a.length>14?19:28}px;font-weight:700;color:#5a3c00;margin:6px 0;line-height:1.3">${a}</div><div style="font-size:15px;font-weight:800;color:#626a80">${m}</div>`);pop(c,i*140);});
+  await w(1200);confetti(160);yay();
+  say(`${aw('ما شاء الله','maa shaa\' Allaah')}! You know all of Question 2: what the angels are made from, their jobs, and the four benefits. Practise writing them on paper, and come back tomorrow to review!`);
+  await w(4200);}}
+  ]}));
+</script>
+</body>
+</html>

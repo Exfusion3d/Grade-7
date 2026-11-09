@@ -1,5 +1,5 @@
 /* The subjects and their lessons, shared by the home page, the subject pages and the parent page.
-   Lesson ids are one letter per subject plus a number: l = Science (named before subjects existed), m = Maths, f = French.
+   Lesson ids are one letter per subject plus a number: l = Science (named before subjects existed), m = Maths, f = French, i = Islamic Studies.
    A lesson without an href is planned but not built yet ("coming soon"). Hrefs are relative to the site root.
    To add a subject: add it here (soon:true until its first lesson exists), give it a page like maths.html,
    and put its lessons in a folder of their own. */
@@ -74,7 +74,25 @@ window.SUBJECTS = [
         ['f10','french/f10-institut-dire-oui.html','🤝',"À l'Institut français : dire oui (Saying yes)"]]}]},
   {id:'kss', name:'KSS', emoji:'🇰🇼', grad:'#17935b,#45c288', soon:true, units:[]},
   {id:'arabic', name:'Arabic', native:'اللغة العربية', emoji:'✒️', grad:'#0f7a6e,#2bb39c', soon:true, units:[]},
-  {id:'islamic', name:'Islamic Studies', emoji:'🌙', grad:'#8a5a00,#d9a441', soon:true, units:[]},
+  {id:'islamic', name:'Islamic Studies', native:'التربية الإسلامية', emoji:'🌙', page:'islamic.html', grad:'#8a5a00,#d9a441', guide:'Hudhud the Hoopoe',
+    blurb:'2nd Term review · with Hudhud the Hoopoe',
+    quiz:{title:'Islamic Quest Quiz', desc:'Coming soon: spot the keyword, pick the answer, build it and write it, level by level.'},
+    guidePdf:{title:'Study Guide (PDF)', desc:'Coming soon: every question with its keyword, answer, sounds and English, plus tracing sheets.'},
+    units:[
+      {tag:'Start here', name:'How to answer the exam', color:'#b8862b', soft:'#f3e3c0', les:[
+        ['i01',null,'🧰','Exam toolkit: instruction words and keywords']]},
+      {tag:'Q2', name:'العقيدة · Belief', color:'#d9a441', soft:'#f6e7c5', les:[
+        ['i02','islamic/i02-angels.html','👼','The angels (and Hadith 1)']]},
+      {tag:'Q3', name:'الحديث · Hadith', color:'#17935b', soft:'#bfe7d2', les:[
+        ['i03',null,'🤲','Sincerity, intention and Hijra']]},
+      {tag:'Q4', name:'السيرة · Life of the Prophet ﷺ', color:'#2c66cf', soft:'#c6d8f6', les:[
+        ['i04',null,'📜','The first revelation in the cave of Hira']]},
+      {tag:'Q5', name:'الفقه · Fiqh', color:'#6a45d8', soft:'#ddd3fb', les:[
+        ['i05',null,'🕌','Prayer: required acts and rulings (and Hadith 3)']]},
+      {tag:'Q6', name:'التهذيب · Manners', color:'#e06a1b', soft:'#f7d3b5', les:[
+        ['i06',null,'👅','Sins of the tongue (and Hadith 2)']]},
+      {tag:'Q7', name:'الثقافة الإسلامية · Islamic culture', color:'#d6336c', soft:'#f6c9da', les:[
+        ['i07',null,'🧩','Responsibility']]}]},
 ];
 /* Every lesson by id: {id, href, e, t, num, subject, unit} */
 window.LESSONS = {};
@@ -134,7 +152,7 @@ function renderSubject(id,ov){
   const {total,fin}=subjectCount(S,st);
   document.getElementById('bar').style.width=(total?fin/total*100:0)+'%';
   const planned=S.units.reduce((n,U)=>n+U.les.length,0);
-  document.getElementById('ptxt').textContent=(fin?`${fin} of ${total} lessons finished${fin===total&&total===planned?' 🏆 All done!':''}`:`${total} lesson${total>1?'s':''} ready · start with Lesson 1!`)+(planned>total?` · ${planned-total} more coming`:'');
+  document.getElementById('ptxt').textContent=(fin?`${fin} of ${total} lessons finished${fin===total&&total===planned?' 🏆 All done!':''}`:`${total} lesson${total>1?'s':''} ready · start with Lesson ${+S.units.flatMap(U=>U.les).find(l=>l[1])[0].slice(1)}!`)+(planned>total?` · ${planned-total} more coming`:'');
   renderRevise(ov,id);
   const qb=ov?.quizBest||{},q=S.quiz,g=S.guidePdf;
   const best=q.modes&&Object.keys(qb).some(m=>q.modes.some(x=>x[0]===m))?'Your best: '+q.modes.map(([m,e,n])=>`<span title="${n}">${e} ${qb[m]?'⭐'.repeat(qb[m].stars)+'☆'.repeat(3-qb[m].stars):'–'}</span>`).join(' · '):'';

@@ -4,7 +4,7 @@ Read this first. It says what this project is, what already exists, the decision
 building in the same style. For the details of writing a lesson, read `lessons/LESSON-GUIDE.md`.
 
 ## What this is
-A revision website for one Grade 7 student (Cambridge curriculum), organised by **subject**: **Science**, **Maths** and **French** (all complete), with KSS, Arabic and Islamic Studies
+A revision website for one Grade 7 student (Cambridge curriculum), organised by **subject**: **Science**, **Maths** and **French** (all complete), **Islamic Studies** (in progress: pilot lesson built), with KSS and Arabic
 planned ("coming soon" cards). Each subject is built
 from the school's own review worksheet, the same way. Science is built from the
 school's review worksheet: **"Class 7 Cambridge Worksheet Midterm 2026"** (Pakistan English School Kuwait, Class 7 C/D),
@@ -22,7 +22,7 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | Path | What it is |
 |---|---|
 | `index.html` | **Home page**: "Hi, nickname", Parent page button and Sign out, an overall progress bar, **Lessons to revise** across all subjects (each with a subject label; decided: quiz questions and lesson Exam check questions count separately), and a **card per subject** (finished lessons, progress bar; planned subjects show "Coming soon"). Also the iPhone tips and the voice help (`#voice-help`, linked from every lesson). Once per device, the first student to sign in is offered to import Science lessons ticked before logins existed (old `g7_done_*` keys; remembered in `g7_legacy_done`) |
-| `subjects.js` | **The subject catalogue** (classic script, loaded by the home, subject and parent pages): every subject with its units/chapters and lessons `[id, href, emoji, title]` (href null = planned, shown as "coming soon"), quiz and study-guide cards, plus the shared page renderers (`renderHome`, `renderSubject`, `renderRevise`). Lesson ids are one letter per subject + two digits: `l` = Science, `m` = Maths, `f` = French |
+| `subjects.js` | **The subject catalogue** (classic script, loaded by the home, subject and parent pages): every subject with its units/chapters and lessons `[id, href, emoji, title]` (href null = planned, shown as "coming soon"), quiz and study-guide cards, plus the shared page renderers (`renderHome`, `renderSubject`, `renderRevise`). Lesson ids are one letter per subject + two digits: `l` = Science, `m` = Maths, `f` = French, `i` = Islamic Studies |
 | `science.html`, `maths.html`, `french.html`, `site.css` | Subject pages (lessons by unit or chapter with ✅ and "continue at scene N", progress bar, that subject's Lessons to revise, quiz and study guide cards), all drawn from `subjects.js`. `site.css` is shared by the home and subject pages |
 | `lessons/l01`–`l14-*.html` | All 14 **Science** lessons on the shared engine, each with about 9 animated, narrated scenes. Lesson 5 (`l05-metals-nonmetals.html`, 14 scenes) is the approved pilot and the style reference for all lessons |
 | `adventure.html` | Redirect to Lesson 5 (its old address), so old links and Home Screen bookmarks keep working |
@@ -30,6 +30,9 @@ only). Every worksheet question and its answer-key answer is transcribed in `sou
 | `lessons/LESSON-GUIDE.md`, `lessons/_template.html` | How to write a lesson (API, layout, tone, testing) and a minimal working example |
 | `maths/` | **Maths lessons** (`m01-writing-expressions.html` …) and `maths.js` (Pi the Robot, the Maths tutor; `frac()` fractions; `buildExpr()` "tap the tiles to build the expression" activity). Maths lessons load `../lessons/engine.js` then `maths.js` and start with `Object.assign({}, MATHS, {...})` |
 | `french/` | **French lessons** (`f01-ma-journee.html` … `f10`) and `french.js` (Coco the Parrot 🦜, the French tutor; `fr(french, english)` for every French string, spoken with a French voice; the **🇬🇧 English translate button** that swaps every `fr()` on the page to English and back; `fw()` for a French word explained in English; `teachFR()` step-by-step questions; `conjCard()` verb tables; `buildSentence()`) |
+| `islamic/` | **Islamic Studies lessons** (`i02-angels.html`, the pilot, waiting for the parent's approval) and `islamic.js` (Hudhud the Hoopoe 🐦, the tutor; `ar(arabic, english, sounds)` for every Arabic string, spoken with an Arabic voice; the **🇬🇧 English** button and the **🔤 Sounds** button (easy English spelling under the Arabic, on by default, `isl_sounds`); `aw()` an Arabic word explained in English; `kw()` a keyword in a question; `clueCard()` (question → instruction word → keyword only → clue → Show me → coloured answer blocks → stamp); `ansBlocks()`; `buildAR()` Arabic tiles right to left; `traceAR()` finger tracing checked by coverage) |
+| `islamic.html` | The Islamic Studies subject page (lessons by worksheet question, quiz and study guide cards say "coming soon") |
+| `source/islamic/worksheet-transcript.md` | The Islamic revision sheet (9 typed pages; the PDF's text layer is garbled, so it was typed from the images): every question in Arabic with English, sounds and its **keyword**, `[FIX]` typos, the instruction words, and the 7-lesson plan |
 | `source/french/worksheet-transcript.md` | The French revision sheet (8 scanned pages, handwritten answers) transcribed word for word with an English translation of every question, `[FIX]` typos, and the 10-lesson plan |
 | `french-quiz.html` | **French Quest** (Coco, blue; silent apart from a 🔈 "hear it in French" button): 4 levels (`f1` Vocabulaire 28, `f2` -er verbs 30, `f3` prendre/avoir/aller 31, `f4` futur proche, en, saying yes 27 = **116 questions**) plus a 25-question Final Boss (`fboss`) and `fretry`. Every question has `en` and choices `oe`, and **🇬🇧 English** (menu and HUD) swaps them. Types: pick one, vrai ou faux, match, put in order, build the sentence (tiles), conjugate (fill a verb table), type it (accent keys; accents nudged once). Ids `f1-01`… permanent; `q:` in backticks on the same line as `id:`. Test: `node tools/test/frquizcheck.js` and `QUIZ=french-quiz.html DRIVER=frquizdriver.js tools/test/quizplay.py f1 <dir>` (`EN=1` for English) |
 | `french-study-guide.pdf` | 15-page French study guide (every worksheet question with its answer and English, verb tables, Watch out / memory-trick boxes, Try these + answer key, cheat sheet). Printed from `source/french/study-guide-source.html` |
@@ -78,6 +81,19 @@ Part 3 Grammaire et expressions: 8 Le futur proche · 9 Le pronom « en » · 10
 Worksheet cards cite the page: `Worksheet · Page 5 · Tu choisis Q8`. The sheet's typos (`[FIX]` in the transcript) are
 corrected silently, as for Maths.
 
+### Islamic Studies: 7 lessons planned (`islamic/i01`–`i07`; pilot `i02` built)
+Built from the school's "مراجعة التربية الإسلامية" 2nd-term sheet (9 pages, Q2–Q7 with answers). Tutor: **Hudhud the Hoopoe** 🐦
+(gold/brown). **The student does not speak, read or write Arabic well**, so the goal is different from the other subjects:
+recognise each question by its **keyword**, memorise the answer, and write it in Arabic. Every Arabic line has English
+(🇬🇧) and sounds (🔤); answers are shown as coloured word blocks (Arabic, sounds, meaning), then built with tiles, traced
+with a finger and written on paper (look, cover, write, check). Answers are written without harakat, as on the sheet.
+Lessons: 1 Exam toolkit (instruction words, keywords, writing tips) · 2 The angels (Q2, Hadith 1) · 3 Sincerity and Hijra (Q3) ·
+4 The first revelation (Q4) · 5 Prayer (Q5, Hadith 3) · 6 Sins of the tongue (Q6, Hadith 2) · 7 Responsibility (Q7).
+Planned after the pilot is approved: the other lessons, Islamic Quest (a level per question, `i2`–`i7`, plus a Final Boss),
+a daily Memory Trainer (spaced repetition of the 46 written answers, "answers mastered" on the parent page) and a study
+guide with tracing sheets. **Surah Al-Ma'arij 1–35 is not part of this build (parent's decision).** Qur'an verses must never
+be read by the synthetic voice. Worksheet cards cite the question: `Worksheet · Q2 · (c) · 1`.
+
 ## The style to keep (decided and approved)
 - **Professor Atom**, a smiling yellow atom mascot, narrates every line. The text appears in a speech bubble and is
   **spoken aloud** with the device's built-in voice (Web Speech API). Scenes wait for the voice to finish. Controls:
@@ -125,8 +141,8 @@ corrected silently, as for Maths.
 - **Test before publishing:** run `.venv/bin/python tools/test/runall.py` (on Linux, set `CHROME` to a Chromium that
   runs with `--no-sandbox`). One-time setup:
   `python3 -m venv .venv && .venv/bin/pip install websocket-client`. All scenes must pass. Look at the screenshots
-  in `tools/test/shots/`. The tester mutes all sound. A run of every lesson takes over 10 minutes, so test Science, Maths and
-  French in separate batches (French twice: also with `QS=en=1`, the English mode); memory is limited, so set `WORKERS=2` (default 6 browsers) if anything else is running.
+  in `tools/test/shots/`. The tester mutes all sound. A run of every lesson takes over 10 minutes, so test Science, Maths,
+  French and Islamic in separate batches (French and Islamic twice: also with `QS=en=1`, the English mode); memory is limited, so set `WORKERS=2` (default 6 browsers) if anything else is running.
 - **Publish:** commit (and push to `main`), then create a Cortex release with Deploy App on. Cortex builds `dist/` and
   deploys it to https://tutor.gocortex.app after the user confirms. Note that unknown paths there return the home page,
   not a 404, so check a new page's title (not just the status code) when confirming a deploy.
