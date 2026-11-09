@@ -57,7 +57,9 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
   `clear(keep)`. Test French lessons in both modes: `QS=en=1` runs the tester with English on (shots end in `-en`).
 - **Islamic Studies (`islamic.js`, tutor Hudhud the Hoopoe 🐦):** write every Arabic string as `ar(arabic, english, sounds)`
   (spoken with an Arabic voice; 🇬🇧 swaps it to English; 🔤 shows the sounds under it). `aw(arabic, sounds)` is an Arabic word
-  explained in English (stays Arabic). Mark question keywords with `kw(arabic, sounds)` inside `q` and `kw(english)` inside `en`.
+  explained in English (in English mode it shows its English if given as a 3rd argument, else its sounds). In English
+  mode everything else Arabic on the stage is translated from the glossary in `islamic.js`: after adding new Arabic words, run
+  `node source/islamic/make-glossary.js`, and check with `QS=en=1` that no Arabic is left on screen. Mark question keywords with `kw(arabic, sounds)` inside `q` and `kw(english)` inside `en`.
   Teach every worksheet question with `clueCard(w,{src,q,en,kind,keys,clue,answer,why})` (`answer: [[arabic, sounds, meaning]]`
   blocks), then let the student `buildAR` and `traceAR` the answers. Exam check items: `q`/`o`/`model` in Arabic with `en`, `oe`,
   `otr` (sounds) and `men`. The keywords taught for a question light up in yellow in its Exam check: add its `src` to
