@@ -34,6 +34,64 @@ const FRUITS=[
   {e:'🌌',word:'Get',a:'العلم بعظمة الله وقوته',bl:[['العلم','al-\'ilm','knowing'],['بعظمة','bi-\'azamat','the greatness of'],['الله','Allaah','Allah'],['وقوته','wa quwwatih','and His power']],en:'knowing the greatness and power of Allah'},
   {e:'🙏',word:'Thanks',a:'شكر الله تعالى على عنايته ببني آدم',bl:[['شكر','shukr','thanking'],['الله','Allaah','Allah'],['تعالى','ta\'aalaa','the Exalted'],['على','\'alaa','for'],['عنايته','\'inaayatihi','His care'],['ببني آدم','bi-banee Aadam','for the children of Adam']],en:'thanking Allah the Exalted for His care for the children of Adam'}];
 
+/* ---------- the opening story (scenes 1–5): Maryam, Yusuf and Grandma on a stormy night ----------
+   Every worksheet answer of Q2 happens as a story moment; a 📌 pin shows the question's keyword and its answer blocks. */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.st-bub{background:#fff;border:3px solid #1f2433;border-radius:16px;padding:5px 12px 7px;font-size:17px;font-weight:700;color:#1f2433;line-height:1.3;box-shadow:0 3px 0 rgba(0,0,0,.25);z-index:18;max-width:340px}
+.st-bub .n{display:block;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#a0742a}
+.st-cloud{background:#fffaf0;border:3px solid #d9a441;border-radius:28px;box-shadow:0 6px 0 rgba(0,0,0,.2);z-index:12}
+.st-pin{background:#fff;border:3px solid #d9a441;border-radius:16px;padding:6px 12px 10px;box-shadow:0 5px 0 #f3e3c0;z-index:22}
+.st-pin .lb{font-size:13px;font-weight:800;color:#a0742a;letter-spacing:.05em;text-transform:uppercase}
+.st-pin .kl{font-size:16px;font-weight:800;color:#626a80;margin:2px 0 6px}
+.st-pin .kl .ax{font-size:24px;color:#1f2433}.st-pin .kl .ax.en{font-size:18px}
+.st-pin .is-b{padding:4px 10px 5px}
+.st-map .src{font-size:11px}
+.st-map .pic{font-size:30px;line-height:1.2;white-space:nowrap}.st-map .cap{font-size:14px;font-weight:800;color:#626a80;vertical-align:middle}
+.st-map .k{font-size:15px;font-weight:800;color:#626a80;margin-top:2px}.st-map .k .aw{font-size:21px;color:#1f2433;background:#ffe680;border-radius:6px;padding:0 4px}
+.st-map .an{font-size:20px;font-weight:800;color:#18a058;margin-top:2px;white-space:nowrap}.st-map .an .aw{font-size:28px;color:#0f7a40}
+.st-map .an .aw.en{font-size:19px}
+body.en-mode .st-map .an{white-space:normal;line-height:1.15}body.en-mode .st-map .an .aw.en{font-size:16px}.st-map .k .aw.en{font-size:15px}
+.st-map .sn{font-size:13px;font-weight:800;color:#2c66cf}
+.st-map .four{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:6px;font-size:18px}
+.st-map .four .aw{font-size:20px;color:#5a3c00}.st-map .four .aw.en{font-size:14px}
+</style>`);
+/* the bedroom at night: window with rain, shelf (clay pot, Qur'an, Grandad's photo), bed with Maryam and Yusuf */
+function night({rain=16}={}){
+  mk('','left:0;top:0;width:960px;height:520px;background:linear-gradient(180deg,#252852 0%,#2f2a55 72%,#4a3a52 72%,#4a3a52 100%)','');
+  const win=mk('','left:40px;top:24px;width:200px;height:150px;background:linear-gradient(#0b0f2a,#1b2350);border:8px solid #8a6a4a;border-radius:10px;overflow:hidden','');
+  const rains=[];for(let i=0;i<rain;i++){const d=mk('',`left:${(i*29+7)%214}px;top:-30px;width:2px;height:22px;background:#9fc3ff;opacity:.75;border-radius:2px`,'',win);
+    rains.push(loop(d,[{transform:'translate(0,0)'},{transform:'translate(-14px,200px)'}],560+(i%5)*90,{delay:i*60,easing:'linear'}));}
+  mk('','left:96px;top:0;width:8px;height:150px;background:#8a6a4a',null,win);mk('','left:0;top:71px;width:200px;height:8px;background:#8a6a4a',null,win);
+  mk('','left:290px;top:120px;width:250px;height:12px;background:#8a5a2b;border-radius:4px;box-shadow:0 4px 0 #5e3c1c','');
+  const pot=mk('','left:300px;top:66px;font-size:50px;line-height:1','🏺'),book=mk('','left:385px;top:66px;font-size:50px;line-height:1','📖'),photo=mk('','left:465px;top:66px;font-size:50px;line-height:1','🖼️');
+  mk('','left:30px;top:350px;width:440px;height:130px;background:#8a5a2b;border-radius:16px 16px 6px 6px','');
+  mk('','left:44px;top:318px;width:230px;height:40px;background:#f3ead6;border-radius:20px','');
+  const maryam=mk('','left:62px;top:266px;font-size:62px;line-height:1;z-index:10','👧'),yusuf=mk('','left:160px;top:272px;font-size:56px;line-height:1;z-index:10','👦');
+  mk('','left:40px;top:330px;width:420px;height:90px;background:linear-gradient(#6a45d8,#563ab5);border-radius:30px 30px 10px 10px;z-index:11','');
+  const flash=mk('','left:0;top:0;width:960px;height:520px;background:#fff;opacity:0;z-index:30;pointer-events:none','');
+  return{win,rain:rains,pot,book,photo,maryam,yusuf,flash};}
+function thunder(R){an(R.flash,[{opacity:0},{opacity:.7},{opacity:0},{opacity:.45},{opacity:0}],{duration:600});beep(70,.4,'sawtooth',.1);shake(R.yusuf);shake(R.maryam);}
+/* Grandma with her oil lamp: walks in from the right, or is already sitting by the bed */
+async function gran(w,R,seated){const x=478,y=262;
+  const g=mk('',`left:${x}px;top:${y}px;width:120px;height:130px;z-index:13`,'');
+  const glow=mk('','left:-90px;top:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,120,.55),rgba(255,214,120,0) 70%);pointer-events:none','',g);
+  mk('','left:0;top:0;font-size:84px;line-height:1','👵',g);const lamp=mk('','left:76px;top:58px;font-size:40px;line-height:1','🪔',g);
+  loop(glow,[{opacity:.7,transform:'scale(.95)'},{opacity:1,transform:'scale(1.06)'}],900,{direction:'alternate'});
+  if(!seated){await an(g,[{transform:'translateX(420px)'},{transform:'translateX(0)'}],{duration:1800,easing:'ease-out'});}
+  return{g,lamp,x,y};}
+/* a speech bubble on the stage (one at a time) */
+function bub(x,y,html,who){stage.querySelector('.st-bub')?.remove();const b=mk('st-bub',`left:${x}px;top:${y}px`,`<span class="n">${who}</span>${html}`);pop(b);return b;}
+/* 📌 a story moment: the question, its keyword and the answer as coloured blocks (stacked in the right-hand column) */
+async function pin(w,label,key,blocks,{x=612,wd=336,y=null,size=28,clear:cl=false}={}){
+  const old=[...stage.querySelectorAll('.st-pin')];if(cl)old.forEach(o=>o.remove());
+  gloss(blocks.map(b=>b[0]).join(' '),blocks.map(b=>b[2]).join(' '),blocks.map(b=>b[1]).join(' '));
+  const bl=blocks.map(([a,s,m],i)=>{gloss(a,m,s);return `<div class="is-b ar-font" data-a="${a}" style="background:${BCOL[i%BCOL.length]}"><div class="a" dir="rtl" style="font-size:${size}px">${a}</div><div class="s">${s}</div><div class="m">${m}</div></div>`;}).join('');
+  const p=mk('st-pin lit',`left:${x}px;top:0;width:${wd}px;visibility:hidden`,`<div class="lb">📌 ${label}</div><div class="kl">🔑 ${key}</div><div class="is-blocks">${bl}</div>`);
+  await w(40);
+  let top=y;if(top==null){const left=cl?[]:old;top=left.length?Math.max(...left.map(o=>o.offsetTop+o.offsetHeight))+10:12;
+    if(top+p.offsetHeight>510){left.forEach(o=>o.remove());top=12;}}
+  p.style.top=top+'px';p.style.visibility='';pop(p);beep(880,.07);point(p);return p;}
+
 Lesson.start(Object.assign({}, ISLAMIC, {
   id:'i02', num:2, part:'Belief · العقيدة', emoji:'👼', title:'The angels',
   intro:`Assalaamu alaykum! I'm <b>Hudhud the Hoopoe</b> 🐦 Today: the <b>angels</b>, Question 2 of your sheet. Press <b>Start</b>!`,
@@ -51,10 +109,179 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🇬🇧</span> turns all the Arabic into English. &nbsp; <span style="background:#fff;border:2px solid #e3e0f0;border-radius:10px;padding:2px 8px">🔤</span> shows how the Arabic sounds.<br>👆 Tap any Arabic on the screen to hear it again.`);pop(tb);point(tb);
   say(`Two buttons help you at the top. The <b>English</b> button turns all the Arabic into English. The <b>Sounds</b> button shows how the Arabic sounds, in English letters. Tap any Arabic to hear it.`);
   await w(4200);unpoint();
-  say(`Today is all about the ${aw('ملائكة','malaa\'ika')}, the <b>angels</b>: Question 2 of your sheet. ${aw('هيا بنا','hayyaa binaa')}! Let's go!`);await w(3000);}},
+  say(`Today is all about the ${aw('ملائكة','malaa\'ika')}, the <b>angels</b>: Question 2 of your sheet. ${aw('هيا بنا','hayyaa binaa')}! Let's start with a <b>story</b>.`);await w(3000);}},
 
-/* 1 */ {t:'Light, fire and clay (Hadith 1)',run:async w=>{
-  say(`Let's start with the <b>first hadith</b> you learn by heart. It tells us what the angels, the jinn and Adam were made from.`);await w(3000);
+/* 1 */ {t:'Story: The stormy night',run:async w=>{
+  const R=night();
+  say(`Story time! It's a stormy winter night. <b>Maryam</b> is eleven, and her little brother <b>Yusuf</b> is seven. Neither of them can sleep.`);await w(3600);
+  thunder(R);bub(40,190,`Maryam! That thunder is SO loud! 😱`,'Yusuf');
+  say(`<b>Crash!</b> Lightning flashes, and Yusuf pulls the blanket right over his head.`);await w(2800);
+  bub(40,190,`Shh! I can hear Grandma coming.`,'Maryam');
+  const G=await gran(w,R);
+  say(`The door creaks open. It's <b>Grandma</b>, with her little oil lamp glowing in the dark. 🪔`);await w(3000);
+  bub(40,190,`Grandma, what are angels made of?`,'Yusuf');
+  say(`Yusuf peeks out and asks the big question: what are the <b>angels</b> made of?`);await w(2800);
+  bub(250,190,`The Prophet ﷺ told us, in a hadith.`,'Grandma');
+  const h=mk('is-card lit',`left:20px;top:12px;width:920px;z-index:25`,`<div class="src">Hadith 1 · الحديث الأول</div><div class="q" style="font-size:24px;line-height:1.5">${ar(
+    `عن عائشة رضي الله عنها أن رسول الله ﷺ قال : ( خلقت ${kw('الملائكة','al-malaa\'ika')} من ${kw('نور','noor')} وخلق ${kw('الجان','al-jaann')} من مارج من ${kw('نار','naar')} وخلق ${kw('آدم','aadam')} مما وصف لكم ) .`,
+    `ʿĀʾisha (may Allah be pleased with her) reported that the Messenger of Allah ﷺ said: "The ${kw('angels')} were created from ${kw('light')}, the ${kw('jinn')} were created from a smokeless flame of ${kw('fire')}, and ${kw('Adam')} was created from what has been described to you (clay)."`,'','blk')}</div>`);pop(h);
+  say(`Grandma remembers the first hadith on your sheet: ${ar('خلقت الملائكة من نور وخلق الجان من مارج من نار وخلق آدم مما وصف لكم','The angels were created from light, the jinn from a smokeless flame of fire, and Adam from what has been described to you.')}`);await w(4200);
+  say(`Angels from <b>light</b>, jinn from <b>fire</b>, and Adam from what has been described to you: <b>clay</b>.`);await w(3000);
+  an(h,[{opacity:1},{opacity:0,transform:'translateY(-30px)'}],{duration:500});await w(500);h.remove();
+  const sp=[];for(let i=0;i<6;i++){const s=mk('',`left:${G.x+30+Math.cos(i)*95}px;top:${G.y+40+Math.sin(i)*80}px;font-size:24px;z-index:14`,'✨');sp.push(s);pop(s,i*90);
+    loop(s,[{opacity:.4,transform:'scale(.8)'},{opacity:1,transform:'scale(1.2)'}],600+i*70,{direction:'alternate'});}
+  bub(250,190,`See this soft glow all around us? Angels were made from light.`,'Grandma');
+  await pin(w,'Q2 (c) · 1',ar(`${kw('الملائكة','al-malaa\'ika')} … ${kw('من','min')}`,`${kw('angels')} … ${kw('from')}`),[['نور','noor','light']]);
+  say(`The glow of the lamp: angels were made from ${aw('نور','noor','light')}, <b>light</b>. 📌 That's Question 2 c, number 1.`);await w(3600);
+  sp.forEach(s=>s.remove());point(G.lamp);loop(G.lamp,[{transform:'scale(1)'},{transform:'scale(1.25) translateY(-3px)'}],300,{direction:'alternate'});
+  bub(250,190,`And the little flame? That's fire. The jinn were made from fire.`,'Grandma');
+  say(`The tiny flame is ${aw('نار','naar','fire')}, <b>fire</b>: the jinn. Light ${aw('نور','noor','light')} has a round ${aw('و','waaw','w')}; fire ${aw('نار','naar','fire')} has a tall ${aw('ا','alif','a')}.`);await w(4200);
+  point(R.pot);loop(R.pot,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],400,{direction:'alternate'});
+  bub(40,190,`Like my clay pot from school? 🏺`,'Yusuf');await w(1800);
+  bub(250,190,`Yes! Adam, the first person, was made from clay.`,'Grandma');
+  await pin(w,'Q2 (c) · 4',ar(`${kw('الإنسان','al-insaan')} … ${kw('من','min')}`,`${kw('mankind')} … ${kw('from')}`),[['طين','teen','clay']]);
+  say(`And people? Allah created mankind from ${aw('طين','teen','clay')}, <b>clay</b>, like Yusuf's pot. 📌 Question 2 c, number 4.`);await w(3600);
+  unpoint();bub(40,190,`So THAT'S why I'm always muddy! 😄`,'Yusuf');shake(R.yusuf);
+  say(`Yusuf giggles: "So that's why I'm always muddy!" Even sleepy Maryam laughs.`);await w(3000);}},
+
+/* 2 */ {t:'Story: Angels never say no',run:async w=>{
+  const R=night({rain:8});const G=await gran(w,R,true);
+  bub(40,190,`Grandma, do angels ever say "five more minutes"?`,'Yusuf');
+  say(`Yusuf has another question. At bedtime he always says "five more minutes". So, do angels ever say <b>no</b> to Allah?`);await w(3800);
+  const c=mk('st-cloud','left:30px;top:12px;width:560px;height:165px','');pop(c);
+  mk('','left:24px;top:30px;font-size:60px','😤',c);mk('','left:14px;top:110px;width:100px;text-align:center;font-size:15px;font-weight:800;color:#e04848','"Five more<br>minutes!"',c);
+  mk('','left:130px;top:40px;width:3px;height:90px;background:#e3d6b8',null,c);
+  for(let i=0;i<6;i++){const s=mk('',`left:${160+i*60}px;top:44px;font-size:40px`,'✨',c);loop(s,[{transform:'translateY(0)'},{transform:'translateY(-14px)'}],520,{direction:'alternate'});}
+  mk('','left:150px;top:112px;width:390px;text-align:center;font-size:17px;font-weight:800;color:#18a058','✨ Angels: always obey, all together ✔',c);
+  bub(250,190,`Never! Allah made the angels, by nature, to obey Him.`,'Grandma');
+  say(`Grandma smiles. "Never! Allah made the angels, <b>by nature</b>, to obey Him. Obeying is simply who they are."`);await w(3800);
+  await pin(w,'Q2 (c) · 2',ar(`${kw('فطرت','futirat')} / ${kw('وجبلت','wa jubilat')}`,`${kw('made by nature')}`),[['الطاعة','at-taa\'a','obedience']]);
+  say(`${aw('فطرت','futirat','made by nature')} and ${aw('جبلت','jubilat','made by nature')} mean <b>made by nature</b>. The answer: ${aw('الطاعة','at-taa\'a','obedience')}, <b>obedience</b>. 📌 Question 2 c, number 2.`);await w(4200);
+  an(c,[{opacity:1},{opacity:0}],{duration:400});await w(400);c.remove();
+  bub(40,190,`Miss Huda says believing in angels is one of the pillars!`,'Maryam');
+  say(`Maryam sits up. "Our teacher says believing in the angels is <b>one of the pillars</b>!" "Pillars of what?" asks Yusuf.`);await w(3600);
+  const P=mk('st-cloud','left:30px;top:12px;width:560px;height:165px','');pop(P);
+  mk('','left:20px;top:8px;width:520px;height:16px;background:#d9a441;border-radius:8px',null,P);
+  const names=['Allah','His angels','His books','His messengers','The Last Day','His decree'];
+  const cols=names.map((n,i)=>{const col=mk('',`left:${24+i*88}px;top:28px;width:72px;height:96px;background:${i===1?'#ffd84d':'#f3ead6'};border:3px solid ${i===1?'#d9a441':'#e3d6b8'};border-radius:6px;transform-origin:50% 0`,null,P);
+    mk('',`left:${14+i*88}px;top:130px;width:92px;text-align:center;font-size:13px;font-weight:800;color:${i===1?'#7a4a00':'#626a80'};line-height:1.1`,`${i+1}. ${n}`,P);
+    an(col,[{transform:'scaleY(0)'},{transform:'scaleY(1)'}],{duration:500,delay:i*180});return col;});
+  bub(250,190,`Of faith! There are six pillars of faith. The angels are one of them.`,'Grandma');
+  say(`Grandma counts on her fingers: belief in Allah, His angels, His books, His messengers, the Last Day, and His decree. <b>Six pillars of faith.</b>`);await w(4200);
+  loop(cols[1],[{boxShadow:'0 0 0 0 #ffd84d'},{boxShadow:'0 0 18px 6px #ffd84d'}],600,{direction:'alternate'});
+  await pin(w,'Q2 (c) · 3',ar(`${kw('ركن من أركان','rukn min arkaan')}`,`${kw('one of the pillars of')}`),[['الإيمان','al-eemaan','faith']]);
+  say(`${aw('ركن من أركان','rukn min arkaan','one of the pillars of')} means <b>one of the pillars of</b>. The answer: ${aw('الإيمان','al-eemaan','faith')}, <b>faith</b>. 📌 Question 2 c, number 3.`);await w(4200);
+  bub(40,190,`Like the pillars holding up a house! 🏠`,'Yusuf');
+  say(`"Like the pillars holding up a house!" says Yusuf. "Exactly," says Grandma. "Our faith stands on all six."`);await w(3200);}},
+
+/* 3 */ {t:'Story: Three angels, three jobs',run:async w=>{
+  const R=night({rain:22});const G=await gran(w,R,true);
+  thunder(R);bub(40,190,`But who sends all this rain?`,'Yusuf');
+  say(`The rain drums on the window. "But who sends all this rain?" asks Yusuf.`);await w(2800);
+  const c=mk('st-cloud','left:30px;top:12px;width:560px;height:165px','');pop(c);
+  const chain=[['🌧️','rain'],['🌱','plants'],['🌾','crops'],['🍞','food']];
+  for(let i=0;i<4;i++){const e=mk('',`left:${20+i*136}px;top:22px;width:100px;text-align:center;font-size:58px;opacity:0`,chain[i][0],c);
+    mk('',`left:${20+i*136}px;top:100px;width:100px;text-align:center;font-size:16px;font-weight:800;color:#626a80`,chain[i][1],c);
+    if(i)mk('',`left:${i*136-6}px;top:42px;font-size:30px;color:#d9a441`,'➜',c);pop(e,i*450);}
+  bub(250,190,`Allah sends the rain. He put the angel Mikail in charge of it.`,'Grandma');
+  say(`"Allah sends the rain," says Grandma. "He gave the angel <b>Mikail</b> the job of looking after the rain, the plants, and our provisions: our food."`);await w(4200);
+  await pin(w,'Q2 (a) · Mikail',ar(`${kw('وظيفة','wadheefa')} ${kw('ميكائيل','meekaa\'eel')}`,`${kw('job')} of ${kw('Mikail')}`),ANGELS[1].job,{size:24});
+  say(`Mikail's job: ${aw('موكل بالأرزاق والنبات والمطر','muwakkal bil-arzaaq wan-nabaat wal-matar','in charge of provisions, plants and rain')}. Rain, then plants, then food. 📌 Question 2 a.`);await w(4200);
+  c.remove();
+  point(R.book);loop(R.book,[{filter:'drop-shadow(0 0 2px #ffd84d)'},{filter:'drop-shadow(0 0 16px #ffd84d)'}],600,{direction:'alternate'});
+  bub(40,190,`And who brought Allah's message, the Qur'an?`,'Maryam');
+  say(`Maryam looks at Grandma's Qur'an on the shelf. "And who brought Allah's message to the Prophet ﷺ?"`);await w(3200);
+  const c2=mk('st-cloud','left:30px;top:12px;width:560px;height:165px','');pop(c2);
+  const t=mk('','left:20px;top:30px;font-size:50px','✨',c2);an(t,[{transform:'translateX(0)'},{transform:'translateX(220px)'}],{duration:1600});
+  mk('','left:300px;top:28px;font-size:54px','📜',c2);mk('','left:390px;top:40px;width:150px;font-size:18px;font-weight:800;color:#7a4a00;line-height:1.2','Allah\'s message → the prophets',c2);
+  mk('','left:20px;top:116px;width:520px;text-align:center;font-size:16px;font-weight:800;color:#626a80','Revelation (al-wahy) = Allah\'s message to His prophets',c2);
+  bub(250,190,`The angel Jibreel. He brought the revelation to the prophets.`,'Grandma');
+  say(`"That was the angel <b>Jibreel</b>. He brought the revelation, Allah's message, to the prophets, and to our Prophet Muhammad ﷺ."`);await w(4000);
+  await pin(w,'Q2 (a) · Jibreel',ar(`${kw('وظيفة','wadheefa')} ${kw('جبريل','jibreel')}`,`${kw('job')} of ${kw('Jibreel')}`),ANGELS[0].job);
+  say(`Jibreel's job: ${aw('ملك الوحي','malak al-wahy','the angel of revelation')}, <b>the angel of revelation</b>. 📌 Question 2 a.`);await w(3600);
+  c2.remove();R.rain.forEach(a=>a.updatePlaybackRate(.5));
+  point(R.photo);loop(R.photo,[{filter:'drop-shadow(0 0 0 #fff)'},{filter:'drop-shadow(0 0 12px #fff2c8)'}],900,{direction:'alternate'});
+  bub(40,190,`Grandma… where did Grandad go?`,'Yusuf');
+  say(`Yusuf picks up the photo of Grandad. He asks quietly, "Grandma, where did Grandad go?"`);await w(3200);
+  unpoint();const hug=mk('','left:380px;top:276px;font-size:46px;z-index:16','🤍');pop(hug);loop(hug,[{transform:'scale(1)'},{transform:'scale(1.15)'}],800,{direction:'alternate'});
+  bub(250,190,`Every life has a time that Allah has set.`,'Grandma');
+  say(`Grandma gives him a hug. "Every life has a time that Allah has set. When Grandad's time came, the <b>Angel of Death</b> took his soul, by Allah's command."`);await w(4400);
+  await pin(w,'Q2 (a) · Angel of Death',ar(`${kw('وظيفة','wadheefa')} ${kw('ملك الموت','malak al-mawt')}`,`${kw('job')} of the ${kw('Angel of Death')}`),ANGELS[2].job);
+  say(`The Angel of Death's job: ${aw('قبض الأرواح','qabd al-arwaah','taking the souls')}, <b>taking the souls</b>. 📌 Question 2 a.`);await w(3400);
+  bub(250,190,`We make du'a for Grandad, and we hope to meet him in Jannah.`,'Grandma');
+  say(`"We make du'a for Grandad every day, and we hope to meet him again in Jannah, in sha Allah." Yusuf feels calm again.`);await w(4000);
+  R.rain.forEach(a=>a.cancel());R.win.style.background='linear-gradient(#0b1440,#1b2a6a)';
+  const moon=mk('','left:120px;top:12px;font-size:44px',"🌙",R.win);pop(moon);
+  for(let i=0;i<5;i++){const s=mk('',`left:${14+i*38}px;top:${80+(i%2)*30}px;font-size:16px`,'⭐',R.win);pop(s,i*150);}
+  stage.querySelector('.st-bub')?.remove();
+  R.maryam.textContent='😴';R.yusuf.textContent='😴';const z=mk('','left:200px;top:220px;font-size:30px;font-weight:800;color:#c9c2ff;z-index:16','Z z z');
+  loop(z,[{transform:'translate(0,0)',opacity:1},{transform:'translate(20px,-30px)',opacity:.2}],1400);
+  say(`Slowly the storm calms down. The rain stops, the moon comes out, and two sleepy children fall asleep at last.`);await w(3800);}},
+
+/* 4 */ {t:'Story: The morning after',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;background:linear-gradient(180deg,#8fd0ff 0%,#cdeeff 46%,#fff7e0 54%,#fff7e0 100%)','');
+  mk('','left:0;top:270px;width:960px;height:250px;background:repeating-linear-gradient(180deg,#d9b98a 0 26px,#c9a574 26px 32px)','');
+  const sun=mk('','left:868px;top:160px;font-size:70px','☀️');an(sun,[{transform:'translateY(0)'},{transform:'translateY(-60px)'}],{duration:2200});
+  const rb=mk('','left:30px;top:20px;width:380px;height:190px;opacity:0;background:radial-gradient(circle at 50% 100%,transparent 52%,#e04848 52% 57%,#f7ad5f 57% 62%,#ffd84d 62% 67%,#18a058 67% 72%,#2c66cf 72% 77%,#6a45d8 77% 82%,transparent 82%)','');
+  mk('','left:0;top:205px;width:960px;height:70px;background:linear-gradient(#7cc76a,#5aa84a)','');
+  [[90,240],[300,250],[560,238]].forEach(([x,y])=>mk('',`left:${x}px;top:${y}px;width:110px;height:22px;border-radius:50%;background:#7ab8ef;opacity:.8`,''));
+  const plants=[];for(let i=0;i<7;i++){const p=mk('',`left:${430+i*52}px;top:180px;font-size:34px;transform-origin:50% 100%`,'🌱');plants.push(p);}
+  const kids=mk('','left:-220px;top:126px;font-size:62px;white-space:nowrap;z-index:5','👵👧👦');
+  const strip=mk('','left:660px;top:8px;width:290px;height:74px','');
+  say(`The next morning, the sun is shining! Grandma takes Maryam and Yusuf to her little farm. Everything has been washed clean by the rain.`);
+  await an(kids,[{transform:'translateX(0)'},{transform:'translateX(280px)'}],{duration:2200});await w(2600);
+  an(rb,[{opacity:0},{opacity:.85}],{duration:900});
+  plants.forEach((p,i)=>{p.textContent=i%3===0?'🍅':i%3===1?'🥒':'🌿';an(p,[{transform:'scale(.4)'},{transform:'scale(1.3)'}],{duration:700,delay:i*120});});
+  bub(330,12,`Look! The rain made everything grow!`,'Yusuf');
+  say(`Puddles, a rainbow, and the plants have shot up. Today the children find four <b>benefits</b> of believing in the angels.`);await w(3800);
+  const badge=(e,l)=>{const b=mk('',`left:${strip.children.length*72}px;top:0;width:66px;text-align:center`,`<div style="font-size:38px">${e}</div><div style="font-size:13px;font-weight:800;color:#7a4a00">${l}</div>`,strip);pop(b);};
+  const key=ar(`${kw('ثمرات','thamaraat')} … ${kw('بالملائكة','bil-malaa\'ika')}`,`${kw('benefits')} … ${kw('the angels')}`);
+  const lines=[
+    [`I love the angels. They always obey Allah! ❤️`,'Yusuf',`One: ${aw(FRUITS[0].a,'',FRUITS[0].en)}: <b>loving the angels because they obey Allah</b>. ❤️ L for Lovely.`],
+    [`Basket? Straight away, Grandma! No "five more minutes"!`,'Yusuf',`Yusuf obeys straight away, kindly, like the angels. Two: ${aw(FRUITS[1].a,'',FRUITS[1].en)}: <b>taking on the angels' good manners</b>. M for Manners.`],
+    [`Last night's storm was SO huge. Allah is so great!`,'Maryam',`Maryam looks up at the enormous sky. Three: ${aw(FRUITS[2].a,'',FRUITS[2].en)}: <b>knowing the greatness and power of Allah</b>. G for Get.`],
+    [`Alhamdulillah! Allah takes care of us all. 🙏`,'Grandma',`The basket is full of vegetables. Four: ${aw(FRUITS[3].a,'',FRUITS[3].en)}: <b>thanking Allah for His care for the children of Adam</b>. T for Thanks.`]];
+  for(let i=0;i<4;i++){const F=FRUITS[i];
+    if(i===0){for(let k=0;k<5;k++){const h=mk('',`left:${210+k*14}px;top:140px;font-size:24px;z-index:6`,'❤️');an(h,[{transform:'translateY(0)',opacity:1},{transform:`translate(${k*8-16}px,-110px)`,opacity:0}],{duration:1600,delay:k*150});}}
+    if(i===1){const bk=mk('','left:520px;top:150px;font-size:44px;z-index:6','🧺');an(bk,[{transform:'translateX(0)'},{transform:'translateX(-250px)'}],{duration:1200});}
+    if(i===2){an(sun,[{transform:'translateY(-60px) scale(1)'},{transform:'translateY(-60px) scale(1.35)'}],{duration:900,direction:'alternate',iterations:2});const cl=mk('','left:500px;top:18px;font-size:46px;opacity:.9','☁️');an(cl,[{transform:'translateX(0)'},{transform:'translateX(120px)'}],{duration:2500});}
+    if(i===3){const v=mk('','left:360px;top:120px;font-size:30px;z-index:7','🍅🥒🌽');pop(v);}
+    bub(i===3?20:300,12,lines[i][0],lines[i][1]);
+    await pin(w,`Q2 (b) · ${i+1}`,key,F.bl,{x:30,wd:900,y:288,size:30,clear:true});
+    say(lines[i][2]);await w(4400);badge(F.e,F.word);}
+  stage.querySelector('.st-pin')?.remove();stage.querySelector('.st-bub')?.remove();
+  const m=mk('is-clue','left:90px;top:330px;width:780px;text-align:center;font-size:30px;white-space:nowrap;z-index:20',`❤️ <b>L</b>ovely &nbsp;🪞 <b>M</b>anners &nbsp;🌌 <b>G</b>et &nbsp;🙏 <b>T</b>hanks`);pop(m);point(m);
+  say(`<b>Lovely Manners Get Thanks</b>: love, manners, greatness, thanks. Four benefits from one stormy night.`);await w(3600);unpoint();}},
+
+/* 5 */ {t:'Story map',run:async w=>{
+  say(`Here's the <b>story map</b>. Each picture from the story leads to a keyword, and each keyword leads to the answer.`);await w(3200);
+  const M=[
+    ['Q2 (c) · 1','🪔✨','Grandma\'s lamp glow',['الملائكة … من','angels … from'],['نور','noor','light']],
+    ['Q2 (c) · 4','🏺','Yusuf\'s clay pot',['الإنسان … من','mankind … from'],['طين','teen','clay']],
+    ['Q2 (c) · 2','😤✨','"Five more minutes?"',['فطرت / وجبلت','made by nature'],['الطاعة','at-taa\'a','obedience']],
+    ['Q2 (c) · 3','🏛️','Six pillars',['ركن من أركان','one of the pillars of'],['الإيمان','al-eemaan','faith']],
+    ['Q2 (a) · Mikail','🌧️🌱','Who sends the rain?',['وظيفة ميكائيل','job of Mikail'],['موكل بالأرزاق والنبات والمطر','muwakkal bil-arzaaq wan-nabaat wal-matar','in charge of provisions, plants and rain']],
+    ['Q2 (a) · Jibreel','📖✨','Grandma\'s Qur\'an',['وظيفة جبريل','job of Jibreel'],['ملك الوحي','malak al-wahy','the angel of revelation']],
+    ['Q2 (a) · Angel of Death','🖼️🤍','Grandad\'s photo',['وظيفة ملك الموت','job of the Angel of Death'],['قبض الأرواح','qabd al-arwaah','taking the souls']]];
+  const said=[`Grandma's lamp glow: angels from ${aw('نور','noor','light')}, light.`,`Yusuf's clay pot: mankind from ${aw('طين','teen','clay')}, clay.`,
+    `"Five more minutes?" Never! Made by nature for ${aw('الطاعة','at-taa\'a','obedience')}, obedience.`,`Six pillars: one of the pillars of ${aw('الإيمان','al-eemaan','faith')}, faith.`,
+    `Who sends the rain? Mikail: ${aw('موكل بالأرزاق والنبات والمطر','muwakkal bil-arzaaq wan-nabaat wal-matar','in charge of provisions, plants and rain')}.`,
+    `Grandma's Qur'an: Jibreel, ${aw('ملك الوحي','malak al-wahy','the angel of revelation')}.`,`Grandad's photo: the Angel of Death, ${aw('قبض الأرواح','qabd al-arwaah','taking the souls')}.`];
+  for(let i=0;i<7;i++){const [lb,e,cap,k,a]=M[i],x=12+(i%3)*316,y=8+Math.floor(i/3)*172;
+    const c=mk('is-card st-map',`left:${x}px;top:${y}px;width:304px;height:162px;padding:6px 10px`,
+      `<div class="src">📌 ${lb}</div><div class="pic"><span>${e}</span> <span class="cap">${cap}</span></div>`+
+      `<div class="k">🔑 ${aw(k[0],'',k[1])}</div><div class="an">➜ ${aw(a[0],'',a[2])}</div><div class="sn">${a[1]}</div>`);
+    pop(c);point(c);if(c.querySelector('.an').scrollWidth>284)c.querySelector('.an .aw').style.fontSize='19px';
+    say(said[i]);await w(2600);}
+  const B=mk('is-card st-map',`left:328px;top:352px;width:620px;height:162px;padding:6px 12px`,
+    `<div class="src">📌 Q2 (b) · four benefits</div><div class="pic"><span>☀️🌈</span> <span class="cap">The morning after</span> &nbsp;<span class="k" style="display:inline">🔑 ${aw('ثمرات … بالملائكة','','benefits … the angels')}</span></div>`+
+    `<div class="four">${FRUITS.map(F=>`<div>${F.e} ${aw(F.a,'',F.en)}</div>`).join('')}</div>`);
+  pop(B);point(B);
+  say(`And the morning after: ${aw('ثمرات','thamaraat','benefits')}, the four benefits. <b>Lovely Manners Get Thanks!</b>`);await w(3600);unpoint();
+  say(`When you see a keyword in the exam, picture the story moment, and the answer will come back to you. Now let's learn each one properly.`);await w(3600);}},
+
+/* 6 */ {t:'Light, fire and clay (Hadith 1)',run:async w=>{
+  say(`Now let's learn Grandma's hadith properly: the <b>first hadith</b> you learn by heart. It tells us what the angels, the jinn and Adam were made from.`);await w(3000);
   const h=mk('is-card','left:30px;top:10px;width:900px',`<div class="src">Hadith 1 · الحديث الأول</div><div class="q" style="font-size:27px">${ar(
     `خلقت ${kw('الملائكة','al-malaa\'ika')} من ${kw('نور','noor')} وخلق ${kw('الجان','al-jaann')} من مارج من ${kw('نار','naar')} وخلق ${kw('آدم','aadam')} مما وصف لكم`,
     `The ${kw('angels')} were created from ${kw('light')}, the ${kw('jinn')} were created from a smokeless flame of ${kw('fire')}, and ${kw('Adam')} was created from what has been described to you (clay).`,'','blk')}</div>`);pop(h);
@@ -76,7 +303,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   const tip=mk('is-why','left:130px;top:440px;width:700px;text-align:center;white-space:nowrap',`💡 light <span class="ar-font" dir="rtl" style="font-size:26px">نور</span> has a round <span class="ar-font" style="font-size:26px">و</span> &nbsp;·&nbsp; 🔥 fire <span class="ar-font" dir="rtl" style="font-size:26px">نار</span> has a tall <span class="ar-font" style="font-size:26px">ا</span>`);pop(tip);
   say(`Watch out! ${aw('نور','noor')} and ${aw('نار','naar')} look alike. Light has a round ${aw('و','waaw')}, like a bulb. Fire has a tall ${aw('ا','alif')}, like a flame.`);await w(4400);}},
 
-/* 2 */ {t:'Who does what? (Q2 a)',run:async w=>{
+/* 7 */ {t:'Who does what? (Q2 a)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:26px">${ar(
     `اكتب ${kw('وظيفة','wadheefa')} كل ملك في الجدول التالي`,`Write the ${kw('job')} of each angel in the following table`,'','blk')}</div>`);pop(q);
   say(`Question 2 a says: ${ar('اكتب وظيفة كل ملك في الجدول التالي','Write the job of each angel in the following table.')}`);await w(2600);
@@ -92,7 +319,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     say(`${aw(A.n,A.ns)}: ${aw(A.job.map(b=>b[0]).join(' '),A.job.map(b=>b[1]).join(' '))}, ${A.jobEn}. ${A.trick}`);await w(4200);}
   unpoint();}},
 
-/* 3 */ {t:'Made from… (Q2 c 1 and 4)',run:async w=>{
+/* 8 */ {t:'Made from… (Q2 c 1 and 4)',run:async w=>{
   say(`Now Question 2 c: ${ar('أكمل ما يأتي','Complete the following')}. Fill the gaps. The hadith already gave you two of the answers!`);await w(3000);
   await clueCard(w,{src:WS+'(c) · 1',kind:['أكمل','akmil','complete: fill the gap'],
     q:`خلق الله تعالى ${kw('الملائكة','al-malaa\'ika')} الكرام ${kw('من','min')} ..........`,en:`Allah the Exalted created the noble ${kw('angels')} ${kw('from')} ……`,
@@ -107,7 +334,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Adam, the first human, was made from ${aw('طين','teen')} 🟫 clay. Angels → light, people → clay.`});
   await w(1200);}},
 
-/* 4 */ {t:'Made to obey (Q2 c 2 and 3)',run:async w=>{
+/* 9 */ {t:'Made to obey (Q2 c 2 and 3)',run:async w=>{
   await clueCard(w,{src:WS+'(c) · 2',kind:['أكمل','akmil','complete: fill the gap'],
     q:`${kw('فطرت','futirat')} الملائكة ${kw('وجبلت','wa jubilat')} على ..........`,en:`The angels were ${kw('made by nature')} to ……`,
     keys:[`${aw('فطرت','futirat')} and ${aw('جبلت','jubilat')} both mean <b>made by nature</b>, born that way.`],
@@ -121,7 +348,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Believing in the angels is one of the six pillars of ${aw('الإيمان','al-eemaan')}, <b>faith</b>. The question starts with the same word!`});
   await w(1200);}},
 
-/* 5 */ {t:'Four benefits (Q2 b)',run:async w=>{
+/* 10 */ {t:'Four benefits (Q2 b)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(b)</div><div class="q" style="font-size:26px">${ar(
     `دون أربعة من ${kw('ثمرات','thamaraat')} الإيمان ${kw('بالملائكة','bil-malaa\'ika')} .`,`Write down four of the ${kw('benefits')} of believing in ${kw('the angels')}.`,'','blk')}</div>`);pop(q);
   say(`Question 2 b: ${ar('دون أربعة من ثمرات الإيمان بالملائكة','Write down four of the benefits of believing in the angels.')}`);await w(2800);
@@ -139,7 +366,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     say(`${['One','Two','Three','Four'][i]}: ${aw(F.a)}: ${F.en}.`);await w(3600);}
   unpoint();}},
 
-/* 6 */ {t:'Build the answers',run:async w=>{
+/* 11 */ {t:'Build the answers',run:async w=>{
   say(`Now you build the answers with tiles. Remember: Arabic is written from <b>right to left</b>, so the first tile goes on the right.`);await w(3200);
   let r=await buildAR(w,{src:WS+'(a)',q:`Build Jibreel's job: ${aw('جبريل','Jibreel')} → <b>the angel of revelation</b>`,
     tiles:[['الوحي','al-wahy'],['المطر','al-matar'],['ملك','malak'],['قبض','qabd']],answer:['ملك','الوحي']});
@@ -148,7 +375,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     tiles:[['لله','lillaah'],['الملائكة','al-malaa\'ika'],['محبة','mahabbat'],['لطاعتهم','li-taa\'atihim'],['بأخلاق','bi-akhlaaq']],answer:['محبة','الملائكة','لطاعتهم','لله']});
   say(r.ok?`Brilliant! ${aw('محبة الملائكة لطاعتهم لله')}.`:`Look again: ${aw('محبة الملائكة لطاعتهم لله')}. Love, angels, obeying, Allah.`);await w(3000);}},
 
-/* 7 */ {t:'Trace it',run:async w=>{
+/* 12 */ {t:'Trace it',run:async w=>{
   say(`Now trace the short answers with your finger. Go over the grey letters. Arabic letters join up, so try to keep your finger moving from <b>right to left</b>.`);await w(3400);
   const W=[['نور','noor','light'],['طين','teen','clay'],['الطاعة','at-taa\'a','obedience']];
   for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. Press <b>Done</b> when you've finished.`);
@@ -160,7 +387,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div class="ar-font" dir="rtl" style="font-size:44px;margin-top:8px;color:#5a3c00">نور · طين · الطاعة · الإيمان</div>`);pop(p);
   say(`The exam is written by hand, so practise on paper too: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Do the four answers of Question 2 c.`);await w(4000);}},
 
-/* 8 */ {t:'Keyword match',run:async w=>{
+/* 13 */ {t:'Keyword match',run:async w=>{
   say(`Keyword game! Each card has a <b>keyword</b> from a question. Tap a card, then tap the answer it belongs to.`);await w(2800);
   const r=await sortGame(w,{bins:[`<span class="ar-font" style="font-size:26px">نور</span> <small>light</small>`,`<span class="ar-font" style="font-size:26px">طين</span> <small>clay</small>`,
       `<span class="ar-font" style="font-size:26px">الطاعة</span> <small>obedience</small>`,`<span class="ar-font" style="font-size:26px">الإيمان</span> <small>faith</small>`],
@@ -168,7 +395,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       [`👼💡`,0],[`🧍🟫`,1]],top:170,colors:['#f2c200','#b8862b','#18a058','#2c66cf']});
   say(r.ok===r.total?`Perfect! You matched every keyword to its answer.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
 
-/* 9 */ {t:'Exam check',run:async w=>{
+/* 14 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
     {src:'Worksheet · Q2 · (a) · جبريل',q:'اكتب وظيفة جبريل',en:'Write the job of Jibreel.',
       o:['ملك الوحي','قبض الأرواح','موكل بالأرزاق والنبات والمطر'],oe:['the angel of revelation','taking the souls','in charge of provisions, plants and rain'],otr:['malak al-wahy','qabd al-arwaah','muwakkal bil-arzaaq wan-nabaat wal-matar'],a:0,cols:1,
@@ -197,7 +424,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       mtr:'Lovely Manners Get Thanks'}
   ]);}},
 
-/* 10 */ {t:'You did it!',run:async w=>{
+/* 15 */ {t:'You did it!',run:async w=>{
   const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 2 done!');pop(t);
   const B=[['👼💡','نور','angels: light'],['🧍🟫','طين','people: clay'],['🙇','الطاعة','made to obey'],['🏛️','الإيمان','pillar of faith'],
     ['📜','ملك الوحي','Jibreel'],['🌧️','موكل بالأرزاق والنبات والمطر','Mikail'],['⏳','قبض الأرواح','Angel of Death'],['🍎','LMGT','Lovely Manners Get Thanks']];

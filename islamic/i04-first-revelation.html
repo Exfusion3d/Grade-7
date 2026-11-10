@@ -11,13 +11,18 @@
 <link rel="icon" href="../icon-180.png">
 <title>The first revelation in the cave of Hira</title>
 <link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.st-bub{background:#fff;border:3px solid #1f2433;border-radius:18px;padding:6px 14px;font-size:22px;font-weight:800;color:#1f2433;white-space:nowrap;z-index:12}
+.st-bub::after{content:'';position:absolute;left:30px;bottom:-11px;width:16px;height:16px;background:#fff;border-right:3px solid #1f2433;border-bottom:3px solid #1f2433;transform:rotate(45deg)}
+.st-bub.r::after{left:auto;right:40px}
+</style>
 </head>
 <body>
 <script src="../lessons/engine.js"></script>
 <script src="islamic.js"></script>
 <script>
 /* Islamic Studies Lesson 4 · Life of the Prophet ﷺ (السيرة) · Worksheet Q4 (a), (b), (c).
-   The story of the first revelation in the cave of Hira, then every question of Q4 taught with clue cards.
+   A 4-scene story of the first revelation (Sahih al-Bukhari's account) with a 📌 tag for every question, a story map, then every question of Q4 taught with clue cards.
    No Qur'an verse is shown or spoken in Arabic; only the surah's name. The Prophet ﷺ and the angel are never drawn. */
 const WS='Worksheet · Q4 · ';
 const DEF_L=[ /* لغة: يطلق على الإعلام في خفاء وسرعة */
@@ -40,66 +45,258 @@ async function chunkRows(w,chunks,{top,rowH=96,size=28}){
     say(`${aw(C.bl.map(b=>b[0]).join(' '),C.bl.map(b=>b[1]).join(' '))}: <b>${C.en}</b>.`);await w(2600);}
   unpoint();}
 
+/* the story: a "📌 Q4 …" tag pops up when a story moment answers a worksheet question: the keyword, then the answer blocks */
+function pin(x,y,wd,tag,[ka,ks,ke],ans,{size=30}={}){
+  const p=mk('is-card lit',`left:${x}px;top:${y}px;width:${wd}px;box-sizing:border-box;z-index:15;padding:6px 12px 10px`,
+    `<div class="src">📌 Q4 ${tag}</div><div style="display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800;margin:2px 0 6px">`+
+    `<span style="font-size:14px;color:#626a80">keyword:</span>${ar(kw(ka,ks),kw(ke))}</div>`);
+  const b=ansBlocks(0,0,wd-24,ans,{size});b.style.position='relative';p.appendChild(b);
+  pop(p);point(p);beep(880,.08);return p;}
+function unpin(p){unpoint();an(p,[{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(.8)'}],{duration:350}).then(()=>p.remove());}
+
 Lesson.start(Object.assign({}, ISLAMIC, {
   id:'i04', num:4, part:'Life of the Prophet ﷺ · السيرة', emoji:'📜', title:'The first revelation in the cave of Hira',
   intro:`Assalaamu alaykum! It's <b>Hudhud</b> 🐦 again. Today: the <b>first revelation</b> in the cave of Hira, Question 4 of your sheet. Press <b>Start</b>!`,
   scenes:[
-/* 0 */ {t:'The cave of Hira',run:async w=>{
-  const sky=mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;overflow:hidden',
-    `<svg width="960" height="520" viewBox="0 0 960 520"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d2350"/><stop offset="1" stop-color="#5a4a9a"/></linearGradient>
-      <radialGradient id="gl"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffd84d" stop-opacity=".8"/><stop offset="1" stop-color="#ffd84d" stop-opacity="0"/></radialGradient></defs>
-      <rect width="960" height="520" fill="url(#sk)"/>
-      <g fill="#fff" opacity=".8"><circle cx="80" cy="60" r="2"/><circle cx="190" cy="120" r="1.6"/><circle cx="300" cy="40" r="2.2"/><circle cx="420" cy="90" r="1.5"/><circle cx="880" cy="70" r="2"/><circle cx="760" cy="30" r="1.6"/><circle cx="600" cy="50" r="1.4"/></g>
-      <path d="M40 520 L330 150 Q360 120 390 150 L520 300 L600 250 L760 520 Z" fill="#7a5a3a"/>
-      <path d="M330 150 Q360 120 390 150 L420 185 Q360 170 300 190 Z" fill="#8f6b46"/>
-      <path d="M0 520 L0 430 Q120 400 240 450 L300 520 Z" fill="#5e4430"/>
-      <ellipse id="glow" cx="372" cy="232" rx="70" ry="60" fill="url(#gl)" opacity="0"/>
-      <path d="M350 250 Q352 212 372 208 Q392 212 394 250 Z" fill="#1f160e"/>
-      <g fill="#e8d7b0"><rect x="640" y="470" width="40" height="30"/><rect x="690" y="460" width="34" height="40"/><rect x="734" y="474" width="44" height="26"/><rect x="790" y="466" width="30" height="34"/><rect x="830" y="476" width="50" height="24"/></g>
+/* 0 */ {t:'Story: The cave on the mountain',run:async w=>{
+  const bg=mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;overflow:hidden',
+    `<svg width="960" height="520" viewBox="0 0 960 520"><defs><linearGradient id="sk0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141a40"/><stop offset="1" stop-color="#5a4a9a"/></linearGradient>
+      <radialGradient id="gl0"><stop offset="0" stop-color="#fff6c8"/><stop offset=".45" stop-color="#ffd84d" stop-opacity=".7"/><stop offset="1" stop-color="#ffd84d" stop-opacity="0"/></radialGradient></defs>
+      <rect width="960" height="520" fill="url(#sk0)"/>
+      <g id="stars0" fill="#fff"><circle cx="190" cy="60" r="2"/><circle cx="260" cy="30" r="1.6"/><circle cx="420" cy="50" r="2.2"/><circle cx="500" cy="110" r="1.5"/><circle cx="560" cy="40" r="1.8"/><circle cx="470" cy="190" r="1.4"/><circle cx="140" cy="150" r="1.6"/><circle cx="80" cy="230" r="1.4"/></g>
+      <path d="M-20 520 L120 330 L210 230 L290 120 Q310 100 330 118 L420 230 L520 360 L640 520 Z" fill="#6b4e33"/>
+      <path d="M290 120 Q310 100 330 118 L372 170 Q320 150 262 162 Z" fill="#82603f"/>
+      <path d="M120 330 L210 230 L250 250 L160 360 Z" fill="#5d432c"/>
+      <ellipse id="glow0" cx="318" cy="176" rx="60" ry="50" fill="url(#gl0)" opacity="0"/>
+      <path d="M300 190 Q302 162 318 158 Q334 162 336 190 Z" fill="#140d07"/>
+      <path d="M600 505 L520 452 L560 404 L468 344 L500 292 L402 244 L424 210 L330 192" stroke="#f3dca0" stroke-width="3" stroke-dasharray="3 9" fill="none" stroke-linecap="round" opacity=".55"/>
+      <rect y="492" width="960" height="28" fill="#3d2c1d"/>
+      <g fill="#d8c39a"><rect x="650" y="452" width="46" height="40"/><rect x="702" y="440" width="40" height="52"/><rect x="752" y="458" width="38" height="34"/><rect x="852" y="446" width="44" height="46"/><rect x="902" y="460" width="50" height="32"/></g>
+      <rect x="800" y="450" width="40" height="42" fill="#15151a"/><rect x="800" y="458" width="40" height="5" fill="#d9a441"/>
+      <g id="win0" fill="#ffd84d"><rect x="664" y="464" width="8" height="10"/><rect x="716" y="452" width="8" height="10"/><rect x="766" y="468" width="8" height="10"/><rect x="866" y="458" width="8" height="10"/><rect x="920" y="470" width="8" height="10"/></g>
     </svg>`);
-  const glow=sky.querySelector('#glow');
-  const hi=mk('ar-font','left:0;top:8px;width:960px;text-align:center;font-size:52px;color:#ffe9a8',aw('السلام عليكم','assalaamu \'alaykum'));pop(hi);
-  say(`${aw('السلام عليكم','assalaamu alaykum')}! Today is a true story: the very first time the Qur'an came down to the Prophet ﷺ.`);await w(3200);hi.remove();
-  const mk1=mk('is-chip','left:620px;top:410px',`🏘️ ${ar('مكة','Makkah','makka')}`);pop(mk1);point(mk1);
-  say(`This is ${aw('مكة','makka')}, Makkah. Near Makkah there is a tall mountain.`);await w(2600);
-  const cave=mk('is-chip','left:290px;top:262px',`${ar('غار حراء','the cave of Hira','ghaar hiraa\'')}`);pop(cave);point(cave);
-  say(`High up on the mountain is a small cave: ${aw('غار حراء','ghaar hiraa\'')}, the <b>cave of Hira</b>. ${aw('غار','ghaar')} means <b>cave</b>.`);await w(3400);
-  say(`Before the revelation, the Prophet ﷺ liked to go up there, away from the noise, to <b>worship</b> Allah and think.`);await w(3400);unpoint();
-  const age=mk('is-chip','left:40px;top:90px;font-size:26px','🎂 40');pop(age);point(age);
-  say(`When he was about <b>forty</b> years old…`);await w(1800);
-  const moon=mk('is-chip','left:40px;top:160px',`🌙 ${ar('رمضان','Ramadan','ramadaan')}`);pop(moon);point(moon);
-  say(`…in the month of ${aw('رمضان','ramadaan')}, <b>Ramadan</b>…`);await w(2000);unpoint();
-  an(glow,[{opacity:0},{opacity:1}],{duration:900});loop(glow,[{transform:'scale(1)',transformOrigin:'372px 232px'},{transform:'scale(1.25)',transformOrigin:'372px 232px'}],900,{direction:'alternate'});
-  const jb=mk('is-chip','left:520px;top:120px',`✨ ${ar('جبريل','Jibreel','jibreel')}`);pop(jb);point(jb);
-  say(`…the angel ${aw('جبريل','jibreel')}, <b>Jibreel</b>, came to him in the cave, with the first verses of the Qur'an.`);await w(3400);
-  const rd=mk('is-card','left:610px;top:190px;width:290px;text-align:center',`<div style="font-size:40px">📖</div><div style="font-size:24px;font-weight:800;color:#7a4a00">"Read!"</div>`+
-    `<div style="font-size:15px;font-weight:800;color:#626a80">the first verses of</div><div style="font-size:24px;font-weight:800">${ar('سورة العلق','Surah Al-\'Alaq','soorat al-\'alaq')}</div>`);pop(rd);point(rd);
-  say(`They were the first verses of ${aw('سورة العلق','soorat al-\'alaq')}, Surah <b>Al-'Alaq</b>. The very first word means <b>Read!</b>`);await w(3800);unpoint();
-  say(`Keep this picture in your head: ⛰️ cave, 🌙 Ramadan, 🎂 forty, ✨ Jibreel, 📖 Read. It answers half of Question 4!`);await w(3600);}},
+  loop(bg.querySelector('#stars0'),[{opacity:1},{opacity:.4}],1400,{direction:'alternate'});
+  loop(bg.querySelector('#win0'),[{opacity:1},{opacity:.6}],900,{direction:'alternate'});
+  const glow=bg.querySelector('#glow0');
+  const ttl=mk('','left:0;top:20px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#ffe9a8;text-shadow:0 3px 0 #1d2350','📜 A true story');pop(ttl);
+  say(`${aw('السلام عليكم','assalaamu alaykum')}! Today's story is <b>true</b>. It happened in Makkah more than 1,400 years ago, and it changed the whole world.`);await w(3600);
+  an(ttl,[{opacity:1},{opacity:0}],{duration:500});
+  const mc=mk('is-chip','left:660px;top:384px',`🕋 ${ar('مكة','Makkah','makka')}`);pop(mc);point(mc);
+  say(`This is ${aw('مكة','makka')}, Makkah. Back then, most people there worshipped idols made of stone, and the poor and weak were often treated badly.`);await w(3800);
+  const am=mk('is-chip','left:620px;top:296px',`⭐ ${ar('الأمين','al-Ameen: the trustworthy one','al-ameen')}`);pop(am);point(am);
+  say(`But one man was different: Muhammad ﷺ. Everyone knew he was honest. They called him ${aw('الأمين','al-ameen','al-Ameen')}, the <b>trustworthy one</b>.`);await w(3800);
+  an(am,[{opacity:1},{opacity:0}],{duration:400});unpoint();
+  /* footsteps climbing the path to the cave */
+  const P=[[600,505],[520,452],[560,404],[468,344],[500,292],[402,244],[424,210],[330,192]];
+  const ft=mk('','left:0;top:0;font-size:30px;z-index:5','👣');
+  const fd=mk('','left:0;top:0;font-size:24px;z-index:5','🫓💧');
+  say(`Before the revelation, he loved to be <b>alone</b>, away from the noise, to <b>worship</b> Allah. He took food and water and climbed up a mountain near Makkah.`);
+  an(ft,P.map(([x,y])=>({transform:`translate(${x-15}px,${y-22}px)`})),{duration:5200,easing:'linear'});
+  an(fd,P.map(([x,y])=>({transform:`translate(${x+14}px,${y-4}px)`})),{duration:5600,easing:'linear'});
+  await w(4200);
+  an(glow,[{opacity:0},{opacity:.55}],{duration:900});
+  const cv=mk('is-chip','left:350px;top:146px',`🕳️ ${ar('غار حراء','the cave of Hira','ghaar hiraa\'')}`);pop(cv);point(cv);
+  say(`High up, there is a small cave: ${aw('غار حراء','ghaar hiraa\'')}, the <b>cave of Hira</b>. He stayed there for many nights, worshipping, then went home for more food.`);await w(4000);
+  ft.remove();fd.remove();
+  let p=pin(560,12,380,'(a) 2',['غار','ghaar','cave'],[['حراء','hiraa\'','Hira']],{size:40});
+  say(`📌 That's Question 4 a 2! The keyword is ${aw('غار','ghaar')}, <b>cave</b>. Which cave did he worship in? ${aw('حراء','hiraa\'')}, <b>Hira</b>.`);await w(4000);
+  say(`The mountain is called the Mountain of Light today, and visitors still climb up to see the little cave.`);await w(3200);
+  cv.remove();unpin(p);
+  const ag=mk('is-chip','left:40px;top:300px;font-size:30px','🎂 <b id="yr">1</b>&nbsp;years old');pop(ag);point(ag);
+  const yr=ag.querySelector('#yr');let n=1;const iv=setInterval(()=>{if(!yr.isConnected||n>=40){clearInterval(iv);return;}yr.textContent=++n;},45);
+  say(`Years went by. He grew older and older… until he was <b>forty</b> years old.`);await w(3200);
+  await w.until(()=>n>=40);clearInterval(iv);yr.textContent='40';an(ag,[{transform:'scale(1)'},{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:600});
+  p=pin(560,12,380,'(b) 1',['أربعين','arba\'een','forty'],TICK,{size:44});
+  say(`📌 Question 4 b 1: ${aw('أربعين','arba\'een')} means <b>forty</b>. The revelation came when he was forty. So that sentence is <b>true</b>: tick √.`);await w(4200);
+  unpin(p);
+  const mn=mk('','left:40px;top:24px;font-size:64px','🌙');an(mn,[{opacity:0,transform:'translateY(30px) rotate(-30deg)'},{opacity:1,transform:'translateY(0) rotate(0)'}],{duration:900});
+  const rm=mk('is-chip','left:120px;top:36px',`${ar('رمضان','Ramadan','ramadaan')}`);pop(rm);point(rm);
+  say(`Then the new moon was seen: the month of ${aw('رمضان','ramadaan')}, <b>Ramadan</b>, had begun. He went up to the cave again, to worship.`);await w(3800);
+  p=pin(560,12,380,'(b) 3',['رمضان','ramadaan','Ramadan'],TICK,{size:44});
+  say(`📌 Question 4 b 3: ${aw('رمضان','ramadaan')}. The revelation first came in the month of <b>Ramadan</b>. True: tick √.`);await w(3800);
+  unpin(p);unpoint();
+  an(glow,[{opacity:.55},{opacity:1}],{duration:900});loop(glow,[{transform:'scale(1)',transformOrigin:'318px 176px'},{transform:'scale(1.3)',transformOrigin:'318px 176px'}],800,{direction:'alternate'});
+  const q=mk('','left:0;top:250px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#ffe9a8;text-shadow:0 3px 0 #1d2350','✨ One night in the cave… ✨');pop(q);
+  say(`And one night, alone in the cave, something happened that had never happened to him before…`);await w(3400);}},
 
-/* 1 */ {t:'Khadijah and Waraqa',run:async w=>{
-  const S=[{x:650,e:'🏠',a:'خديجة رضي الله عنها',s:'khadeeja radiyallaahu \'anhaa',en:'Khadijah',d:'His wife comforted him'},
-    {x:340,e:'📜',a:'ورقة بن نوفل',s:'waraqa ibn nawfal',en:'Waraqa ibn Nawfal',d:'Her cousin, who knew the earlier holy books'},
-    {x:30,e:'✨',a:'الناموس',s:'an-naamoos',en:'an-Naamoos',d:'= the angel of revelation, Jibreel'}];
-  const T=[`After that, the Prophet ﷺ went home to his wife ${aw('خديجة','khadeeja')}, Khadijah. She comforted him.`,
-    `Khadijah took him to her cousin ${aw('ورقة بن نوفل','waraqa ibn nawfal')}, Waraqa ibn Nawfal: a wise old man who knew the earlier holy books.`,
-    `Waraqa said it was ${aw('الناموس','an-naamoos')}, an-Naamoos, who had come to Prophet Musa. An-Naamoos means the <b>angel of revelation</b>: Jibreel!`];
-  for(let i=0;i<3;i++){const s=S[i];
-    const c=mk('is-card',`left:${s.x}px;top:14px;width:280px;height:228px;text-align:center`,
-      `<div style="font-size:52px">${s.e}</div><div style="font-size:26px;font-weight:700;color:#5a3c00;line-height:1.35">${ar(s.a,s.en,s.s)}</div><div style="font-size:16px;font-weight:700;color:#626a80;margin-top:4px">${s.d}</div>`);
-    pop(c);point(c);if(i)mk('',`left:${s.x+282}px;top:110px;font-size:34px;width:28px;text-align:center`,'⬅');
-    say(T[i]);await w(3800);}
-  unpoint();
-  const f=mk('is-card','left:30px;top:268px;width:900px;text-align:center',
-    `<div style="font-size:20px;font-weight:800;color:#7a4a00">Later, the revelation came in <b>different forms</b>:</div>`+
-    `<div style="display:flex;justify-content:center;gap:60px;margin-top:8px"><div><div style="font-size:50px">👤</div><div style="font-size:16px;font-weight:800">Jibreel sometimes came<br>looking like a man</div></div>`+
-    `<div><div style="font-size:50px" class="bell">🔔</div><div style="font-size:16px;font-weight:800">sometimes it came like<br>the ringing of a bell</div></div>`+
-    `<div><div style="font-size:50px">❌1️⃣</div><div style="font-size:16px;font-weight:800">so NOT always<br>one single form</div></div></div>`);
-  pop(f);point(f);loop(f.querySelector('.bell'),[{transform:'rotate(-14deg)'},{transform:'rotate(14deg)'}],260,{direction:'alternate'});
-  say(`One more thing to remember. The revelation came in <b>different forms</b>. Sometimes Jibreel came looking like a man. Sometimes it came like the ringing of a bell.`);await w(4000);
-  say(`So it did <b>not</b> always come in one single form. That's a tick-or-cross question on your sheet!`);await w(3000);unpoint();}},
+/* 1 */ {t:'Story: "Read!"',run:async w=>{
+  const bg=mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;overflow:hidden',
+    `<svg width="960" height="520" viewBox="0 0 960 520"><defs><linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#10163a"/><stop offset="1" stop-color="#3a3478"/></linearGradient>
+      <radialGradient id="gl1"><stop offset="0" stop-color="#fffbe6"/><stop offset=".4" stop-color="#ffe680" stop-opacity=".85"/><stop offset="1" stop-color="#ffd84d" stop-opacity="0"/></radialGradient></defs>
+      <rect width="960" height="520" fill="url(#sk1)"/>
+      <g id="st1" fill="#fff"><circle cx="200" cy="150" r="2"/><circle cx="260" cy="210" r="1.5"/><circle cx="350" cy="140" r="2.2"/><circle cx="420" cy="230" r="1.6"/><circle cx="160" cy="260" r="1.4"/><circle cx="460" cy="170" r="1.8"/></g>
+      <path d="M90 470 Q160 380 240 400 Q300 360 380 395 Q450 370 540 470 Z" fill="#241a3a"/>
+      <g fill="#ffd84d"><circle cx="250" cy="430" r="2.5"/><circle cx="280" cy="440" r="2"/><circle cx="320" cy="425" r="2.5"/><circle cx="360" cy="438" r="2"/><circle cx="300" cy="452" r="2"/><circle cx="400" cy="446" r="2.2"/></g>
+      <ellipse id="glow1" cx="315" cy="260" rx="230" ry="200" fill="url(#gl1)" opacity="0"/>
+      <path fill-rule="evenodd" fill="#3b2a1a" d="M0 0 H960 V520 H0 Z M90 470 Q70 130 300 90 Q530 130 540 470 Z"/>
+      <path d="M560 60 Q640 120 610 220 M700 300 Q760 360 720 460 M40 80 Q70 160 50 250 M860 120 Q900 200 870 300" stroke="#2c1f12" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <rect y="470" width="960" height="50" fill="#2c1f12"/>
+    </svg>`);
+  loop(bg.querySelector('#st1'),[{opacity:1},{opacity:.4}],1300,{direction:'alternate'});
+  const glow=bg.querySelector('#glow1');
+  const lb=mk('is-chip','left:20px;top:14px;font-size:16px',`🕳️ inside ${ar('غار حراء','the cave of Hira','ghaar hiraa\'')}`);pop(lb);
+  say(`We are inside the cave of Hira. It is quiet. Through the opening you can see the stars, and the lamps of Makkah far below.`);await w(3800);
+  an(glow,[{opacity:0},{opacity:1}],{duration:1400});loop(glow,[{transform:'scale(1)',transformOrigin:'315px 260px'},{transform:'scale(1.12)',transformOrigin:'315px 260px'}],900,{direction:'alternate'});
+  const sp=mk('','left:255px;top:200px;font-size:64px;z-index:4','✨');pop(sp);loop(sp,[{transform:'scale(1) rotate(0)'},{transform:'scale(1.3) rotate(20deg)'}],700,{direction:'alternate'});
+  say(`Suddenly, the angel ${aw('جبريل','jibreel')}, <b>Jibreel</b>, came to him. We never draw angels, so in our picture there is only a light.`);await w(3800);
+  let p=pin(580,12,360,'(a) 3',['الملك','al-malak','the angel'],[['جبريل','jibreel','Jibreel'],['عليه السلام','\'alayhis-salaam','peace be upon him']],{size:36});
+  say(`📌 Question 4 a 3: ${aw('الملك','al-malak')}, <b>the angel</b>. The angel who came down to the Prophet ﷺ was ${aw('جبريل عليه السلام','jibreel \'alayhis-salaam')}, Jibreel, peace be upon him.`);await w(4200);
+  say(`Remember Lesson 2? Jibreel is the angel who brings Allah's words to the prophets.`);await w(2800);
+  unpin(p);
+  const b1=mk('st-bub','left:330px;top:120px;font-size:40px','"Read!"');pop(b1);point(b1);beep(660,.1);
+  say(`The angel said: <b>"Read!"</b>`);await w(1800);
+  const b2=mk('st-bub l','left:130px;top:350px',`<small style="font-size:13px;color:#626a80;display:block">the Prophet ﷺ:</small>"I am not a reader."`);pop(b2);point(b2);
+  say(`The Prophet ﷺ answered: <b>"I am not a reader."</b> He had never learnt to read or write.`);await w(3400);
+  const C=mk('','left:610px;top:150px;display:flex;gap:16px;font-size:60px','');
+  say(`The angel held him tightly, until it was very hard to bear, then let him go and said again: <b>Read!</b> This happened <b>three</b> times.`);
+  ['1️⃣','2️⃣','3️⃣'].forEach((e,i)=>{const s=document.createElement('span');s.textContent=e;s.style.opacity=0;C.appendChild(s);pop(s,600+i*1500);});
+  await w(4800);b1.remove();b2.remove();C.remove();unpoint();
+  const bk=mk('is-card','left:150px;top:150px;width:330px;text-align:center;z-index:6',`<div style="font-size:52px">📖</div><div style="font-size:15px;font-weight:800;color:#626a80">the very first verses came from</div>`+
+    `<div style="font-size:30px;font-weight:800;color:#5a3c00">${ar('سورة العلق','Surah Al-\'Alaq','soorat al-\'alaq')}</div><div style="font-size:22px;font-weight:800;color:#7a4a00">first word: "Read!"</div>`);pop(bk);point(bk);
+  say(`Then the angel recited the <b>first</b> verses of the Qur'an ever to come down. They are the start of ${aw('سورة العلق','soorat al-\'alaq')}, Surah <b>Al-'Alaq</b>, and they begin with the word that means <b>Read</b>.`);await w(4600);
+  p=pin(580,12,360,'(a) 1',['أول … سورة','awwal … soorat','first … Surah'],[['العلق','al-\'alaq','Al-\'Alaq']],{size:40});
+  say(`📌 Question 4 a 1: ${aw('أول','awwal')} means <b>first</b>, ${aw('سورة','soora')} means <b>surah</b>. The first verses came from Surah ${aw('العلق','al-\'alaq')}, <b>Al-'Alaq</b>.`);await w(4200);
+  say(`Think about it: the very first word Allah sent down was <b>Read!</b> A great reason to love reading and learning.`);await w(3400);
+  say(`Then the light was gone. The Prophet ﷺ left the cave and hurried home, his heart trembling…`);an(glow,[{opacity:1},{opacity:0}],{duration:1600});an(sp,[{opacity:1},{opacity:0}],{duration:1200});await w(3200);}},
 
-/* 2 */ {t:'Surah and cave (Q4 a 1 and 2)',run:async w=>{
+/* 2 */ {t:'Story: "Cover me!"',run:async w=>{
+  const bg=mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;overflow:hidden',
+    `<svg width="960" height="520" viewBox="0 0 960 520"><defs><linearGradient id="sk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151b44"/><stop offset="1" stop-color="#4b3f8a"/></linearGradient>
+      <radialGradient id="lp2"><stop offset="0" stop-color="#ffe680"/><stop offset="1" stop-color="#ffd84d" stop-opacity="0"/></radialGradient></defs>
+      <rect width="960" height="520" fill="url(#sk2)"/>
+      <g id="st2" fill="#fff"><circle cx="300" cy="60" r="2"/><circle cx="380" cy="130" r="1.5"/><circle cx="210" cy="40" r="1.8"/><circle cx="440" cy="80" r="1.4"/><circle cx="260" cy="200" r="1.5"/></g>
+      <path d="M-20 340 L90 150 Q105 132 120 150 L260 340 Z" fill="#5d432c"/>
+      <path d="M98 182 Q99 168 106 166 Q113 168 114 182 Z" fill="#140d07"/>
+      <rect y="470" width="960" height="50" fill="#3d2c1d"/>
+      <path d="M106 186 L150 260 L200 330 L250 420 L330 470 L380 478 L560 486 L780 482" stroke="#f3dca0" stroke-width="3" stroke-dasharray="3 9" fill="none" opacity=".45"/>
+      <rect x="300" y="340" width="160" height="130" fill="#c9a46a"/><rect x="292" y="330" width="176" height="14" fill="#a8844e"/>
+      <rect x="360" y="400" width="40" height="70" fill="#5a3a1c"/>
+      <ellipse id="lamp2" cx="331" cy="380" rx="34" ry="30" fill="url(#lp2)"/><rect x="318" y="366" width="26" height="28" fill="#ffd84d"/>
+      <rect x="720" y="350" width="150" height="120" fill="#bf9a62"/><rect x="712" y="340" width="166" height="14" fill="#9e7b46"/>
+      <rect x="776" y="410" width="38" height="60" fill="#5a3a1c"/><rect x="836" y="372" width="22" height="24" fill="#ffd84d" opacity=".8"/>
+    </svg>`);
+  loop(bg.querySelector('#st2'),[{opacity:1},{opacity:.4}],1300,{direction:'alternate'});
+  loop(bg.querySelector('#lamp2'),[{opacity:1},{opacity:.55}],700,{direction:'alternate'});
+  const kh=mk('is-chip','left:466px;top:414px;font-size:15px;padding:2px 10px',`🏠 the house of ${ar('خديجة','Khadijah','khadeeja')}`);pop(kh);
+  const ft=mk('','left:0;top:0;font-size:30px;z-index:5','👣');
+  const P=[[106,186],[150,260],[200,330],[250,420],[330,466],[378,460]];
+  an(ft,P.map(([x,y])=>({transform:`translate(${x-15}px,${y-24}px)`})),{duration:3600,easing:'linear'});
+  const ht=mk('','left:420px;top:250px;font-size:44px;z-index:5','💓');pop(ht);loop(ht,[{transform:'scale(1)'},{transform:'scale(1.35)'}],300,{direction:'alternate'});
+  say(`The Prophet ﷺ came down the mountain and hurried through the dark streets of Makkah to his home. His heart was <b>trembling</b>.`);await w(4000);
+  ht.remove();
+  const b=mk('st-bub','left:250px;top:240px',`"Cover me! Cover me!"`);pop(b);point(b);
+  say(`He came in to his wife ${aw('خديجة','khadeeja')}, Khadijah, and said: <b>"Cover me! Cover me!"</b>`);await w(3000);
+  const ck=mk('','left:330px;top:150px;font-size:56px;z-index:5','🧥');an(ck,[{transform:'translateY(-60px)',opacity:0},{transform:'translateY(130px)',opacity:1}],{duration:1400,easing:'ease-in'});
+  say(`So they wrapped him in a cloak until his fear went away. Then he told her everything, and said: "I was afraid for myself."`);await w(4000);
+  b.remove();ck.remove();
+  const b2=mk('st-bub','left:200px;top:236px',`<small style="font-size:13px;color:#626a80;display:block">Khadijah:</small>"Never! Allah will never let you down!"`);pop(b2);point(b2);
+  say(`Khadijah comforted him. She said: <b>"Never! By Allah, Allah will never let you down."</b>`);await w(3400);
+  const K=[['👨‍👩‍👧','kind to family'],['🤝','helps the weak'],['🍞','gives to the poor'],['🏡','looks after guests'],['🆘','helps in hard times']];
+  const kc=mk('is-card','left:480px;top:14px;width:450px;box-sizing:border-box;padding:8px 10px',`<div style="font-size:15px;font-weight:800;color:#7a4a00;margin-bottom:4px">Khadijah: "Because you are…"</div><div style="display:flex;justify-content:space-between"></div>`);
+  pop(kc);point(kc);const kr=kc.lastElementChild;
+  say(`"You are kind to your family, you help the weak, you give to the poor, you look after guests, and you help people in hard times."`);
+  K.forEach(([e,t],i)=>{const d=document.createElement('div');d.style.cssText='width:84px;text-align:center;font-size:13px;font-weight:800;color:#5a3c00;line-height:1.2;opacity:0';d.innerHTML=`<div style="font-size:36px">${e}</div>${t}`;kr.appendChild(d);pop(d,i*900);});
+  await w(4800);
+  say(`She believed him straight away. Khadijah became the very first person to accept Islam.`);await w(3200);
+  kc.remove();b2.remove();unpoint();
+  an(ft,[{transform:'translate(363px,436px)'},{transform:'translate(760px,436px)'}],{duration:2600,easing:'linear'});
+  const wq=mk('is-chip','left:690px;top:290px',`📜 ${ar('ورقة بن نوفل','Waraqa ibn Nawfal','waraqa ibn nawfal')}`);pop(wq,800);
+  say(`Then Khadijah took him to her cousin, ${aw('ورقة بن نوفل','waraqa ibn nawfal')}, <b>Waraqa ibn Nawfal</b>: a very old man who had become blind, and who knew the holy books that came before.`);await w(4400);point(wq);
+  say(`The Prophet ﷺ told Waraqa everything he had seen in the cave.`);await w(2400);
+  wq.remove();ft.remove();
+  const b3=mk('st-bub r','left:440px;top:262px',`<small style="font-size:13px;color:#626a80;display:block">Waraqa:</small>"This is ${ar(kw('الناموس','an-naamoos'),kw('an-Naamoos'))}, whom Allah sent to Musa!"`);b3.classList.add('lit');pop(b3);point(b3);
+  say(`Waraqa said: <b>"This is ${aw('الناموس','an-naamoos','an-Naamoos')}, whom Allah sent down to Musa!"</b>`);await w(3400);
+  let p=pin(470,12,470,'(c) 3',['الناموس','an-naamoos','an-Naamoos'],[['ملك','malak','angel'],['الوحي','al-wahy','of revelation'],['( جبريل عليه السلام )','(jibreel \'alayhis-salaam)','(Jibreel, peace be upon him)']],{size:28});
+  say(`📌 Question 4 c 3: what did Waraqa mean by ${aw('الناموس','an-naamoos')}? ${aw('ملك الوحي','malak al-wahy')}: the <b>angel of revelation</b>, Jibreel, peace be upon him. The same angel who came to Musa!`);await w(4600);
+  say(`Waraqa also warned him: one day his own people would turn against him, just as people had done to the prophets before.`);await w(3600);
+  unpin(p);b3.remove();
+  const rd=mk('','left:330px;top:240px;font-size:60px;z-index:5','✅');pop(rd);
+  say(`Now the Prophet ﷺ understood what had happened in the cave. He was not afraid any more.`);await w(3000);
+  p=pin(470,12,470,'(c) 2',['حال … بعد نزول الوحي','haal … ba\'da nuzool al-wahy','how … after the revelation came'],
+    [['أصبح','asbaha','he became'],['مستعدا','musta\'iddan','ready'],['لقبول','li-qabool','to receive'],['الوحي','al-wahy','the revelation']],{size:30});
+  say(`📌 Question 4 c 2: how was he <b>after</b> the revelation came? ${aw('أصبح مستعدا لقبول الوحي','asbaha musta\'iddan li-qabool al-wahy')}: he <b>became ready</b> to receive the revelation.`);await w(4400);
+  say(`And the revelation kept coming, bit by bit, for twenty-three years, until the whole Qur'an had come down.`);await w(3200);}},
+
+/* 3 */ {t:'Story: The bell and the whisper',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;background:linear-gradient(#fff4dc,#f6e2b8)','');
+  const qb=mk('st-bub','left:40px;top:20px;font-size:20px',`<small style="font-size:13px;color:#626a80;display:block">a companion, al-Harith ibn Hisham:</small>"How does the revelation come to you?"`);pop(qb);point(qb);
+  say(`Years later, a companion called al-Harith ibn Hisham asked the Prophet ﷺ: <b>"How does the revelation come to you?"</b>`);await w(3600);
+  const F=[['🔔','like the ringing<br>of a bell','the hardest on him'],['🚪💬','the angel came<br>looking like a man','and spoke to him'],['❄️💧','on cold days','his forehead dripped with sweat']];
+  const fc=F.map(([e,a,b],i)=>mk('is-card',`left:${40+i*300}px;top:110px;width:270px;height:150px;box-sizing:border-box;text-align:center`,
+    `<div class="e" style="font-size:48px">${e}</div><div style="font-size:18px;font-weight:800;color:#5a3c00;line-height:1.25">${a}</div><div style="font-size:14px;font-weight:700;color:#626a80">${b}</div>`));
+  pop(fc[0]);point(fc[0]);loop(fc[0].querySelector('.e'),[{transform:'rotate(-16deg)'},{transform:'rotate(16deg)'}],240,{direction:'alternate'});
+  say(`He answered: "Sometimes it comes to me like the <b>ringing of a bell</b>, and that is the hardest on me."`);await w(3600);
+  pop(fc[1]);point(fc[1]);
+  say(`"And sometimes the angel comes to me <b>looking like a man</b>, and speaks to me."`);await w(3000);
+  pop(fc[2]);point(fc[2]);
+  say(`His wife Aisha said that even on very <b>cold</b> days, she saw his forehead dripping with sweat when the revelation came.`);await w(3600);
+  let p=pin(250,290,460,'(b) 2',['صورة واحدة','soora waahida','one single form'],CROSS,{size:44});
+  say(`📌 Question 4 b 2: ${aw('صورة واحدة','soora waahida')} means <b>one single form</b>. Did it always come in one form? No! Bell, man… <b>different forms</b>. False: cross ×.`);await w(4600);
+  clear();
+  /* the classroom: what wahy means in everyday language */
+  mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;background:linear-gradient(#e9f1ff,#d3e2fb)','');
+  mk('','left:40px;top:20px;width:400px;height:150px;background:#1f5a3c;border:8px solid #8a5a2b;border-radius:10px;box-sizing:border-box;color:#fff;font:700 22px/1.4 "Chalkboard SE","Comic Sans MS",cursive;padding:14px',
+    'Today: fractions ½ + ¼ = ¾');
+  const tc=mk('','left:450px;top:60px;font-size:72px','👩‍🏫');
+  mk('','left:560px;top:206px;width:360px;height:22px;background:#a5733d;border-radius:6px','');
+  const yu=mk('','left:600px;top:130px;font-size:64px','👦');const ma=mk('','left:800px;top:130px;font-size:64px','👧');
+  mk('','left:588px;top:232px;font-size:14px;font-weight:800;color:#2c66cf','Yusuf');mk('','left:796px;top:232px;font-size:14px;font-weight:800;color:#c2367a','Maryam');
+  an(tc,[{transform:'scaleX(-1)'}],{duration:200});
+  say(`Now, the Arabic word for revelation is ${aw('الوحي','al-wahy')}. What does it mean in everyday language? Let's peek into a classroom.`);await w(3600);
+  say(`The teacher turns to write on the board. Yusuf has big news: there's a surprise party for Teacher at break time!`);await w(3400);
+  const wh=mk('st-bub','left:500px;top:110px;font-size:17px;z-index:8','🤫 psst… surprise party at break!');
+  an(wh,[{transform:'translateX(0) scale(.3)',opacity:0},{transform:'translateX(60px) scale(1)',opacity:1,offset:.3},{transform:'translateX(80px) scale(1)',opacity:1,offset:.75},{transform:'translateX(160px) scale(.3)',opacity:0}],{duration:2200,easing:'ease-in-out'});
+  an(ma,[{transform:'rotate(0)'},{transform:'rotate(-12deg)'},{transform:'rotate(0)'}],{duration:700,delay:900});
+  say(`He leans over and whispers it to Maryam, <b>secretly</b> and super <b>quickly</b>. Psst!`);await w(2800);
+  an(tc,[{transform:'scaleX(-1)'},{transform:'scaleX(1)'}],{duration:300});const qm=mk('','left:520px;top:40px;font-size:40px','❓');pop(qm);
+  say(`The teacher turns round… and notices nothing! A message told <b>secretly</b> and <b>quickly</b>: in language, that is what ${aw('وحي','wahy')} means.`);await w(3800);qm.remove();
+  p=pin(30,270,900,'(c) 1 · in language',['الوحي لغة','al-wahy lugha','revelation in language'],
+    [['يطلق','yutlaqu','it is used'],['على','\'alaa','for'],['الإعلام','al-i\'laam','telling'],['في','fee','in'],['خفاء','khafaa\'','secret'],['وسرعة','wa sur\'a','and quickly']],{size:30});
+  say(`📌 Question 4 c 1, ${aw('لغة','lugha')}, in language: ${aw('يطلق على الإعلام في خفاء وسرعة','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a')}. It is used for telling something <b>secretly</b> 🤫 and <b>quickly</b> ⚡.`);await w(4800);
+  clear();
+  /* in Islamic law: Allah's message to His prophets */
+  mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;background:linear-gradient(#1d2350,#5a4a9a)','');
+  const R=[['✨','Allah sends<br>His message'],['📜','brought by<br>Jibreel'],['⛰️','to His prophets<br>and messengers'],['🌍','who pass it<br>on to people']];
+  const row=mk('','left:30px;top:24px;width:900px;display:flex;justify-content:space-between;align-items:center','');
+  say(`But in Islamic law, ${aw('الوحي','al-wahy')} means something much greater. It's like our story in the cave:`);
+  for(let i=0;i<R.length;i++){if(i){const a=document.createElement('div');a.style.cssText='font-size:34px;color:#ffe9a8;opacity:0';a.textContent='➜';row.appendChild(a);pop(a,i*700-350);}
+    const d=document.createElement('div');d.style.cssText='width:170px;text-align:center;color:#fff;font-size:16px;font-weight:800;line-height:1.25;opacity:0';d.innerHTML=`<div style="font-size:52px">${R[i][0]}</div>${R[i][1]}`;row.appendChild(d);pop(d,i*700);}
+  await w(3600);
+  p=pin(30,230,900,'(c) 1 · in Islamic law',['الوحي شرعا','al-wahy shar\'an','revelation in Islamic law'],
+    [['إعلام','i\'laam','telling'],['الله','Allaah','Allah'],['تعالى','ta\'aalaa','the Exalted'],['أنبياءه','anbiyaa\'ahu','His prophets'],['ورسله','wa rusulahu','and His messengers'],
+     ['بما','bimaa','what'],['يريد','yureedu','He wants'],['أن','an','to'],['يبلغه','yuballighahu','pass it on'],['إليهم','ilayhim','to them']],{size:26});
+  say(`📌 ${aw('شرعا','shar\'an')}, in Islamic law: ${aw('إعلام الله تعالى أنبياءه ورسله بما يريد أن يبلغه إليهم','i\'laam Allaah ta\'aalaa anbiyaa\'ahu wa rusulahu bimaa yureedu an yuballighahu ilayhim')}.`);await w(4600);
+  say(`Allah the Exalted <b>telling</b> His prophets and messengers what He wants to pass on to them. 📨`);await w(3400);
+  say(`So: in language, the quick secret whisper 🤫⚡. In Islamic law, Allah's message 📨 to His prophets. That's the whole story of Question 4!`);await w(4200);}},
+
+/* 4 */ {t:'Story map',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;border-radius:18px;background:linear-gradient(#fff8e8,#f6e6c4)','');
+  say(`Here is the <b>story map</b>: every moment of the story, its keyword, and its answer. Use it to revise the whole of Question 4.`);await w(3400);
+  const M=[['⛰️🕳️','(a) 2','غار','ghaar','cave','حراء','hiraa\'','Hira'],
+    ['🎂','(b) 1','أربعين','arba\'een','forty','√','','true'],
+    ['🌙','(b) 3','رمضان','ramadaan','Ramadan','√','','true'],
+    ['✨','(a) 3','الملك','al-malak','the angel','جبريل عليه السلام','jibreel \'alayhis-salaam','Jibreel, peace be upon him'],
+    ['📖','(a) 1','أول … سورة','awwal … soora','first … Surah','العلق','al-\'alaq','Al-\'Alaq'],
+    ['📜','(c) 3','الناموس','an-naamoos','an-Naamoos','ملك الوحي ( جبريل عليه السلام )','malak al-wahy (jibreel \'alayhis-salaam)','the angel of revelation (Jibreel)'],
+    ['✅','(c) 2','حال … بعد','haal … ba\'da','how … after','أصبح مستعدا لقبول الوحي','asbaha musta\'iddan li-qabool al-wahy','he became ready to receive the revelation'],
+    ['🔔','(b) 2','صورة واحدة','soora waahida','one single form','×','','false'],
+    ['🤫⚡','(c) 1 · language','الوحي لغة','al-wahy lugha','revelation in language','يطلق على الإعلام في خفاء وسرعة','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a','telling something secretly and quickly'],
+    ['📨','(c) 1 · Islamic law','الوحي شرعا','al-wahy shar\'an','revelation in Islamic law','إعلام الله تعالى أنبياءه ورسله بما يريد أن يبلغه إليهم','i\'laam Allaah ta\'aalaa anbiyaa\'ahu wa rusulahu bimaa yureedu an yuballighahu ilayhim','Allah telling His prophets and messengers what He wants to pass on to them']];
+  const T=[`The cave: Hira.`,`Forty: true.`,`Ramadan: true.`,`The angel: Jibreel, peace be upon him.`,`The first surah: Al-'Alaq.`,`An-Naamoos: the angel of revelation.`,
+    `After the revelation: he became ready to receive it.`,`One single form: false.`,`In language: secretly and quickly.`,`In Islamic law: Allah telling His prophets and messengers.`];
+  const pos=i=>i<8?{x:12+(i%4)*236,y:8+Math.floor(i/4)*166,wd:224}:{x:12+(i-8)*472,y:352,wd:460};
+  for(let i=0;i<M.length;i++){const [e,tg,ka,ks,ke,aa,as,ae]=M[i],{x,y,wd}=pos(i);const big=i>=8;
+    const isT=aa==='√'||aa==='×';
+    const ans=isT?`<span style="font-size:34px;font-weight:900;color:${aa==='√'?'#18a058':'#e04848'}">${aa}</span>`:
+      `<span style="font-size:${big?(i===9?17:21):(aa.length>20?16:aa.length>14?18:26)}px;font-weight:700;color:#5a3c00">${ar(aa,ae,as)}</span>`;
+    const c=mk('is-card lit',`left:${x}px;top:${y}px;width:${wd}px;box-sizing:border-box;padding:4px 8px 6px;text-align:center`,
+      `<div style="display:flex;align-items:center;justify-content:center;gap:8px"><span style="font-size:${big?26:28}px">${e}</span><span class="src">📌 Q4 ${tg}</span></div>`+
+      `<div style="font-size:${big?17:19}px;font-weight:800;line-height:1.3">${ar(kw(ka,ks),kw(ke))}</div><div style="font-size:14px;color:#a0742a;line-height:1">⬇</div><div style="line-height:1.25">${ans}</div>`);
+    pop(c);point(c);say(T[i]);await w(i>=8?2600:1700);}
+  unpoint();confetti(80);yay();
+  say(`Picture the story in the exam: spot the keyword, remember the moment, and the answer comes back. Now let's practise each question properly!`);await w(3800);}},
+
+/* 5 */ {t:'Surah and cave (Q4 a 1 and 2)',run:async w=>{
   say(`Question 4 a: ${ar('أكمل ما يأتي بما هو مناسب','Complete with what fits.')} Fill the gaps.`);await w(2600);
   await clueCard(w,{src:WS+'(a) · 1',kind:['أكمل','akmil','complete: fill the gap'],
     q:`${kw('أول','awwal')} ما نزل من القرآن أول آيات من ${kw('سورة','soorat')} ..........`,en:`The ${kw('first')} part of the Qur'an revealed was the first verses of ${kw('Surah')} ……`,
@@ -114,7 +311,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`${aw('غار حراء','ghaar hiraa\'')}: the cave of Hira, high on the mountain near Makkah ⛰️.`});
   await w(1200);}},
 
-/* 3 */ {t:'The angel (Q4 a 3 and c 3)',run:async w=>{
+/* 6 */ {t:'The angel (Q4 a 3 and c 3)',run:async w=>{
   await clueCard(w,{src:WS+'(a) · 3',
     q:`${kw('الملك','al-malak')} الذي نزل على النبي ﷺ هو : ..........`,en:`The ${kw('angel')} who came down to the Prophet ﷺ is ……`,
     keys:[`${aw('الملك','al-malak')} means <b>the angel</b>. Which angel came down to the Prophet ﷺ?`],
@@ -130,7 +327,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Same angel again! An-Naamoos is ${aw('ملك الوحي','malak al-wahy')}, Jibreel's job from Question 2.`});
   await w(1200);}},
 
-/* 4 */ {t:'Tick or cross (Q4 b)',run:async w=>{
+/* 7 */ {t:'Tick or cross (Q4 b)',run:async w=>{
   await tfCard(w,{src:WS+'(b) · 1',ok:true,
     q:`نزل الوحي على النبي ﷺ عند بلوغه ${kw('أربعين','arba\'een')} سنة`,en:`Revelation came to the Prophet ﷺ when he reached ${kw('forty')} years`,
     keys:[`${aw('أربعين','arba\'een')} means <b>forty</b>. Was he forty?`],clue:`<span class="ar-font" dir="rtl">أربعين</span> → 🎂 40 → true`,
@@ -139,7 +336,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   await tfCard(w,{src:WS+'(b) · 2',ok:false,kind:null,
     q:`كان الوحي ينزل على النبي في ${kw('صورة واحدة','soora waahida')}`,en:`Revelation came down to the Prophet in ${kw('one single form')}`,
     keys:[`${aw('صورة واحدة','soora waahida')} means <b>one single form</b>. Only one way? Think of the bell and the man.`],clue:`<span class="ar-font" dir="rtl">صورة واحدة</span> → 1️⃣❌ → false`,
-    why:`Correct fact: it came in <b>different forms</b>: Jibreel looking like a man 👤, or like the ringing of a bell 🔔.`});
+    why:`Correct fact: it came in <b>different forms</b>: the angel looking like a man 💬, or like the ringing of a bell 🔔.`});
   await w(1200);clear();
   await tfCard(w,{src:WS+'(b) · 3',ok:true,kind:null,
     q:`كان نزول الوحي على النبي ﷺ في شهر ${kw('رمضان','ramadaan')}`,en:`The revelation first came to the Prophet ﷺ in the month of ${kw('Ramadan')}`,
@@ -147,7 +344,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Yes: the Qur'an first came down in Ramadan 🌙. Forty √, Ramadan √, one form ×.`});
   await w(1200);}},
 
-/* 5 */ {t:'Revelation in language (Q4 c 1)',run:async w=>{
+/* 8 */ {t:'Revelation in language (Q4 c 1)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(c) · 1</div><div class="q" style="font-size:28px">${ar(
     `عرف ${kw('الوحي','al-wahy')} ${kw('لغة','lugha')} ${kw('وشرعا','wa shar\'an')} .`,`Define ${kw('revelation')} ${kw('in language')} and ${kw('in Islamic law')}.`,'','blk')}</div>`);pop(q);
   say(`Question 4 c 1: ${ar('عرف الوحي لغة وشرعا','Define revelation in language and in Islamic law.')}`);await w(2600);
@@ -163,7 +360,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   await chunkRows(w,DEF_L,{top:top+h.offsetHeight+14,rowH:78,size:24});
   say(`All together: ${aw('يطلق على الإعلام في خفاء وسرعة','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a')}. Telling, secretly, quickly: 📢🤫⚡.`);await w(3800);}},
 
-/* 6 */ {t:'Revelation in Islamic law (Q4 c 1)',run:async w=>{
+/* 9 */ {t:'Revelation in Islamic law (Q4 c 1)',run:async w=>{
   const h=mk('is-clue','left:30px;top:10px;width:900px;box-sizing:border-box;text-align:center',`<span class="ar-font" dir="rtl">شرعا</span> in Islamic law → Allah 📨 prophets → <b>Allah's message</b>`);pop(h);point(h);
   say(`Now the second answer: ${aw('شرعا','shar\'an')}, <b>in Islamic law</b>. Picture a letter 📨 going from Allah to His prophets and messengers.`);await w(3800);
   await chunkRows(w,DEF_S,{top:h.offsetHeight+24,rowH:84,size:24});
@@ -172,7 +369,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div class="is-why" style="flex:1;text-align:center"><span class="ar-font" style="font-size:24px">شرعا</span> in Islamic law: Allah 📨 prophets</div>`;pop(cmp);point(cmp);
   say(`Keep them apart like this: ${aw('لغة','lugha')}, the whisper 🤫⚡. ${aw('شرعا','shar\'an')}, Allah's message 📨 to His prophets and messengers.`);await w(4000);unpoint();}},
 
-/* 7 */ {t:'Ready (Q4 c 2)',run:async w=>{
+/* 10 */ {t:'Ready (Q4 c 2)',run:async w=>{
   await clueCard(w,{src:WS+'(c) · 2',kind:['أجب','ajib','answer: write a short answer'],
     q:`ما ${kw('حال','haal')} النبي ﷺ ${kw('بعد نزول الوحي','ba\'da nuzool al-wahy')} ؟`,en:`${kw('How')} was the Prophet ﷺ ${kw('after the revelation came')}?`,
     keys:[`${aw('حال','haal')} means <b>state</b>: how he was.`,`${aw('بعد نزول الوحي','ba\'da nuzool al-wahy')} means <b>after the revelation came down</b>.`],
@@ -181,7 +378,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`After that first meeting, he became <b>ready</b> ✅ to receive the revelation that kept coming.`});
   await w(1200);}},
 
-/* 8 */ {t:'Build the answers',run:async w=>{
+/* 11 */ {t:'Build the answers',run:async w=>{
   say(`Now build the answers with tiles. Arabic goes from <b>right to left</b>, so the first tile goes on the right.`);await w(3000);
   let r=await buildAR(w,{src:WS+'(c) · 2',q:`Build the answer: ✅ <b>he became ready to receive the revelation</b>`,
     tiles:[['الوحي','al-wahy'],['جبريل','jibreel'],['أصبح','asbaha'],['لقبول','li-qabool'],['حراء','hiraa\''],['مستعدا','musta\'iddan']],answer:['أصبح','مستعدا','لقبول','الوحي']});
@@ -190,7 +387,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     tiles:[['خفاء','khafaa\''],['الإعلام','al-i\'laam'],['الله','Allaah'],['يطلق','yutlaqu'],['وسرعة','wa sur\'a'],['على','\'alaa'],['في','fee']],answer:['يطلق','على','الإعلام','في','خفاء','وسرعة']});
   say(r.ok?`Brilliant! ${aw('يطلق على الإعلام في خفاء وسرعة','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a')}.`:`Look again: ${aw('يطلق على الإعلام في خفاء وسرعة','yutlaqu \'alal-i\'laam fee khafaa\' wa sur\'a')}. Used for, telling, secretly, quickly.`);await w(3400);}},
 
-/* 9 */ {t:'Trace it',run:async w=>{
+/* 12 */ {t:'Trace it',run:async w=>{
   say(`Now trace the short answers with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
   const W=[['حراء','hiraa\'','Hira'],['العلق','al-\'alaq','Al-\'Alaq'],['جبريل','jibreel','Jibreel']];
   for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. Press <b>Done</b> when you've finished.`);
@@ -203,7 +400,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div style="font-size:17px;font-weight:700;color:#626a80;margin-top:4px">Then the two definitions: <span class="ar-font" style="font-size:22px">لغة</span> 🤫⚡ and <span class="ar-font" style="font-size:22px">شرعا</span> 📨, one chunk at a time.</div>`);pop(p);
   say(`The exam is written by hand, so practise on paper too: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Do the definitions one coloured chunk at a time.`);await w(4200);}},
 
-/* 10 */ {t:'Keyword match',run:async w=>{
+/* 13 */ {t:'Keyword match',run:async w=>{
   say(`Keyword game! Each card has a <b>keyword</b> or a picture. Tap a card, then tap the answer it belongs to.`);await w(2800);
   const r=await sortGame(w,{bins:[`<span class="ar-font" style="font-size:26px">العلق</span> <small>Al-'Alaq</small>`,`<span class="ar-font" style="font-size:26px">حراء</span> <small>Hira</small>`,
       `<span class="ar-font" style="font-size:26px">جبريل</span> <small>Jibreel</small>`],
@@ -211,7 +408,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     top:170,colors:['#2c66cf','#b8862b','#18a058']});
   say(r.ok===r.total?`Perfect! You matched every keyword to its answer.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
 
-/* 11 */ {t:'Exam check',run:async w=>{
+/* 14 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
     {src:'Worksheet · Q4 · (a) · 1',q:'أول ما نزل من القرآن أول آيات من سورة ..........',en:'The first part of the Qur\'an revealed was the first verses of Surah ……',
       o:['الفاتحة','العلق','المعارج'],oe:['Al-Fatiha','Al-\'Alaq','Al-Ma\'arij'],otr:['al-faatiha','al-\'alaq','al-ma\'aarij'],a:1,cols:3,
@@ -238,10 +435,10 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       model:'ملك الوحي ( جبريل عليه السلام )',men:'The angel of revelation (Jibreel, peace be upon him)',mtr:'malak al-wahy (jibreel \'alayhis-salaam)'}
   ]);}},
 
-/* 12 */ {t:'You did it!',run:async w=>{
+/* 15 */ {t:'You did it!',run:async w=>{
   const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 4 done!');pop(t);
   const B=[['📖','العلق','first surah'],['⛰️🕳️','حراء','the cave'],['✨','جبريل عليه السلام','the angel'],['📜','ملك الوحي','an-Naamoos'],
-    ['🎂🌙','أربعين · رمضان','forty √ Ramadan √'],['🔔👤','صورة واحدة','one form ×'],['🤫⚡ · 📨','لغة · شرعا','two definitions'],['✅','أصبح مستعدا لقبول الوحي','became ready']];
+    ['🎂🌙','أربعين · رمضان','forty √ Ramadan √'],['🔔💬','صورة واحدة','one form ×'],['🤫⚡ · 📨','لغة · شرعا','two definitions'],['✅','أصبح مستعدا لقبول الوحي','became ready']];
   B.forEach(([e,a,m],i)=>{const c=mk('is-card',`left:${30+(i%4)*228}px;top:${80+Math.floor(i/4)*200}px;width:212px;height:180px;text-align:center;padding:10px 8px;box-sizing:border-box`,
     `<div style="font-size:40px">${e}</div><div class="ar-font" dir="rtl" style="font-size:${a.length>14?21:28}px;font-weight:700;color:#5a3c00;margin:6px 0;line-height:1.3">${a}</div><div style="font-size:15px;font-weight:800;color:#626a80">${m}</div>`);pop(c,i*140);});
   await w(1200);confetti(160);yay();

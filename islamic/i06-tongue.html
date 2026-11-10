@@ -11,6 +11,20 @@
 <link rel="icon" href="../icon-180.png">
 <title>Sins of the tongue</title>
 <link rel="stylesheet" href="../lessons/engine.css">
+<style>
+.st-world{overflow:hidden}
+.st-kid{width:96px;text-align:center;z-index:5}
+.st-kid .e{font-size:58px;line-height:1}
+.st-kid .n{display:inline-block;font-size:14px;font-weight:800;background:#fff;border-radius:8px;padding:0 7px;margin-top:2px}
+.st-kid .mo{position:absolute;right:0;top:-10px;font-size:28px}
+.st-bub{background:#fff;border:3px solid #1f2433;border-radius:16px;padding:6px 12px;font-size:17px;font-weight:800;color:#1f2433;text-align:center;z-index:12;line-height:1.3}
+.st-bub:after{content:'';position:absolute;bottom:-12px;left:var(--tx);border:10px solid transparent;border-bottom:0;border-top-color:var(--tc)}
+.st-pin .src{color:#b8860b}
+.st-key{font-size:22px;font-weight:700;line-height:1.35;margin:2px 0 6px}
+.st-key .kw{background:#ffe680;box-shadow:0 0 0 2px #ffd84d}
+body.en-mode .st-pin .is-b .m,body.en-mode .st-small .is-b .m{font-size:16px}
+.st-note{font-size:15px;font-weight:800;color:#18a058;margin-top:6px}
+</style>
 </head>
 <body>
 <script src="../lessons/engine.js"></script>
@@ -41,6 +55,23 @@ const CAUSES=[
 const HADITH='تجد من شر الناس يوم القيامة عند الله ذا الوجهين ، الذي يأتي هؤلاء بوجه وهؤلاء بوجه';
 const HADITH_EN='You will find among the worst of people on the Day of Resurrection, in the sight of Allah, the two-faced person, who comes to some people with one face and to others with another face.';
 
+/* ---------- story helpers: a scenery strip (960×300), children, speech bubbles and 📌 answer pins ---------- */
+const world=(top,bot,ground)=>mk('st-world',`left:0;top:0;width:960px;height:300px;border-radius:0 0 18px 18px;background:linear-gradient(${top},${bot})`,
+  `<div style="position:absolute;left:0;right:0;bottom:0;height:78px;background:${ground}"></div>`);
+const kid=(W,em,name,x,y,col)=>mk('st-kid',`left:${x}px;top:${y}px`,`<div class="e">${em}</div><div class="n" style="color:${col}">${name}</div><div class="mo"></div>`,W);
+const mood=(k,e)=>{const m=k.querySelector('.mo');m.textContent=e;if(e)pop(m);};
+/* walk to x with a little bounce on every step */
+const walk=(k,x,ms,step=110)=>{const b=loop(k.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-7px)'}],step,{direction:'alternate'});
+  an(k,[{left:x+'px'}],{duration:ms,easing:'linear'}).then(()=>b.cancel());};
+const bub=(W,x,y,wd,html,col,tx=40)=>mk('st-bub',`left:${x}px;top:${y}px;width:${wd}px;border-color:${col};--tx:${Math.max(14,Math.min(wd-30,tx))}px;--tc:${col}`,html,W);
+/* a 📌 pin: the question it answers, its keyword, then the answer as coloured blocks */
+function pin(x,y,wd,lab,key,blocks,{col='#d9a441',note}={}){
+  const t=mk('is-card st-pin',`left:${x}px;top:${y}px;width:${wd}px;padding:6px 12px 8px;border-color:${col};z-index:25`,
+    `<div class="src">📌 ${lab}</div><div class="st-key">${key}</div>`);
+  const b=ansBlocks(0,0,wd-28,blocks.map(x=>[...x]),{size:26});b.style.position='relative';b.style.left='0';b.style.top='0';t.appendChild(b);
+  if(note)t.insertAdjacentHTML('beforeend',`<div class="st-note">${note}</div>`);
+  pop(t);beep(880,.08);return t;}
+
 Lesson.start(Object.assign({}, ISLAMIC, {
   id:'i06', num:6, part:'Manners · التهذيب', emoji:'👅', title:'Sins of the tongue',
   intro:`Assalaamu alaykum! I'm <b>Hudhud the Hoopoe</b> 🐦 Today: the <b>sins of the tongue</b>, Question 6 of your sheet. Press <b>Start</b>!`,
@@ -58,9 +89,208 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     else loop(p,[{transform:'translateX(-14px)'},{transform:'translateX(14px)'}],700,{direction:'alternate'});
     say(`${aw(S.a,S.s)}: <b>${S.en}</b>. That means ${S.pic}.`);await w(3400);}
   unpoint();
-  say(`Question 6 asks for the <b>causes</b> of these sins, their <b>names</b>, and three <b>true or false</b> sentences. And you'll learn <b>Hadith 2</b>, about the two-faced person. ${aw('هيا بنا','hayyaa binaa')}!`);await w(3800);}},
+  say(`Question 6 asks for the <b>causes</b> of these sins, their <b>names</b>, three <b>true or false</b> sentences, and <b>Hadith 2</b>. First, a story! ${aw('هيا بنا','hayyaa binaa','let\'s go')}!`);await w(3800);}},
 
-/* 1 */ {t:'The two-faced person (Hadith 2)',run:async w=>{
+/* 1 */ {t:'Story: the new girl',run:async w=>{
+  const W=world('#bfe6ff','#effaff','#9bd77a');
+  const sun=mk('','left:830px;top:14px;font-size:54px','☀️',W);loop(sun,[{transform:'rotate(0deg)'},{transform:'rotate(25deg)'}],1800,{direction:'alternate'});
+  ['🌳','🌲','🌳','🌲'].forEach((t,i)=>mk('',`left:${470+i*120}px;top:${118+(i%2)*14}px;font-size:76px`,t,W));
+  const cl=mk('','left:120px;top:40px;font-size:40px','☁️',W);loop(cl,[{transform:'translateX(0)'},{transform:'translateX(160px)'}],7000,{direction:'alternate'});
+  const ch=mk('is-card','left:180px;top:340px;width:600px;text-align:center',`<div style="font-size:26px;font-weight:800;color:#7a4a00">📖 The rumour that ran around the class</div><div style="font-size:17px;font-weight:700;color:#626a80">Watch for the 📌 pins: each one is an exam answer!</div>`);pop(ch);
+  const bus=mk('','left:-240px;top:120px;width:150px;height:110px',`<div style="font-size:110px;line-height:1;transform:scaleX(-1)">🚌</div>`,W);
+  an(bus,[{left:'60px'}],{duration:1800,easing:'ease-out'});beep(300,.15);
+  say(`Story time! 📖 Lina's class is going on a <b>school trip</b> to the park. Everybody is excited.`);await w(3400);
+  an(bus,[{left:'-260px'}],{duration:1500,easing:'ease-in'});
+  const lina=kid(W,'🧕🏽','Lina',40,142,'#18a058'),rania=kid(W,'👧🏾','Rania',140,142,'#c2367a'),maryam=kid(W,'👧🏽','Maryam',240,142,'#e06a1b');
+  [lina,rania,maryam].forEach((k,i)=>pop(k,300+i*200));
+  const huda=kid(W,'👧🏻','Huda',960,142,'#2c66cf');mk('','left:56px;top:28px;font-size:30px','🎒',huda);
+  await w(1200);walk(huda,780,2400,90);
+  say(`There's a new girl in the class: <b>Huda</b>. She's shy, she has a huge old backpack, and she walks with tiny, quick steps.`);await w(4000);
+  ch.remove();
+  an(rania,[{left:'170px'}],{duration:500});an(maryam,[{left:'230px'}],{duration:500});
+  let b=bub(W,90,20,260,`"Look at the new girl's backpack. It's older than my granny!"`,'#c2367a',90);pop(b);beep(620,.06);mood(lina,'😕');
+  say(`Rania whispers: "Look at the new girl's backpack. It's older than my granny!"`);await w(3200);b.remove();
+  b=bub(W,190,20,260,`"And she's so slow at everything. So weird!"`,'#e06a1b',60);pop(b);beep(560,.06);
+  say(`Maryam giggles: "And she's so slow at everything. So weird!"`);await w(3000);b.remove();
+  const far=mk('','left:610px;top:40px;width:230px;text-align:center;font-size:17px;font-weight:800;color:#2c66cf;background:#fff;border-radius:12px;padding:4px 8px',`👂❌ Huda can't hear them`,W);pop(far);point(huda);
+  say(`Huda is far away. She can't hear them. But if she did, she would <b>hate</b> it.`);await w(3400);unpoint();far.remove();
+  const p1=pin(13,312,452,'Q6 (b) · 1',ar(`بما ${kw('يكرهونه','yakrahoonahu')} → 🙈`,`with what ${kw('they hate')} → 🙈`),[['الغيبة','al-gheeba','backbiting']],{col:'#e06a1b'});
+  say(`That is ${aw('الغيبة','al-gheeba','backbiting')}: <b>backbiting</b>. Your sheet says: ${ar('ذكر الناس بما يكرهونه بالقول أو الفعل','Mentioning people with what they hate, by words or actions.')}`);await w(4600);
+  point(p1.querySelector('.kw'));
+  say(`The keyword is ${aw('يكرهونه','yakrahoonahu','they hate it')}: <b>what they hate</b>. Saying things people would hate, behind their back, is backbiting. Even if it's true!`);await w(4200);unpoint();
+  /* Maryam copies Huda's walk */
+  b=bub(W,250,20,220,`"Look, I'm Huda! 🐧"`,'#e06a1b',50);pop(b);
+  const me=maryam.querySelector('.e'),bob=loop(me,[{transform:'translateY(0) rotate(-6deg)'},{transform:'translateY(-6px) rotate(6deg)'}],140,{direction:'alternate'});
+  an(maryam,[{left:'380px'}],{duration:2200,easing:'linear'});mood(rania,'😂');beep(700,.05);
+  say(`Then Maryam jumps up and <b>copies Huda's walk</b>: tiny, quick steps, like a penguin. Rania laughs. Maryam doesn't say a word about her.`);await w(4200);
+  bob.cancel();b.remove();
+  b=bub(W,10,20,280,`"She didn't <b>say</b> anything... so it isn't backbiting. Is it? 🤔"`,'#18a058',40);pop(b);mood(lina,'🤔');
+  say(`Lina wonders: if Maryam didn't <b>say</b> anything, is it still backbiting?`);await w(3200);b.remove();
+  const p2=pin(495,312,452,'Q6 (c) · 3',ar(`${kw('تقتصر','taqtasir')} الغيبة على ${kw('القول','al-qawl')} .`,`Backbiting is ${kw('only')} done with ${kw('words')}.`),CROSS,{col:'#e04848',note:`✔ ${ar('الغيبة بالقول أو الفعل','Backbiting is by words or actions','al-gheeba bil-qawl aw al-fi\'l')}`});
+  say(`Yes, it is! Backbiting is ${ar('بالقول أو الفعل','by words or actions','bil-qawl aw al-fi\'l')}. So the sentence ${ar('تقتصر الغيبة على القول','Backbiting is only done with words')} is <b>false</b>. A cross!`);await w(4600);
+  point(p2.querySelector('.kw'));
+  say(`Watch out for ${aw('تقتصر','taqtasir','only')}: it means <b>only</b>. Copying someone's walk is an <b>action</b>, so backbiting is not only words.`);await w(4000);unpoint();
+  mood(lina,'😟');shake(lina);
+  say(`Lina gets a knot in her tummy. Something isn't right. And the day has only just begun...`);await w(3200);}},
+
+/* 2 */ {t:'Story: faces, tales and two faces',run:async w=>{
+  let W=world('#ffe2b8','#fff6e6','#a5d97e');
+  const lake=()=>{mk('','left:560px;top:200px;width:420px;height:60px;border-radius:50%;background:#7cc3f0',``,W);mk('','left:30px;top:226px;width:150px;height:30px;border-radius:8px;background:repeating-linear-gradient(45deg,#e04848 0 14px,#fff 14px 28px)',``,W);};
+  lake();mk('','left:60px;top:186px;font-size:34px','🧺',W);
+  let huda=kid(W,'👧🏻','Huda',80,130,'#2c66cf');pop(huda);
+  const yusuf=kid(W,'👦🏽','Yusuf',600,130,'#6a45d8');pop(yusuf,200);
+  say(`Lunchtime by the lake. 🧺 Huda sits on a blanket, alone. Then <b>Yusuf</b> walks straight up to her.`);await w(3200);
+  walk(yusuf,200,1400,120);await w(1500);mood(yusuf,'😝');
+  let b=bub(W,230,10,300,`"Nice backpack, Grandma! Did you find it in a museum?" 😝`,'#6a45d8',30);pop(b);beep(650,.06);
+  say(`He pulls a silly face, rolls his eyes and says: "Nice backpack, Grandma! Did you find it in a museum?"`);await w(3800);b.remove();
+  const fans=['😂','🤭'].map((e,i)=>{const f=mk('',`left:${380+i*60}px;top:150px;font-size:44px`,e,W);pop(f,i*150);return f;});
+  mood(huda,'😢');shake(huda);
+  say(`Some children laugh. Yusuf is treating Huda as if she were small and worth nothing. Huda stares at the ground.`);await w(3600);
+  const p1=pin(13,312,300,'Q6 (b) · 2',ar(`${kw('احتقار','ihtiqaar')} → 😝`,`${kw('looking down on')} → 😝`),[['السخرية','as-sukhriyya','mocking']],{col:'#6a45d8'});
+  say(`That's ${aw('السخرية','as-sukhriyya','mocking')}: ${ar('احتقار الناس بالهمز واللمز','Looking down on people with mocking gestures and digs.')}`);await w(4000);
+  point(p1.querySelector('.kw'));
+  say(`The keyword is ${aw('احتقار','ihtiqaar','looking down on')}: <b>looking down on</b> people. The faces and the nasty little digs are ${aw('الهمز واللمز','al-hamz wal-lamz','mocking gestures and digs')}.`);await w(4400);unpoint();
+  /* tales */
+  W.remove();W=world('#ffe2b8','#fff6e6','#a5d97e');lake();
+  huda=kid(W,'👧🏻','Huda',60,130,'#2c66cf');const rania=kid(W,'👧🏾','Rania',800,130,'#c2367a');pop(huda);pop(rania,150);
+  const zaid=kid(W,'👦🏻','Zaid',430,130,'#0f7a6e');pop(zaid,300);
+  const env=mk('','left:56px;top:20px;font-size:30px','📨',zaid);
+  say(`Now meet <b>Zaid</b>. He loves carrying news, like a postman with a bag of letters. 📨`);await w(3000);
+  walk(zaid,680,1200,90);await w(1300);
+  b=bub(W,560,10,300,`"Huda said you're a show-off!"`,'#0f7a6e',200);pop(b);beep(560,.06);mood(rania,'😠');
+  say(`He runs to Rania: "Huda said you're a show-off!" Huda never said that!`);await w(3200);b.remove();
+  walk(zaid,170,1500,90);await w(1600);
+  b=bub(W,100,10,300,`"Rania said you're boring!"`,'#0f7a6e',80);pop(b);beep(560,.06);mood(huda,'😠');
+  say(`Then he runs back to Huda: "Rania said you're boring!" Now both girls are angry with each other.`);await w(3600);b.remove();
+  const bolt=mk('','left:420px;top:60px;font-size:60px','⚡',W);pop(bolt);shake(bolt);
+  const p2=pin(330,312,300,'Q6 (b) · 3',ar(`${kw('نقل الكلام','naql al-kalaam')} → 📨`,`${kw('carrying talk')} → 📨`),[['النميمة','an-nameema','spreading tales']],{col:'#2c66cf'});
+  say(`That's ${aw('النميمة','an-nameema','spreading tales')}: ${ar('نقل الكلام للإفساد بين الناس','Carrying talk to make trouble between people.')}`);await w(4000);
+  point(p2.querySelector('.kw'));
+  say(`The keyword is ${aw('نقل الكلام','naql al-kalaam','carrying talk')}: <b>carrying talk</b>, like Zaid the postman, to <b>make trouble</b>.`);await w(3800);unpoint();
+  /* two faces */
+  W.remove();W=world('#ffe2b8','#fff6e6','#a5d97e');lake();
+  huda=kid(W,'👧🏻','Huda',60,130,'#2c66cf');const maryam=kid(W,'👧🏽','Maryam',800,130,'#e06a1b');pop(huda);pop(maryam,150);
+  const r=kid(W,'👧🏾','Rania',430,130,'#c2367a');pop(r,300);
+  say(`And Rania? Watch her very carefully.`);await w(2200);
+  walk(r,180,1200,90);await w(1300);mood(r,'😊');
+  b=bub(W,140,10,300,`"I love your backpack! Sit with me on the bus!" 😊`,'#c2367a',50);pop(b);beep(660,.06);mood(huda,'🙂');
+  say(`To Huda she's sweet: "I love your backpack! Sit with me on the bus!"`);await w(3200);b.remove();
+  walk(r,680,1500,90);await w(1600);mood(r,'😏');
+  b=bub(W,480,10,300,`"Her backpack is SO ugly. I was just being nice." 😏`,'#c2367a',220);pop(b);beep(520,.06);
+  say(`Then she skips to Maryam: "Her backpack is SO ugly. I was just being nice." One face here, another face there.`);await w(3800);b.remove();
+  for(let i=0;i<2;i++){walk(r,300,400,60);await w(450);mood(r,'😊');walk(r,560,400,60);await w(450);mood(r,'😏');}
+  const mask=mk('','left:430px;top:30px;font-size:80px','🎭',W);pop(mask);shake(mask);
+  const h=mk('is-card','left:30px;top:8px;width:900px;z-index:30',`<div class="src">Hadith 2 · ${aw('الحديث الثاني','al-hadeeth ath-thaani','Hadith 2')}</div><div class="q" style="font-size:22px">${ar(
+    `عن أبي هريرة رضي الله عنه قال : قال رسول الله ﷺ : ( تجد من شر الناس يوم القيامة عند الله ${kw('ذا الوجهين','dhal-wajhayn')} ، الذي يأتي هؤلاء بوجه وهؤلاء بوجه ) .`,
+    `Abu Hurayra said: the Messenger of Allah ﷺ said: "You will find among the worst of people on the Day of Resurrection, in the sight of Allah, the ${kw('two-faced')} person, who comes to some people with one face and to others with another face."`,'','blk')}</div>`);pop(h);
+  say(`The Prophet ﷺ warned about exactly this, in <b>Hadith 2</b>: ${ar(HADITH,HADITH_EN)}`);await w(5000);
+  h.classList.add('lit');point(h.querySelector('.kw'));
+  say(`The keyword is ${aw('ذا الوجهين','dhal-wajhayn','the two-faced one')}: the person with <b>two faces</b>. ${aw('وجه','wajh','face')} means <b>face</b>.`);await w(3600);unpoint();h.remove();
+  const p3=pin(647,312,300,'Hadith 2',ar(`${kw('ذا الوجهين','dhal-wajhayn')} → 🎭`,`${kw('two-faced')} → 🎭`),[['ذا','dha','the one with'],['الوجهين','al-wajhayn','two faces']],{col:'#c2367a'});
+  say(`Rania was ${aw('ذا الوجهين','dhal-wajhayn','two-faced')}. The Prophet ﷺ said such a person is among the <b>worst of people</b> on the Day of Resurrection.`);await w(4200);}},
+
+/* 3 */ {t:'Story: Lina speaks up',run:async w=>{
+  let W=world('#cfe9ff','#f2faff','#9bd77a');
+  mk('','left:760px;top:120px;font-size:100px;line-height:1',`<div style="transform:scaleX(-1)">🚌</div>`,W);
+  const amal=kid(W,'👩🏽‍🏫','Ms Amal',640,130,'#b8860b');pop(amal);
+  const lina=kid(W,'🧕🏽','Lina',40,130,'#18a058');pop(lina,200);mood(lina,'🤔');
+  let b=bub(W,20,10,330,`"If I tell Ms Amal what they did... am I <b>backbiting</b> too?" 🤔`,'#18a058',40);pop(b);
+  say(`Lina wants to help Huda. But she's worried: if I tell the teacher what the others did, am I backbiting too?`);await w(3800);b.remove();
+  walk(lina,510,1800,100);await w(1900);mood(lina,'');
+  b=bub(W,330,10,330,`"Ms Amal, some children are being unkind to Huda. Please help her."`,'#18a058',200);pop(b);beep(600,.06);
+  say(`She tells Ms Amal: "Some children are being unkind to Huda. Please help her."`);await w(3200);b.remove();
+  b=bub(W,450,10,330,`"You did the right thing, Lina. 🛑 You told me so I can <b>stop a wrong</b>."`,'#b8860b',220);pop(b);beep(700,.06);mood(lina,'😊');
+  say(`Ms Amal smiles: "You did the right thing." Telling someone who can <b>stop a wrong</b> is allowed. That's ${aw('تغيير المنكر','taghyeer al-munkar','stopping a wrong')}.`);await w(4200);b.remove();
+  const p1=pin(13,312,560,'Q6 (c) · 1',ar(`${kw('حرم','harrama')} الإسلام الغيبة في حال ${kw('تغيير المنكر','taghyeer al-munkar')} .`,`Islam ${kw('forbids')} backbiting when it is done ${kw('to stop a wrong')}.`),CROSS,{col:'#e04848',note:`✔ ${ar('تجوز الغيبة لتغيير المنكر','Mentioning a wrong to stop it is allowed','tajooz al-gheeba li-taghyeer al-munkar')}`});
+  say(`So this sentence is <b>false</b>: ${ar('حرم الإسلام الغيبة في حال تغيير المنكر','Islam forbids backbiting when it is done to stop a wrong.')} A cross!`);await w(4200);
+  point(p1.querySelectorAll('.kw')[1]);
+  say(`The deciding words are ${aw('تغيير المنكر','taghyeer al-munkar','stopping a wrong')}. Lina wasn't backbiting: she was <b>stopping a wrong</b> 🛑, so Islam allows it.`);await w(4000);unpoint();
+  const go=mk('','left:620px;top:360px;width:300px;text-align:center;font-size:20px;font-weight:800;color:#7a4a00',`Ms Amal: "Everyone, come and sit down. 👋"`);pop(go);
+  say(`Ms Amal claps her hands: "Everyone, come and sit down. Let's talk."`);await w(3000);
+  /* the four causes */
+  clear();
+  const board=mk('is-card st-pin st-board','left:13px;top:8px;width:600px;height:476px;border-color:#b8860b',`<div class="src">📌 Q6 (a)</div><div class="st-key" style="font-size:24px">${ar(`${kw('أسباب','asbaab')} ${kw('آفات اللسان','aafaat al-lisaan')}`,`the ${kw('causes')} of the ${kw('sins of the tongue')}`)}</div>`);pop(board);
+  const amal2=kid(stage,'👩🏽‍🏫','Ms Amal',640,190,'#b8860b');pop(amal2);
+  say(`Ms Amal asks each child, kindly: <b>why</b> did you do it? Their answers are the four ${aw('أسباب','asbaab','causes')} of ${aw('آفات اللسان','aafaat al-lisaan','the sins of the tongue')}.`);await w(4400);
+  const WHO=[['👦🏽','Yusuf','#6a45d8',`"Nobody was watching me, so who cares?"`,`Yusuf says: "Nobody was watching." But Allah is <b>always</b> watching! Cause 1:`],
+    ['👦🏻','Zaid','#0f7a6e',`"At home, everyone carries stories about the neighbours."`,`Zaid says that at home, everyone carries stories. Nobody taught him better. Cause 2:`],
+    ['👧🏾','Rania','#c2367a',`"Huda got top marks. I was jealous... and I thought I was better than her."`,`Rania was jealous of Huda, and thought she was better than her. Cause 3:`],
+    ['👧🏽','Maryam','#e06a1b',`"It was only a joke! Words don't count."`,`Maryam says it was only a joke. But every word is rewarded or punished on the Day of Judgement! Cause 4:`]];
+  let k=null,bb=null;
+  for(let i=0;i<4;i++){const [e,n,col,line,s]=WHO[i],C=CAUSES[i];
+    if(k)k.remove();if(bb)bb.remove();
+    k=kid(stage,e,n,830,190,col);pop(k);bb=bub(stage,630,14,317,line,col,230);pop(bb,200);beep(560+i*60,.06);
+    say(`${s}`);await w(3600);
+    const y=board.offsetTop+92+i*96;
+    const ic=mk('',`left:28px;top:${y+4}px;width:70px;text-align:center;font-size:40px;line-height:1`,C.e);pop(ic);
+    mk('',`left:28px;top:${y+48}px;width:70px;text-align:center;font-size:13px;font-weight:800;color:#7a4a00`,C.word);
+    const bl=ansBlocks(100,y,500,C.bl.map(x=>[...x]),{size:22,show:false});bl.classList.add('st-small');
+    await revealBlocks(w,bl,{say:false,wait:200});point(bl);
+    say(`${aw(C.a,C.bl.map(x=>x[1]).join(' '),C.en)}: <b>${C.en}</b>.`);await w(2800);}
+  unpoint();k.remove();bb.remove();
+  say(`Take the first letters: <b>W</b>ho <b>H</b>urts <b>H</b>earts <b>F</b>orgets. Someone who hurts hearts with their tongue has forgotten four things.`);await w(4000);
+  const p2=pin(630,300,317,'Q6 (c) · 2',ar(`${kw('الحسد والكبر','al-hasad wal-kibr')} سبب لانتشار آفات اللسان .`,`${kw('Envy and arrogance')} are a cause of the spread of the sins of the tongue.`),TICK,{col:'#18a058'});
+  amal2.remove();
+  say(`Remember Rania? ${aw('الحسد والكبر','al-hasad wal-kibr','envy and arrogance')} pushed her tongue. So ${ar('الحسد والكبر سبب لانتشار آفات اللسان','Envy and arrogance are a cause of the spread of the sins of the tongue.')} is <b>true</b>. A tick!`);await w(4600);}},
+
+/* 4 */ {t:'Story: sorry, Huda',run:async w=>{
+  const W=world('#ffb88a','#ffe8c9','#8fcf6e');
+  const sun=mk('','left:820px;top:60px;font-size:60px','🌅',W);an(sun,[{transform:'translateY(40px)'}],{duration:6000});
+  const huda=kid(W,'👧🏻','Huda',800,130,'#2c66cf');pop(huda);mood(huda,'😔');
+  const K=[['👧🏽','Maryam','#e06a1b','Sorry I talked about you behind your back.'],['👦🏽','Yusuf','#6a45d8','Sorry I made fun of you.'],
+    ['👦🏻','Zaid','#0f7a6e','Sorry I carried tales. Rania never said that.'],['👧🏾','Rania','#c2367a','Sorry I was two-faced. I\'ll be one honest face.']];
+  const ks=K.map(([e,n,c],i)=>{const k=kid(W,e,n,40+i*120,130,c);pop(k,i*150);return k;});
+  say(`Before the bus goes home, the children walk over to Huda. They have something to say.`);await w(3200);
+  for(let i=0;i<4;i++){const [,n,c,line]=K[i],kx=ks[i].offsetLeft,bx=Math.min(640,Math.max(10,kx-40));const b=bub(W,bx,10,300,`"${line}"`,c,kx+40-bx);pop(b);beep(600+i*50,.06);
+    say(`${n}: "${line}"`);await w(3000);b.remove();}
+  mood(huda,'😊');
+  let b=bub(W,560,10,300,`"Thank you. Can we start again?" 😊`,'#2c66cf',250);pop(b);beep(780,.08);
+  say(`Huda smiles: "Thank you. Can we start again?"`);await w(2800);b.remove();
+  const lina=kid(W,'🧕🏽','Lina',-100,130,'#18a058');walk(lina,580,1600,100);
+  ks.forEach((k,i)=>an(k,[{left:(140+i*110)+'px'}],{duration:900}));an(huda,[{left:'700px'}],{duration:900});
+  await w(1500);
+  for(let i=0;i<6;i++){const h=mk('',`left:${170+i*95}px;top:30px;font-size:34px`,'❤️',W);pop(h,i*120);loop(h,[{transform:'translateY(0)'},{transform:'translateY(-14px)'}],600+i*60,{direction:'alternate'});}
+  yay();confetti(60);
+  say(`Lina joins in, and by the end of the day Huda has five new friends. ❤️ She even sits with Rania on the bus.`);await w(3800);
+  const pr=mk('is-card','left:130px;top:318px;width:700px;text-align:center',`<div style="font-size:22px;font-weight:800;color:#7a4a00">🤝 The class promise</div>`+
+    `<div style="font-size:19px;font-weight:700;line-height:1.55;margin-top:4px">Before I speak about someone: <b>would they hate it?</b> 🙈<br>Am I mocking? 😏 &nbsp;·&nbsp; Am I carrying talk? 📨 &nbsp;·&nbsp; One face only! 🎭</div>`);pop(pr);
+  say(`And the class makes a promise: before I speak about someone, would they <b>hate</b> it? Am I mocking? Am I carrying talk? And always one honest face.`);await w(4800);
+  say(`${aw('ما شاء الله','maa shaa\' Allaah','well done')}! Now let's put the whole story on one map.`);await w(2600);}},
+
+/* 5 */ {t:'Story map',run:async w=>{
+  const t=mk('','left:0;top:2px;width:960px;text-align:center;font-size:22px;font-weight:800;color:#7a4a00','🗺️ Story map: picture → keyword → answer');pop(t);
+  const M=[
+    {e:'🙊🎒',st:'Rania whispers about Huda',k:['يكرهونه','yakrahoonahu','they hate it'],a:['الغيبة','al-gheeba','backbiting'],q:'Q6 (b) 1',col:'#e06a1b'},
+    {e:'😝',st:'Yusuf pulls faces',k:['احتقار','ihtiqaar','looking down on'],a:['السخرية','as-sukhriyya','mocking'],q:'Q6 (b) 2',col:'#6a45d8'},
+    {e:'📨',st:'Zaid the postman',k:['نقل الكلام','naql al-kalaam','carrying talk'],a:['النميمة','an-nameema','spreading tales'],q:'Q6 (b) 3',col:'#2c66cf'},
+    {e:'🎭',st:'Rania: sweet, then mean',k:['ذا الوجهين','dhal-wajhayn','two-faced'],a:['شر الناس','sharr an-naas','the worst of people'],q:'Hadith 2',col:'#c2367a'},
+    {e:'🛑',st:'Lina tells Ms Amal',k:['تغيير المنكر','taghyeer al-munkar','stopping a wrong'],a:['×','khata\'','false'],q:'Q6 (c) 1',col:'#e04848'},
+    {e:'😤',st:'Rania was jealous',k:['الحسد والكبر','al-hasad wal-kibr','envy and arrogance'],a:['√','saheeh','true'],q:'Q6 (c) 2',col:'#18a058'},
+    {e:'🐧',st:'Maryam copies the walk',k:['تقتصر','taqtasir','only'],a:['×','khata\'','false'],q:'Q6 (c) 3',col:'#e04848'}];
+  const cards=M.map((m,i)=>{const r=i<4?0:1,c=i<4?i:i-4,wd=r?186:226,x=r?13+c*198:13+c*237,y=r?268:40;
+    const big=m.a[0].length<2;
+    return mk('is-card',`left:${x}px;top:${y}px;width:${wd}px;height:${r?236:218}px;text-align:center;padding:6px 8px;border-color:${m.col};visibility:hidden`,
+    `<div class="src">${m.q}</div><div style="font-size:34px;line-height:1.1">${m.e}</div><div style="font-size:13px;font-weight:800;color:#626a80;line-height:1.2">${m.st}</div>`+
+    `<div style="font-size:22px;font-weight:700;margin-top:4px"><span class="kw" style="background:#ffe680;box-shadow:0 0 0 2px #ffd84d">${aw(m.k[0],m.k[1],m.k[2])}</span></div>`+
+    `<div style="font-size:18px;color:#a0742a;line-height:1">⬇</div>${big?`<div style="font-size:40px;font-weight:800;color:${m.col};line-height:1.1;font-family:system-ui,sans-serif">${m.a[0]}</div><div style="font-size:16px;font-weight:800;color:${m.col}">${m.a[2]}</div>`:`<div style="font-size:26px;font-weight:800;color:${m.col}">${aw(m.a[0],m.a[1],m.a[2])}</div>`}`);});
+  const A=mk('is-card',`left:${13+3*198}px;top:268px;width:340px;height:236px;padding:6px 10px;border-color:#b8860b;visibility:hidden`,
+    `<div class="src" style="text-align:center">Q6 (a) · Ms Amal asks why</div><div style="text-align:center;font-size:20px;font-weight:700"><span class="kw" style="background:#ffe680;box-shadow:0 0 0 2px #ffd84d">${aw('أسباب','asbaab','causes')}</span> <span style="font-size:13px;font-weight:800;color:#626a80">Who Hurts Hearts Forgets</span></div>`+
+    `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 6px;margin-top:4px">${CAUSES.map(C=>`<div style="background:#fff8e6;border-radius:10px;padding:2px 4px;text-align:center;font-size:19px;font-weight:700;color:#5a3c00;line-height:1.2"><span style="font-size:16px">${C.e}</span> ${aw(C.a,C.bl.map(x=>x[1]).join(' '),C.en)}</div>`).join('')}</div>`);
+  cards.splice(4,0,A);
+  say(`Here's the whole story on one map. Each picture leads to a <b>keyword</b>, and each keyword leads to the <b>answer</b>.`);await w(3400);
+  const lines=[`Rania whispers about Huda, things she would hate: ${aw('يكرهونه','yakrahoonahu','they hate it')} → ${aw('الغيبة','al-gheeba','backbiting')}.`,
+    `Yusuf pulls faces, looking down on her: ${aw('احتقار','ihtiqaar','looking down on')} → ${aw('السخرية','as-sukhriyya','mocking')}.`,
+    `Zaid the postman carries talk: ${aw('نقل الكلام','naql al-kalaam','carrying talk')} → ${aw('النميمة','an-nameema','spreading tales')}.`,
+    `Rania's two faces: Hadith 2, ${aw('ذا الوجهين','dhal-wajhayn','the two-faced one')}, among the worst of people.`,
+    `Lina's question to Ms Amal gives the four causes: Who Hurts Hearts Forgets.`,
+    `Lina told Ms Amal to stop a wrong: ${aw('تغيير المنكر','taghyeer al-munkar','stopping a wrong')} is allowed, so it's a cross.`,
+    `Rania was jealous: envy and arrogance are a cause, so it's a tick.`,
+    `Maryam copied the walk without a word: backbiting isn't only words, so it's a cross.`];
+  for(let i=0;i<cards.length;i++){const c=cards[i];c.style.visibility='visible';pop(c);point(c);beep(520+i*40,.06);say(lines[i]);await w(3400);}
+  unpoint();
+  say(`Close your eyes and walk through the story: the whisper, the faces, the postman, the two faces, Lina speaking up. Every scene is an answer!`);await w(4200);}},
+
+/* 6 */ {t:'The two-faced person (Hadith 2)',run:async w=>{
   say(`First, the <b>second hadith</b> you learn by heart. Listen carefully.`);await w(2200);
   const h=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">Hadith 2 · الحديث الثاني</div><div class="q" style="font-size:24px">${ar(
     `عن أبي هريرة رضي الله عنه قال : قال رسول الله ﷺ : ( تجد من شر الناس يوم القيامة عند الله ${kw('ذا الوجهين','dhal-wajhayn')} ، الذي يأتي هؤلاء ${kw('بوجه','bi-wajh')} وهؤلاء ${kw('بوجه','bi-wajh')} ) .`,
@@ -85,7 +315,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   const lab=mk('',`left:330px;top:${T+H/2+50}px;width:300px;text-align:center`,`<div style="font-size:34px;font-weight:700;color:#c2367a">${aw('ذا الوجهين','dhal-wajhayn')}</div><div style="font-size:16px;font-weight:800;color:#626a80">two-faced</div>`);pop(lab);
   say(`Two faces: that is ${aw('ذا الوجهين','dhal-wajhayn')}. The Prophet ﷺ said such a person is among the <b>worst of people</b> on the Day of Resurrection. Be one honest face to everyone.`);await w(4400);}},
 
-/* 2 */ {t:'Four causes (Q6 a)',run:async w=>{
+/* 7 */ {t:'Four causes (Q6 a)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:28px">${ar(
     `دون ${kw('أسباب','asbaab')} ${kw('آفات اللسان','aafaat al-lisaan')}`,`Write down the ${kw('causes')} of the ${kw('sins of the tongue')}`,'','blk')}</div>`);pop(q);
   say(`Question 6 a: ${ar('دون أسباب آفات اللسان','Write down the causes of the sins of the tongue.')}`);await w(2600);
@@ -103,7 +333,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     say(`${['One','Two','Three','Four'][i]}: ${aw(C.a)}, ${C.en}. ${C.say}`);await w(4200);}
   unpoint();}},
 
-/* 3 */ {t:'Backbiting (Q6 b 1)',run:async w=>{
+/* 8 */ {t:'Backbiting (Q6 b 1)',run:async w=>{
   say(`Question 6 b: ${ar('اكتب المصطلح الصحيح للعبارات الآتية','Write the correct term for the following phrases.')} You read a description and write its <b>name</b>.`);await w(3400);
   await clueCard(w,{src:WS+'(b) · 1',kind:['المصطلح','al-mustalah','the term: the name of it'],
     q:`ذكر الناس بما ${kw('يكرهونه','yakrahoonahu')} بالقول أو الفعل .`,en:`Mentioning people with what ${kw('they hate')}, by words or actions.`,
@@ -112,7 +342,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`${aw('الغيبة','al-gheeba')} 🙈 is talking about someone who is not there, saying what they would hate. Even if it's true!`});
   await w(1200);}},
 
-/* 4 */ {t:'Mocking and tales (Q6 b 2–3)',run:async w=>{
+/* 9 */ {t:'Mocking and tales (Q6 b 2–3)',run:async w=>{
   await clueCard(w,{src:WS+'(b) · 2',
     q:`${kw('احتقار','ihtiqaar')} الناس ${kw('بالهمز واللمز','bil-hamz wal-lamz')} .`,en:`${kw('Looking down on')} people ${kw('with mocking gestures and digs')}.`,
     keys:[`${aw('احتقار','ihtiqaar')} means <b>looking down on</b> people, as if they were small.`,`${aw('بالهمز واللمز','bil-hamz wal-lamz')}: with <b>mocking</b> faces and nasty little digs.`],
@@ -126,7 +356,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`${aw('النميمة','an-nameema')} 📨 is carrying words from one person to another to make them fall out.`});
   await w(1200);}},
 
-/* 5 */ {t:'True or false? (Q6 c 1)',run:async w=>{
+/* 10 */ {t:'True or false? (Q6 c 1)',run:async w=>{
   say(`Question 6 c: tick or cross. One keyword decides if the sentence is true or false.`);await w(2600);
   await tfCard(w,{src:WS+'(c) · 1',ok:false,
     q:`${kw('حرم','harrama')} الإسلام الغيبة في حال ${kw('تغيير المنكر','taghyeer al-munkar')} .`,en:`Islam ${kw('forbids')} backbiting when it is done ${kw('to stop a wrong')}.`,
@@ -135,7 +365,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`✔ The correct fact: ${ar('تجوز الغيبة لتغيير المنكر','Mentioning a wrong to stop it is allowed','tajooz al-gheeba li-taghyeer al-munkar')}. Telling a teacher or parent who can stop the wrong is <b>not</b> forbidden.`});
   await w(1400);}},
 
-/* 6 */ {t:'True or false? (Q6 c 2–3)',run:async w=>{
+/* 11 */ {t:'True or false? (Q6 c 2–3)',run:async w=>{
   await tfCard(w,{src:WS+'(c) · 2',ok:true,
     q:`${kw('الحسد والكبر','al-hasad wal-kibr')} سبب لانتشار آفات اللسان .`,en:`${kw('Envy and arrogance')} are a cause of the spread of the sins of the tongue.`,
     keys:[`${aw('الحسد والكبر','al-hasad wal-kibr')}: <b>envy and arrogance</b>. You know this one: it's cause number three from Question 6 a!`],
@@ -149,7 +379,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`✔ The correct fact: ${ar('الغيبة بالقول أو الفعل','Backbiting is by words or actions','al-gheeba bil-qawl aw al-fi\'l')}. Copying someone to make fun of them behind their back is backbiting too.`});
   await w(1200);}},
 
-/* 7 */ {t:'Build the answers',run:async w=>{
+/* 12 */ {t:'Build the answers',run:async w=>{
   say(`Now build two causes with tiles. Remember: Arabic goes from <b>right to left</b>, so the first tile goes on the right.`);await w(3200);
   let r=await buildAR(w,{src:WS+'(a) · 1',q:`Build cause 1: 👀 <b>forgetting that Allah is watching</b>`,
     tiles:[['الله','Allaah'],['عدم','\'adam'],['التربية','at-tarbiya'],['مراقبة','muraaqabat']],answer:['عدم','مراقبة','الله']});
@@ -158,7 +388,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     tiles:[['الجزاء','al-jazaa\''],['الحسد','al-hasad'],['الغفلة','al-ghafla'],['عن','\'an'],['سوء','soo\'']],answer:['الغفلة','عن','الجزاء']});
   say(r.ok?`Brilliant! ${aw('الغفلة عن الجزاء','al-ghafla \'an al-jazaa\'')}.`:`Look again: ${aw('الغفلة عن الجزاء','al-ghafla \'an al-jazaa\'')}. Forgetting, about, the reward.`);await w(3000);}},
 
-/* 8 */ {t:'Trace it',run:async w=>{
+/* 13 */ {t:'Trace it',run:async w=>{
   say(`Now trace the three names with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
   for(const S of SINS){clear();say(`Trace ${aw(S.a,S.s)}, <b>${S.en}</b> ${S.e}. Press <b>Done</b> when you've finished.`);
     const r=await traceAR(w,{word:S.a,tr:S.s,en:S.en});
@@ -169,7 +399,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div class="ar-font" dir="rtl" style="font-size:44px;margin-top:8px;color:#5a3c00">الغيبة · السخرية · النميمة</div>`);pop(p);
   say(`The exam is written by hand, so practise on paper too: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Then try the four causes: Who Hurts Hearts Forgets.`);await w(4200);}},
 
-/* 9 */ {t:'Keyword match',run:async w=>{
+/* 14 */ {t:'Keyword match',run:async w=>{
   say(`Keyword game! Each card has a <b>keyword</b> from a description. Tap a card, then tap the name it belongs to.`);await w(2800);
   const bin=S=>`<span class="ar-font" style="font-size:26px">${S.a}</span> <small>${S.en}</small>`;
   const r=await sortGame(w,{bins:SINS.map(bin),
@@ -177,7 +407,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       [`${aw('نقل الكلام','naql al-kalaam')}`,2],[`${aw('للإفساد','lil-ifsaad')}`,2],[`🙈`,0],[`😏`,1],[`📨`,2]],top:180,colors:SINS.map(S=>S.col)});
   say(r.ok===r.total?`Perfect! You matched every keyword to its name.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
 
-/* 10 */ {t:'Exam check',run:async w=>{
+/* 15 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
     {src:'Worksheet · Q6 · (b) · 1',q:'ذكر الناس بما يكرهونه بالقول أو الفعل .',en:'Write the term: mentioning people with what they hate, by words or actions.',
       o:['الغيبة','السخرية','النميمة'],oe:['backbiting','mocking','spreading tales'],otr:['al-gheeba','as-sukhriyya','an-nameema'],a:0,cols:3,
@@ -203,7 +433,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       mtr:'Who Hurts Hearts Forgets'}
   ]);}},
 
-/* 11 */ {t:'You did it!',run:async w=>{
+/* 16 */ {t:'You did it!',run:async w=>{
   const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 6 done!');pop(t);
   const B=[['🙈','الغيبة','يكرهونه → backbiting'],['😏','السخرية','احتقار → mocking'],['📨','النميمة','نقل الكلام → tales'],['🎭','ذا الوجهين','Hadith 2: two-faced'],
     ['👀🏠😤⚖️','WHHF','Who Hurts Hearts Forgets'],['🛑','تغيير المنكر','× stopping a wrong is allowed'],['😤','الحسد والكبر','√ envy & arrogance: a cause'],['🗣️🤸','بالقول أو الفعل','× words OR actions']];

@@ -11,6 +11,40 @@
 <link rel="icon" href="../icon-180.png">
 <title>Responsibility</title>
 <link rel="stylesheet" href="../lessons/engine.css">
+<style>
+/* the opening story */
+.st-who{text-align:center;line-height:1;z-index:8}
+.st-who .e{display:inline-block;transform-origin:50% 85%}
+.st-who .n{display:inline-block;margin-top:2px;background:#fff;border:2px solid #d9a441;border-radius:10px;padding:1px 8px;font-size:14px;font-weight:800;color:#7a4a00;white-space:nowrap}
+.st-bub{background:#fff;border:3px solid #1f2433;border-radius:18px;padding:6px 13px;font-size:18px;font-weight:800;color:#1f2433;line-height:1.3;z-index:25;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.st-bub::after{content:'';position:absolute;bottom:-13px;left:24px;border:11px solid transparent;border-top-color:#1f2433;border-bottom:0}
+.st-bub.r::after{left:auto;right:24px}
+.st-win{border:8px solid #8a5a2b;border-radius:10px;overflow:hidden;background:linear-gradient(#8fd3ff,#e6f6ff);box-shadow:inset 0 0 0 2px #5a3a1b}
+.st-star{position:absolute;color:#fff6c2;font-size:16px}
+.st-clock{background:#1f2433;color:#7dff9a;font-family:"Courier New",monospace;font-size:30px;font-weight:700;padding:4px 14px;border-radius:12px;border:4px solid #6b6f80;z-index:9;white-space:nowrap}
+.st-title{text-align:center;font-size:32px;font-weight:800;color:#7a4a00;background:#fff8e6;border:3px solid #f2c200;border-radius:20px;padding:8px 16px}
+.st-day{background:#6a45d8;color:#fff;border-radius:14px;padding:4px 14px;font-size:20px;font-weight:800;z-index:12;white-space:nowrap}
+.st-z{font-size:30px;font-weight:800;color:#2c66cf;z-index:9}
+.st-pin{border-color:#e04848;box-shadow:0 6px 0 #f3c6c6;z-index:30}
+.st-pin .src{color:#c0392b;font-size:14px}
+.st-pin .pq{font-size:25px;font-weight:700;line-height:1.5;color:#1f2433}
+.st-pin .pq .ax.en{font-size:19px;line-height:1.4}
+.st-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.st-pic{font-size:34px;min-width:46px;text-align:center}
+.st-map{position:absolute;background:#fff;border:3px solid #f0d9a8;border-radius:16px;box-shadow:0 5px 0 #f3e3c0;padding:6px 12px;text-align:center}
+.st-map .src{font-size:13px;font-weight:800;letter-spacing:.05em;color:#c0392b}
+.st-map .pic{font-size:34px;line-height:1.15}
+.st-map .key{font-size:22px;font-weight:700;line-height:1.4}
+.st-map .key .ax.en{font-size:16px}
+.st-map .arr{font-size:18px;font-weight:800;color:#a0742a;line-height:1.1}
+.st-map .ans{display:inline-block;min-width:196px;box-sizing:border-box;border-radius:10px;color:#fff;font-size:22px;font-weight:700;padding:1px 10px;margin:2px;line-height:1.45}
+.st-map .ans .ax.en{font-size:15px}
+.st-map .two .ans{width:228px;min-width:0;padding:1px 4px;font-size:19px;white-space:nowrap}
+.st-map .two .ans .ax::after{font-size:11px !important;letter-spacing:-.2px}
+.st-map .ans b{font-size:16px;opacity:.9;vertical-align:top}
+body.en-mode .st-map [dir=rtl]{direction:ltr}
+body.snd-mode .st-map .ans .ax[data-tr]:not(.en)::after{color:#fff;opacity:.95}
+</style>
 </head>
 <body>
 <script src="../lessons/engine.js"></script>
@@ -18,7 +52,10 @@
 <script>
 /* Islamic Studies Lesson 7 · Islamic culture (الثقافة الإسلامية) · Worksheet Q7 (a) 1–3, (b), (c).
    Responsible or irresponsible (مسؤول / غير مسؤول), the four kinds of personal responsibility (المسؤولية + an ending
-   in ـية) and responsibility towards religion (worship and dealings). Same pattern as the pilot, i02-angels.html. */
+   in ـية) and responsibility towards religion (worship and dealings). Same pattern as the pilot, i02-angels.html.
+   Scenes 1–5 are the opening story, "One week in Ramadan with the Saleh family": Faris stays up all night (a 1), Reem
+   drinks too many energy drinks (a 2), Dad teaches the little ones to pray (a 3), Dad shows the four circles (b), and
+   Faris prays at the mosque and sells honestly at the family shop (c); then a story map of all five questions. */
 const WS='Worksheet · Q7 · ';
 const MAS='#6a45d8';
 const KINDS=[
@@ -27,6 +64,32 @@ const KINDS=[
   {e:'👨‍👩‍👧',end:'الأسرية',s:'al-usariyya',m:'family',who:'my family',col:'#e06a1b',word:'Us'},
   {e:'🏙️',end:'المجتمعية',s:'al-mujtama\'iyya',m:'to society',who:'society',col:'#c2367a',word:'Manners'}];
 const bt=t=>`<span class="ar-font" style="font-size:26px">${t[0]}</span> <small>${t[1]}</small>`;
+/* ---------- story helpers (the Saleh family's week in Ramadan) ---------- */
+/* a character: big emoji with a name tag; .e is the emoji (change its text to change the face) */
+const who=(x,y,e,name,size=80)=>mk('st-who',`left:${x}px;top:${y}px;width:${Math.round(size*1.5)}px`,`<div class="e" style="font-size:${size}px">${e}</div><div><span class="n">${name}</span></div>`);
+const face=(c,e)=>{c.querySelector('.e').textContent=e;pop(c.querySelector('.e'));};
+/* walk to x (and y), bobbing on the way */
+async function walk(c,x,ms=1200,y){const b=loop(c.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-9px)'}],230,{direction:'alternate'});
+  const f={left:c.offsetLeft+'px',top:c.offsetTop+'px'},t={left:x+'px',top:(y??c.offsetTop)+'px'};
+  await an(c,[f,t],{duration:ms,easing:'ease-in-out'});b.cancel();}
+/* a speech bubble on the stage (tail on the left, or on the right with r) */
+const bub=(x,y,html,{wd,r}={})=>{const b=mk('st-bub'+(r?' r':''),`left:${x}px;top:${y}px${wd?`;width:${wd}px`:';white-space:nowrap'}`,html);pop(b);beep(660,.04);return b;};
+/* a window onto the sky that can turn from day to night and back */
+function win(x,y,wd,h,night){
+  const f=mk('st-win',`left:${x}px;top:${y}px;width:${wd}px;height:${h}px`,'');
+  const sun=mk('',`left:${wd*.12}px;top:${h*.12}px;font-size:${h*.3}px;opacity:${night?0:1}`,'☀️',f);
+  const n=mk('',`left:0;top:0;width:100%;height:100%;background:linear-gradient(#0f1440,#3a3f86);opacity:${night?1:0}`,
+    `<div style="position:absolute;left:${wd*.6}px;top:${h*.1}px;font-size:${h*.3}px">🌙</div>`+[[.15,.2],[.35,.55],[.25,.75],[.8,.65],[.5,.3]].map(([a,b])=>`<div class="st-star" style="left:${wd*a}px;top:${h*b}px">✦</div>`).join(''),f);
+  n.querySelectorAll('.st-star').forEach((s,i)=>loop(s,[{opacity:.25},{opacity:1}],500+i*170,{direction:'alternate'}));
+  mk('',`left:${wd/2-4}px;top:0;width:8px;height:${h}px;background:#8a5a2b`,'',f);mk('',`left:0;top:${h/2-4}px;width:${wd}px;height:8px;background:#8a5a2b`,'',f);
+  return{f,night:()=>{an(n,[{opacity:1}],{duration:1000});an(sun,[{opacity:0}],{duration:600});},day:()=>{an(n,[{opacity:0}],{duration:1000});an(sun,[{opacity:1}],{duration:1000});}};}
+/* the moment a worksheet question happens in the story: a pinned card with the question (keywords lit) */
+function pin(x,y,wd,src,q,en){const c=mk('is-card st-pin lit',`left:${x}px;top:${y}px;width:${wd}px`,`<div class="src">📌 ${src}</div><div class="pq">${ar(q,en,'','blk')}</div>`);
+  pop(c);beep(880,.1);beep(1100,.1);point(c);return c;}
+/* answer blocks inside a pinned card (a row, optionally with a picture on the left) */
+function pinBlocks(c,ans,{size=30,pic}={}){const row=document.createElement('div');row.className='st-row';c.appendChild(row);
+  if(pic){const p=document.createElement('div');p.className='st-pic';p.innerHTML=pic;row.appendChild(p);}
+  const bl=ansBlocks(0,0,10,ans,{size,show:false});row.appendChild(bl);Object.assign(bl.style,{position:'relative',left:'0',top:'0',width:'auto',flex:'1'});return bl;}
 
 Lesson.start(Object.assign({}, ISLAMIC, {
   id:'i07', num:7, part:'Islamic culture · الثقافة الإسلامية', emoji:'🧩', title:'Responsibility',
@@ -48,7 +111,240 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<span class="ar-font" dir="rtl" style="font-size:40px;color:#5a3c00">مسـ<span style="color:#e04848">ؤ</span>ول</span>`);pop(tip);point(tip);
   say(`Writing tip: in ${aw('مسؤول','mas\'ool')}, the little hamza ${aw('ء','hamza')} sits on top of a ${aw('و','waaw')}, like a hat. Then comes another ${aw('و','waaw')} and a ${aw('ل','laam')}.`);await w(4200);unpoint();}},
 
-/* 1 */ {t:'Staying up late (Q7 a 1)',run:async w=>{
+/* 1 */ {t:'Story: Faris the night owl (Q7 a 1)',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;background:linear-gradient(#fff8ea,#f6e3c4)');
+  mk('','left:0;top:400px;width:960px;height:120px;background:#d9b98c');
+  const ttl=mk('st-title','left:110px;top:24px;width:740px','🌙 One week in Ramadan with the Saleh family');pop(ttl);
+  const fam=[['👨','Dad',90],['🧕','Mum',90],['🧑','Faris, 16',84],['👧','Reem, 14',80],['👦','Yusuf, 7',64],['🧒','Huda, 5',58]];
+  const F=fam.map(([e,n,s],i)=>who(40+i*150,400-s-46,e,n,s));F.forEach((f,i)=>pop(f,300+i*150));
+  F.forEach((f,i)=>loop(f.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],700+i*90,{direction:'alternate'}));
+  say(`Story time! Meet the <b>Saleh family</b>. This Ramadan, in one week, they will act out every answer of Question 7.`);await w(3600);
+  point(F[2]);say(`There's Dad and Mum, big brother <b>Faris</b>, sister <b>Reem</b>, and the little ones, <b>Yusuf</b> and <b>Huda</b>.`);await w(3600);
+  unpoint();clear();
+  /* Faris's room */
+  mk('','left:0;top:0;width:960px;height:520px;background:#f1e2c6');
+  mk('','left:0;top:400px;width:960px;height:120px;background:#c99e6b');
+  const W=win(620,36,230,160,true);
+  const bed=mk('','left:640px;top:268px;font-size:150px;line-height:1','🛏️');
+  const dark=mk('','left:0;top:0;width:960px;height:520px;background:#0b1035;opacity:0;z-index:5;pointer-events:none');
+  const tv=mk('','left:60px;top:250px;font-size:100px;line-height:1;z-index:8','📺');
+  const clk=mk('st-clock','left:30px;top:30px','8:30 pm');pop(clk);
+  const fa=who(-140,282,'🧑','Faris',80);
+  const day=mk('st-day','left:330px;top:36px','Night 1');pop(day);
+  say(`Night one. After the Taraweeh prayer, Faris sits down with his brand-new video game.`);
+  await walk(fa,220,1500);W.night();an(dark,[{opacity:.42}],{duration:1200});
+  loop(tv,[{filter:'drop-shadow(0 0 3px #7fd0ff)'},{filter:'drop-shadow(0 0 26px #7fd0ff)'}],600,{direction:'alternate'});
+  const pad=mk('','left:330px;top:330px;font-size:42px;z-index:9','🎮');pop(pad);loop(pad,[{transform:'rotate(-12deg)'},{transform:'rotate(12deg)'}],260,{direction:'alternate'});
+  await w(2400);
+  clk.textContent='10:00 pm';shake(clk);let b=bub(230,196,'Just one more level!');
+  say(`Ten o'clock. "Just one more level," says Faris.`);await w(2400);b.remove();
+  say(`Midnight. One o'clock. Two. Three! His eyes are red and stinging, but he keeps on playing.`);
+  for(const t of ['11:00 pm','12:00 am','1:00 am','2:00 am','3:00 am']){clk.textContent=t;beep(760,.05);shake(clk);await w(600);}
+  face(fa,'🥱');await w(1800);
+  const mum=who(980,268,'🧕','Mum',90);await walk(mum,470,1200);
+  b=bub(440,180,'Faris! Suhoor, then Fajr!',{r:false});
+  say(`At half past three, Mum calls him for suhoor, the meal before dawn. He gulps it down and prays Fajr half asleep.`);clk.textContent='3:30 am';await w(3600);b.remove();
+  await walk(mum,990,900);mum.remove();pad.remove();
+  await walk(fa,640,1000,262);face(fa,'😴');an(fa.querySelector('.e'),[{transform:'rotate(0)'},{transform:'rotate(-70deg)'}],{duration:400});
+  const z=mk('st-z','left:740px;top:200px','Z z z');loop(z,[{transform:'translate(0,0)',opacity:.3},{transform:'translate(14px,-18px)',opacity:1}],900,{direction:'alternate'});
+  say(`Then he drops into bed. Ahhh, sleep at last!`);await w(2000);
+  W.day();an(dark,[{opacity:0}],{duration:1200});day.textContent='Day 1';
+  say(`The sun comes up. Yusuf and Huda go to school, and Dad opens the family shop. And Faris? Still snoring at one o'clock in the afternoon!`);
+  for(const t of ['7:00 am','9:00 am','11:00 am','1:00 pm']){clk.textContent=t;beep(600,.05);await w(700);}
+  await w(2600);
+  clk.textContent='3:00 pm';z.remove();face(fa,'😫');an(fa.querySelector('.e'),[{transform:'rotate(0)'}],{duration:300});b=bub(650,118,'Ugh! I missed school… and I\'m SO hungry!',{wd:250});
+  say(`At three o'clock he wakes up grumpy. He has missed his lessons, he has a headache, and his fast feels twice as long.`);await w(3600);b.remove();
+  day.textContent='Night 2, 3, 4…';shake(day);
+  say(`And the next night? Exactly the same. Too much staying up, every single night.`);await w(2800);
+  const c=pin(20,96,560,'Q7 · (a) · 1',`شاب ${kw('أسرف','asrafa')} ${kw('بالسهر','bis-sahar')} خلال شهر رمضان`,`A young man who ${kw('stayed up far too late')} in Ramadan`);
+  say(`📌 That's Question 7 (a) 1! ${ar('شاب أسرف بالسهر خلال شهر رمضان','A young man who stayed up far too late in Ramadan.')} It's Faris!`);await w(3600);
+  const K=c.querySelectorAll('.kw');point(K[0]);
+  say(`The keywords: ${aw('أسرف','asrafa','he overdid it')}, he <b>overdid it</b>, and ${aw('بالسهر','bis-sahar','staying up late')}, <b>staying up late</b>. Too much is never a good sign.`);await w(3800);
+  const bl=pinBlocks(c,[['غير','ghayr','not'],['مسؤول','mas\'ool','responsible']],{size:34,pic:'🧑🎮'});
+  await revealBlocks(w,bl,{wait:1500});
+  say(`So Faris was ${aw('غير مسؤول','ghayr mas\'ool')}, <b>irresponsible</b>. In the exam, see ${aw('أسرف بالسهر','asrafa bis-sahar','stayed up far too late')} and picture Faris snoring at lunchtime!`);await w(4000);unpoint();}},
+
+/* 2 */ {t:'Story: Reem\'s cans and Dad\'s lesson (Q7 a 2, 3)',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;background:#e9e2f7');
+  mk('','left:0;top:400px;width:960px;height:120px;background:#b9a2d6');
+  const W=win(40,40,200,140,true);
+  const dark=mk('','left:0;top:0;width:960px;height:520px;background:#0b1035;opacity:.3;z-index:5;pointer-events:none');
+  const re=who(56,218,'👧','Reem',84);
+  const desk=mk('','left:70px;top:330px;width:400px;height:24px;background:#8a5a2b;border-radius:8px;z-index:9;box-shadow:0 6px 0 #5a3a1b');
+  mk('','left:100px;top:354px;width:16px;height:60px;background:#6b4423;z-index:9');mk('','left:420px;top:354px;width:16px;height:60px;background:#6b4423;z-index:9');
+  const books=mk('','left:404px;top:270px;font-size:52px;z-index:10','📚');
+  const lamp=mk('','left:440px;top:214px;font-size:58px;z-index:10','💡');loop(lamp,[{filter:'drop-shadow(0 0 4px #ffd84d)'},{filter:'drop-shadow(0 0 22px #ffd84d)'}],800,{direction:'alternate'});
+  const note=mk('st-day','left:300px;top:60px;background:#e04848','📅 Exams next week!');pop(note);
+  const day=mk('st-day','left:560px;top:20px','Night 2');pop(day);
+  say(`Meanwhile, Reem has exams next week. Her plan? Study all night, every night. And to stay awake… energy drinks!`);await w(3600);
+  let b=bub(110,140,'Energy drinks will keep me awake!');await w(1600);b.remove();
+  say(`One can after iftar. Two. Three. Four. Five cans!`);
+  const cans=[];for(let i=0;i<5;i++){const cn=mk('',`left:${190+i*42}px;top:282px;font-size:44px;z-index:10`,'🥤');pop(cn);cans.push(cn);beep(500+i*90,.06);await w(500);}
+  const cnt=mk('st-day','left:120px;top:440px;background:#e06a1b','🥤 × 5');pop(cnt);await w(1600);
+  const heart=mk('','left:560px;top:120px;font-size:90px;z-index:10','❤️');pop(heart);
+  loop(heart,[{transform:'scale(1)'},{transform:'scale(1.3)'}],170,{direction:'alternate'});
+  face(re,'😵');loop(re.querySelector('.e'),[{transform:'translateX(-3px)'},{transform:'translateX(3px)'}],90,{direction:'alternate'});
+  say(`Her heart starts racing, her hands start shaking, and at three in the morning she still can't fall asleep.`);await w(3800);
+  heart.remove();day.textContent='Day 2';an(dark,[{opacity:0}],{duration:900});
+  face(re,'🤢');const test=mk('','left:600px;top:150px;font-size:80px;z-index:10','📝❓');pop(test);
+  say(`Next day, in her practice test, she feels sick and dizzy. She can't remember a single thing she studied!`);await w(3600);
+  const mum=who(990,256,'🧕','Mum',90);test.remove();await walk(mum,600,1100);
+  cans.forEach((c,i)=>an(c,[{transform:'translate(0,0)',opacity:1},{transform:`translate(${450-i*42}px,-60px) scale(.3)`,opacity:0}],{duration:700,delay:i*120}));
+  const good=mk('','left:200px;top:270px;font-size:50px;z-index:10','💧🌴🛏️');pop(good);
+  b=bub(470,160,'Water, dates and sleep: that\'s real energy!',{r:true});
+  say(`Mum takes the cans away. "Water, dates and a good night's sleep," she says. "That's the real energy drink."`);await w(3800);b.remove();
+  const c=pin(470,250,470,'Q7 · (a) · 2',`فتاة ${kw('تكثر','tukthir')} من ${kw('مشروبات الطاقة','mashroobaat at-taaqa')}`,`A girl who drinks ${kw('a lot of')} ${kw('energy drinks')}`);
+  mum.remove();
+  say(`📌 Question 7 (a) 2! ${ar('فتاة تكثر من مشروبات الطاقة','A girl who drinks a lot of energy drinks.')} That's Reem!`);await w(3400);
+  const K=c.querySelectorAll('.kw');point(K[0]);
+  say(`${aw('تكثر','tukthir','a lot')} means <b>a lot</b>, too much, and ${aw('مشروبات الطاقة','mashroobaat at-taaqa','energy drinks')} means <b>energy drinks</b>. Five cans: far too many!`);await w(3800);
+  let bl=pinBlocks(c,[['غير','ghayr','not'],['مسؤول','mas\'ool','responsible']],{size:32,pic:'🥤'});
+  await revealBlocks(w,bl,{wait:1300});
+  say(`Reem was ${aw('غير مسؤول','ghayr mas\'ool')}, <b>irresponsible</b>: she did not look after her health.`);await w(3000);unpoint();
+  clear();
+  /* Maghrib: Dad teaches the little ones to pray */
+  mk('','left:0;top:0;width:960px;height:520px;background:linear-gradient(#ffe0b0,#fff3dc)');
+  mk('','left:0;top:410px;width:960px;height:110px;background:#c99e6b');
+  win(40,30,200,130,false);
+  const door=mk('','left:790px;top:150px;width:150px;height:262px;background:#8a5a2b;border:6px solid #5a3a1b;border-bottom:0;border-radius:10px 10px 0 0','');
+  mk('','left:802px;top:162px;width:126px;height:250px;background:#f6e6c8','');
+  const qb=mk('st-day','left:610px;top:30px;background:#18a058','qibla ➜');pop(qb);
+  const dy=mk('st-day','left:300px;top:30px','Maghrib time');pop(dy);
+  const mats=[0,1,2].map(i=>mk('',`left:${330+i*140}px;top:${440}px;width:110px;height:44px;border-radius:8px;z-index:3;transform-origin:0 50%;`+
+    `background:repeating-linear-gradient(90deg,#18a058 0 14px,#17935b 14px 18px);border:3px solid #0f7a40`,''));
+  const dad=who(990,290,'👨','Dad',96);
+  say(`Now it's Maghrib time. Dad calls the little ones: "Yusuf, Huda, come here. Tonight I'll teach you how to pray!"`);
+  await walk(dad,580,1200);b=bub(560,200,'Come, I\'ll teach you to pray!');await w(3400);b.remove();
+  const yu=who(-120,326,'👦','Yusuf',66),hu=who(-120,334,'🧒','Huda',58);walk(yu,410,1100);await walk(hu,280,1300);
+  for(const m of mats){m.style.visibility='visible';await an(m,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:400});}
+  an(mats[0],[{transform:'rotate(0)'},{transform:'rotate(-35deg)'}],{duration:500});face(hu,'😅');
+  say(`Dad rolls out the prayer mats. Oops! Huda puts hers the wrong way round. Dad smiles and turns it to face the qibla.`);await w(3400);
+  an(mats[0],[{transform:'rotate(-35deg)'},{transform:'rotate(0)'}],{duration:500});face(hu,'🙂');await w(800);
+  say(`Dad prays slowly, step by step, so they can copy. Yusuf follows every move, and Huda peeks at Dad to check!`);
+  const bow=c=>an(c.querySelector('.e'),[{transform:'rotate(0)'},{transform:'rotate(28deg)'},{transform:'rotate(28deg)'},{transform:'rotate(0)'}],{duration:1400});
+  for(let k=0;k<2;k++){bow(dad);await w(300);bow(yu);await w(250);bow(hu);await w(1200);}
+  await w(1200);
+  const c2=pin(20,86,560,'Q7 · (a) · 3',`أب ${kw('يعلم','yu\'allim')} أولاده ${kw('الصلاة','as-salaah')}`,`A father who ${kw('teaches')} his children ${kw('to pray')}`);
+  say(`📌 Question 7 (a) 3! ${ar('أب يعلم أولاده الصلاة','A father who teaches his children to pray.')} That's Dad!`);await w(3400);
+  const K2=c2.querySelectorAll('.kw');point(K2[0]);
+  say(`${aw('يعلم','yu\'allim','teaches')} means <b>teaches</b>, and ${aw('الصلاة','as-salaah')} means <b>prayer</b>. Teaching your children to pray is a wonderful duty.`);await w(3800);
+  bl=pinBlocks(c2,[['مسؤول','mas\'ool','responsible']],{size:36,pic:'👨🕌'});
+  await revealBlocks(w,bl,{wait:1300});
+  say(`So Dad is ${aw('مسؤول','mas\'ool')}, <b>responsible</b>. No ${aw('غير','ghayr')} this time!`);await w(3000);unpoint();
+  const fa=who(990,262,'🥱','Faris',70),re2=who(990,280,'🤕','Reem',60);walk(fa,776,900);await walk(re2,858,1000);
+  b=bub(560,110,'Dad never stays up all night…',{r:true});await w(1400);
+  const b2=bub(560,196,'…and he never needs energy drinks!',{r:true});
+  say(`Faris and Reem watch from the doorway, tired and grumpy. Dad is calm and full of energy. "Dad," says Faris, "teach us to be responsible too."`);await w(4400);b.remove();b2.remove();}},
+
+/* 3 */ {t:'Story: Dad Shows Us Manners (Q7 b)',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;background:#fffaf0');
+  const cx=232,cy=282,R=[64,112,162,214],ORD=[3,0,1,2]; /* ring index for D, S, U, M (religion goes around everything) */
+  const rings=KINDS.map((K,i)=>{const r=R[ORD[i]];const c=mk('',`left:${cx-r}px;top:${cy-r}px;width:${2*r}px;height:${2*r}px;border-radius:50%;border:4px solid ${K.col};background:${K.col}1f;z-index:${10-ORD[i]};visibility:hidden`,'');return c;});
+  const kids=mk('',`left:${cx-60}px;top:${cy-34}px;width:120px;text-align:center;font-size:44px;z-index:20;line-height:1`,'🧑👧');pop(kids);
+  const day=mk('st-day','left:14px;top:12px','Day 3 · iftar');pop(day);
+  const dad=who(10,404,'👨','Dad',62);pop(dad);
+  let b=bub(100,350,'Responsibility is like circles around you!');
+  say(`Day three, at iftar. Dad says: "Responsibility is like circles around you. This week, I'll show you one circle a day."`);await w(3800);b.remove();
+  const c=pin(478,10,470,'Q7 · (b)',`دون ${kw('أقسام','aqsaam')} ${kw('المسؤولية الفردية','al-mas\'ooliyya al-fardiyya')}`,`Write down the ${kw('kinds')} of ${kw('personal responsibility')}`);
+  say(`📌 This is Question 7 (b)! ${ar('دون أقسام المسؤولية الفردية','Write down the kinds of personal responsibility.')} Four kinds: one for each circle.`);await w(3800);
+  const K=c.querySelectorAll('.kw');point(K[1]);
+  say(`${aw('أقسام','aqsaam','kinds')} means <b>kinds</b>, and ${aw('المسؤولية الفردية','al-mas\'ooliyya al-fardiyya','personal responsibility')} means <b>personal responsibility</b>. Watch Faris and Reem's week.`);await w(3800);
+  const EV=[{d:'Day 4',act:'⏰🕌',lab:'religion',line:`Day four: <b>religion</b>, the circle around everything. Faris sets an alarm and prays Fajr on time, and Reem reads Qur'an after Asr.`},
+    {d:'Day 5',act:'🛏️💧',lab:'me',line:`Day five: <b>me</b>. Faris switches off his game at ten and sleeps. Reem swaps her cans for water and dates.`},
+    {d:'Day 6',act:'🍽️📖',lab:'family',line:`Day six: <b>family</b>. Faris helps Mum lay the iftar table, and Reem helps Yusuf with his reading.`},
+    {d:'Day 7',act:'🍲🏠',lab:'society',line:`Day seven: <b>society</b>. They carry a plate of iftar to old Uncle Khalid next door, and Faris carries his shopping bags.`}];
+  for(let i=0;i<4;i++){const Kd=KINDS[i],r=R[ORD[i]],r0=ORD[i]?R[ORD[i]-1]:0,e=EV[i];
+    day.textContent=e.d;pop(day);
+    const ring=rings[i];ring.style.visibility='visible';an(ring,[{transform:'scale(.2)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:700,easing:'cubic-bezier(.4,1.4,.6,1)'});beep(480+i*80,.08);
+    const ly=ORD[i]?cy-(r+r0)/2-20:cy+14;
+    const lab=mk('',`left:${cx-80}px;top:${ly}px;width:160px;text-align:center;z-index:21;line-height:1`,`<div style="font-size:26px">${e.act}</div><div style="font-size:13px;font-weight:800;color:${Kd.col}">${e.lab}</div>`);pop(lab);point(lab);
+    say(e.line);await w(3800);
+    const bl=pinBlocks(c,[['المسؤولية','al-mas\'ooliyya','responsibility',MAS],[Kd.end,Kd.s,Kd.m,Kd.col]],{size:24,pic:`<div style="font-size:26px;line-height:1">${Kd.e}</div><div style="font-size:12px;font-weight:800;color:${Kd.col}">${Kd.word}</div>`});
+    await revealBlocks(w,bl,{say:false,wait:250});
+    say(`${['One','Two','Three','Four'][i]}: ${aw('المسؤولية '+Kd.end,'al-mas\'ooliyya '+Kd.s)}, <b>${Kd.m} responsibility</b>. ${Kd.word[0]} for <b>${Kd.word}</b>.`);await w(3200);}
+  unpoint();b=bub(90,452,'Dad Shows Us Manners!');
+  say(`And who showed them every circle? Dad! So remember: <b>Dad Shows Us Manners</b>. Deeniyya, shakhsiyya, usariyya, mujtama'iyya.`);await w(4200);}},
+
+/* 4 */ {t:'Story: The honest shopkeeper (Q7 c)',run:async w=>{
+  mk('','left:0;top:0;width:960px;height:520px;background:linear-gradient(#9fdcff,#e8f7ff)');
+  mk('','left:0;top:420px;width:960px;height:100px;background:#d8d2c4');
+  const mosque=mk('','left:30px;top:250px;font-size:150px;line-height:1','🕌');
+  const shop=mk('','left:420px;top:120px;width:380px;height:300px;background:#fff3dc;border:4px solid #8a5a2b;border-radius:10px','');
+  mk('',`left:408px;top:104px;width:404px;height:56px;border-radius:8px;background:repeating-linear-gradient(90deg,#e04848 0 40px,#fff 40px 80px);box-shadow:0 5px 0 rgba(0,0,0,.15)`,'');
+  mk('','left:470px;top:60px;width:280px;text-align:center;background:#1f2433;color:#ffd84d;border-radius:10px;font-size:22px;font-weight:800;padding:4px 0','🏪 Saleh Family Shop');
+  const shelf=mk('','left:450px;top:180px;font-size:40px;letter-spacing:6px','🌴🍬🧃🍞🥫');
+  const counter=mk('','left:440px;top:330px;width:340px;height:90px;background:#b07a45;border-radius:8px;z-index:9;box-shadow:inset 0 6px 0 #8a5a2b','');
+  const day=mk('st-day','left:330px;top:14px','Last day of Ramadan');pop(day);
+  const fa=who(520,250,'🧑','Faris',80);
+  say(`It's the last day of Ramadan, and the shop is busy with Eid shopping. Dad asks Faris to look after the counter.`);await w(3600);
+  const adhan=bub(60,190,'🔊 Allahu akbar…');
+  say(`But first, the call to prayer! Faris hands the counter to Dad for a few minutes and goes to the mosque.`);await w(1200);
+  const dad=who(990,250,'👨','Dad',80);walk(dad,640,900);
+  await walk(fa,200,1500,300);adhan.remove();
+  const ok1=mk('st-day','left:40px;top:200px;background:#18a058','🕌 prays on time ✔');pop(ok1);
+  say(`He prays Dhuhr on time, with the jama'ah. Being responsible to his religion in his <b>worship</b>.`);await w(3600);
+  await walk(fa,520,1400,250);walk(dad,990,900);
+  const cu=who(990,268,'👵','A customer',78);await walk(cu,826,1100);
+  let b=bub(560,150,'A kilo of dates for Eid, please!',{r:true});
+  say(`A customer comes in: "A kilo of dates for Eid, please!" Faris puts them on the scale and weighs them fairly, not one date short.`);
+  const sc=mk('','left:650px;top:290px;font-size:56px;z-index:10','⚖️');pop(sc);loop(sc,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],400,{direction:'alternate'});await w(3800);b.remove();
+  const note5=mk('','left:840px;top:330px;font-size:40px;z-index:11','💵');pop(note5);
+  b=bub(230,150,'Three and a half dinars. Here is your change!',{r:true});
+  say(`The dates cost three and a half dinars. She pays with a five-dinar note, in a big hurry. She doesn't even count her change.`);
+  await an(note5,[{transform:'translate(0,0)'},{transform:'translate(-240px,0)'}],{duration:800});await w(2600);
+  const coins=[0,1].map(i=>mk('',`left:${600+i*30}px;top:296px;font-size:36px;z-index:11`,'🪙'));
+  for(const [i,co] of coins.entries())an(co,[{transform:'translate(0,0)'},{transform:`translate(${240-i*20}px,0)`}],{duration:700,delay:i*200});
+  say(`Nobody would know if Faris kept a little. But Faris knows Allah sees everything. He gives back every fils: one and a half dinars.`);await w(4000);b.remove();
+  b=bub(600,150,'May Allah bless you, son!',{r:true});
+  say(`That's being responsible to his religion in his <b>dealings with people</b>: buying and selling honestly.`);await w(3400);b.remove();
+  const c=pin(150,10,660,'Q7 · (c)',`وضح المسؤولية ${kw('تجاه','tujaah')} ${kw('الدين','ad-deen')} .`,`Explain responsibility ${kw('towards')} ${kw('religion')}.`);
+  say(`📌 Question 7 (c)! ${ar('وضح المسؤولية تجاه الدين','Explain responsibility towards religion.')} That's Faris's day!`);await w(3400);
+  const K=c.querySelectorAll('.kw');point(K[0]);
+  say(`${aw('تجاه','tujaah','towards')} means <b>towards</b>, and ${aw('الدين','ad-deen')} means <b>religion</b>. Two answers: the mosque and the shop.`);await w(3600);
+  const A=[[['في','fee','in','#18a058'],['العبادات','al-\'ibaadaat','acts of worship','#e06a1b'],['( الصلاة )','as-salaah','(prayer)','#b8860b']],
+    [['في','fee','in','#2c66cf'],['المعاملات','al-mu\'aamalaat','dealings with people','#6a45d8'],['( البيع والشراء )','al-bay\' wash-shiraa\'','(buying and selling)','#b8860b']]];
+  const SAY=[`One: ${aw('في العبادات ( الصلاة )','fil-\'ibaadaat, as-salaah')}: in <b>acts of worship</b>, like <b>prayer</b>. Faris at the mosque.`,
+    `Two: ${aw('في المعاملات ( البيع والشراء )','fil-mu\'aamalaat, al-bay\' wash-shiraa\'')}: in <b>dealings with people</b>, like <b>buying and selling</b>. Faris at the shop.`];
+  for(let i=0;i<2;i++){const bl=pinBlocks(c,A[i],{size:28,pic:['🕌','🏪'][i]});await revealBlocks(w,bl,{say:false,wait:250});say(SAY[i]);await w(3800);}
+  say(`Remember: <b>Pray</b> at the mosque, <b>Pay</b> honestly at the shop. Pray and Pay!`);await w(3000);unpoint();
+  clear();
+  /* Eid night: the happy ending */
+  mk('','left:0;top:0;width:960px;height:520px;background:linear-gradient(#0f1440,#3a3f86)');
+  [[80,60],[300,40],[520,90],[700,30],[880,80],[200,150],[620,170]].forEach(([x,y],i)=>{const s=mk('st-star',`left:${x}px;top:${y}px;font-size:22px`,'✦');loop(s,[{opacity:.2},{opacity:1}],500+i*130,{direction:'alternate'});});
+  const moon=mk('','left:430px;top:30px;font-size:90px;filter:drop-shadow(0 0 20px #fff3a0)','🌙');pop(moon);
+  mk('','left:0;top:420px;width:960px;height:100px;background:#2b2f5e');
+  const fam=[['👨','Dad',84],['🧕','Mum',84],['🧑','Faris',78],['👧','Reem',74],['👦','Yusuf',60],['🧒','Huda',54]];
+  const F=fam.map(([e,n,s],i)=>who(40+i*150,420-s-40,e,n,s));F.forEach((f,i)=>pop(f,i*120));
+  F.forEach((f,i)=>loop(f.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-10px)'}],420+i*60,{direction:'alternate'}));
+  const eid=mk('st-title','left:250px;top:150px;width:460px;font-size:30px',`🎉 ${aw('عيد مبارك','eid mubaarak','Happy Eid')}`);pop(eid);confetti(80);yay();
+  say(`That night, the Eid moon appears. The whole family is rested, happy and proud of each other.`);await w(3200);
+  b=bub(160,236,'Best Ramadan ever!',{r:true});const b2=bub(470,246,'And no energy drinks!');
+  say(`"Best Ramadan ever," says Faris. And yes, he finished his game, in the daytime, at a sensible hour!`);await w(4000);}},
+
+/* 5 */ {t:'Story map',run:async w=>{
+  const t=mk('','left:0;top:2px;width:960px;text-align:center;font-size:20px;font-weight:800;color:#7a4a00','🗺️ Story map: picture → keyword → answer');pop(t);
+  say(`Here's the whole story on one map. In the exam, spot the <b>keyword</b>, picture the <b>story</b>, and the answer follows.`);await w(3600);
+  const m=(x,y,wd,h,src,pic,key,ans)=>mk('st-map',`left:${x}px;top:${y}px;width:${wd}px;height:${h}px`,
+    `<div class="src">${src}</div><div class="pic">${pic}</div><div class="key">${key}</div><div class="arr">⬇</div><div dir="rtl">${ans}</div>`);
+  const A=(a,en,s,col,n)=>`<span class="ans" style="background:${col}">${n?`<b class="nogl">${n}</b> `:''}${ar(a,en,s)}</span>`;
+  const NOT=A('غير مسؤول','irresponsible','ghayr mas\'ool','#e04848'),YES=A('مسؤول','responsible','mas\'ool','#18a058');
+  const C=[m(12,34,296,196,'Q7 (a) 1','🧑🎮🌙😴',ar(`${kw('أسرف','asrafa')} ${kw('بالسهر','bis-sahar')}`,`${kw('stayed up far too late')}`),NOT),
+    m(332,34,296,196,'Q7 (a) 2','👧🥤🥤🥤🤢',ar(`${kw('تكثر','tukthir')} من ${kw('مشروبات الطاقة','mashroobaat at-taaqa')}`,`${kw('a lot of')} ${kw('energy drinks')}`),NOT),
+    m(652,34,296,196,'Q7 (a) 3','👨🕌👦🧒',ar(`${kw('يعلم','yu\'allim')} أولاده ${kw('الصلاة','as-salaah')}`,`${kw('teaches')} his children ${kw('to pray')}`),YES),
+    m(12,244,500,268,'Q7 (b) · Dad Shows Us Manners','⭕ 🕌 🧍 👨‍👩‍👧 🏙️',ar(`${kw('أقسام','aqsaam')} ${kw('المسؤولية الفردية','al-mas\'ooliyya al-fardiyya')}`,`${kw('kinds')} of ${kw('personal responsibility')}`),
+      KINDS.map((K,i)=>A('المسؤولية '+K.end,(K.m==='to society'?'responsibility to society':K.m+' responsibility'),'al-mas\'ooliyya '+K.s,K.col,i+1)).join('')),
+    m(524,244,424,268,'Q7 (c) · Pray and Pay','🕌 🏪',ar(`${kw('تجاه','tujaah')} ${kw('الدين','ad-deen')}`,`${kw('towards')} ${kw('religion')}`),
+      A('في العبادات ( الصلاة )','in acts of worship (prayer)','fil-\'ibaadaat (as-salaah)','#e06a1b',1)+A('في المعاملات ( البيع والشراء )','in dealings with people (buying and selling)','fil-mu\'aamalaat (al-bay\' wash-shiraa\')','#6a45d8',2))];
+  C.forEach(c=>{c.classList.add('lit');c.style.visibility='hidden';});C[3].lastElementChild.classList.add('two');
+  const L=[`Faris and his game: ${aw('أسرف بالسهر','asrafa bis-sahar','stayed up far too late')} means ${aw('غير مسؤول','ghayr mas\'ool')}, <b>irresponsible</b>.`,
+    `Reem and her cans: ${aw('تكثر من مشروبات الطاقة','tukthir min mashroobaat at-taaqa','a lot of energy drinks')} means ${aw('غير مسؤول','ghayr mas\'ool')} too.`,
+    `Dad and the prayer mats: ${aw('يعلم أولاده الصلاة','yu\'allim awlaadahu as-salaah','teaches his children to pray')} means ${aw('مسؤول','mas\'ool')}, <b>responsible</b>.`,
+    `The circles: ${aw('أقسام','aqsaam','kinds')} means four kinds. Dad Shows Us Manners: religious, personal, family and society.`,
+    `The mosque and the shop: ${aw('تجاه الدين','tujaah ad-deen','towards religion')}. In worship, prayer, and in dealings, buying and selling. Pray and Pay!`];
+  for(let i=0;i<5;i++){C[i].style.visibility='visible';pop(C[i]);point(C[i]);beep(520+i*70,.07);say(L[i]);await w(3800);}
+  unpoint();say(`That's all of Question 7 in one story. Now let's learn to <b>write</b> every answer.`);await w(2800);}},
+
+/* 6 */ {t:'Staying up late (Q7 a 1)',run:async w=>{
   say(`Question 7 a says: ${ar('حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول )','Decide the type of action by writing the word responsible or irresponsible.')} You only ever write one of our two words.`);await w(3400);
   await clueCard(w,{src:WS+'(a) · 1',kind:['حدد','haddid','decide: responsible or not?'],
     q:`شاب ${kw('أسرف','asrafa')} ${kw('بالسهر','bis-sahar')} خلال شهر رمضان`,en:`A young man who ${kw('overdid')} ${kw('staying up late')} during the month of Ramadan`,
@@ -57,7 +353,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`He is ${aw('غير مسؤول','ghayr mas\'ool')}: staying up far too late wastes time and harms his body.`});
   await w(1200);}},
 
-/* 2 */ {t:'Energy drinks and prayer (Q7 a 2, 3)',run:async w=>{
+/* 7 */ {t:'Energy drinks and prayer (Q7 a 2, 3)',run:async w=>{
   await clueCard(w,{src:WS+'(a) · 2',kind:['حدد','haddid','decide: responsible or not?'],
     q:`فتاة ${kw('تكثر','tukthir')} من ${kw('مشروبات الطاقة','mashroobaat at-taaqa')}`,en:`A girl who drinks ${kw('a lot of')} ${kw('energy drinks')}`,
     keys:[`${aw('تكثر','tukthir')} means <b>a lot</b>, too much. Another "too much" warning!`,`${aw('مشروبات الطاقة','mashroobaat at-taaqa')} means <b>energy drinks</b>. Too many are bad for your heart and your sleep.`],
@@ -71,7 +367,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`He is ${aw('مسؤول','mas\'ool')}: he takes care of his family's religion. No ${aw('غير','ghayr')} this time!`});
   await w(1200);}},
 
-/* 3 */ {t:'Sort the actions',run:async w=>{
+/* 8 */ {t:'Sort the actions',run:async w=>{
   const note=mk('','left:30px;top:10px;width:900px;text-align:center;font-size:17px;font-weight:800;color:#7a4a00',
     `Arabic cards = worksheet keywords &nbsp;·&nbsp; <span style="color:#2c66cf">English cards = extra practice (not on the sheet)</span>`);pop(note);
   say(`Sorting game! Tap a card, then tap ${aw('مسؤول','mas\'ool')} or ${aw('غير مسؤول','ghayr mas\'ool')}. The Arabic cards are from your sheet. The English ones are extra practice.`);await w(3400);
@@ -81,7 +377,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     top:210,colors:['#18a058','#e04848']});
   say(r.ok===r.total?`Perfect! Too much of something, or harming yourself or others: ${aw('غير مسؤول','ghayr mas\'ool')}. Doing your duties: ${aw('مسؤول','mas\'ool')}.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3400);}},
 
-/* 4 */ {t:'Circles of responsibility',run:async w=>{
+/* 9 */ {t:'Circles of responsibility',run:async w=>{
   say(`Question 7 b asks for the kinds of <b>personal responsibility</b>. Picture circles growing around you, like ripples in a pond.`);await w(3000);
   const cx=270,cy=262,R=[66,130,192,252],order=[1,2,3,0];
   const rings=[];
@@ -112,7 +408,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `Remember: <b>D</b>ad <b>Sh</b>ows <b>U</b>s <b>M</b>anners<br><small style="color:#2c66cf">Deeniyya · Shakhsiyya · Usariyya · Mujtama'iyya</small>`);pop(t);point(t);
   say(`Memory sentence: <b>Dad Shows Us Manners</b>. D for deeniyya, Sh for shakhsiyya, U for usariyya, M for mujtama'iyya.`);await w(4200);unpoint();}},
 
-/* 5 */ {t:'Four kinds (Q7 b)',run:async w=>{
+/* 10 */ {t:'Four kinds (Q7 b)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(b)</div><div class="q" style="font-size:26px">${ar(
     `دون ${kw('أقسام','aqsaam')} ${kw('المسؤولية الفردية','al-mas\'ooliyya al-fardiyya')}`,`Write down the ${kw('kinds')} of ${kw('personal responsibility')}`,'','blk')}</div>`);pop(q);
   say(`Question 7 b: ${ar('دون أقسام المسؤولية الفردية','Write down the kinds of personal responsibility.')}`);await w(2600);
@@ -131,7 +427,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   unpoint();
   say(`Purple is always the same word. Only the coloured ending changes. <b>Dad Shows Us Manners</b>!`);await w(3000);}},
 
-/* 6 */ {t:'Towards religion (Q7 c)',run:async w=>{
+/* 11 */ {t:'Towards religion (Q7 c)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(c)</div><div class="q" style="font-size:28px">${ar(
     `وضح المسؤولية ${kw('تجاه','tujaaha')} ${kw('الدين','ad-deen')} .`,`Explain responsibility ${kw('towards')} ${kw('religion')}.`,'','blk')}</div>`);pop(q);
   say(`Question 7 c: ${ar('وضح المسؤولية تجاه الدين','Explain responsibility towards religion.')}`);await w(2600);
@@ -160,7 +456,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   const t=mk('is-why',`left:30px;top:${top+230}px;width:900px;text-align:center`,`💡 Memory: <b>Pray</b> 🕌 and <b>Pay</b> 🛒 &nbsp;·&nbsp; both answers start with <span class="ar-font" style="font-size:24px">في</span> (in) and have an example in brackets.`);pop(t);point(t);
   say(`Remember: <b>Pray and Pay</b>. Both answers start with ${aw('في','fee')}, <b>in</b>, and put an example in brackets. Write the brackets too!`);await w(3800);unpoint();}},
 
-/* 7 */ {t:'Build the answers',run:async w=>{
+/* 12 */ {t:'Build the answers',run:async w=>{
   say(`Now you build the answers with tiles. Remember: Arabic is written from <b>right to left</b>, so the first tile goes on the right.`);await w(3200);
   let r=await buildAR(w,{src:WS+'(a) · 1',q:`Build the answer for ${aw('أسرف بالسهر','asrafa bis-sahar')}: <b>irresponsible</b>`,
     tiles:[['مسؤول','mas\'ool'],['المسؤولية','al-mas\'ooliyya'],['غير','ghayr']],answer:['غير','مسؤول']});
@@ -172,7 +468,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     tiles:[['والشراء','wash-shiraa\''],['في','fee'],['العبادات','al-\'ibaadaat'],['البيع','al-bay\''],['المعاملات','al-mu\'aamalaat']],answer:['في','المعاملات','البيع','والشراء']});
   say(r.ok?`Excellent! In dealings: buying and selling. On paper, put brackets around ${aw('البيع والشراء','al-bay\' wash-shiraa\'')}.`:`Look again: ${aw('في المعاملات ( البيع والشراء )')}. In, dealings, buying, and selling.`);await w(3400);}},
 
-/* 8 */ {t:'Trace it',run:async w=>{
+/* 13 */ {t:'Trace it',run:async w=>{
   say(`Now trace the short answers with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
   const W=[['مسؤول','mas\'ool','responsible'],['غير مسؤول','ghayr mas\'ool','irresponsible'],['الدينية','ad-deeniyya','religious']];
   for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. ${a==='مسؤول'?`Remember the hamza hat on the ${aw('و','waaw')}! `:''}Press <b>Done</b> when you've finished.`);
@@ -184,7 +480,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div class="ar-font" dir="rtl" style="font-size:30px;margin-top:8px;color:#5a3c00;line-height:1.6">مسؤول · غير مسؤول<br>المسؤولية الدينية · المسؤولية الشخصية<br>المسؤولية الأسرية · المسؤولية المجتمعية</div>`);pop(p);
   say(`The exam is written by hand, so practise on paper: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Write the four kinds of Question 7 b: Dad Shows Us Manners.`);await w(4200);}},
 
-/* 9 */ {t:'Which circle?',run:async w=>{
+/* 14 */ {t:'Which circle?',run:async w=>{
   const note=mk('','left:30px;top:10px;width:900px;text-align:center;font-size:17px;font-weight:800;color:#2c66cf','Extra practice (not on the sheet): which kind of responsibility is it?');pop(note);
   say(`One more game, just for practice. Each card is an everyday duty. Which circle does it belong to? Tap a card, then tap its ending.`);await w(3200);
   const r=await sortGame(w,{bins:KINDS.map(K=>bt([K.end,K.who==='me'?'personal':K.who==='my family'?'family':K.who])),
@@ -193,7 +489,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     top:220,colors:KINDS.map(K=>K.col)});
   say(r.ok===r.total?`Perfect! Me, my family, society, and religion around it all.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong circle. Press Replay to try again.`);await w(3000);}},
 
-/* 10 */ {t:'Exam check',run:async w=>{
+/* 15 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
     {src:'Worksheet · Q7 · (a) · 1',q:'حدد نوع التصرف الصادر بكتابة كلمة ( مسؤول أو غير مسؤول ) : شاب أسرف بالسهر خلال شهر رمضان',en:'Write responsible or irresponsible: a young man who stayed up far too late during Ramadan.',
       o:['مسؤول','غير مسؤول'],oe:['responsible','irresponsible'],otr:['mas\'ool','ghayr mas\'ool'],a:1,cols:3,
@@ -220,7 +516,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       mtr:'Pray and Pay: fil-\'ibaadaat (as-salaah), fil-mu\'aamalaat (al-bay\' wash-shiraa\')'}
   ]);}},
 
-/* 11 */ {t:'You did it!',run:async w=>{
+/* 16 */ {t:'You did it!',run:async w=>{
   const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 7 done!');pop(t);
   const B=[['🦸','مسؤول','responsible'],['🙈','غير مسؤول','irresponsible'],['🕌','المسؤولية<br>الدينية','religious'],['🧍','المسؤولية<br>الشخصية','personal'],
     ['👨‍👩‍👧','المسؤولية<br>الأسرية','family'],['🏙️','المسؤولية<br>المجتمعية','society'],['🕌','في العبادات<br>( الصلاة )','worship: prayer'],['🛒','في المعاملات<br>( البيع والشراء )','dealings: buying and selling']];

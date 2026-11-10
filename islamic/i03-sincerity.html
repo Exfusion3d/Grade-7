@@ -20,6 +20,28 @@ body.snd-mode .ax:not(.en) .opt[data-tr]::after{content:attr(data-tr);direction:
 .ul .ul-ans{background-size:100% 5px;color:#0f7a40}
 .ul .ax.en .ul-ans{background-position:left bottom}
 .ul .opt:not(.ul-ans){color:#a8a1b8}
+/* the story: people, speech bubbles and the 📌 question tags */
+.st-p{text-align:center;z-index:5}
+.st-p .e{line-height:1.05;white-space:nowrap}
+.st-p .nm{display:inline-block;margin-top:2px;background:#fff;border:2px solid #d9a441;border-radius:10px;padding:0 8px;font-size:15px;font-weight:800;color:#7a4a00}
+.st-bub{background:#fff;border:3px solid #1f2433;border-radius:18px;padding:6px 12px;font-size:18px;font-weight:800;color:#1f2433;line-height:1.3;z-index:20;text-align:center}
+.st-bub::after{content:'';position:absolute;top:100%;left:var(--tx,40px);margin-left:-10px;border:10px solid transparent;border-top-color:#1f2433}
+.st-bub.up::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:#1f2433}
+.st-bub .ax:not(.en){font-size:1.25em}
+.st-pin{text-align:center;border-color:#d9a441;box-shadow:0 6px 0 #e8c98a,0 10px 30px rgba(120,80,0,.25)}
+.st-pin .pq{font-size:15px;font-weight:800;color:#a0742a;letter-spacing:.04em}
+.st-pin .pk{font-size:28px;font-weight:700;margin:2px 0 4px;color:#1f2433}
+.st-pin .pk .ax.en{font-size:22px}
+.st-tag{background:#fff;border:3px solid;border-radius:14px;padding:4px 10px;text-align:center;font-weight:800;z-index:8}
+.st-tag .ax:not(.en){font-size:30px}
+.sm-card{position:absolute;background:#fff;border:3px solid #f0d9a8;border-radius:16px;box-shadow:0 4px 0 #f3e3c0;text-align:center;padding:6px 8px}
+.sm-card .src{font-size:12px;font-weight:800;color:#a0742a;letter-spacing:.05em}
+.sm-card .pic{font-size:32px;line-height:1.1}
+.sm-card .cap{font-size:13px;font-weight:800;color:#626a80}
+.sm-card .key{font-size:22px;font-weight:700;margin:2px 0}
+.sm-card .key .ax.en{font-size:16px}
+.sm-card .ans{font-weight:700;color:#0f7a40;line-height:1.3}
+.sm-card .ans .ax.en{font-size:16px;color:#0f7a40}
 </style>
 </head>
 <body>
@@ -42,33 +64,253 @@ const FRUITS=[
   {e:'🛡️',word:'Devil',a:'العصمة من الشيطان',bl:[['العصمة','al-\'isma','protection'],['من','min','from'],['الشيطان','ash-shaytaan','Shaytan']],en:'protection from Shaytan'},
   {e:'🤝',word:'Day',a:'نيل شفاعة النبي ﷺ',bl:[['نيل','nayl','earning'],['شفاعة','shafaa\'at','the intercession of'],['النبي ﷺ','an-nabee','the Prophet ﷺ']],en:'earning the intercession of the Prophet ﷺ on the Day of Judgement'}];
 
+/* ---------- the story "The Two Gardens": people, bubbles, scenery and the 📌 question tags ---------- */
+function person(x,y,e,name,size=64){const p=mk('st-p',`left:${x}px;top:${y}px;width:130px`,`<div class="e" style="font-size:${size}px">${e}</div><div class="nm">${name}</div>`);pop(p);return p;}
+const face=(p,e)=>{p.querySelector('.e').textContent=e;};
+/* walk to (dx,dy) from where the person was placed, bobbing on the way */
+function walk(p,dx,dy=0,ms=1500){const b=loop(p.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-9px)'}],230,{direction:'alternate'});
+  an(p,[{transform:`translate(${dx}px,${dy}px)`}],{duration:ms,easing:'ease-in-out'});setTimeout(()=>b.cancel(),ms);}
+function bub(x,y,wd,html,tail=40,up){const b=mk('st-bub'+(up?' up':''),`left:${x}px;top:${y}px;width:${wd}px;--tx:${tail}px`,html);pop(b);return b;}
+function glow(el,col='#ffd000'){return loop(el,[{filter:`drop-shadow(0 0 0 ${col})`},{filter:`drop-shadow(0 0 16px ${col})`}],700,{direction:'alternate'});}
+function floatUp(x,y,list,n=6){for(let i=0;i<n;i++){const f=mk('',`left:${x+(i*37)%70-35}px;top:${y}px;font-size:28px;z-index:6;opacity:0`,list[i%list.length]);
+  an(f,[{opacity:0,transform:'translateY(0)'},{opacity:1,offset:.2},{opacity:0,transform:'translateY(-150px)'}],{duration:1700,delay:i*260});}}
+function shade(col,to,ms=1200){const d=mk('',`left:0;top:0;width:960px;height:520px;background:${col};opacity:0;z-index:4;pointer-events:none`);an(d,[{opacity:to}],{duration:ms});return d;}
+/* a 📌 tag: the worksheet question, its keyword and the answer blocks, over a pale veil */
+function pin(x,y,wd,lab,keyHTML,bl,size=32,pic=''){
+  const veil=mk('',`left:0;top:0;width:960px;height:520px;background:rgba(255,248,232,.82);z-index:25`);an(veil,[{opacity:0},{opacity:1}],{duration:400});
+  const c=mk('is-card lit st-pin',`left:${x}px;top:${y}px;width:${wd}px;z-index:30`,`<div class="pq">📌 ${lab}</div>${pic?`<div style="font-size:38px;line-height:1.1">${pic}</div>`:''}<div class="pk">${keyHTML}</div>`);
+  const b=ansBlocks(0,0,0,bl.map(r=>[...r]),{size,show:false});b.style.cssText='position:relative;margin-top:6px;justify-content:center';c.appendChild(b);
+  pop(c);beep(780,.1);return {c,b,off(){c.remove();veil.remove();}};}
+const KW=(a,s,e)=>ar(kw(a,s),kw(e));
+
 Lesson.start(Object.assign({}, ISLAMIC, {
   id:'i03', num:3, part:'Hadith · الحديث', emoji:'🤲', title:'Sincerity, intention and Hijra',
   intro:`Assalaamu alaykum! It's <b>Hudhud</b> again 🐦 Today: <b>sincerity</b>, <b>intention</b> and the <b>Hijra</b>, Question 3 of your sheet. Press <b>Start</b>!`,
   scenes:[
 /* 0 */ {t:'Why do you do it?',run:async w=>{
-  say(`Two boys clean the mosque. They do exactly the same job. But Allah gives them very different rewards. Why?`);await w(3400);
-  const P=[{x:40,e:'🧒🧹',tag:'💖',t:'Boy 1',d:'He does it <b>only for Allah</b>.',col:'#18a058'},{x:500,e:'🧒🧹',tag:'🎭👏',t:'Boy 2',d:'He does it so people <b>praise him</b>.',col:'#e04848'}];
-  const els=P.map(p=>mk('is-card',`left:${p.x}px;top:14px;width:420px;height:150px;text-align:center;border-color:${p.col}`,
-    `<div style="font-size:50px">${p.e} <span class="tg">${p.tag}</span></div><div style="font-size:21px;font-weight:800;color:${p.col}">${p.t}</div><div style="font-size:18px;font-weight:700;color:#3a3f52">${p.d}</div>`));
-  for(const [i,e] of els.entries()){pop(e);point(e);loop(e.querySelector('.tg'),[{transform:'scale(1)'},{transform:'scale(1.2)'}],600,{direction:'alternate'});
-    say(i?`The second boy does it so people will see him and <b>praise</b> him.`:`The first boy does it <b>only for Allah</b>. Nobody needs to see him.`);await w(2800);}
-  say(`The difference is inside the heart. Here are the three words for it.`);await w(2200);
-  const Wd=[['الإخلاص','al-ikhlaas','sincerity','doing good deeds only for Allah','💖','#18a058'],['النية','an-niyya','intention','the reason in your heart','🎯','#2c66cf'],['الرياء','ar-riyaa\'','showing off','doing it to be seen: the opposite','🎭','#e04848']];
-  for(const [i,[a,s,m,d,e,col]] of Wd.entries()){
-    const c=mk('is-card',`left:${30+i*306}px;top:190px;width:286px;height:200px;text-align:center;border-color:${col}`,
-      `<div style="font-size:44px">${e}</div><div class="ar-font" dir="rtl" style="font-size:38px;font-weight:700;color:${col};line-height:1.2">${a}</div>`+
-      `<div style="font-size:15px;font-weight:800;color:#2c66cf">${s}</div><div style="font-size:19px;font-weight:800;color:#5a3c00">${m}</div><div style="font-size:15px;font-weight:700;color:#626a80">${d}</div>`);
-    pop(c);point(c);beep(520+i*90,.08);
-    say([`${aw(a,s)} means <b>sincerity</b>: doing good deeds <b>only for Allah</b>. That's the first boy.`,
-      `${aw(a,s)} means <b>intention</b>: the reason in your heart, <b>why</b> you do something.`,
-      `${aw(a,s)} means <b>showing off</b>: doing good so people see you. It's the <b>opposite</b> of sincerity. That's the second boy.`][i]);await w(3600);}
-  unpoint();
-  const h=mk('is-why','left:130px;top:410px;width:700px;text-align:center;font-size:20px',
-    `The Prophet ﷺ said: ${ar(`إنما الأعمال بالنيات`,'Actions are judged by intentions.','innamal a\'maalu bin-niyyaat','ar-font')}`);pop(h);point(h);
-  say(`The Prophet ﷺ said: ${ar('إنما الأعمال بالنيات','Actions are judged by intentions.')} That means <b>actions are judged by intentions</b>. The famous hadith of intentions starts like this.`);await w(4400);unpoint();}},
+  mk('',`left:0;top:0;width:960px;height:520px;background:linear-gradient(#cfeeff,#f4fbff 72%)`);
+  mk('',`left:0;top:400px;width:960px;height:120px;background:linear-gradient(#9bd77a,#6fbf55)`);
+  const t=mk('','left:0;top:16px;width:960px;text-align:center;font-size:44px;font-weight:800;color:#7a4a00','📖 The Two Gardens');pop(t);
+  say(`Two boys do <b>exactly</b> the same good deed. But Allah gives them very different rewards. How can that be?`);await w(3400);
+  const P=[{x:150,n:'Garden 1'},{x:590,n:'Garden 2'}],pots=[];
+  for(const p of P){const g=mk('',`left:${p.x}px;top:330px;width:220px;height:90px;border-radius:50% 50% 12px 12px;background:#8a5a2b`);pop(g);
+    const sp=mk('',`left:${p.x}px;top:250px;width:220px;text-align:center;font-size:70px`,'🌱');pop(sp,200);pots.push(sp);}
+  say(`Picture two gardens. The same seeds, the same water, the same sunshine.`);await w(2800);
+  pots[0].textContent='🌳';pop(pots[0]);an(pots[0],[{transform:'scale(1)'},{transform:'scale(1.7) translateY(-30px)'}],{duration:900});
+  const fr=mk('',`left:150px;top:150px;width:220px;text-align:center;font-size:30px;opacity:0`,'🍎 🍊 🍐 🍋');an(fr,[{opacity:1}],{duration:500,delay:700});
+  pots[1].textContent='🎈';pop(pots[1]);loop(pots[1],[{transform:'translateY(0)'},{transform:'translateY(-14px)'}],700,{direction:'alternate'});
+  say(`One garden grows a real tree, full of fruit. The other grows only a shiny balloon, with nothing inside.`);await w(3600);
+  const q=mk('is-why','left:180px;top:440px;width:600px;text-align:center;font-size:22px','🔒 The secret is hidden <b>inside the heart</b>.');pop(q);point(q);
+  say(`The secret is something nobody can see: it's hidden <b>inside the heart</b>. Let's find out in a story. This is Question 3 of your sheet.`);await w(3800);unpoint();}},
 
-/* 1 */ {t:'The Hijra (Q3 a 1)',run:async w=>{
+/* 1 */ {t:'Story: Charity day',run:async w=>{
+  mk('',`left:0;top:0;width:960px;height:520px;background:linear-gradient(#bfe6ff,#f2fbff 72%)`);
+  mk('',`left:0;top:395px;width:960px;height:125px;background:linear-gradient(#9bd77a,#6fbf55)`);
+  const sun=mk('','left:860px;top:14px;font-size:56px','☀️');loop(sun,[{transform:'rotate(0)'},{transform:'rotate(25deg)'}],2200,{direction:'alternate'});
+  const ban=mk('','left:250px;top:12px;width:460px;text-align:center;padding:6px;border-radius:14px;background:#e06a1b;color:#fff;font-size:26px;font-weight:800;box-shadow:0 4px 0 #b44e0a','🎪 School Charity Day 🎪');pop(ban);
+  mk('','left:380px;top:372px;width:200px;height:18px;background:#a8743a;border-radius:6px;box-shadow:0 4px 0 #7a4a20');
+  mk('','left:395px;top:390px;width:12px;height:60px;background:#7a4a20');mk('','left:553px;top:390px;width:12px;height:60px;background:#7a4a20');
+  const O=person(-140,300,'👦📦','Omar'),K=person(980,300,'🧒📦','Karim');
+  say(`Story time! 📖 Meet two cousins, <b>Omar</b> and <b>Karim</b>. They're in the same class, and today is the school charity day.`);
+  walk(O,370);walk(K,-560);await w(3600);
+  say(`Both boys have the same job: carry the boxes of food to the charity table.`);
+  walk(O,500,0,900);walk(K,-690,0,900);await w(1000);
+  face(O,'👦');face(K,'🧒');const bx=mk('','left:380px;top:322px;width:200px;text-align:center;font-size:44px','📦📦');pop(bx);beep(500,.08);
+  walk(O,340,0,800);walk(K,-520,0,800);await w(2400);
+  face(K,'🧒📱');let b2=bub(560,150,300,`Quick, film me! 📸 Everyone will see how kind I am!`,230);floatUp(780,280,['👍','❤️','👏']);
+  say(`Karim pulls out his phone. “Quick, film me! Everyone will see how kind I am!” He wants <b>likes</b> and <b>praise</b>.`);await w(4000);
+  let b1=bub(130,150,300,`Nobody needs to see. I'm doing this for Allah. 💖`,110);const g=glow(O.querySelector('.e'));
+  say(`Omar just keeps working. “Nobody needs to see. I'm doing this <b>for Allah</b>.”`);await w(3400);
+  b1.remove();b2.remove();
+  const ni=mk('st-tag',`left:330px;top:90px;width:300px;border-color:#2c66cf;color:#2c66cf;font-size:18px`,`<span style="font-size:30px">🎯</span> ${ar('النية','intention','an-niyya')}<div style="font-size:15px;color:#626a80">the reason in your heart</div>`);pop(ni);point(ni);
+  say(`Same boxes, same table, same job. The difference is the reason in their hearts: ${aw('النية','an-niyya','intention')}, the <b>intention</b>.`);await w(4000);
+  const ik=mk('st-tag',`left:80px;top:190px;width:250px;border-color:#18a058;color:#18a058;font-size:17px`,`<span style="font-size:30px">💖</span> ${ar('الإخلاص','sincerity','al-ikhlaas')}<div style="font-size:14px;color:#626a80">only for Allah</div>`);pop(ik);point(ik);
+  say(`Omar has ${aw('الإخلاص','al-ikhlaas','sincerity')}, <b>sincerity</b>: doing good deeds <b>only for Allah</b>.`);await w(3400);
+  const ri=mk('st-tag',`left:630px;top:190px;width:250px;border-color:#e04848;color:#e04848;font-size:17px`,`<span style="font-size:30px">🎭</span> ${ar('الرياء','showing off','ar-riyaa\'')}<div style="font-size:14px;color:#626a80">to be seen: the opposite</div>`);pop(ri);point(ri);
+  say(`Karim has ${aw('الرياء','ar-riyaa\'','showing off')}, <b>showing off</b>: doing good so people see you. It's the <b>opposite</b> of sincerity.`);await w(3800);
+  unpoint();ni.remove();ik.remove();ri.remove();
+  b2=bub(540,170,320,`Omar, how do you do it? Don't you want people to clap for you? 👏`,250);
+  say(`Karim is puzzled. “Omar, how do you do it? Don't you want people to clap for you?”`);await w(3200);
+  b2.remove();const B=person(-140,300,'🧑','Bilal',56),Z=person(-140,300,'👦','Zayd',56);walk(B,140);walk(Z,235);
+  b1=bub(150,160,330,`My good friends help me. They always remind me: do it for Allah!`,180);
+  say(`Omar's friends <b>Bilal</b> and <b>Zayd</b> come over. “My good friends help me,” says Omar. “They always remind me: do it for Allah!”`);await w(4200);
+  b1.remove();b2=bub(560,150,330,`I thought lots of money 💰 or showing off 🎭 would help!`,240);
+  say(`“Oh!” says Karim. “I thought lots of <b>money</b> would help, or <b>showing off</b>!”`);await w(3000);
+  const x1=mk('','left:640px;top:96px;font-size:50px;z-index:21','❌');pop(x1);const x2=mk('','left:770px;top:96px;font-size:50px;z-index:21','❌');pop(x2,250);boo();
+  say(`No! Money doesn't make you sincere, and showing off is the <b>opposite</b>. It's <b>good friends</b> who help.`);await w(3400);
+  b2.remove();x1.remove();x2.remove();
+  const P=pin(150,60,660,'Question 3 (a) 2',KW(`الوسائل … تعين`,'al-wasaa\'il … tu\'een','things … help'),
+    [['مصاحبة','musaahabat','keeping company with'],['الأخيار','al-akhyaar','good people']],40,'👦🧑👦');
+  say(`📌 Here's <b>Question 3 a 2</b>! When you see ${aw('الوسائل','al-wasaa\'il','things')} and ${aw('تعين','tu\'een','help')}, things that <b>help</b> sincerity, think of Omar's good friends.`);await w(4400);
+  await revealBlocks(w,P.b,{say:false,wait:300});
+  say(`The answer: ${aw('مصاحبة الأخيار','musaahabat al-akhyaar','keeping company with good people')}: <b>keeping company with good people</b>. 👫`);await w(3400);
+  unpoint();P.off();g.cancel();shade('#1d2d6b',.55,1500);
+  say(`That evening, the cousins went to visit their grandfather, <b>Jiddo Yusuf</b>. And Karim had something to show him…`);await w(3200);}},
+
+/* 2 */ {t:'Story: Jiddo\'s Hijra tale',run:async w=>{
+  mk('',`left:0;top:0;width:960px;height:520px;background:linear-gradient(#141c48,#2f3f86 75%)`);
+  mk('',`left:0;top:400px;width:960px;height:120px;background:linear-gradient(#b5463a,#8a2f27)`);
+  const moon=mk('','left:60px;top:20px;font-size:54px','🌙');glow(moon,'#fff6b0');
+  for(let i=0;i<12;i++){const s=mk('',`left:${150+i*67}px;top:${14+(i*53)%90}px;font-size:16px;color:#fff6b0`,'✦');loop(s,[{opacity:.3},{opacity:1}],600+i*90,{direction:'alternate'});}
+  const lamp=mk('','left:460px;top:380px;font-size:40px','🪔');glow(lamp,'#ffb000');
+  const J=person(415,270,'👴','Jiddo Yusuf',80),O=person(160,300,'👦','Omar'),K=person(680,300,'🧒📱','Karim');
+  say(`That night, at Jiddo Yusuf's house. Karim can't wait to show his phone.`);await w(2800);
+  let b=bub(560,170,300,`Jiddo! I got 50 likes today! 📱👍`,200);floatUp(745,280,['👍','❤️']);
+  say(`“Jiddo! I got <b>fifty likes</b> today!”`);await w(2400);
+  b.remove();b=bub(330,140,300,`Fifty likes! And what did you get from <b>Allah</b>? 🤔`,140);
+  say(`Jiddo smiles. “Fifty likes! And what did you get from <b>Allah</b>?” Karim goes quiet.`);await w(3400);
+  b.remove();face(K,'🧒❓');b=bub(330,140,300,`Let me tell you a true story about <b>intentions</b>.`,140);
+  say(`“Let me tell you a true story,” says Jiddo, “about <b>intentions</b>.”`);await w(2800);b.remove();
+  /* the map: Makkah on the right, Madinah on the left */
+  const map=mk('',`left:0;top:0;width:960px;height:520px;background:linear-gradient(#ffe9b8,#f2c98a);z-index:9`);an(map,[{opacity:0},{opacity:1}],{duration:700});
+  map.innerHTML=`<svg width="960" height="520" style="position:absolute;left:0;top:0"><path d="M790 330 C 640 420, 520 200, 330 300 S 200 330, 170 320" fill="none" stroke="#a0742a" stroke-width="5" stroke-dasharray="4 14" stroke-linecap="round"/></svg>`;
+  for(const [x,y] of [[300,440],[620,450],[850,440],[80,450]])mk('',`left:${x}px;top:${y}px;font-size:34px`,'🌵',map);
+  const mak=mk('st-tag',`left:700px;top:150px;width:220px;border-color:#e04848;color:#5a3c00;font-size:16px`,
+    `<div style="font-size:50px">🕋</div><b>Makkah</b><div>${ar('بلد الشرك','the land of shirk','balad ash-shirk')}</div>`,map);pop(mak);point(mak);
+  say(`Long ago in <b>Makkah</b>, most people worshipped idols instead of Allah. That is called <b>shirk</b>. The Muslims there were treated very badly.`);await w(4200);
+  const mad=mk('st-tag',`left:40px;top:150px;width:220px;border-color:#18a058;color:#5a3c00;font-size:16px`,
+    `<div style="font-size:50px">🌴🕌🌴</div><b>Madinah</b><div>${ar('بلد الإسلام','the land of Islam','balad al-islaam')}</div>`,map);pop(mad);point(mad);
+  say(`So Allah allowed the Muslims to move to <b>Madinah</b>, a city whose people welcomed Islam.`);await w(3400);unpoint();
+  const cam=mk('','left:760px;top:290px;font-size:56px;z-index:10','🐪');
+  const bob=loop(cam,[{marginTop:'0px'},{marginTop:'-8px'}],300,{direction:'alternate'});
+  an(cam,[{transform:'translate(0,0)'},{transform:'translate(-200px,60px)',offset:.3},{transform:'translate(-420px,-30px)',offset:.65},{transform:'translate(-600px,10px)'}],{duration:4400,easing:'linear'});
+  say(`The Muslims, and then the Prophet ﷺ, left their homes in Makkah and travelled through the desert, all the way to Madinah.`);await w(4400);bob.cancel();
+  const P=pin(200,40,560,'Question 3 (a) 1',KW('ترك بلد','tark balad','leaving a land'),[['الهجرة','al-hijra','the Hijra (migration)']],46,'🕋 🐪 ➡️ 🕌');
+  say(`📌 <b>Question 3 a 1</b>! ${aw('ترك بلد','tark balad','leaving a land')}: <b>leaving</b> the land of shirk for the land of Islam.`);await w(3600);
+  await revealBlocks(w,P.b,{say:false,wait:300});
+  say(`That journey has a special name: ${aw('الهجرة','al-hijra','the Hijra')}, the <b>Hijra</b>. 🐪 Camel journey, Hijra!`);await w(3400);
+  unpoint();P.off();an(map,[{opacity:0}],{duration:600});await w(700);map.remove();cam.remove();face(K,'🧒');
+  b=bub(330,140,300,`Leaving home is hard. So what matters is <b>why</b> each person did it.`,140);
+  say(`“Leaving your home is very hard,” says Jiddo. “So what matters is <b>why</b> each person did it.”`);await w(3200);b.remove();
+  const h=mk('is-why','left:130px;top:20px;width:700px;text-align:center;font-size:20px;z-index:12',
+    `The Prophet ﷺ said: ${ar('إنما الأعمال بالنيات','“Actions are judged by intentions.”','innamal a\'maalu bin-niyyaat','ar-font')}`);pop(h);point(h);
+  say(`The Prophet ﷺ said: ${ar('إنما الأعمال بالنيات','Actions are judged by intentions.')} <b>Actions are judged by intentions.</b>`);await w(4000);
+  const v=mk('st-tag','left:330px;top:135px;width:300px;border-color:#e06a1b;color:#5a3c00;font-size:16px;z-index:12',
+    `<div style="font-size:44px">🧳 ➡️ 💰</div>${ar('يصيبها','he gets it','yuseebuhaa')}`);pop(v);point(v);
+  say(`The same hadith says: someone who made the Hijra only for something of this world, like money, ${aw('يصيبها','yuseebuhaa','gets it')}. He <b>gets it</b>, and that's all his Hijra was for.`);await w(4800);
+  unpoint();h.remove();v.remove();
+  const P2=pin(200,40,560,'Question 3 (a) 4',`${ar('معنى','the meaning of','ma\'naa')} ( ${KW('يصيبها','yuseebuhaa','yuseebuhaa')} )`,[['يحصل','yahsulu','he gets'],['عليها','\'alayhaa','it']],44,'🧳 ➡️ 💰');
+  say(`📌 <b>Question 3 a 4</b> asks the meaning of ${aw('يصيبها','yuseebuhaa','yuseebuhaa')}. Picture the suitcase full of money. 🧳`);await w(3400);
+  await revealBlocks(w,P2.b,{say:false,wait:300});
+  say(`The answer: ${aw('يحصل عليها','yahsulu \'alayhaa','he gets it')}: <b>he gets it</b>.`);await w(2800);
+  unpoint();P2.off();face(K,'🧒📱');
+  b=bub(560,170,320,`So I got my likes… and that's <b>all</b> I got? 😟`,200);
+  say(`Karim looks at his phone. “So I got my likes… and that's <b>all</b> I got?”`);await w(3000);
+  b.remove();b=bub(330,140,300,`It's never too late to change your intention. 😊`,140);
+  say(`Jiddo smiles kindly. “It's never too late to change your intention, Karim.” That night, Karim had a very strange dream…`);await w(4000);
+  b.remove();shade('#0b1030',.7,1500);const z=mk('','left:770px;top:230px;font-size:34px;color:#fff;z-index:6','💤');pop(z);await w(1200);}},
+
+/* 3 */ {t:'Story: The door with two locks',run:async w=>{
+  mk('',`left:0;top:0;width:960px;height:520px;background:linear-gradient(#5b3fb0,#c78ad8 80%)`);
+  for(let i=0;i<10;i++){const s=mk('',`left:${30+i*95}px;top:${20+(i*41)%110}px;font-size:22px;color:#fff6b0`,'✨');loop(s,[{opacity:.2,transform:'scale(.7)'},{opacity:1,transform:'scale(1.1)'}],700+i*70,{direction:'alternate'});}
+  mk('','left:0;top:150px;width:960px;height:280px;background:repeating-linear-gradient(90deg,#b98b5e 0 78px,#a87a4e 78px 80px);border-top:8px solid #8a5a2b');
+  mk('',`left:0;top:420px;width:960px;height:100px;background:linear-gradient(#8fcf72,#5fae48)`);
+  const sign=mk('','left:290px;top:100px;width:380px;text-align:center;padding:4px;border-radius:12px;background:#fff8e6;border:3px solid #d9a441;font-size:18px;font-weight:800;color:#7a4a00','🌳 The Garden of Accepted Deeds');pop(sign);
+  const door=mk('','left:400px;top:180px;width:160px;height:240px;border-radius:80px 80px 6px 6px;background:linear-gradient(#ffd84d,#d9a441);border:5px solid #7a4a00');pop(door);
+  const L1=mk('',`left:430px;top:230px;width:100px;text-align:center;font-size:44px`,'🔒'),L2=mk('',`left:430px;top:310px;width:100px;text-align:center;font-size:44px`,'🔒');pop(L1);pop(L2);
+  const K=person(-140,300,'🧒','Karim');
+  say(`In his dream, Karim finds a high wall with a golden door. The sign says: <b>the Garden of Accepted Deeds</b>.`);walk(K,280);await w(3800);
+  say(`But the door has <b>two locks</b>! A good deed can only open it if it fits <b>both</b>.`);point(L1);await w(1600);point(L2);await w(1600);unpoint();
+  face(K,'🧒📱');let b=bub(20,170,290,`I'll pray, and post a video so everyone sees! 📸`,190);
+  say(`Karim tries: “I'll pray, and post a video so everyone sees!”`);await w(3000);
+  shake(L1);boo();b.remove();
+  say(`Clunk! The first lock won't open. That deed isn't for Allah alone.`);await w(2600);
+  const k1=mk('st-tag',`left:610px;top:180px;width:300px;border-color:#18a058;color:#5a3c00;font-size:16px`,`<div style="font-size:36px">🔑💖</div>${ar('خالصا لله','purely for Allah','khaalisan lillaah')}<div style="color:#18a058">Key 1: purely for Allah</div>`);pop(k1);point(k1);
+  say(`Lock 1 needs the key ${aw('خالصا لله','khaalisan lillaah','purely for Allah')}: <b>purely for Allah</b>. That's sincerity.`);await w(3400);unpoint();
+  face(K,'🧒😎');b=bub(20,150,300,`OK, only for Allah! And I'll pray Maghrib with <b>four</b> rak'ahs, one extra!`,190);
+  say(`Karim tries again. “OK, only for Allah this time! And I'll pray Maghrib with <b>four</b> rak'ahs. One extra, for luck!”`);await w(4000);
+  L1.textContent='🔓';pop(L1);beep(700,.08);await w(500);shake(L2);boo();b.remove();
+  say(`Click! The first lock opens. But the second lock won't budge.`);await w(2400);
+  const k2=mk('st-tag',`left:610px;top:330px;width:300px;border-color:#2c66cf;color:#5a3c00;font-size:16px`,`<div style="font-size:36px">🔑📖</div>${ar('موافقا لسنة النبي ﷺ','following the Sunnah of the Prophet ﷺ','muwaafiqan li-sunnat an-nabee')}<div style="color:#2c66cf">Key 2: the Prophet's ﷺ way</div>`);pop(k2);point(k2);
+  say(`Maghrib has <b>three</b> rak'ahs. We can't invent our own way. Lock 2 needs ${aw('موافقا لسنة النبي','muwaafiqan li-sunnat an-nabee','following the Sunnah of the Prophet')}: done the way the Prophet ﷺ taught.`);await w(5000);unpoint();
+  face(K,'🧒');L1.textContent='🔒';const O=person(-140,300,'👦','Omar');walk(O,150);
+  b=bub(20,150,320,`For Allah only, and the way the Prophet ﷺ taught us. 🤲`,110);
+  say(`Then Omar walks into the dream. “For Allah only,” he says, “and the way the Prophet ﷺ taught us.”`);await w(3800);b.remove();
+  L1.textContent='🔓';pop(L1);beep(700,.08);await w(500);L2.textContent='🔓';pop(L2);beep(820,.08);
+  door.style.background='radial-gradient(#fffbe0,#ffe680)';glow(door,'#fff3a0');yay();
+  say(`Click, click! <b>Both</b> locks open, and golden light pours out of the door. ✨`);await w(3000);
+  k1.remove();k2.remove();
+  const P=pin(30,40,900,'Question 3 (a) 3',`${KW('شروط','shuroot','conditions')} <span style="font-size:20px">= 2 keys 🔑🔑</span>`,
+    [['خالصا','khaalisan','purely'],['لله','lillaah','for Allah'],['وموافقا','wa muwaafiqan','and following'],['لسنة','li-sunnat','the Sunnah of'],['النبي','an-nabee','the Prophet']],34,'🚪🔒🔒');
+  say(`📌 <b>Question 3 a 3</b>! The keyword is ${aw('شروط','shuroot','conditions')}: <b>conditions</b>, more than one. Two locks need <b>two keys</b>.`);await w(3800);
+  await revealBlocks(w,P.b,{say:false,wait:250});
+  say(`So underline the answer with <b>both</b> keys, joined by ${aw('و','wa','and')}, and: ${aw('خالصا لله وموافقا لسنة النبي','khaalisan lillaah wa muwaafiqan li-sunnat an-nabee','purely for Allah and following the Sunnah of the Prophet')}.`);await w(4800);
+  unpoint();P.off();
+  say(`The boys step through the golden door. What's inside? Let's see!`);an(O,[{transform:'translate(330px,0)',opacity:0}],{duration:1600});an(K,[{transform:'translate(400px,0)',opacity:0}],{duration:1600});await w(2400);}},
+
+/* 4 */ {t:'Story: The four fruits',run:async w=>{
+  mk('',`left:0;top:0;width:960px;height:520px;background:linear-gradient(#c7f0ff,#fffbe8 80%)`);
+  mk('',`left:0;top:410px;width:960px;height:110px;background:linear-gradient(#9bd77a,#5fae48)`);
+  mk('','left:185px;top:260px;width:56px;height:160px;border-radius:8px;background:linear-gradient(90deg,#8a5a2b,#a8743a)');
+  const can=mk('','left:40px;top:50px;width:350px;height:250px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#6fd06a,#2f8f3a);box-shadow:inset 0 -12px 0 rgba(0,0,0,.12)');pop(can);
+  const O=person(300,320,'👦','Omar',56);
+  const kp=mk('','left:620px;top:130px;width:280px;height:290px');
+  mk('','left:20px;top:240px;width:240px;height:50px;border-radius:50% 50% 8px 8px;background:#8a5a2b',null,kp);
+  const bal=mk('','left:70px;top:20px;width:140px;text-align:center;font-size:90px',`🎈`,kp);loop(bal,[{transform:'translateY(0)'},{transform:'translateY(-14px)'}],700,{direction:'alternate'});
+  mk('','left:60px;top:160px;width:160px;text-align:center;font-size:20px;font-weight:800;color:#e04848','👍 50 likes',kp);
+  const K=person(760,320,'🧒','Karim',56);
+  say(`Behind the door are two gardens. Omar's garden has a huge tree. It grew from all the good deeds he did <b>only for Allah</b>.`);await w(4200);
+  point(bal);say(`Karim's garden has only a shiny balloon of likes. Karim touches it…`);await w(2800);unpoint();
+  an(bal,[{transform:'scale(1.4)',opacity:1},{transform:'scale(0)',opacity:0}],{duration:400});beep(200,.15);
+  const pf=mk('','left:700px;top:160px;font-size:60px','💥');pop(pf);face(K,'🧒😮');
+  say(`Pop! 💥 Nothing inside. Likes and praise don't last.`);await w(2600);
+  pf.remove();an(kp,[{opacity:0}],{duration:600});an(K,[{transform:'translate(-470px,90px)'}],{duration:1400});
+  /* the pin: the question, then the four fruits one by one */
+  const pc=mk('is-card lit st-pin',`left:440px;top:8px;width:490px;height:478px;z-index:12;text-align:left`,
+    `<div class="pq" style="text-align:center">📌 Question 3 (b)</div><div class="pk" style="text-align:center;font-size:30px">${ar(`اكتب ${kw('ثمرات','thamaraat')} ${kw('الإخلاص','al-ikhlaas')}`,`Write the ${kw('benefits')} of ${kw('sincerity')}`)}</div>`);pop(pc);beep(780,.1);point(pc);
+  say(`📌 This garden is <b>Question 3 b</b>: ${aw('ثمرات','thamaraat','fruits')} ${aw('الإخلاص','al-ikhlaas','sincerity')}, the <b>fruits</b>, or benefits, of sincerity. Four fruits, four answers: the <b>four Ds</b>!`);await w(4800);unpoint();
+  const SPOT=[[110,110],[260,100],[120,200],[270,195]];
+  const EV=[
+    async()=>{const s=mk('','left:20px;top:330px;font-size:44px;z-index:6','📦');pop(s);await w(400);const t=mk('','left:40px;top:300px;font-size:40px;z-index:7','✅');pop(t);beep(900,.08);},
+    async()=>{const c=mk('','left:-120px;top:10px;font-size:70px;z-index:7','⛈️');an(c,[{transform:'translateX(0)'},{transform:'translateX(560px)'}],{duration:3600,easing:'linear'});
+      const u=mk('','left:315px;top:262px;font-size:40px;z-index:7','☂️');pop(u);
+      const t=bub(20,330,250,`“Just copy my homework!”`,200,true);t.style.top='440px';t.style.fontSize='15px';setTimeout(()=>{t.remove();},3200);},
+    async()=>{const sh=mk('','left:390px;top:240px;font-size:44px;z-index:7','🛡️');pop(sh);
+      for(let i=0;i<3;i++){const m=mk('',`left:10px;top:${180+i*50}px;font-size:22px;font-weight:800;color:#6a45d8;z-index:7`,'💬 show off!');
+        an(m,[{transform:'translateX(0)',opacity:1},{transform:'translateX(260px)',opacity:1,offset:.6},{transform:'translateX(120px) rotate(-30deg)',opacity:0}],{duration:1500,delay:i*350});}},
+    async()=>{const l=mk('','left:40px;top:0px;width:350px;height:420px;border-radius:50%;background:radial-gradient(rgba(255,240,150,.85),rgba(255,240,150,0) 70%);z-index:3;pointer-events:none');an(l,[{opacity:0},{opacity:1}],{duration:900});
+      const s=mk('','left:190px;top:4px;font-size:40px;z-index:7','🤲');pop(s);}];
+  const SAY=[`One: ${aw('صحة الأعمال','sihhat al-a\'maal','deeds are valid')}: his deeds are <b>valid</b> and accepted by Allah. ✅ D for <b>Deeds</b>.`,
+    `Two: ${aw('النجاة من الفتن','an-najaat min al-fitan','being saved from trials')}: being <b>saved from trials</b>. When someone says “just copy my homework”, a sincere heart stays safe. D for <b>Dangers</b>.`,
+    `Three: ${aw('العصمة من الشيطان','al-\'isma min ash-shaytaan','protection from Shaytan')}: <b>protection from Shaytan</b>. His whispers bounce off a sincere heart. D for <b>Devil</b>.`,
+    `Four: ${aw('نيل شفاعة النبي ﷺ','nayl shafaa\'at an-nabee','earning the intercession of the Prophet ﷺ')}: earning the <b>intercession</b> of the Prophet ﷺ, when he asks Allah for good for us on the Day of Judgement. D for <b>Day</b>.`];
+  const bod=mk('','left:12px;top:96px;width:466px',null,pc);bod.style.position='relative';bod.style.left='0';bod.style.top='0';
+  for(let i=0;i<4;i++){const F=FRUITS[i];
+    const f=mk('',`left:${SPOT[i][0]}px;top:${SPOT[i][1]}px;font-size:46px;z-index:5`,F.e);pop(f);beep(600+i*80,.1);loop(f,[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],800,{direction:'alternate'});
+    const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;margin-top:6px';
+    row.innerHTML=`<div style="width:70px;text-align:center;flex:none"><div style="font-size:30px">${F.e}</div><div style="font-size:14px;font-weight:800;color:#7a4a00">${F.word}</div></div>`;
+    bod.appendChild(row);const bl=ansBlocks(0,0,0,F.bl.map(b=>[...b]),{size:22});bl.style.cssText='position:relative;flex:1';row.appendChild(bl);pop(row);
+    point(row);await EV[i]();say(SAY[i]);await w(i===3?5200:4400);}
+  unpoint();
+  const b=bub(20,190,300,`I want a real garden! From now on: only for Allah. 🤲`,180);face(K,'🧒');
+  say(`Karim kneels down. “I want a <b>real</b> garden! From now on, only for Allah.” He plants a brand new seed.`);await w(3800);
+  b.remove();const seed=mk('','left:100px;top:420px;font-size:40px;z-index:8','🌱');pop(seed);await w(700);seed.textContent='🌿';pop(seed);await w(700);seed.textContent='🌳';an(seed,[{transform:'scale(1.6) translateY(-14px)'}],{duration:700});
+  yay();confetti(70);
+  say(`And it starts to grow! The next day, Karim put his phone away and helped at the mosque with Omar, Bilal and Zayd. The end! 🌟`);await w(4400);}},
+
+/* 5 */ {t:'Story map',run:async w=>{
+  const t=mk('','left:0;top:4px;width:960px;text-align:center;font-size:28px;font-weight:800;color:#7a4a00','🗺️ Story map: The Two Gardens');pop(t);
+  say(`Here's the whole story on one map. In the exam, spot the <b>keyword</b>, remember the <b>story</b>, and the <b>answer</b> comes back.`);await w(3600);
+  const M=[{src:'Q3 (a) 1',pic:'🐪🕋➡️🕌',cap:'Jiddo\'s tale: the journey',k:KW('ترك بلد','tark balad','leaving a land'),a:ar('الهجرة','the Hijra','al-hijra'),fs:30,
+      s:`The camel journey: ${aw('ترك بلد','tark balad','leaving a land')} → ${aw('الهجرة','al-hijra','the Hijra')}.`},
+    {src:'Q3 (a) 2',pic:'👦🧑👦',cap:'Omar\'s good friends',k:KW('الوسائل … تعين','al-wasaa\'il … tu\'een','things … help'),a:ar('مصاحبة الأخيار','keeping company with good people','musaahabat al-akhyaar'),fs:24,
+      s:`Omar's friends: what <b>helps</b> sincerity → ${aw('مصاحبة الأخيار','musaahabat al-akhyaar','keeping company with good people')}.`},
+    {src:'Q3 (a) 3',pic:'🚪🔑🔑',cap:'The door with two locks',k:KW('شروط','shuroot','conditions'),a:ar('خالصا لله وموافقا لسنة النبي','purely for Allah and following the Sunnah of the Prophet','khaalisan lillaah wa muwaafiqan li-sunnat an-nabee'),fs:19,
+      s:`The golden door: ${aw('شروط','shuroot','conditions')}, two keys → both, with ${aw('و','wa','and')}.`},
+    {src:'Q3 (a) 4',pic:'🧳➡️💰',cap:'The suitcase of money',k:KW('يصيبها','yuseebuhaa','yuseebuhaa'),a:ar('يحصل عليها','he gets it','yahsulu \'alayhaa'),fs:28,
+      s:`The suitcase: ${aw('يصيبها','yuseebuhaa','yuseebuhaa')} → ${aw('يحصل عليها','yahsulu \'alayhaa','he gets it')}, he gets it.`}];
+  for(const [i,m] of M.entries()){
+    const c=mk('sm-card lit',`left:${13+i*237}px;top:48px;width:206px;height:236px`,
+      `<div class="src">📌 ${m.src}</div><div class="pic">${m.pic}</div><div class="cap">${m.cap}</div><div class="key">🔎 ${m.k}</div><div style="font-size:16px">⬇️</div><div class="ans" style="font-size:${m.fs}px">${m.a}</div>`);
+    pop(c);point(c);beep(520+i*70,.08);say(m.s);await w(3400);}
+  const bc=mk('sm-card lit','left:13px;top:296px;width:917px;height:206px',
+    `<div class="src">📌 Q3 (b) · 🌳 Omar's tree</div><div class="key">🔎 ${ar(`${kw('ثمرات','thamaraat')} ${kw('الإخلاص','al-ikhlaas')}`,`${kw('benefits')} of ${kw('sincerity')}`)} <span style="font-size:16px;color:#626a80">→ the 4 Ds</span></div>`+
+    `<div style="display:flex;justify-content:space-around;margin-top:4px;direction:rtl">${FRUITS.map(F=>`<div style="width:215px;direction:ltr"><div style="font-size:30px">${F.e}</div><div class="ans" style="font-size:22px">${ar(F.a,F.bl.map(b=>b[2]).join(' '),F.bl.map(b=>b[1]).join(' '))}</div><div style="font-size:14px;font-weight:800;color:#7a4a00">${F.word}</div></div>`).join('')}</div>`);
+  pop(bc);point(bc);
+  say(`And Omar's tree: ${aw('ثمرات الإخلاص','thamaraat al-ikhlaas','the fruits of sincerity')} → the four Ds: Deeds, Dangers, Devil, Day. Now let's practise each question properly!`);await w(5200);unpoint();}},
+
+
+/* 6 */ {t:'The Hijra (Q3 a 1)',run:async w=>{
   say(`Question 3 a is a new kind of question. Each sentence has <b>three choices</b> in brackets. You draw a line under the right one.`);await w(3200);
   await clueCard(w,{src:WS+'(a) · 1',kind:UL,
     q:`${kw('ترك بلد','tark balad')} الشرك إلى بلد الإسلام ( ${op('النية','an-niyya')} – ${op('الهجرة','al-hijra',1)} – ${op('الإخلاص','al-ikhlaas')} )`,
@@ -78,7 +320,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`The Prophet ﷺ made the Hijra from Makkah to Madinah. Leaving a land = ${aw('الهجرة','al-hijra')}.`}).then(c=>underline(w,c,aw('الهجرة','al-hijra')));
   await w(800);}},
 
-/* 2 */ {t:'Good company (Q3 a 2)',run:async w=>{
+/* 7 */ {t:'Good company (Q3 a 2)',run:async w=>{
   const c=await clueCard(w,{src:WS+'(a) · 2',kind:UL,
     q:`من ${kw('الوسائل','al-wasaa\'il')} التي ${kw('تعين','tu\'een')} على ${kw('الإخلاص','al-ikhlaas')} ( ${op('مصاحبة الأخيار','musaahabat al-akhyaar',1)} – ${op('كثرة المال','kathrat al-maal')} – ${op('الرياء','ar-riyaa\'')} )`,
     en:`One of the ${kw('things')} that ${kw('help')} ${kw('sincerity')} ( ${op('keeping company with good people',0,1)} – ${op('lots of money')} – ${op('showing off')} )`,
@@ -87,7 +329,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Good friends remind you to do things for Allah. Money doesn't help, and ${aw('الرياء','ar-riyaa\'')}, showing off, is the opposite!`});
   await underline(w,c,aw('مصاحبة الأخيار','musaahabat al-akhyaar'));}},
 
-/* 3 */ {t:'Two conditions (Q3 a 3)',run:async w=>{
+/* 8 */ {t:'Two conditions (Q3 a 3)',run:async w=>{
   say(`For a good deed to be accepted by Allah, it needs <b>two</b> things. Think of a door with <b>two locks</b>.`);await w(3000);
   const door=mk('','left:400px;top:30px;width:160px;height:230px;border-radius:14px 14px 4px 4px;background:#b8862b;border:5px solid #7a4a00;text-align:center;font-size:44px;line-height:72px','🔒<br>🔒<br>🚪');pop(door);
   const K=[{x:40,e:'💖',a:'خالصا لله',s:'khaalisan lillaah',m:'purely for Allah',col:'#18a058'},{x:620,e:'📖',a:'موافقا لسنة النبي ﷺ',s:'muwaafiqan li-sunnat an-nabee',m:'following the Sunnah of the Prophet ﷺ',col:'#2c66cf'}];
@@ -106,7 +348,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   const t=mk('is-clue','left:130px;top:420px;width:700px;text-align:center;white-space:normal',`Remember: <b>two</b> conditions = <b>two</b> keys = the answer with <span class="ar-font" dir="rtl">و</span> (and)`);pop(t);
   say(`Remember: two conditions, two keys. In the exam, pick the answer that has <b>both</b>, joined by ${aw('و','wa')}, <b>and</b>.`);await w(3400);}},
 
-/* 4 */ {t:'Pick both (Q3 a 3)',run:async w=>{
+/* 9 */ {t:'Pick both (Q3 a 3)',run:async w=>{
   const c=await clueCard(w,{src:WS+'(a) · 3',kind:UL,
     q:`من ${kw('شروط','shuroot')} صحة العمل أن يكون ( ${op('خالصا لله','khaalisan lillaah')} – ${op('موافقا لسنة النبي','muwaafiqan li-sunnat an-nabee')} – ${op('خالصا لله وموافقا لسنة النبي','khaalisan lillaah wa muwaafiqan li-sunnat an-nabee',1)} )`,
     en:`A ${kw('condition')} for a deed to be accepted is that it is ( ${op('purely for Allah')} – ${op('following the Sunnah')} – ${op('purely for Allah and following the Sunnah',0,1)} )`,
@@ -115,7 +357,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`The first two choices are each only <b>one</b> key. The third has both, joined by ${aw('و','wa')}.`});
   await underline(w,c,`the <b>last</b> choice, the long one with both keys`);}},
 
-/* 5 */ {t:'Gets it (Q3 a 4)',run:async w=>{
+/* 10 */ {t:'Gets it (Q3 a 4)',run:async w=>{
   say(`Later in the hadith of intentions, the Prophet ﷺ talks about someone who moves away for a <b>worldly</b> thing, like money, to get it.`);await w(3600);
   const v=mk('is-card','left:180px;top:20px;width:600px;text-align:center',
     `<div style="font-size:52px">🧳➡️💰</div><div class="ar-font" dir="rtl" style="font-size:52px;font-weight:700;color:#5a3c00">${aw('يصيبها','yuseebuhaa')}</div><div style="font-size:21px;font-weight:800;color:#2c66cf">= gets it 🎁</div>`);pop(v);point(v);
@@ -129,7 +371,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Not "loves it", not "keeps away from it". ${aw('يصيبها','yuseebuhaa')} = ${aw('يحصل عليها','yahsulu \'alayhaa')}, <b>gets it</b>.`});
   await underline(w,c,aw('يحصل عليها','yahsulu \'alayhaa'));}},
 
-/* 6 */ {t:'Four fruits of sincerity (Q3 b)',run:async w=>{
+/* 11 */ {t:'Four fruits of sincerity (Q3 b)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(b)</div><div class="q" style="font-size:28px">${ar(
     `اكتب ${kw('ثمرات','thamaraat')} ${kw('الإخلاص','al-ikhlaas')}`,`Write the ${kw('benefits')} of ${kw('sincerity')}`,'','blk')}</div>`);pop(q);
   say(`Question 3 b: ${ar('اكتب ثمرات الإخلاص','Write the benefits of sincerity.')}`);await w(2600);
@@ -147,7 +389,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     say(`${['One','Two','Three','Four'][i]}, <b>${F.word}</b>: ${aw(F.a)}: ${F.en}.`);await w(3600);}
   unpoint();}},
 
-/* 7 */ {t:'Spot the difference',run:async w=>{
+/* 12 */ {t:'Spot the difference',run:async w=>{
   say(`Watch out! Two questions on your sheet both ask for ${aw('ثمرات','thamaraat')}, fruits. The <b>second</b> keyword tells you which one.`);await w(3600);
   const C=[{x:30,src:'Q2 (b)',q:`دون أربعة من ${kw('ثمرات','thamaraat')} الإيمان ${kw('بالملائكة','bil-malaa\'ika')} .`,en:`Write down four of the ${kw('benefits')} of believing in ${kw('the angels')}.`,
       e:'👼',key:'الملائكة',ks:'al-malaa\'ika',m:'angels',ans:'Lovely Manners Get Thanks',col:'#2c66cf'},
@@ -165,7 +407,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `👼 <span class="ar-font" dir="rtl" style="font-size:28px">ثمرات + الملائكة</span> → angels' list<br>💖 <span class="ar-font" dir="rtl" style="font-size:28px">ثمرات + الإخلاص</span> → the 4 Ds`);pop(t);
   say(`So always read the word <b>after</b> ${aw('ثمرات','thamaraat')}. Angels or sincerity?`);await w(3200);}},
 
-/* 8 */ {t:'Build the answers',run:async w=>{
+/* 13 */ {t:'Build the answers',run:async w=>{
   say(`Now build the answers with tiles. Arabic goes from <b>right to left</b>, so the first tile goes on the right.`);await w(3000);
   let r=await buildAR(w,{src:WS+'(a) · 3',q:`Build the answer with <b>both keys</b>: 🔑💖 <b>purely for Allah</b> + 🔑📖 <b>and following the Sunnah of the Prophet</b>`,
     tiles:[['النبي','an-nabee'],['لله','lillaah'],['كثرة','kathrat'],['خالصا','khaalisan'],['لسنة','li-sunnat'],['وموافقا','wa muwaafiqan']],answer:['خالصا','لله','وموافقا','لسنة','النبي']});
@@ -174,7 +416,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     tiles:[['الفتن','al-fitan'],['الشيطان','ash-shaytaan'],['النجاة','an-najaat'],['من','min']],answer:['النجاة','من','الفتن']});
   say(r.ok?`Brilliant! ${aw('النجاة من الفتن','an-najaat min al-fitan')}.`:`Look again: ${aw('النجاة من الفتن','an-najaat min al-fitan')}. Saved, from, trials.`);await w(3000);}},
 
-/* 9 */ {t:'Trace it',run:async w=>{
+/* 14 */ {t:'Trace it',run:async w=>{
   say(`Now trace some short answers with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
   const W=[['الهجرة','al-hijra','the Hijra'],['الأخيار','al-akhyaar','good people'],['الفتن','al-fitan','trials']];
   for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}, <b>${m}</b>. Press <b>Done</b> when you've finished.`);
@@ -186,7 +428,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div class="ar-font" dir="rtl" style="font-size:34px;margin-top:8px;color:#5a3c00;line-height:1.6">صحة الأعمال<br>النجاة من الفتن<br>العصمة من الشيطان<br>نيل شفاعة النبي ﷺ</div>`);pop(p);
   say(`The exam is written by hand, so practise on paper too: <b>look</b>, <b>cover</b>, <b>write</b>, then <b>check</b>. Write the four fruits of sincerity: the four Ds.`);await w(4200);}},
 
-/* 10 */ {t:'Keyword match',run:async w=>{
+/* 15 */ {t:'Keyword match',run:async w=>{
   say(`Keyword game! Each card has a <b>keyword</b> or a picture. Tap a card, then tap the answer it belongs to.`);await w(2800);
   const r=await sortGame(w,{bins:[`<span style="white-space:nowrap"><span class="ar-font" style="font-size:26px">الهجرة</span> <small>Hijra</small></span>`,`<span style="white-space:nowrap"><span class="ar-font" style="font-size:20px">مصاحبة الأخيار</span> <small>friends</small></span>`,
       `<span style="white-space:nowrap"><span class="ar-font" style="font-size:20px">خالصا … وموافقا</span> <small>both</small></span>`,`<span style="white-space:nowrap"><span class="ar-font" style="font-size:20px">يحصل عليها</span> <small>gets it</small></span>`],
@@ -194,7 +436,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       [`🏠➡️🕌`,0],[`👫😇`,1],[`🔑💖 + 🔑📖`,2],[`🎁`,3]],top:170,colors:['#b8862b','#18a058','#2c66cf','#e06a1b']});
   say(r.ok===r.total?`Perfect! You matched every keyword to its answer.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
 
-/* 11 */ {t:'Exam check',run:async w=>{
+/* 16 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
     {src:'Worksheet · Q3 · (a) · 1',q:'ترك بلد الشرك إلى بلد الإسلام ( النية – الهجرة – الإخلاص )',en:'Leaving the land of shirk for the land of Islam (intention – Hijra – sincerity)',
       o:['النية','الهجرة','الإخلاص'],oe:['intention','Hijra','sincerity'],otr:['an-niyya','al-hijra','al-ikhlaas'],a:1,cols:1,
@@ -214,7 +456,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       mtr:'The 4 Ds: Deeds · Dangers · Devil · Day of Judgement'}
   ]);}},
 
-/* 12 */ {t:'You did it!',run:async w=>{
+/* 17 */ {t:'You did it!',run:async w=>{
   const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 3 done!');pop(t);
   const B=[['🐪','الهجرة','leaving a land'],['👫😇','مصاحبة الأخيار','helps sincerity'],['🔑🔑','خالصا لله وموافقا لسنة النبي','two conditions'],['🎁','يحصل عليها','gets it'],
     ['✅','صحة الأعمال','Deeds'],['🛟','النجاة من الفتن','Dangers'],['🛡️','العصمة من الشيطان','Devil'],['🤝','نيل شفاعة النبي ﷺ','Day of Judgement']];

@@ -18,7 +18,9 @@
 <script>
 /* Islamic Studies Lesson 5 · Fiqh (الفقه) · Worksheet Q5 (a), (b), (c) and Hadith 3.
    Q5 (a) five required acts of prayer, shown by a stick figure praying; Q5 (b) three ticks and crosses;
-   Q5 (c) the definitions of الواجب, السنة and المكروه, taught as building blocks and a doer / leaver grid. */
+   Q5 (c) the definitions of الواجب, السنة and المكروه, taught as building blocks and a doer / leaver grid.
+   Scenes 1–5 are the opening story, "Bilal's first Dhuhr at the big mosque" (fictional people): every question appears
+   as a story moment with a 📌 pin (keyword + answer), and the Story map sums it up. */
 const WS='Worksheet · Q5 · ';
 document.head.insertAdjacentHTML('beforeend',`<style>
 .pr-fig svg{display:block}
@@ -79,6 +81,75 @@ const DEF={
 /* colour the doer green and the leaver pink in the definition blocks */
 const tint=bl=>bl.map(([a,s,m])=>[a,s,m,/فاعل/.test(a)?'#18a058':/تارك/.test(a)?'#c2367a':/يثاب/.test(a)?'#d39a00':/يأثم/.test(a)?'#e04848':'#6a45d8']);
 
+/* ---------- the opening story: Bilal's first Dhuhr at the big mosque (fictional characters) ---------- */
+document.head.insertAdjacentHTML('beforeend',`<style>
+.st-bg{left:0;top:0;width:960px;height:520px}
+.st-p{text-align:center;z-index:4}.st-p .e{line-height:1}
+.st-p .n{display:inline-block;margin-top:2px;font-size:14px;font-weight:800;color:#5a3c00;background:#fff8e6;border:2px solid #f2c200;border-radius:9px;padding:0 7px;white-space:nowrap}
+.st-name{font-size:14px;font-weight:800;color:#5a3c00;text-align:center}
+.st-bub{background:#fff;border:3px solid #1f2433;border-radius:16px;padding:5px 12px;font-size:19px;font-weight:700;color:#1f2433;line-height:1.3;z-index:12;box-shadow:0 3px 0 rgba(0,0,0,.12);max-width:330px}
+.st-bub:after{content:'';position:absolute;bottom:-14px;left:var(--tx,26px);border:8px solid transparent;border-top-color:#1f2433}
+.st-bub.r:after{left:auto;right:26px}
+.st-bub .ax:not(.en){font-size:1.3em}
+.st-star{font-size:22px;z-index:2}
+.st-pin{border-color:#e04848;box-shadow:0 5px 0 #f5c6c6;padding:8px 14px;z-index:20}
+.st-pin .lab{font-size:13px;font-weight:800;letter-spacing:.05em;color:#c0392b;text-transform:uppercase}
+.st-pin .key{font-size:24px;font-weight:700;line-height:1.45;margin:2px 0 4px;text-align:right}
+.st-pin .key .ax.en{font-size:18px;display:block;text-align:left}
+.st-pin .note{margin-top:8px;font-size:15px;padding:5px 10px}
+.st-pin .note .ax:not(.en),.st-pin .note .aw:not(.en){font-size:1.35em}
+.st-chart td,.st-chart th{height:auto;padding:4px 8px}.st-chart td{height:84px}
+.pr-grid.st-chart td.t{font-size:26px}
+.st-chart .ex{font-size:12px;font-weight:800;color:#626a80;margin-top:2px;white-space:nowrap}
+.st-map{padding:6px 8px;text-align:center;overflow:hidden}
+.st-map .pic{font-size:28px;line-height:1.1}
+.st-map .cap{font-size:13px;font-weight:800;color:#626a80}
+.st-map .lab{font-size:11px;font-weight:800;color:#c0392b;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.st-map .key{font-size:19px;font-weight:700;line-height:1.3;margin:2px 0}
+.st-map .key .ax.en{font-size:15px}
+.st-map .arr{font-size:14px;color:#d9a441;line-height:1}
+.st-map .ans{font-size:17px;font-weight:700;color:#0f7a40;line-height:1.35}
+.st-map .ans .ax.en{font-size:14px}
+.st-map.wide .ans{font-size:23px}.st-map.wide .pic{font-size:34px}.st-map.wide .key{font-size:24px}
+.st-map .ans .big{font-size:34px;font-weight:900;line-height:1}
+.st-map .li{display:flex;align-items:center;justify-content:space-between;gap:6px;border-top:2px dashed #f0d9a8;padding:5px 0;font-size:20px}
+.st-map .li .ax.en{font-size:14px;text-align:right}
+</style>`);
+/* a story character: an emoji with a name tag; .firstChild is the emoji (to tilt or flip it) */
+function person(x,y,emo,name,size=76){const p=mk('st-p',`left:${x}px;top:${y}px`,`<div class="e" style="font-size:${size}px">${emo}</div><div class="n">${name}</div>`);pop(p);p._x=0;return p;}
+/* walk characters to x offsets (dx) with a bobbing step; resolves when they arrive */
+function walkTo(P,dx,ms){return Promise.all(P.map((p,i)=>{const b=loop(p.firstChild,[{transform:'translateY(0)'},{transform:'translateY(-7px)'}],260,{direction:'alternate',delay:i*130});
+  const a=an(p,[{transform:`translateX(${p._x}px)`},{transform:`translateX(${dx[i]}px)`}],{duration:ms,easing:'linear'});p._x=dx[i];
+  return Promise.resolve(a).then(()=>b.cancel());}));}
+const bubs=()=>stage.querySelectorAll('.st-bub').forEach(e=>e.remove());
+/* a speech bubble over a character (removes the last one); x/y: top left, else just above the character */
+function bub(p,html,{x,y,max=stage.querySelector('.st-pin')?548:950}={}){bubs();const b=mk('st-bub',`left:0;top:0;visibility:hidden`,html);
+  const px=p.offsetLeft+(p._x||0);
+  const left=Math.max(8,Math.min(x??px,max-b.offsetWidth));b.style.left=left+'px';
+  b.style.top=(y??Math.max(8,p.offsetTop-b.offsetHeight-14))+'px';
+  /* point the tail at the character's head */
+  const cx=px+p.offsetWidth/2;b.style.setProperty('--tx',Math.max(14,Math.min(b.offsetWidth-30,cx-left-8))+'px');b.style.visibility='';pop(b);beep(700,.04);return b;}
+/* inside the mosque: wall, windows, the mihrab and the prayer carpet (stars: twinkling ceiling) */
+let IDN=0;
+function interior(stars){const id='crp'+(++IDN);
+  const win=x=>`<path d="M${x} 230 V160 Q${x+30} 118 ${x+60} 160 V230 Z" fill="#a9dcff" stroke="#d9a441" stroke-width="4"/>`;
+  mk('st-bg','',`<svg width="960" height="520" viewBox="0 0 960 520"><defs><pattern id="${id}" width="120" height="74" patternUnits="userSpaceOnUse">
+    <rect width="120" height="74" fill="#b8452f"/><path d="M0 71 H120" stroke="#e8c27a" stroke-width="5"/><path d="M60 16 l15 20 l-15 20 l-15 -20z" fill="#cf5f45"/></pattern></defs>
+    <rect width="960" height="520" fill="#f7ecd6"/><rect width="960" height="44" fill="#2f7d6d"/><path d="M0 44 H960" stroke="#d9a441" stroke-width="5"/>
+    ${win(40)}${win(420)}${win(640)}${win(840)}
+    <path d="M200 300 V140 Q270 54 340 140 V300 Z" fill="#2f7d6d" stroke="#d9a441" stroke-width="7"/><path d="M226 300 V152 Q270 92 314 152 V300 Z" fill="#256a5c"/>
+    <rect y="300" width="960" height="220" fill="url(#${id})"/></svg>`);
+  if(stars)for(let i=0;i<18;i++)mk('st-star',`left:${14+i*53}px;top:7px`,'✨');}
+/* the three people praying in a row (stick figures, as in the rest of the lesson) */
+function row(names){return names.map((n,i)=>{const x=20+i*160;const f=figure(x,318,.7,'stand');mk('st-name',`left:${x+20}px;top:462px;width:100px`,`<span class="n" style="background:#fff8e6;border:2px solid #f2c200;border-radius:9px;padding:0 7px">${n}</span>`);return f;});}
+/* 📌 a story pin: the worksheet question's keyword and its answer blocks (shown with pinShow) */
+function pin(x,y,wd,lab,key,blocks,{size=26,note}={}){
+  const c=mk('is-card st-pin',`left:${x}px;top:${y}px;width:${wd}px`,`<div class="lab">📌 ${lab}</div><div class="key lit">${key}</div>`);
+  const bl=ansBlocks(0,0,wd-34,blocks,{size,show:false});bl.style.position='relative';bl.style.width='100%';c.appendChild(bl);
+  if(note)mk('is-why note','position:relative',note,c);
+  pop(c);beep(880,.08);return c;}
+const pinShow=(w,P)=>revealBlocks(w,P.querySelector('.is-blocks'),{say:false,wait:260});
+
 Lesson.start(Object.assign({}, ISLAMIC, {
   id:'i05', num:5, part:'Fiqh · الفقه', emoji:'🕌', title:'Prayer: required acts and rulings',
   intro:`Assalaamu alaykum! Hudhud here 🐦 Today: <b>prayer</b>, Question 5 of your sheet, and Hadith 3. Press <b>Start</b>!`,
@@ -95,9 +166,198 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div style="display:flex;gap:14px;align-items:center"><div style="font-size:50px">${e}</div><div><div style="font-size:23px;font-weight:800;color:#7a4a00">${a}</div><div style="font-size:17px;font-weight:700;color:#626a80">${b}</div></div></div>`));
   const lines=[`First, <b>Hadith 3</b>: where to look when you pray.`,`Then <b>Question 5 a</b>: five things you <b>must</b> do in prayer.`,`<b>Question 5 b</b>: three ticks and crosses.`,`And <b>Question 5 c</b>: three definitions, built from the same few blocks.`];
   for(let i=0;i<4;i++){pop(els[i]);point(els[i]);beep(520+i*80,.08);say(lines[i]);await w(2600);}
-  unpoint();say(`${aw('هيا بنا','hayyaa binaa')}! Let's go!`);await w(1600);}},
+  unpoint();say(`${aw('هيا بنا','hayyaa binaa')}! Let's start with a <b>story</b>. Watch for the 📌 pins: each one is an exam answer!`);await w(3000);}},
 
-/* 1 */ {t:'Eyes down (Hadith 3)',run:async w=>{
+/* 1 */ {t:'Story: Off to the big mosque',run:async w=>{
+  mk('st-bg','background:linear-gradient(#7cc8f5,#d4f0ff 62%,#ead8a8 62%,#dcc28a)','');
+  const sun=mk('','left:420px;top:6px;font-size:64px','☀️');loop(sun,[{transform:'rotate(0deg)'},{transform:'rotate(25deg) scale(1.1)'}],1600,{direction:'alternate'});
+  mk('','left:20px;top:150px;font-size:96px','🏠');mk('','left:170px;top:178px;font-size:70px','🌴');mk('','left:560px;top:212px;font-size:56px','🌴');
+  const mos=mk('','left:690px;top:96px;font-size:200px;line-height:1','🕌');
+  const D=person(-40,262,'👨','Baba',100),B=person(-130,292,'👦','Bilal',72);
+  const go=walkTo([D,B],[250,250],5200);
+  say(`Story time! 📖 Meet <b>Bilal</b>. Today he is going to <b>Dhuhr</b> prayer at the big mosque with his Baba, for the very first time.`);await w(3600);
+  point(sun);an(sun,[{filter:'drop-shadow(0 0 0 #ffd84d)'},{filter:'drop-shadow(0 0 24px #ffd84d)'}],{duration:900});
+  say(`The sun is high in the sky. It's midday: the time for Dhuhr.`);await w(2600);unpoint();await go;
+  bub(B,`What if I get it wrong, Baba? 😟`);
+  say(`Bilal is a little nervous. "What if I get it wrong, Baba?"`);await w(2800);
+  bub(D,`Just listen to the imam. His voice tells you every move. 🎙️`);
+  say(`Baba smiles. "Just listen to the imam. His voice tells you every move."`);await w(3000);
+  bub(D,`And on the way home, I'll show you my reward chart ⭐`);
+  say(`"And on the way home, I'll show you my special <b>reward chart</b>."`);await w(2800);
+  bubs();await walkTo([D,B],[330,330],2200);
+  clear();interior();
+  const F=row(['Baba','Bilal','Yusuf']);
+  say(`Inside, shoes off, the carpet is soft. Bilal stands between Baba and his friend <b>Yusuf</b>, in a nice straight row.`);await w(3400);
+  const im=mk('st-bub',`left:20px;top:16px;max-width:510px`,`🎙️ Imam: ${ar('الله أكبر','Allah is the greatest','Allaahu akbar')}`);pop(im);
+  say(`The imam says ${ar('الله أكبر','Allah is the greatest')}, and the prayer begins.`);await w(2600);im.remove();
+  bub(F[1],`🤫 ${ar('أعوذ بالله من الشيطان الرجيم','I seek refuge with Allah from Satan, the outcast','a\'oodhu billaahi minash-shaytaanir-rajeem')}`,{x:200,y:178});
+  say(`Before the Faatiha, Bilal quietly says the isti'aadha: ${ar('أعوذ بالله من الشيطان الرجيم','I seek refuge with Allah from Satan, the outcast.')}`);await w(4000);
+  const P=pin(560,16,385,'Q5 (b) · 1 · tick or cross',ar(`من ${kw('سنن','sunan')} الصلاة ${kw('القولية','al-qawliyya')} ${kw('الاستعاذة','al-isti\'aadha')}`,
+    `${kw('Al-isti\'aadha')} is one of the ${kw('spoken')} ${kw('sunnahs')} of prayer`),TICK,{size:44,note:`🗣️ you <b>say</b> it = spoken &nbsp;·&nbsp; ⭐ a bonus = sunnah`});
+  await w(60);point(P);
+  say(`Baba taught him this one. It's a <b>spoken sunnah</b>: you <b>say</b> it with your tongue, and it earns a reward.`);await w(3600);
+  await pinShow(w,P);point(P.querySelector('.is-blocks'));
+  say(`So on your sheet, ${ar('من سنن الصلاة القولية الاستعاذة','al-isti\'aadha is one of the spoken sunnahs of prayer')} is <b>true</b>. Tick √!`);await w(3600);unpoint();}},
+
+/* 2 */ {t:'Story: The imam\'s voice (Q5 a)',run:async w=>{
+  interior();
+  const F=row(['Baba','Bilal','Yusuf']);const pose=p=>F.forEach(f=>f.set(p));
+  const KEY=ar(`اكتب خمسة من ${kw('واجبات','waajibaat')} ${kw('الصلاة','as-salaah')}`,`Write five of the ${kw('required acts')} of ${kw('prayer')}`);
+  say(`Bilal listens to the imam's voice. He's about to discover the <b>five required acts</b> of prayer: things everyone <b>must</b> do.`);await w(3600);
+  const list=mk('',`left:560px;top:250px;width:385px;display:flex;flex-direction:row-reverse;flex-wrap:wrap;gap:8px;justify-content:flex-start`,'');
+  let P=null;
+  const imam=said=>{bubs();const b=mk('st-bub',`left:20px;top:16px;max-width:510px`,`🎙️ Imam: ${said}`);pop(b);return b;};
+  const act=async(i,line)=>{const A=ACTS[i];P?.remove();P=pin(560,12,385,`Q5 (a) · required act ${i+1} of 5`,KEY,A.bl,{size:26});await w(60);
+    await pinShow(w,P);point(P);say(line);await w(3400);
+    const chip=mk('is-chip','position:static;font-size:16px;padding:4px 10px',`<span style="font-size:22px">${A.e}</span><span style="font-size:22px">${aw(A.bl.map(b=>b[0]).join(' '),A.bl.map(b=>b[1]).join(' '),A.bl.map(b=>b[2]).join(' '))}</span>`,list);pop(chip);beep(600+i*70,.07);await w(300);};
+  imam(ar('الله أكبر','Allah is the greatest','Allaahu akbar'));pose('ruku');
+  say(`Time to bow. The imam says ${ar('الله أكبر','Allah is the greatest')}, and the whole row moves down together.`);await w(3000);
+  await act(0,`${aw('تكبيرات الانتقال','takbeeraat al-intiqaal')}: saying Allaahu akbar every time you <b>move</b>. Required act number one!`);
+  imam(ar('سمع الله لمن حمده','Allah hears the one who praises Him','sami\'a Allaahu liman hamidah'));pose('up');
+  say(`Rising up, the imam says ${ar('سمع الله لمن حمده','Allah hears the one who praises Him.')} Allah <b>hears</b> whoever praises Him.`);await w(3600);
+  await act(1,`${aw('التسميع','at-tasmee\'')}, from ${aw('سمع','sami\'a')}: <b>hear</b>. Number two!`);
+  bub(F[1],`👦 ${ar('ربنا ولك الحمد','Our Lord, and all praise is Yours','rabbanaa wa lakal-hamd')}`,{x:120,y:190});
+  say(`Bilal answers with everyone: ${ar('ربنا ولك الحمد','Our Lord, and all praise is Yours.')} That's <b>praise</b>.`);await w(3400);
+  await act(2,`${aw('التحميد','at-tahmeed')}, from ${aw('حمد','hamd')}: <b>praise</b>. Number three!`);
+  imam(ar('الله أكبر','Allah is the greatest','Allaahu akbar'));pose('sujood');await w(800);
+  const cat=mk('',`left:540px;top:430px;font-size:46px;z-index:6`,'🐈');an(cat,[{transform:'translateX(0)'},{transform:'translateX(-600px)'}],{duration:4200,easing:'linear'});
+  say(`Then, in sujood… meow! A cat strolls along the row.`);await w(2400);
+  const ha=mk('st-bub r',`left:330px;top:206px;font-size:24px`,'😆 HA HA HA!');pop(ha);shake(ha);
+  say(`And somebody <b>laughs out loud</b>! Bilal keeps his eyes down. Who was it? We'll find out after the prayer.`);await w(3400);ha.remove();cat.remove();
+  for(const p of ['sit','sujood','stand','ruku','up','sujood','sit','sujood']){pose(p);await w(450);}
+  say(`Bilal finishes the first rak'ah, then prays the second one just the same.`);await w(2600);
+  imam(ar('الله أكبر','Allah is the greatest','Allaahu akbar'));pose('sit');
+  say(`After two rak'ahs, everyone <b>sits</b>. Is it over? No, Dhuhr has four rak'ahs. This sitting is required!`);await w(3400);
+  await act(3,`${aw('الجلوس للتشهد الأول','al-juloos lit-tashahhud al-awwal')}: <b>sitting</b> for the first tashahhud. Number four!`);
+  pose('tash');bub(F[1],`☝️ ${ar('التحيات لله','All greetings are for Allah','at-tahiyyaatu lillaah')} …`,{x:120,y:190});
+  say(`Sitting there, Bilal says the first tashahhud: ${ar('التحيات لله','All greetings are for Allah')}, and the rest of it.`);await w(3200);
+  await act(4,`${aw('التشهد الأول','at-tashahhud al-awwal')}: <b>saying</b> the first tashahhud. Number five!`);
+  bubs();P.remove();pose('stand');
+  const m=mk('is-clue','left:575px;top:40px;white-space:normal;width:355px;text-align:center',`🖐️ <b>M</b>ove, <b>H</b>ear, <b>P</b>raise, <b>S</b>it, <b>S</b>ay`);pop(m);point(list);
+  say(`Five required acts in one prayer! Bilal counts them on his fingers: <b>Move, Hear, Praise, Sit, Say</b>.`);await w(3600);unpoint();}},
+
+/* 3 */ {t:'Story: After the prayer (Hadith 3, Q5 b)',run:async w=>{
+  interior(true);
+  const B=person(30,300,'👦','Bilal',76),D=person(150,272,'👨','Baba',100),Y=person(290,300,'🧒','Yusuf',76);
+  say(`The prayer is over. Everyone says salaam. But Yusuf is bursting to tell Bilal something.`);await w(3000);
+  bub(Y,`Did you see the ceiling? ✨ I looked up at the patterns the whole prayer!`,{x:250,y:150});
+  an(Y.firstChild,[{transform:'rotate(0deg)'},{transform:'rotate(-14deg)'}],{duration:500});
+  stage.querySelectorAll('.st-star').forEach((s,i)=>loop(s,[{opacity:.3,transform:'scale(.8)'},{opacity:1,transform:'scale(1.25)'}],600,{direction:'alternate',delay:i*90}));
+  say(`"Did you see the ceiling? I looked <b>up</b> at the patterns the whole prayer!"`);await w(3200);
+  bub(D,`Yusuf, the Prophet ﷺ spoke about that.`,{x:110,y:160});
+  say(`Baba kneels down kindly. "Yusuf, the Prophet ﷺ spoke about that. Listen."`);await w(3000);bubs();
+  const h=mk('is-card','left:30px;top:10px;width:900px;z-index:25',`<div class="src">Hadith 3 · الحديث الثالث</div><div class="q" style="font-size:24px;line-height:1.6">${ar(
+    `عن أنس بن مالك رضي الله عنه أن رسول الله ﷺ قال : ( ما بال أقوام ${kw('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')} في صلاتهم ، فاشتد قوله في ذلك حتى قال : لينتهن عن ذلك أو لتخطفن أبصارهم ) .`,
+    `Anas ibn Malik (may Allah be pleased with him) reported that the Messenger of Allah ﷺ said: "What is wrong with people who ${kw('raise their eyes to the sky')} in their prayer?" He spoke very strongly about it, until he said: "They must stop that, or their sight will be snatched away."`,'','blk')}</div>`);
+  pop(h);h.classList.add('lit');await w(60);point(h.querySelector('.kw'));
+  say(`The Prophet ﷺ said: ${ar('ما بال أقوام يرفعون أبصارهم إلى السماء في صلاتهم','What is wrong with people who raise their eyes to the sky in their prayer?')}`);await w(4200);
+  say(`He spoke very strongly: they must stop, or their <b>sight</b> could be snatched away.`);await w(3200);
+  unpoint();h.remove();
+  const P=pin(560,16,385,'Hadith 3 · fill the gap',ar(`ما بال أقوام ${kw('يرفعون','yarfa\'oona')} أبصارهم إلى ${kw('السماء','as-samaa\'')}`,
+    `What is wrong with people who ${kw('raise')} their eyes to ${kw('the sky')}?`),
+    [['يرفعون','yarfa\'oona','they raise'],['أبصارهم','absaarahum','their eyes'],['إلى','ilaa','to'],['السماء','as-samaa\'','the sky']],{size:26,note:'👇 In prayer: eyes <b>down</b> on your sujood spot'});
+  await w(60);await pinShow(w,P);point(P);
+  say(`Remember the keyword ${aw('السماء','as-samaa\'')}, <b>the sky</b>. They <b>raise</b> their eyes to the sky: ${aw('يرفعون','yarfa\'oona')}.`);await w(3600);
+  an(Y.firstChild,[{transform:'rotate(-14deg)'},{transform:'rotate(16deg)'}],{duration:500});
+  bub(Y,`From now on, my eyes stay down 👇 on my sujood spot!`,{x:250,y:150});
+  say(`Yusuf nods. "From now on, my eyes stay <b>down</b>, on my sujood spot!"`);await w(3000);
+  clear();interior(true);
+  /* the laugh */
+  const O=person(40,300,'🧑🏽','Omar',76),D2=person(200,272,'👨','Baba',100);
+  const cat=mk('','left:420px;top:410px;font-size:50px','🐈');loop(cat,[{transform:'translateX(0)'},{transform:'translateX(-24px)'}],700,{direction:'alternate'});
+  say(`Then Bilal sees his friend <b>Omar</b> in the corner, praying Dhuhr all over again. Why?`);await w(3000);
+  bub(O,`That laugh was me! 😳 The cat sat right in front of me!`,{x:20,y:150});
+  say(`"That laugh was me!" says Omar, red-faced. "The cat sat right in front of me!"`);await w(3000);
+  bub(D2,`Laughing out loud breaks the prayer. So Omar had to pray again.`,{x:180,y:150});
+  const P2=pin(560,16,385,'Q5 (b) · 3 · tick or cross',ar(`من ${kw('مبطلات','mubtilaat')} الصلاة ${kw('القهقهة','al-qahqaha')}`,`${kw('Laughing out loud')} ${kw('breaks')} the prayer`),
+    TICK,{size:44,note:`😆💥 <b>qah-qah!</b> Even the word sounds like a laugh`});await w(60);
+  say(`Baba explains: <b>laughing out loud</b>, ${aw('القهقهة','al-qahqaha')}, <b>breaks</b> the prayer. You have to pray it again.`);await w(3600);
+  await pinShow(w,P2);point(P2.querySelector('.is-blocks'));
+  say(`So ${ar('من مبطلات الصلاة القهقهة','laughing out loud breaks the prayer')} is <b>true</b>. Tick √! Even the word sounds like a laugh: qah-qah!`);await w(3800);
+  clear();interior(true);
+  /* the turning head */
+  const K=person(40,272,'🧔','Uncle Khalid',100),D3=person(250,272,'👨','Baba',100);
+  const turn=loop(K.firstChild,[{transform:'scaleX(1)'},{transform:'scaleX(-1)'}],700,{direction:'alternate',easing:'steps(1)'});
+  const ey=mk('',`left:250px;top:240px;font-size:44px`,'👀');pop(ey);const ey2=mk('',`left:330px;top:250px;font-size:36px`,'❓');pop(ey2,200);
+  const look=loop(ey,[{transform:'translateX(-40px)'},{transform:'translateX(140px)'}],1400,{direction:'alternate'});
+  say(`Last, <b>Uncle Khalid</b> comes over. During the prayer he kept turning his head, left, right, left…`);await w(3200);
+  bub(K,`I was looking to see if my son had come. Is turning part of prayer?`,{x:20,y:120});
+  say(`"I was looking to see if my son had come. Is turning around part of prayer?"`);await w(3000);turn.cancel();look.cancel();ey.remove();ey2.remove();
+  bub(D3,`No! Turning around without a need is not required. It is makrooh: disliked.`,{x:200,y:120});
+  const P3=pin(560,16,385,'Q5 (b) · 2 · tick or cross',ar(`من ${kw('واجبات','waajibaat')} الصلاة ${kw('الالتفات بلا حاجة','al-iltifaat bilaa haaja')}`,`${kw('Turning around without need')} is one of the ${kw('required acts')} of prayer`),
+    CROSS,{size:44,note:`✔ ${ar('الالتفات بلا حاجة مكروه','turning around without need is disliked','al-iltifaat bilaa haaja makrooh')}`});await w(60);
+  say(`Baba says: ${aw('الالتفات بلا حاجة','al-iltifaat bilaa haaja')}, <b>turning around without a need</b>, is <b>not</b> a required act. It is ${aw('مكروه','makrooh')}, <b>disliked</b>.`);await w(4200);
+  await pinShow(w,P3);point(P3.querySelector('.is-blocks'));
+  say(`So ${ar('من واجبات الصلاة الالتفات بلا حاجة','turning around without need is one of the required acts of prayer')} is <b>false</b>. Put a cross ×!`);await w(3800);unpoint();}},
+
+/* 4 */ {t:'Story: Baba\'s reward chart (Q5 c)',run:async w=>{
+  mk('st-bg','background:linear-gradient(#9ad6f7,#e3f5ff 30%,#f7efdc 30%)','');
+  const D=person(14,6,'👨','Baba',64),B=person(96,22,'👦','Bilal',50);
+  [D,B].forEach((p,i)=>loop(p.firstChild,[{transform:'translateY(0)'},{transform:'translateY(-5px)'}],380,{direction:'alternate',delay:i*190}));
+  bub(B,`Baba, why are some things a must, and some just a bonus?`,{x:170,y:10});
+  say(`On the way home, Bilal has a question. "Baba, why are some things a <b>must</b>, and some just a <b>bonus</b>?"`);await w(3400);
+  bub(D,`Here's my reward chart. Two questions for each one!`,{x:170,y:10});
+  const g=mk('',`left:12px;top:132px;width:476px`,`<table class="pr-grid st-chart" style="position:static;width:100%"><tr><th></th><th>🏃 do it</th><th>🙅 leave it</th></tr>`+
+    [['w','good','⭐ reward','bad','⚠️ sin','🎙️ the 5 imam things'],['s','good','⭐ reward','ok','🆗 no sin','🤫 a\'oodhu billaah'],['m','ok','🆗 no sin','good','⭐ reward','🧔↩️ turning around']].map(([k,c1,t1,c2,t2,ex])=>
+    `<tr><td class="t">${aw(DEF[k].t,DEF[k].ts,DEF[k].te)}<div class="ex">${ex}</div></td><td class="${c1} hide">${t1}</td><td class="${c2} hide">${t2}</td></tr>`).join('')+`</table>`);pop(g);
+  say(`Baba opens his notebook. "For each one, ask two questions: if you <b>do</b> it, do you get a star? If you <b>leave</b> it, is it a sin?"`);await w(3800);bubs();
+  const R=g.querySelectorAll('tr');let P=null;
+  const rowShow=async(r,lines)=>{for(let c=1;c<=2;c++){const td=R[r].children[c];td.classList.remove('hide');pop(td);point(td);beep(td.classList.contains('good')?760:td.classList.contains('bad')?300:520,.08);say(lines[c-1]);await w(2600);}};
+  const def=async(k,lab,key,note)=>{P?.remove();P=pin(500,16,448,lab,key,tint(DEF[k].bl),{size:24,note});await w(60);await pinShow(w,P);point(P);
+    say(`${aw(DEF[k].t,DEF[k].ts)}: ${aw(DEF[k].a,DEF[k].s)}.`);await w(3800);};
+  point(R[1]);say(`"${aw('الواجب','al-waajib')}, the <b>required</b>, is like the five things the imam said today."`);await w(3000);
+  await rowShow(1,[`Do it: a <b>reward</b> ⭐.`,`Leave it on purpose: that's a <b>sin</b> ⚠️. You must not leave it!`]);
+  await def('w','Q5 (c) · 1 · define',ar(`عرف ما يأتي : ${kw('الواجب','al-waajib')}`,`Define the following: ${kw('al-waajib (the required)')}`));
+  point(R[2]);say(`"${aw('السنة','as-sunna')}, the <b>sunnah</b>, is like your a'oodhu billaah."`);await w(2800);
+  await rowShow(2,[`Do it: a <b>reward</b> ⭐.`,`Leave it: <b>no sin</b>. It's a bonus!`]);
+  await def('s','Q5 (c) · 2 · define',ar(`عرف ما يأتي : ${kw('السنة','as-sunna')}`,`Define the following: ${kw('as-sunna (the recommended)')}`),
+    `👧 A "she" word, so the endings are ${aw('فاعلها','faa\'iluhaa','its doer')} and ${aw('تاركها','taarikuhaa','its leaver')}`);
+  say(`Bilal spots something: ${aw('السنة','as-sunna')} is a "she" word, so her answer ends in ${aw('ها','haa')}: ${aw('فاعلها','faa\'iluhaa')}, ${aw('تاركها','taarikuhaa')}.`);await w(3800);
+  point(R[3]);say(`"And ${aw('المكروه','al-makrooh')}, the <b>disliked</b>, is like Uncle Khalid turning his head. This one <b>flips</b>!"`);await w(3200);
+  await rowShow(3,[`Do it: <b>no sin</b>, but it's not good.`,`<b>Leave</b> it: that gets the <b>reward</b> ⭐!`]);
+  await def('m','Q5 (c) · 3 · define',ar(`عرف ما يأتي : ${kw('المكروه','al-makrooh')}`,`Define the following: ${kw('al-makrooh (the disliked)')}`));
+  unpoint();clear();
+  mk('st-bg','background:linear-gradient(#ffe9b8,#fff8e6)','');
+  const t=mk('','left:0;top:14px;width:960px;text-align:center;font-size:30px;font-weight:800;color:#7a4a00','⭐ The next day at Dhuhr ⭐');pop(t);
+  const E=[['🧒','Yusuf','eyes down on his sujood spot 👇'],['🧑🏽','Omar','not a single giggle 🤐'],['🧔','Uncle Khalid','kept perfectly still 🧍'],['👦','Bilal','knew all five required acts 🖐️']];
+  for(let i=0;i<4;i++){const [e,n,d]=E[i];const r=mk('is-card',`left:150px;top:${72+i*104}px;width:660px;height:92px;display:flex;align-items:center;gap:18px`,
+      `<span style="font-size:52px">${e}</span><span style="font-size:22px;font-weight:800;color:#5a3c00;width:170px">${n}</span><span style="font-size:19px;font-weight:700;color:#2c3550;flex:1">${d}</span><span class="stk" style="font-size:44px">⭐</span>`);
+    pop(r,i*150);}
+  await w(700);
+  say(`The next day at Dhuhr, Yusuf kept his eyes down, Omar didn't giggle once, and Uncle Khalid kept perfectly still.`);await w(3600);
+  stage.querySelectorAll('.stk').forEach((s,i)=>an(s,[{transform:'scale(0) rotate(-90deg)'},{transform:'scale(1.3) rotate(10deg)'},{transform:'scale(1)'}],{duration:600,delay:i*200}));
+  confetti(80);yay();
+  say(`And Bilal? He knew all five required acts. Gold stars for everyone! ⭐`);await w(3000);}},
+
+/* 5 */ {t:'Story map',run:async w=>{
+  const t=mk('','left:0;top:4px;width:960px;text-align:center;font-size:24px;font-weight:800;color:#7a4a00','🗺️ Story map: Bilal\'s first Dhuhr');pop(t);
+  say(`Here's the whole story on one map. Each picture leads to a <b>keyword</b>, and each keyword leads to its <b>answer</b>.`);await w(3200);
+  const card=(x,y,wd,h,pic,cap,lab,key,ans)=>mk('is-card st-map'+(wd>200&&h<300?' wide':''),`left:${x}px;top:${y}px;width:${wd}px;height:${h}px`,
+    `<div class="pic">${pic}</div><div class="cap">${cap}</div><div class="lab">📌 ${lab}</div><div class="key lit">${key}</div><div class="arr">⬇</div><div class="ans">${ans}</div>`);
+  const k1=(a,s,e)=>ar(kw(a,s),kw(e));
+  const C=[
+    [10,44,244,468,'🎙️🕌',"The imam's voice",'Q5 (a)',ar(`${kw('واجبات','waajibaat')} ${kw('الصلاة','as-salaah')}`,`${kw('required acts')} of ${kw('prayer')}`),
+      ACTS.map(A=>`<div class="li"><span>${A.e}</span>${ar(A.bl.map(b=>b[0]).join(' '),A.bl.map(b=>b[2]).join(' '),A.bl.map(b=>b[1]).join(' '))}</div>`).join(''),
+      `<b>The imam's voice</b>: five required acts, ${aw('واجبات الصلاة','waajibaat as-salaah')}. Move, Hear, Praise, Sit, Say.`],
+    [264,44,166,226,'🧒✨','Yusuf looks up','Hadith 3',k1('السماء','as-samaa\'','the sky'),ar('يرفعون أبصارهم إلى السماء','they raise their eyes to the sky','yarfa\'oona absaarahum ilas-samaa\''),
+      `<b>Yusuf looks up</b> at the ceiling: Hadith 3, ${aw('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')}. Eyes down!`],
+    [440,44,166,226,'🤫👦',"Bilal's whisper",'Q5 (b) · 1',k1('الاستعاذة','al-isti\'aadha','al-isti\'aadha'),`<span class="big" style="color:#18a058">√</span> spoken sunnah`,
+      `<b>Bilal's whisper</b>: ${aw('الاستعاذة','al-isti\'aadha')} is a spoken sunnah. Tick!`],
+    [616,44,166,226,'🧔↩️','Uncle Khalid turns','Q5 (b) · 2',k1('الالتفات بلا حاجة','al-iltifaat bilaa haaja','turning without need'),`<span class="big" style="color:#e04848">×</span> makrooh`,
+      `<b>Uncle Khalid turns his head</b>: not required, it's makrooh. Cross!`],
+    [792,44,158,226,'🐈😆','Omar laughs','Q5 (b) · 3',k1('القهقهة','al-qahqaha','laughing out loud'),`<span class="big" style="color:#18a058">√</span> breaks it`,
+      `<b>Omar laughs</b> at the cat: ${aw('القهقهة','al-qahqaha')} breaks the prayer. Tick!`],
+    [264,280,222,232,'🎙️⭐⚠️','The five imam things','Q5 (c) · 1',k1('الواجب','al-waajib','al-waajib'),ar(DEF.w.a,DEF.w.en,DEF.w.s),
+      `${aw('الواجب','al-waajib')}: doer rewarded, leaver sinful.`],
+    [496,280,222,232,'🤫⭐🆗',"a'oodhu billaah",'Q5 (c) · 2',k1('السنة','as-sunna','as-sunna'),ar(DEF.s.a,DEF.s.en,DEF.s.s),
+      `${aw('السنة','as-sunna')}: doer rewarded, leaver not sinful, with the "she" endings.`],
+    [728,280,222,232,'🧔🆗⭐','turning the head','Q5 (c) · 3',k1('المكروه','al-makrooh','al-makrooh'),ar(DEF.m.a,DEF.m.en,DEF.m.s),
+      `${aw('المكروه','al-makrooh')}: it flips! The leaver is rewarded.`]];
+  for(const [x,y,wd,h,pic,cap,lab,key,ans,line] of C){const c=card(x,y,wd,h,pic,cap,lab,key,ans);pop(c);point(c);beep(620,.06);say(line);await w(3000);}
+  unpoint();
+  say(`In the exam, find the keyword, remember the story moment, and the answer comes back to you.`);await w(3200);}},
+
+/* 6 */ {t:'Eyes down (Hadith 3)',run:async w=>{
   say(`First, the <b>third hadith</b> you learn by heart. It is about where your eyes look in prayer.`);await w(2800);
   const h=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">Hadith 3 · الحديث الثالث</div><div class="q" style="font-size:24px;line-height:1.6">${ar(
     `عن أنس بن مالك رضي الله عنه أن رسول الله ﷺ قال : ( ما بال أقوام ${kw('يرفعون أبصارهم إلى السماء','yarfa\'oona absaarahum ilas-samaa\'')} في صلاتهم ، فاشتد قوله في ذلك حتى قال : لينتهن عن ذلك أو لتخطفن أبصارهم ) .`,
@@ -125,7 +385,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   const tip=mk('is-why','left:130px;top:450px;width:700px;text-align:center;font-size:19px','💡 In prayer: eyes <b>down</b> 👇 on your sujood spot, never up to the sky ☁️');pop(tip);
   say(`Remember: in prayer, your eyes stay <b>down</b>, on your sujood spot. Never up at the sky.`);await w(3200);}},
 
-/* 2 */ {t:'Watch the prayer (Q5 a)',run:async w=>{
+/* 7 */ {t:'Watch the prayer (Q5 a)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:26px">${ar(
     `اكتب خمسة من ${kw('واجبات','waajibaat')} ${kw('الصلاة','as-salaah')}`,`Write five of the ${kw('required acts')} of ${kw('prayer')}`,'','blk')}</div>`);pop(q);
   say(`Question 5 a says: ${ar('اكتب خمسة من واجبات الصلاة','Write five of the required acts of prayer.')}`);await w(2800);
@@ -151,7 +411,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   stage.querySelectorAll('.pr-bub,.cur-ans').forEach(e=>e.remove());unpoint();
   say(`That's all five! The figure did them in one prayer.`);await w(2200);}},
 
-/* 3 */ {t:'Five required acts (Q5 a)',run:async w=>{
+/* 8 */ {t:'Five required acts (Q5 a)',run:async w=>{
   const q=mk('is-card','left:30px;top:8px;width:900px',`<div class="src">${WS}(a)</div><div class="q" style="font-size:24px">${ar(
     `اكتب خمسة من ${kw('واجبات','waajibaat')} ${kw('الصلاة','as-salaah')}`,`Write five of the ${kw('required acts')} of ${kw('prayer')}`,'','blk')}</div>`);pop(q);q.classList.add('lit');
   const tip=mk('is-clue','left:200px;top:160px;width:560px;text-align:center;white-space:normal',`Remember: <b>M</b>ove, <b>H</b>ear, <b>P</b>raise, <b>S</b>it, <b>S</b>ay`);pop(tip);
@@ -166,7 +426,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   unpoint();
   say(`Five dotted lines, five answers. You can write them in any order.`);await w(2800);}},
 
-/* 4 */ {t:'Tick or cross (Q5 b)',run:async w=>{
+/* 9 */ {t:'Tick or cross (Q5 b)',run:async w=>{
   say(`Question 5 b: ${ar('ضع علامة ( √ ) أو ( × ) أمام العبارات التالية','Put a tick or a cross next to the following statements.')}`);await w(3000);
   await tfCard(w,{src:WS+'(b) · 1',ok:true,
     q:`من ${kw('سنن','sunan')} الصلاة ${kw('القولية','al-qawliyya')} ${kw('الاستعاذة','al-isti\'aadha')}`,en:`Saying "a'oodhu billaah" (${kw('al-isti\'aadha')}) is one of the ${kw('spoken')} ${kw('sunnahs')} of prayer`,
@@ -191,7 +451,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     why:`Laughing out loud breaks the prayer: you have to pray it again. True √.`});
   await w(1200);}},
 
-/* 5 */ {t:'Rule building blocks (Q5 c)',run:async w=>{
+/* 10 */ {t:'Rule building blocks (Q5 c)',run:async w=>{
   say(`Question 5 c: ${ar('عرف ما يأتي','Define the following')}. Three words: ${aw('الواجب','al-waajib')}, ${aw('السنة','as-sunna')} and ${aw('المكروه','al-makrooh')}.`);await w(3600);
   say(`Good news: all three definitions are built from the <b>same six blocks</b>, like LEGO!`);await w(2600);
   const B=[['ما','maa','what','#6a45d8'],['يثاب','yuthaab','is rewarded ⭐','#d39a00'],['يأثم','ya\'tham','is sinful ⚠️','#e04848'],
@@ -213,7 +473,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   for(let r=1;r<=3;r++)for(let c=1;c<=2;c++){const td=R[r].children[c];td.classList.remove('hide');pop(td);point(td);beep(td.classList.contains('good')?760:td.classList.contains('bad')?300:520,.08);say(lines[r-1][c-1]);await w(2700);}
   unpoint();}},
 
-/* 6 */ {t:'Required and sunnah (Q5 c 1 and 2)',run:async w=>{
+/* 11 */ {t:'Required and sunnah (Q5 c 1 and 2)',run:async w=>{
   await clueCard(w,{src:WS+'(c) · 1',kind:['عرف','\'arrif','define: write what it means'],
     q:`عرف ما يأتي : ${kw('الواجب','al-waajib')}`,en:`Define the following: ${kw('al-waajib (the required)')}`,
     keys:[`${aw('الواجب','al-waajib')}: the <b>required</b>. Star for the doer ⭐, sin for the leaver ⚠️.`],
@@ -242,7 +502,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
   const tip=mk('is-why',`left:160px;top:${Math.min(cardsBottom+14,462)}px;width:640px;text-align:center;font-size:19px`,`💡 Round <span class="ar-font" style="font-size:24px">ة</span> in the word → <span class="ar-font" style="font-size:24px">ها</span> in the answer`);pop(tip);
   say(`Tip: the round ${aw('ة','taa\' marbooTa')} in the word means ${aw('ها','haa')} in the answer.`);await w(3000);}},
 
-/* 7 */ {t:'Disliked (Q5 c 3)',run:async w=>{
+/* 12 */ {t:'Disliked (Q5 c 3)',run:async w=>{
   await clueCard(w,{src:WS+'(c) · 3',kind:['عرف','\'arrif','define: write what it means'],
     q:`عرف ما يأتي : ${kw('المكروه','al-makrooh')}`,en:`Define the following: ${kw('al-makrooh (the disliked)')}`,
     keys:[`${aw('المكروه','al-makrooh')}: the <b>disliked</b>. It flips: the <b>leaver</b> gets the star ⭐, and the doer is not sinful.`],
@@ -258,7 +518,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     say(`${aw(D.t,D.ts)}: ${aw(D.a,D.s)}.`);await w(3600);}
   unpoint();}},
 
-/* 8 */ {t:'Build the answers',run:async w=>{
+/* 13 */ {t:'Build the answers',run:async w=>{
   say(`Now you build the definitions with tiles. Watch out for the ${aw('ها','haa')} endings! Remember: <b>right to left</b>.`);await w(3000);
   let r=await buildAR(w,{src:WS+'(c) · 2',q:`Build the definition of ${aw('السنة','as-sunna')}: doer rewarded ⭐, leaver <b>not</b> sinful. It's a "she" word 👧`,
     tiles:[['تاركها','taarikuhaa'],['يثاب','yuthaabu'],['فاعله','faa\'iluhu'],['ولا','wa laa'],['ما','maa'],['يأثم','ya\'thamu'],['فاعلها','faa\'iluhaa'],['تاركه','taarikuh']],
@@ -269,7 +529,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     answer:['ما','يثاب','تاركه','ولا','يأثم','فاعله']});
   say(r.ok?`Brilliant! ${aw(DEF.m.a,DEF.m.s)}.`:`Look again: ${aw(DEF.m.a,DEF.m.s)}. The leaver comes first.`);await w(3400);}},
 
-/* 9 */ {t:'Trace it',run:async w=>{
+/* 14 */ {t:'Trace it',run:async w=>{
   say(`Now trace some short answer words with your finger. Go over the grey letters, from <b>right to left</b>.`);await w(3000);
   const W=[['التسميع','at-tasmee\'','saying "sami\'a Allaah…"'],['التحميد','at-tahmeed','saying "rabbanaa wa lakal-hamd"'],['يثاب','yuthaab','is rewarded']];
   for(const [a,s,m] of W){clear();say(`Trace ${aw(a,s)}: <b>${m}</b>. Press <b>Done</b> when you've finished.`);
@@ -281,7 +541,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
     `<div class="ar-font" dir="rtl" style="font-size:34px;margin-top:10px;color:#5a3c00;line-height:1.6">${DEF.w.a}<br>${DEF.s.a}<br>${DEF.m.a}</div>`);pop(p);
   say(`The exam is written by hand, so practise on paper: <b>look</b>, <b>cover</b>, <b>write</b>, <b>check</b>. Write the three definitions, then the five required acts.`);await w(4200);}},
 
-/* 10 */ {t:'Keyword match',run:async w=>{
+/* 15 */ {t:'Keyword match',run:async w=>{
   say(`Keyword game! Each card is something from this lesson. Tap a card, then tap the box it belongs to.`);await w(2800);
   const r=await sortGame(w,{bins:[`<span class="ar-font" style="font-size:26px">واجب</span> <small>required</small>`,`<span class="ar-font" style="font-size:26px">سنة</span> <small>sunnah</small>`,
       `<span class="ar-font" style="font-size:26px">مكروه</span> <small>disliked</small>`,`<span class="ar-font" style="font-size:26px">مبطل</span> <small>breaks it</small>`],
@@ -291,7 +551,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       [aw('القهقهة','al-qahqaha'),3],[`😆💥`,3]],top:180,colors:['#2c66cf','#18a058','#e06a1b','#e04848']});
   say(r.ok===r.total?`Perfect! You sorted every card.`:`You got ${r.ok} of ${r.total}. The red ones are in the wrong place. Press Replay to try again.`);await w(3000);}},
 
-/* 11 */ {t:'Exam check',run:async w=>{
+/* 16 */ {t:'Exam check',run:async w=>{
   await examCheck(w,[
     {src:'Hadith 3 · الحديث الثالث',q:'ما بال أقوام .......... أبصارهم إلى السماء في صلاتهم',en:'What is wrong with people who …… their eyes to the sky in their prayer?',
       o:['يخفضون','يرفعون','يغمضون'],oe:['lower','raise','close'],otr:['yakhfidoon','yarfa\'oon','yughmidoon'],a:1,cols:3,
@@ -320,7 +580,7 @@ Lesson.start(Object.assign({}, ISLAMIC, {
       mtr:'Move, Hear, Praise, Sit, Say'}
   ]);}},
 
-/* 12 */ {t:'You did it!',run:async w=>{
+/* 17 */ {t:'You did it!',run:async w=>{
   const t=mk('','left:0;top:10px;width:960px;text-align:center;font-size:40px;font-weight:800;color:#7a4a00','🏆 Question 5 done!');pop(t);
   const B=[['👇','أبصارهم إلى السماء','Hadith 3: eyes down'],['🔄','تكبيرات الانتقال','Move'],['👂🙌','التسميع · التحميد','Hear · Praise'],['🧎☝️','الجلوس · التشهد الأول','Sit · Say'],
     ['✅','الاستعاذة · القهقهة','Q5 b: both true √'],['🙍↩️','الالتفات ×','disliked, not required'],['⭐⚠️','الواجب','doer ⭐ leaver ⚠️'],['👧','فاعلها · تاركها','sunnah: "she" endings']];
