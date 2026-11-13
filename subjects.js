@@ -1,5 +1,5 @@
 /* The subjects and their lessons, shared by the home page, the subject pages and the parent page.
-   Lesson ids are one letter per subject plus a number: l = Science (named before subjects existed), m = Maths, f = French, i = Islamic Studies.
+   Lesson ids are one letter per subject plus a number: l = Science (named before subjects existed), m = Maths, f = French, i = Islamic Studies, c = Computer.
    A lesson without an href is planned but not built yet ("coming soon"). Hrefs are relative to the site root.
    To add a subject: add it here (soon:true until its first lesson exists), give it a page like maths.html,
    and put its lessons in a folder of their own. */
@@ -72,6 +72,27 @@ window.SUBJECTS = [
         ['f08','french/f08-futur-proche.html','🚀','Le futur proche (The near future: going to)'],
         ['f09','french/f09-pronom-en.html','🍬','Le pronom « en » (The pronoun "en")'],
         ['f10','french/f10-institut-dire-oui.html','🤝',"À l'Institut français : dire oui (Saying yes)"]]}]},
+  {id:'computer', name:'Computer', emoji:'💻', page:'computer.html', grad:'#0e7490,#22b8c9', guide:'Chip the Mouse',
+    blurb:'2nd Term worksheet · with Chip the Mouse',
+    quiz:{href:'computer-quiz.html', title:'Computer Quest Quiz', desc:'103 questions in 4 levels plus a Final Boss: pick, true or false, fill the blank, match, build the code, spot the mistake and earn stars.',
+      modes:[['p1','🌐','HTML'],['p2','🎨','CSS'],['p3','🐍','Python'],['p4','🖌️','GIMP'],['pboss','👑','Final Boss']]},
+    trainer:{href:'computer-trainer.html', mode:'ctrainer', total:25, title:'Answer Trainer', desc:'The 25 written answers, ten a day: spot the keyword, remember the answer, write it. The hard ones come back sooner.'},
+    guidePdf:{href:'computer-study-guide.pdf', title:'Study Guide (PDF)', desc:'Every worksheet question with its answer, memory tricks, a cheat sheet and all 25 model answers.'},
+    units:[
+      {tag:'Part 1', name:'Web pages with HTML', color:'#0e7490', soft:'#c4eef2', les:[
+        ['c01','computer/c01-what-is-html.html','🌐','What is HTML?'],
+        ['c02','computer/c02-tags-structure.html','🏷️','HTML tags and page structure'],
+        ['c03','computer/c03-pictures.html','🖼️','Pictures on a web page'],
+        ['c04','computer/c04-links.html','🔗','Links: internal, external and URLs']]},
+      {tag:'Part 2', name:'Styling with CSS', color:'#6a45d8', soft:'#ddd3fb', les:[
+        ['c05','computer/c05-what-is-css.html','🎨','What is CSS?'],
+        ['c06','computer/c06-style-sheets.html','📑','Three kinds of style sheet']]},
+      {tag:'Part 3', name:'Programming and Python', color:'#17935b', soft:'#bfe7d2', les:[
+        ['c07','computer/c07-programs-languages.html','🤖','Programs and programming languages'],
+        ['c08','computer/c08-meet-python.html','🐍','Meet Python: interactive and script mode']]},
+      {tag:'Part 4', name:'Drawing in GIMP', color:'#e06a1b', soft:'#f7d3b5', les:[
+        ['c09','computer/c09-gimp-painting.html','🖌️','GIMP painting tools'],
+        ['c10','computer/c10-gimp-fixing.html','🪄','GIMP fixing and effects tools']]}]},
   {id:'kss', name:'KSS', emoji:'🇰🇼', grad:'#17935b,#45c288', soon:true, units:[]},
   {id:'arabic', name:'Arabic', native:'اللغة العربية', emoji:'✒️', grad:'#0f7a6e,#2bb39c', soon:true, units:[]},
   {id:'islamic', name:'Islamic Studies', native:'التربية الإسلامية', emoji:'🌙', page:'islamic.html', grad:'#8a5a00,#d9a441', guide:'Hudhud the Hoopoe',
@@ -142,6 +163,8 @@ function renderHome(ov){
   document.getElementById('ptxt').textContent=F?`${F} of ${T} lessons finished across all subjects`:`${T} lessons ready · pick a subject to start!`;
   renderRevise(ov);}
 
+/* A subject's trainer progress from the overview (mode 'itrainer' = Islamic Memory Trainer, 'ctrainer' = Computer Answer Trainer). */
+function trainerOf(S,ov){const m=S.trainer?.mode||'itrainer';return ov?.trainers?.[m]||(m==='itrainer'?ov?.trainer:null)||null;}
 /* A subject page: lessons by unit, progress bar, Lessons to revise, quiz and study guide cards. */
 function renderSubject(id,ov){
   const S=SUBJECTS.find(s=>s.id===id),st=lessonState(ov);
@@ -161,5 +184,5 @@ function renderSubject(id,ov){
   document.getElementById('practise').innerHTML=
     (q.href?`<a class="card c2" href="${q.href}">`:`<div class="card c2 soon">`)+`<span class="e">🎮</span><div><h3>${q.title}</h3><p>${q.desc}</p>${best?`<p class="qbest">${best}</p>`:''}</div>`+(q.href?'</a>':'</div>')+
     (S.trainer?`<a class="card c1" href="${S.trainer.href}"><span class="e">🧠</span><div><h3>${S.trainer.title}</h3><p>${S.trainer.desc}</p>`+
-      (ov?.trainer?`<p class="qbest">🧠 ${ov.trainer.mastered} of ${ov.trainer.total||46} answers mastered</p>`:'')+`</div></a>`:'')+
+      (trainerOf(S,ov)?`<p class="qbest">🧠 ${trainerOf(S,ov).mastered} of ${trainerOf(S,ov).total||S.trainer.total||46} answers mastered</p>`:'')+`</div></a>`:'')+
     (g.href?`<a class="card c3" href="${g.href}">`:`<div class="card c3 soon">`)+`<span class="e">📄</span><div><h3>${g.title}</h3><p>${g.desc}</p></div>`+(g.href?'</a>':'</div>');}

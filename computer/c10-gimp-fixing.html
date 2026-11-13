@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>GIMP fixing and effects tools</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script src="gimp.js"></script>
+<script>
+/* Computer Lesson 10 · Drawing in GIMP · Worksheet Q25, MCQ 11, MCQ 13, Blank 10, Blank 13, True/False 12, True/False 13.
+   The last Computer lesson: the tools that fix photos (clone, heal, dodge, burn, smudge), fuzzy select and filters,
+   each working on a real canvas (gimp.js), then the student fixes a damaged photo and matches tools to jobs. */
+const side=(x,y,wd,html,col='#0e7490')=>mk('',`left:${x}px;top:${y}px;width:${wd}px;border-radius:18px;background:#fff;border:3px solid ${col};box-shadow:0 4px 0 ${col}55;padding:10px 14px;box-sizing:border-box;font-size:18px;font-weight:700;line-height:1.35;color:#1f2433`,html);
+const head=(t,e)=>`<div style="font-size:20px;font-weight:900;color:#0e5f75">${e?e+' ':''}${t}</div>`;
+const chipL=(x,y,wd,html,bg='#e7f7f9',col='#0e7490')=>mk('',`left:${x}px;top:${y}px;width:${wd}px;height:46px;border-radius:14px;background:${bg};border:3px solid ${col};display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box;font-size:18px;font-weight:800;color:#1f2433;white-space:nowrap;overflow:hidden`,html);
+/* the flower in the meadow pictures, and the round area that holds it (for cloning) */
+const flowerAt=G=>[G.W*.3,G.H*.72,G.H*.05];
+const flowerArea=([x,y,s])=>[[x,y+s*.6],s*1.8];
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c10', num:10, part:'Drawing in GIMP', emoji:'🪄', title:'GIMP fixing and effects tools',
+  intro:`Hi, it's <b>Chip</b> 🖱️ Today GIMP becomes a <b>photo doctor</b>: we fix pictures and add special effects. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'A photo that needs fixing',run:async w=>{
+  const G=gimp(150,8,660,384,{tools:['clone','heal','dodge','burn','smudge','fuzzy','rect','gradient'],tw:100,cols:2,title:'old-photo.jpg – GIMP'});pop(G.el);
+  G.pic('meadow',{spot:[G.W*.48,G.H*.24,15],shade:true,flowers:[flowerAt(G)]});
+  say(`Oh dear! This old photo has a <b>brown stain</b> in the sky, and one corner is much too <b>dark</b>. 😟`);await w(2600);
+  say(`GIMP doesn't only paint. It has tools to <b>fix photos</b> too! Watch it heal the stain…`);
+  await G.use(w,'heal');unpoint();await G.heal(w,G.W*.48,G.H*.24,15,{ms:1600});await w(1200);
+  say(`…and <b>lighten</b> the dark corner. Like magic! ✨`);
+  await G.use(w,'dodge','lighter');unpoint();await G.stroke(w,gpZig(0,G.H*.35,G.W*.6,G.H*.65,5),{size:70,exposure:.2,ms:1600});
+  await G.stroke(w,gpZig(0,G.H*.55,G.W*.35,G.H*.45,4),{size:60,exposure:.18,ms:1000});await w(1400);
+  const T=[['🩹','Heal'],['©','Clone'],['☀️','Dodge'],['🔥','Burn'],['👆','Smudge'],['🪄','Fuzzy select'],['✨','Filters']];
+  T.forEach(([e,t],i)=>{const c=mk('',`left:${13+i*134}px;top:408px;width:124px;height:96px;border-radius:18px;background:linear-gradient(135deg,#0e7490,#22b8c9);color:#fff;text-align:center;font-size:16px;font-weight:900;box-shadow:0 5px 0 #0b5566;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px`,
+    `<span style="font-size:${e==='©'?34:36}px;line-height:1">${e==='©'?GP_TOOLS.clone.i.replace('width="22" height="22"','width="40" height="40"'):e}</span>${t}`);pop(c,i*160);});
+  say(`Today you'll meet seven tools for <b>fixing</b> pictures and adding <b>special effects</b>. Let's go!`);await w(3200);}},
+
+/* 1 */ {t:'The clone tool',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['clone','heal','dodge'],tw:150});pop(G.el);const F=flowerAt(G);G.pic('meadow',{flowers:[F]});
+  const [src,ar]=flowerArea(F);
+  say(`This meadow has just <b>one</b> flower. 🌸 The <b>clone tool</b> can copy it, so the meadow looks full of flowers!`);await w(2800);
+  await G.use(w,'clone','Ctrl + click = source');unpoint();
+  const k=side(630,8,318,`${head('Step 1: choose the source')}Hold <b>Ctrl</b> and click the part you want to copy.`);pop(k);
+  say(`<b>Step 1:</b> hold <b>Ctrl</b> and click the flower. That tells GIMP which part to copy: the <b>source</b>.`);await w(2600);
+  const k2=side(630,138,318,`${head('Step 2: paint the copy')}Paint somewhere else, and the copy appears under the brush.`);pop(k2);
+  say(`<b>Step 2:</b> paint somewhere else. Watch the cross: it shows where GIMP is copying <b>from</b>.`);
+  await G.clone(w,src,[G.W*.62,src[1]+4],{area:ar,ms:2400});await w(1400);
+  say(`A perfect copy! Let's make one more.`);await G.clone(w,src,[G.W*.84,src[1]-10],{area:ar,ms:1800});await w(1400);
+  wsCard('left:630px;top:272px;width:318px',{src:'Worksheet · MCQ 11',q:'Which of the following is used to copy a part of an image?<br>(a) Clone (b) Dodge (c) Both (a) and (b)',a:'✔ (a) Clone'});
+  say(`Worksheet: which is used to <b>copy</b> a part of an image? <b>Clone!</b> Dodge only makes things lighter.`);await w(3200);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q25',q:'What is the use of the clone tool in GIMP?',
+    keys:[['clone tool',`The keyword is <b>clone</b>. Write what it does: it <b>copies</b> parts and <b>pastes</b> them.`]],
+    lines:['In GIMP the clone tool <b>reproduces</b> the selected parts in an image.','It <b>copies</b> the selected parts of the image and <b>pastes</b> them in any other part of the image.'],
+    trick:'<b>Cl</b>one = <b>C</b>opy: a clone is an exact copy, like twins 👯. It copies a part and pastes it somewhere else.'});}},
+
+/* 2 */ {t:'The heal tool',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['clone','heal'],tw:150});pop(G.el);const S=G.pic('face');
+  const sx=S.face[0]-S.r*.42,sy=S.face[1]+S.r*.55,sr=11;G.pic('face',{spot:[sx,sy,sr]});
+  say(`This photo is lovely, but look: there's a <b>spot</b> on the face. 🔴 A <b>defect</b> is a mark or fault that shouldn't be there.`);await w(1200);
+  const Z=G.zoom(Math.round(sx-24),Math.round(sy-16),48,32,{x:630,y:8,scale:6.5,label:'🔍 Before'});pop(Z);await w(2400);
+  await G.use(w,'heal','removes defects');unpoint();
+  say(`The <b>heal tool</b> 🩹 paints over the spot and <b>blends</b> it with the skin all around it. Watch it disappear!`);
+  await G.heal(w,sx,sy,sr,{ms:2200});await w(800);
+  const Z2=G.zoom(Math.round(sx-24),Math.round(sy-16),48,32,{x:630,y:8,scale:6.5,label:'🔍 After'});Z.remove();Z2.style.borderColor='#18a058';pop(Z2);yay();
+  say(`Gone! The heal tool <b>removes defects</b> in images, like spots, scratches and dust.`);await w(2800);
+  const c=side(630,262,318,`${head('Clone or heal?','🤔')}<b>Clone</b> makes a <b>copy</b>. <b>Heal</b> makes a mark <b>disappear</b> by blending.`);pop(c);
+  say(`Clone and heal are cousins. <b>Clone</b> copies a part exactly. <b>Heal</b> blends a defect away.`);await w(3000);
+  c.remove();
+  wsCard('left:630px;top:262px;width:318px',{src:'Worksheet · Blank 13',q:'The ________ tool is used to remove defects in images.',a:'✔ Heal'});
+  say(`Worksheet: the <b>Heal</b> tool is used to remove defects in images.`);await w(2600);
+  const t=chipL(630,430,318,'<span style="font-size:24px">🩹</span><span><b>Heal</b> = a photo plaster</span>','#fff8d6','#f2c200');t.style.height='64px';pop(t);
+  say(`Memory trick: <b>Heal</b> is like a plaster 🩹 for photos. It makes the hurt spot better!`);await w(2600);}},
+
+/* 3 */ {t:'Dodge and burn',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['dodge','burn'],tw:150});pop(G.el);G.pic('meadow',{shade:true,flowers:[flowerAt(G)]});
+  say(`Two tools work like light and shade. This corner is too <b>dark</b>, so we use the <b>dodge</b> tool. ☀️`);await w(800);
+  await G.use(w,'dodge','lighter');unpoint();
+  await G.stroke(w,gpZig(0,G.H*.35,G.W*.6,G.H*.65,5),{size:70,exposure:.2,ms:1800});await G.stroke(w,gpZig(0,G.H*.55,G.W*.35,G.H*.45,4),{size:60,exposure:.18,ms:1100});
+  const d=side(630,8,318,`${head('Dodge = lighter','☀️')}It makes parts of the image <b>lighter</b>.`);pop(d);
+  say(`See? <b>Dodge</b> makes the image <b>lighter</b>, as if the sun came out.`);await w(2600);
+  await G.use(w,'burn','darker');unpoint();
+  say(`The <b>burn</b> tool does the opposite: it makes parts <b>darker</b>. 🔥 Let's give the sky a stormy top.`);
+  await G.stroke(w,gpZig(0,0,G.W,G.H*.22,3),{size:60,exposure:.45,ms:1800});
+  const b=side(630,110,318,`${head('Burn = darker','🔥')}It makes parts of the image <b>darker</b>.`,'#e06a1b');pop(b);await w(2400);
+  const n=side(630,212,318,`<span style="font-size:15px">💡 In real GIMP, dodge and burn share <b>one</b> tool, with a switch to choose.</span>`,'#9cbcf2');n.style.background='#eef4ff';pop(n);
+  say(`By the way, in real GIMP, dodge and burn share one tool button. You switch between them.`);await w(2600);
+  wsCard('left:630px;top:300px;width:318px',{src:'Worksheet · True/False 12',q:'The Dodge tool is used to lighten the image.',a:'✔ T (True)'});
+  say(`True or false? The dodge tool is used to <b>lighten</b> the image. <b>True!</b>`);await w(2600);
+  stage.innerHTML='';
+  const L=mk('',`left:30px;top:20px;width:440px;height:300px;border-radius:24px;background:linear-gradient(135deg,#fff8d6,#ffe680);border:4px solid #f2c200;text-align:center`,
+    `<div class="e" style="font-size:90px;margin-top:20px">☀️</div><div style="font-size:42px;font-weight:900;color:#8a5a00">Dodge = Day</div><div style="font-size:24px;font-weight:800;margin-top:6px">makes it <b>lighter</b></div>`);
+  const R=mk('',`left:490px;top:20px;width:440px;height:300px;border-radius:24px;background:linear-gradient(135deg,#3a2a20,#1f2433);border:4px solid #e06a1b;text-align:center;color:#fff`,
+    `<div class="e" style="font-size:90px;margin-top:20px">🍞</div><div style="font-size:42px;font-weight:900;color:#ffb27a">Burn = Black</div><div style="font-size:24px;font-weight:800;margin-top:6px">makes it <b>darker</b>, like burnt toast</div>`);
+  pop(L);loop(L.querySelector('.e'),[{transform:'rotate(0)'},{transform:'rotate(40deg)'}],1200,{direction:'alternate'});
+  say(`Memory trick: <b>D</b>odge = <b>D</b>ay: lighter. ☀️`);await w(2200);
+  pop(R);loop(R.querySelector('.e'),[{transform:'scale(1)'},{transform:'scale(1.12)'}],700,{direction:'alternate'});
+  say(`<b>B</b>urn = <b>B</b>lack: darker, like burnt toast!`);await w(2200);
+  const no=mk('ca-note',`left:30px;top:348px;width:900px`,`⚠️ Remember from lesson 9: the <b>gradient</b> tool does <b>not</b> darken an image (True/False 11 is <b>F</b>). It mixes two colours. <b>Burn</b> darkens.`);pop(no);
+  say(`And remember: the <b>gradient</b> tool does <b>not</b> darken an image. It mixes two colours. Darkening is <b>burn</b>'s job.`);await w(3200);}},
+
+/* 4 */ {t:'The smudge tool',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['smudge','brush'],tw:150});pop(G.el);G.pic('stripes');
+  say(`Here are stripes of wet paint. 🎨 Now imagine dragging your <b>finger</b> through them…`);await w(1800);
+  await G.use(w,'smudge','smears colour');unpoint();
+  say(`That's the <b>smudge</b> tool. 👆 It <b>smears</b> the colours along, just like a finger in wet paint.`);
+  for(const [y,a] of [[.25,14],[.5,20],[.75,14]])await G.stroke(w,gpWave(10,G.H*y,G.W-10,a,1.5),{size:30,strength:.75,ms:1500});
+  await w(1600);
+  const s=side(630,8,318,`${head('Smudge = smear','👆')}It drags colour from one place into the next, like finger painting.`);pop(s);await w(1200);
+  say(`Artists use smudge to blend colours softly, for skies, hair and clouds.`);
+  await G.stroke(w,gpWave(G.W-10,G.H*.38,10,10,2),{size:40,strength:.7,ms:1500});await G.stroke(w,gpWave(10,G.H*.62,G.W-10,10,2),{size:40,strength:.7,ms:1500});await w(1600);
+  const t=chipL(630,180,318,'<span style="font-size:24px">👆</span><span><b>Sm</b>udge = <b>sm</b>ear</span>','#fff8d6','#f2c200');t.style.height='64px';pop(t);
+  say(`Memory trick: <b>sm</b>udge and <b>sm</b>ear start with the same letters!`);await w(2400);
+  const q=side(630,262,318,`${head('Which one?','🤔')}<div style="font-size:16px;line-height:1.5">👆 <b>Smudge</b> smears<br>☀️ <b>Dodge</b> lightens<br>🔥 <b>Burn</b> darkens<br>🩹 <b>Heal</b> removes defects</div>`,'#6a45d8');pop(q);
+  say(`So far: smudge smears, dodge lightens, burn darkens and heal removes defects.`);await w(3000);}},
+
+/* 5 */ {t:'Fuzzy select: the magic wand',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['fuzzy','rect','gradient'],tw:192});pop(G.el);const S=G.pic('balloon');
+  say(`Sometimes you want to change just <b>one part</b> of a picture, like only the sky. First you must <b>select</b> it.`);await w(2600);
+  await G.use(w,'fuzzy','magic wand');unpoint();
+  say(`The <b>fuzzy select</b> tool 🪄 is also called the <b>magic wand</b>. One click on the sky…`);await w(1200);
+  await G.fuzzy(w,...S.sky,{ms:1400});
+  say(`…and it selects all the sky! See the <b>marching ants</b>? That dotted line moves round the selection.`);await w(2800);
+  const c=side(630,8,318,`${head('Fuzzy select','🪄')}Selects <b>contiguous</b> areas (all <b>touching</b>) of a <b>similar colour</b>.`);pop(c);
+  say(`It selects <b>contiguous</b> areas of a <b>similar colour</b>. Contiguous means <b>touching</b>, joined together.`);await w(3000);
+  const ring=(p,t,r)=>{const e=mk('gp-target',`left:${p[0]-r}px;top:${p[1]-r*.6}px;width:${r*2}px;height:${r*1.2}px;border-color:#e04848`,'',G.wrap);
+    const l=mk('',`left:${p[0]-60}px;top:${p[1]+r*.6+2}px;width:120px;text-align:center;font-size:13px;font-weight:900;color:#fff;background:#e04848;border-radius:8px;z-index:6`,t,G.wrap);pop(e);pop(l);return[e,l];};
+  const R1=ring(S.lake,'❌ not touching',G.W*.22),R2=ring(S.balloon,'❌ not blue',G.H*.2);
+  say(`Look at the lake. It's the <b>same blue</b>, but it's <b>not selected</b>, because it doesn't touch the sky. The balloon isn't blue, so it's left out too.`);await w(3600);[...R1,...R2].forEach(e=>e.remove());
+  await G.use(w,'gradient','sunset, only in the selection');unpoint();
+  say(`Now any change happens only <b>inside</b> the selection. A sunset sky! 🌅 The balloon stays red.`);
+  await G.gradient(w,[0,0],[0,S.sky[1]*2.1],{c1:'#ff7a59',c2:'#ffd27a',ms:1600});await w(2000);
+  wsCard('left:630px;top:156px;width:318px',{src:'Worksheet · Blank 10',q:'The ________ tool allows the selection of contiguous areas of a similar colour range.',a:'✔ Fuzzy Select'});
+  say(`Worksheet: the <b>Fuzzy Select</b> tool allows the selection of contiguous areas of a similar colour range.`);await w(3400);
+  const t=chipL(630,350,318,'<span style="font-size:24px">🪄</span><span>One tap grabs all the <b>touching</b> pixels of a <b>similar colour</b></span>','#fff8d6','#f2c200');t.style.height='84px';t.style.whiteSpace='normal';t.style.fontSize='16px';pop(t);
+  say(`Memory trick: <b>fuzzy select</b> is a magic wand. One tap grabs all the touching pixels of a similar colour.`);await w(3000);}},
+
+/* 6 */ {t:'Filters: special effects',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['fuzzy','heal','burn'],tw:150});pop(G.el);
+  G.pic('meadow',{flowers:[[G.W*.3,G.H*.72,G.H*.05],[G.W*.55,G.H*.8,G.H*.05,'#ffd84d'],[G.W*.78,G.H*.74,G.H*.05,'#c9b6f4']]});const orig=G.snap();
+  say(`<b>Filters</b> add <b>special effects</b> to an image, like the filters in a photo app. In GIMP they live in the <b>Filters</b> menu at the top.`);await w(2600);
+  const FX=[['blur','💧 Blur'],['emboss','🗿 Emboss'],['invert','🔄 Invert colours'],['sepia','📜 Old photo']];
+  const D=G.dropdown('Filters',FX.map(f=>f[1]),{wd:190});point(D.el);await w(400);
+  const lines={blur:`<b>Blur</b> makes everything soft and out of focus.`,emboss:`<b>Emboss</b> makes the picture look carved in stone.`,invert:`<b>Invert</b> swaps every colour for its opposite!`,sepia:`<b>Old photo</b> makes it brown, like a photo from long ago.`};
+  for(let i=0;i<3;i++){const [k]=FX[i];D.rows.forEach((r,j)=>r.classList.toggle('on',j===i));point(D.rows[i]);beep(700,.05);say(lines[k]);
+    await G.filter(w,k,{ms:1100});await w(2000);G.put(orig);}
+  D.rows.forEach(r=>r.classList.remove('on'));
+  say(`Your turn! Tap a filter in the menu to try it. Try at least <b>two</b>! ✨`);
+  let tries=0,busy=false;const tried=new Set();
+  D.rows.forEach((r,i)=>{r.onclick=async()=>{if(busy)return;busy=true;try{D.rows.forEach((x,j)=>x.classList.toggle('on',j===i));G.put(orig);say(lines[FX[i][0]]);await G.filter(w,FX[i][0],{ms:900});tried.add(i);tries++;}catch(e){}busy=false;};});
+  point(D.rows[3]);
+  window.AUTOPLAY=()=>{if(!busy)D.rows[3-(tries%2)*2].click();};
+  await w.until(()=>tries>=2&&!busy);window.AUTOPLAY=null;unpoint();await w(1600);
+  D.rows.forEach(r=>r.onclick=null);
+  wsCard('left:630px;top:8px;width:318px',{src:'Worksheet · MCQ 13',q:'Which of the following is used to apply special effects to an image?<br>(a) Filters (b) Heal (c) Burn',a:'✔ (a) Filters'});
+  say(`Worksheet: which is used to apply <b>special effects</b>? <b>Filters!</b> Heal removes defects and burn darkens.`);await w(3200);
+  wsCard('left:630px;top:190px;width:318px',{src:'Worksheet · True/False 13',q:'Filters are used to select objects in GIMP.',a:'✘ F (False)'});
+  say(`True or false? Filters are used to <b>select</b> objects. <b>False!</b> Filters add effects. <b>Select</b> tools, like fuzzy select, select things.`);await w(3600);
+  const t=chipL(630,330,318,'<span style="font-size:24px">✨</span><span><b>Filters</b> = special <b>FX</b></span>','#fff8d6','#f2c200');t.style.height='64px';pop(t);
+  say(`Memory trick: <b>Filters</b> are <b>FX</b>: special effects! Selecting is a different job.`);await w(2600);D.el.close();}},
+
+/* 7 */ {t:'Fix the damaged photo!',run:async w=>{
+  const G=gimp(13,8,700,504,{tools:['clone','heal','dodge','burn','smudge','fuzzy'],tw:150,title:'old-photo.jpg – GIMP'});pop(G.el);
+  const F=[G.W*.47,G.H*.74,G.H*.05],SP=[G.W*.5,G.H*.24,16];G.pic('meadow',{spot:SP,shade:.6,flowers:[F]});const before=G.snap();
+  const [src,ar]=flowerArea(F);
+  const steps=[['🩹','Heal the stain'],[GP_TOOLS.clone.i,'Clone the flower'],['☀️','Dodge dark corner'],['✨','Add a filter']];
+  mk('',`left:725px;top:10px;width:222px;font-size:20px;font-weight:900;color:#0e5f75`,'Photo doctor jobs');
+  const L=steps.map(([e,t],i)=>{const c=chipL(725,46+i*56,222,`<span class="tk" style="font-size:22px">${e}</span>${t}`,'#f4f6fa','#c5cdda');c.style.fontSize='16px';pop(c,i*80);return c;});
+  const tick=i=>{L[i].style.background='#e3f7ec';L[i].style.borderColor='#18a058';L[i].querySelector('.tk').textContent='✅';beep(900,.08);};
+  const now=i=>{L[i].style.borderColor='#ffb000';L[i].style.background='#fff8d6';L[i].animate([{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:400});};
+  const wrong=t=>say(`That's the <b>${GP_TOOLS[t].n}</b> tool. Look for the other one! 🔍`);
+  const near=(p,q,r)=>Math.hypot(p[0]-q[0],p[1]-q[1])<=r;
+  say(`You're the <b>photo doctor</b> now! 🩺 This old photo needs three fixes and a special effect.`);await w(2400);
+  /* 1 heal */
+  now(0);say(`<b>Step 1:</b> tap the <b>Heal</b> tool 🩹, the plaster.`);
+  await G.pick(w,'heal',{onWrong:wrong});
+  say(`Now tap the <b>brown stain</b> in the sky.`);
+  await G.tap(w,{auto:SP.slice(0,2),target:true,tr:30,ok:(x,y)=>near([x,y],SP,46),miss:()=>say(`Find the <b>brown stain</b> in the sky and tap right on it!`)});
+  await G.heal(w,SP[0],SP[1],SP[2],{ms:1800});tick(0);await w(1200);
+  /* 2 clone */
+  now(1);say(`<b>Step 2:</b> let's add more flowers. Tap the <b>Clone</b> tool, the stamp.`);
+  await G.pick(w,'clone',{onWrong:wrong});
+  say(`Tap the <b>flower</b> to choose the source. In real GIMP you hold <b>Ctrl</b> while you click.`);
+  await G.tap(w,{auto:src,target:true,tr:ar,ok:(x,y)=>near([x,y],src,ar+14),miss:()=>say(`Tap right on the <b>flower</b>!`)});
+  say(`Now tap an <b>empty patch of grass</b> where the copy should grow.`);
+  const gy=G.H*.6+ar+6;
+  const dst=await G.tap(w,{auto:[G.W*.78,src[1]],target:true,tr:ar,ok:(x,y)=>y>=G.H*.62&&!near([x,y],src,ar*2.2),miss:()=>say(`Tap on the <b>grass</b>, away from the first flower.`)});
+  dst[1]=Math.max(gy,Math.min(G.H-ar-4,dst[1]));dst[0]=Math.max(ar+4,Math.min(G.W-ar-4,dst[0]));
+  await G.clone(w,src,dst,{area:ar,ms:1800});tick(1);await w(1200);
+  /* 3 dodge */
+  now(2);say(`<b>Step 3:</b> the bottom corner is too dark. Which tool makes things <b>lighter</b>? Tap it!`);
+  await G.pick(w,'dodge',{hint:4000,onWrong:t=>say(t==='burn'?`Careful! <b>Burn</b> makes it <b>darker</b>. Dodge = Day! ☀️`:`That's the <b>${GP_TOOLS[t].n}</b> tool. Which one makes it lighter?`)});
+  say(`Yes, <b>dodge</b>! Now tap the <b>dark corner</b>.`);
+  await G.tap(w,{auto:[G.W*.14,G.H*.86],target:true,tr:34,ok:(x,y)=>x<G.W*.55&&y>G.H*.45,miss:()=>say(`The dark part is at the <b>bottom left</b>. Tap there!`)});
+  await G.stroke(w,gpZig(0,G.H*.5,G.W*.5,G.H*.5,4),{size:80,exposure:.2,ms:1500});await G.stroke(w,gpZig(0,G.H*.7,G.W*.3,G.H*.3,3),{size:64,exposure:.18,ms:900});tick(2);await w(1000);
+  /* 4 filter */
+  now(3);say(`<b>Step 4:</b> finish with a <b>special effect</b>. The <b>Filters</b> menu is open: tap the effect you like! ✨`);
+  const FX=[['sepia','📜 Old photo'],['emboss','🗿 Emboss'],['blur','💧 Blur']];
+  const D=G.dropdown('Filters',FX.map(f=>f[1]),{wd:180});point(D.el);let pick=null;
+  D.rows.forEach((r,i)=>r.onclick=()=>{pick=FX[i][0];r.classList.add('on');beep(700,.05);});
+  window.AUTOPLAY=()=>{pick='sepia';};await w.until(()=>pick);window.AUTOPLAY=null;unpoint();await w(300);D.el.close();
+  await G.filter(w,pick,{ms:1100});tick(3);yay();confetti(120);
+  /* before and after */
+  const th=document.createElement('canvas');th.width=G.W;th.height=G.H;th.getContext('2d').putImageData(before,0,0);
+  const bx=mk('gp-zoom',`left:725px;top:284px;width:222px`,'<div class="lb">Before</div>');th.style.width='210px';th.style.height=Math.round(210*G.H/G.W)+'px';bx.appendChild(th);pop(bx);
+  say(`Look at the <b>before</b> picture! 😮 You healed the stain, cloned a flower, dodged the dark corner and added a filter. Brilliant work, photo doctor!`);await w(3600);
+  }},
+
+/* 8 */ {t:'Which tool does this job?',run:async w=>{
+  const JOBS=[['Copy a flower to another place','clone'],['Remove a spot from a face','heal'],['Make a dark corner lighter','dodge'],['Make the sky darker','burn'],
+    ['Smear wet paint with a finger','smudge'],['Select all the touching blue sky','fuzzy'],['Add a special effect, like blur','filters']];
+  mk('',`left:13px;top:6px;width:934px;text-align:center;font-size:22px;font-weight:900;color:#0e5f75`,'Which tool does this job? Tap a job, then its tool.');
+  const svg=mk('','left:0;top:0;width:960px;height:520px;pointer-events:none;z-index:1','<svg width="960" height="520"></svg>').firstChild;
+  const order=['filters','dodge','clone','fuzzy','burn','smudge','heal'];
+  let selJ=null,done=0,first=0;const tried=new Set();
+  const J=JOBS.map(([t,k],i)=>{const e=btn('',`left:13px;top:${44+i*67}px;width:470px;height:56px;border-radius:14px;background:#fff;border:3px solid #c5cdda;display:flex;align-items:center;padding:0 14px;box-sizing:border-box;font-size:18px;font-weight:800;color:#1f2433;z-index:2`,
+    `${i+1}. ${t}`,()=>{if(e.ok)return;selJ=e;J.forEach(x=>{if(!x.ok){x.style.borderColor=x===e?'#ffb000':'#c5cdda';x.style.background=x===e?'#fff8d6':'#fff';}});beep(650,.05);});e.k=k;pop(e,i*60);return e;});
+  const T=order.map((k,i)=>{const e=btn('',`left:620px;top:${44+i*67}px;width:327px;height:56px;border-radius:14px;background:#2a2a2f;border:3px solid #46464d;display:flex;align-items:center;gap:12px;padding:0 14px;box-sizing:border-box;font-size:18px;font-weight:800;color:#fff;z-index:2`,
+    `<span style="font-size:24px;display:inline-flex">${GP_TOOLS[k].i}</span>${GP_TOOLS[k].n}`,()=>pickT(e));e.k=k;pop(e,300+i*60);return e;});
+  function pickT(e){if(!selJ){say(`First tap a <b>job</b> on the left, then its tool.`);shake(e);return;}if(e.ok)return;
+    if(e.k===selJ.k){if(!tried.has(selJ.k))first++;[selJ,e].forEach(x=>{x.ok=true;x.style.borderColor='#18a058';x.style.background=x===e?'#17935b':'#e3f7ec';});
+      const y1=selJ.offsetTop+28,y2=e.offsetTop+28;svg.insertAdjacentHTML('beforeend',`<line x1="483" y1="${y1}" x2="620" y2="${y2}" stroke="#18a058" stroke-width="5" stroke-linecap="round"/>`);
+      yay();done++;say([`Yes! <b>${GP_TOOLS[e.k].n}</b>.`,`Correct! That's the <b>${GP_TOOLS[e.k].n}</b> tool.`,`Well done: <b>${GP_TOOLS[e.k].n}</b>!`][done%3]);selJ=null;}
+    else{tried.add(selJ.k);boo();shake(e);say(`Not quite. The <b>${GP_TOOLS[e.k].n}</b> tool can't do that job. Try another!`);}}
+  say(`Let's match each job to the right tool! Tap a <b>job</b> on the left, then tap the <b>tool</b> that does it.`);
+  window.AUTOPLAY=()=>{const j=J.find(x=>!x.ok);if(!j)return;j.click();T.find(x=>x.k===j.k).click();};
+  await w.until(()=>done===JOBS.length);window.AUTOPLAY=null;await w(1200);confetti(100);
+  say(first===JOBS.length?`Perfect! 🎉 All seven tools matched first time. You really know your GIMP tools!`:`All matched! 🎉 You got <b>${first} of 7</b> right first time. Press Replay to try again.`);await w(2800);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · MCQ 11',q:'Which of the following is used to copy a part of an image?',o:['Clone','Dodge','Both (a) and (b)'],a:0,cols:3,
+      why:'The <b>clone</b> tool copies part of an image and pastes it in another part.',
+      whyNot:{1:'the dodge tool makes parts of an image lighter; it does not copy.',2:'only the clone tool copies. Dodge just lightens.'}},
+    {src:'Worksheet · MCQ 13',q:'Which of the following is used to apply special effects to an image?',o:['Filters','Heal','Burn'],a:0,cols:3,
+      why:'<b>Filters</b> apply special effects, like blur and emboss.',
+      whyNot:{1:'the heal tool removes defects, like spots.',2:'the burn tool makes parts of an image darker.'}},
+    {src:'Worksheet · Blank 10',q:'The ________ tool allows the selection of contiguous areas of a similar colour range.',o:['Fuzzy Select','Clone','Smudge'],a:0,cols:3,
+      why:'<b>Fuzzy select</b>, the magic wand, selects touching areas of a similar colour.',whyNot:{1:'the clone tool copies part of an image.',2:'the smudge tool smears colours.'}},
+    {src:'Worksheet · Blank 13',q:'The ________ tool is used to remove defects in images.',o:['Heal','Burn','Gradient'],a:0,cols:3,
+      why:'The <b>heal</b> tool removes defects by blending them with the area around them.',whyNot:{1:'the burn tool darkens parts of an image.',2:'the gradient tool fills a mix of two colours.'}},
+    {src:'Worksheet · True/False 12',q:'The Dodge tool is used to lighten the image.',o:['T (True)','F (False)'],a:0,
+      why:'<b>Dodge</b> = Day: it makes the image <b>lighter</b>.',whyNot:{1:'dodge really does lighten. It is burn that darkens.'}},
+    {src:'Worksheet · True/False 13',q:'Filters are used to select objects in GIMP.',o:['T (True)','F (False)'],a:1,
+      why:'Filters apply <b>special effects</b>. Select tools, like fuzzy select, select objects.',whyNot:{0:'filters add special effects; selecting is the job of the select tools.'}},
+    {src:'Worksheet · Q25',q:'What is the use of the clone tool in GIMP?',model:'In GIMP the clone tool reproduces the selected parts in an image. It copies the selected parts of the image and pastes them in any other part of the image.'},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'GIMP fixing and effects tools',badges:[
+    ['👯','<b>Clone</b> copies a part and pastes it','The clone tool copies selected parts of an image and pastes them in another part.'],
+    ['🩹','<b>Heal</b> removes defects','The heal tool removes defects, like spots, from images.'],
+    ['☀️','<b>Dodge</b> = Day: lighter','The dodge tool makes the image lighter.'],
+    ['🍞','<b>Burn</b> = Black: darker','The burn tool makes the image darker.'],
+    ['👆','<b>Smudge</b> smears colour','The smudge tool smears colours, like a finger in wet paint.'],
+    ['🪄','<b>Fuzzy select</b>: touching areas of a similar colour','Fuzzy select selects contiguous areas of a similar colour range.'],
+    ['✨','<b>Filters</b> = special effects','Filters apply special effects to an image.'],
+    ['🚫','Filters do <b>not</b> select objects','Filters are not used to select objects. That is the select tools\' job.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

@@ -14,7 +14,7 @@ export async function overviewFor(ctx: QueryCtx, profileId: Id<"profiles">) {
   const quizBest: Record<string, { right: number; total: number; stars: number; pct: number }> = {};
   for (const r of runs) {
     const pct = r.total ? Math.round((r.right / r.total) * 100) : 0;
-    if (r.mode !== "retry" && (!quizBest[r.mode] || pct > quizBest[r.mode].pct)) quizBest[r.mode] = { right: r.right, total: r.total, stars: r.stars, pct };
+    if (!/retry$/.test(r.mode) && (!quizBest[r.mode] || pct > quizBest[r.mode].pct)) quizBest[r.mode] = { right: r.right, total: r.total, stars: r.stars, pct };
   }
 
   const latest = new Map<string, { lessonId: string; correct: boolean; at: number }>();
@@ -30,13 +30,18 @@ export async function overviewFor(ctx: QueryCtx, profileId: Id<"profiles">) {
     .map(([lessonId, e]) => ({ lessonId, wrong: e.wrong, lastAt: e.lastAt }))
     .sort((a, b) => b.wrong - a.wrong || b.lastAt - a.lastAt);
 
-  // Islamic Studies Memory Trainer (islamic-trainer.html): saved like a quiz level, mode "itrainer"
-  const tr = await ctx.db.query("quizState").withIndex("by_profile_mode", (q) => q.eq("profileId", profileId).eq("mode", "itrainer")).unique();
-  let trainer: { mastered: number; seen: number; total: number } | null = null;
-  try {
-    const st = tr ? JSON.parse(tr.state) : null;
-    if (st) trainer = { mastered: Number(st.mastered) || 0, seen: Number(st.seen) || 0, total: Number(st.total) || 0 };
-  } catch (e) { trainer = null; }
+  // Answer trainers, saved like a quiz level: "itrainer" = Islamic Memory Trainer (islamic-trainer.html),
+  // "ctrainer" = Computer Answer Trainer (computer-trainer.html). `trainer` stays the Islamic one for older pages.
+  type Trainer = { mastered: number; seen: number; total: number };
+  const trainers: Record<string, Trainer> = {};
+  for (const mode of ["itrainer", "ctrainer"]) {
+    const tr = await ctx.db.query("quizState").withIndex("by_profile_mode", (q) => q.eq("profileId", profileId).eq("mode", mode)).unique();
+    try {
+      const st = tr ? JSON.parse(tr.state) : null;
+      if (st) trainers[mode] = { mastered: Number(st.mastered) || 0, seen: Number(st.seen) || 0, total: Number(st.total) || 0 };
+    } catch (e) { /* unreadable state: no trainer progress */ }
+  }
+  const trainer: Trainer | null = trainers.itrainer ?? null;
 
   const lastActive = Math.max(0, ...lessons.map((l) => l.updatedAt), ...answers.map((a) => a.at), ...runs.map((r) => r.at));
   return {
@@ -47,6 +52,7 @@ export async function overviewFor(ctx: QueryCtx, profileId: Id<"profiles">) {
     correct: answers.filter((a) => a.correct).length,
     lastActive: lastActive || null,
     trainer,
+    trainers,
   };
 }
 

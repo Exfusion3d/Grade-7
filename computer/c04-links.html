@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Links: internal, external and URLs</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script>
+/* Computer Lesson 4 · Web pages with HTML · Worksheet MCQ 7, MCQ 9, Blank 8, Blank 9, True/False 7, True/False 8.
+   Hyperlinks with <A HREF>, internal and external linking (True/False 7 keeps the key's T with a gentle note,
+   parent's decision), TARGET="_blank", absolute and relative URLs, link colours LINK / ALINK / VLINK. */
+const HREFW=`<b data-say="H ref">HREF</b>`,BLANKW=`<b data-say="blank">_blank</b>`;
+const SITE='https://www.chipscheese.com/';
+const hiLine=(E,n)=>{const l=E.code.innerHTML.split('\n');l[n]=`<span style="background:#fff3a6;border-radius:4px">${l[n]}</span>`;E.code.innerHTML=l.join('\n');};
+/* an arrow between two points in an svg string, drawn in */
+const arrowSVG=(x1,y1,x2,y2,col,dash)=>`<path d="M${x1} ${y1} Q${(x1+x2)/2} ${Math.min(y1,y2)-40} ${x2} ${y2}" stroke="${col}" stroke-width="5" fill="none" stroke-linecap="round" ${dash?'stroke-dasharray="10 8"':''} marker-end="url(#ah-${col.slice(1)})"/>`;
+const markers=cols=>`<defs>${cols.map(c=>`<marker id="ah-${c.slice(1)}" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="${c}"/></marker>`).join('')}</defs>`;
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c04', num:4, part:'Web pages with HTML', emoji:'🔗', title:'Links: internal, external and URLs',
+  intro:`Hi, it's <b>Chip</b>! 🖱️ Today: <b>links</b>, the magic doors that jump from page to page. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Jump to another page',run:async w=>{
+  const E=editor(13,10,452,230,{title:'index.html - Notepad',size:17});pop(E.el);
+  setCode(E,`<HTML>\n<BODY>\n<H1>Chip's Cheese Club</H1>\n<P>Welcome!</P>\n`);
+  const B=browser(495,10,452,330,{url:SITE+'index.html',title:"Chip's Cheese Club"});pop(B.el,150);
+  B.page.innerHTML=`<h1>Chip's Cheese Club</h1><p>Welcome!</p>`;
+  say(`Remember the spider's web? 🕸️ Pages are joined by <b>hyperlinks</b>. Let's make one!`);await w(2400);
+  await typeCode(w,E,`<A HREF="photos.html">My photos</A>`,{speed:34});hiLine(E,4);
+  B.page.insertAdjacentHTML('beforeend','<p style="font-size:24px"><a class="lk">My photos</a></p>');const lk=B.page.querySelector('.lk');
+  an(lk,[{transform:'scale(0)'},{transform:'scale(1)'}],{duration:400});lk.style.display='inline-block';
+  say(`See the <b>blue, underlined</b> words? That's a link! Go on, <b>tap it</b>. 👆`);point(lk);
+  let go=false;lk.onclick=()=>{go=true;};window.AUTOPLAY=()=>{go=true;};
+  await w.until(()=>go);window.AUTOPLAY=null;unpoint();beep(800,.06);
+  lk.style.color='#e04848';await w(300);
+  await an(B.page,[{opacity:1,transform:'none'},{opacity:0,transform:'translateX(-60px)'}],{duration:300});
+  B.go(SITE+'photos.html','My photos');B.page.innerHTML=`<h2>My photos 📸</h2><p style="font-size:44px;margin:4px 0">🧀 🐱 🏖️</p><p><a>⬅ Back home</a></p>`;
+  an(B.page,[{opacity:0,transform:'translateX(60px)'},{opacity:1,transform:'none'}],{duration:300});yay();
+  say(`Whoosh! 🚀 We jumped to a <b>new page</b>: photos dot H T M L. Look, the address changed too.`);
+  B.addr.querySelector('.url').animate([{background:'#fff'},{background:'#ffe680'},{background:'#fff'}],{duration:1000,iterations:2});await w(3000);
+  const an1=mk('',`left:13px;top:262px;width:452px;height:240px;border-radius:20px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center;padding:12px;box-sizing:border-box`,
+    `<div class="anc" style="font-size:80px;line-height:1.1">⚓</div><div style="font-size:24px;font-weight:900;color:#0e5f75">${C('<A>')} = <b>Anchor</b> tag</div><div style="font-size:18px;font-weight:700;color:#4a5570;margin-top:8px">It makes <b>hyperlinks</b>: words you click to jump somewhere else.</div>`);
+  an1.querySelector('.cd').style.fontSize='24px';pop(an1);loop(an1.querySelector('.anc'),[{transform:'rotate(-12deg)'},{transform:'rotate(12deg)'}],700,{direction:'alternate'});
+  say(`Links are made with the ${C('<A>')}. A stands for <b>anchor</b> ⚓. It's like a rope tying one page to another.`);await w(3400);
+  const h=mk('',`left:495px;top:360px;width:452px;text-align:center;font-size:21px;font-weight:800;color:#1f2433`,'Click a link ➜ the browser opens another page 🚪');pop(h);await w(1600);}},
+
+/* 1 */ {t:'Inside a link tag',run:async w=>{
+  const big=mk('code',`left:13px;top:24px;width:934px;text-align:center;background:#1e2433;color:#e8ecf5;border-radius:18px;padding:16px 0;font-size:34px;font-weight:700;box-shadow:0 6px 0 #0e7490;box-sizing:border-box`,
+    `<span class="p1">${hl('<A')}</span> <span class="p2"><span class="t-att">HREF</span>${hl('=')}<span class="t-str">"photos.html"</span></span>${hl('>')}<span class="p3">My photos</span><span class="p4">${hl('</A>')}</span>`);pop(big);
+  const parts=[['.p1','opening tag ⚓','#7cc4ff',`It starts with the opening A tag: the <b>anchor</b>.`],
+    ['.p2','where to go 📍','#e0a800',`Then the ${HREFW} attribute. Its value is the page to jump to: photos dot H T M L.`],
+    ['.p3','what you click 👆','#18a058',`Between the tags, the <b>link text</b>: the words you see and click.`],
+    ['.p4','closing tag','#e04848',`And the <b>closing</b> A tag, to finish the link. It's a container tag!`]];
+  let pi=0;for(const [cls,t,col,s] of parts){const el=big.querySelector(cls);el.style.cssText+=`;border-radius:8px;box-shadow:0 0 0 4px ${col}`;
+    const l=mk('',`left:${13+el.offsetLeft+el.offsetWidth/2-90}px;top:${pi++===3?178:126}px;width:180px;text-align:center;font-size:20px;font-weight:900;color:${col}`,'⬆<br>'+t);pop(l);beep(600,.05);say(s);await w(2600);}
+  const hr=mk('',`left:130px;top:240px;width:700px;height:96px;border-radius:20px;background:#fff8e6;border:3px solid #f2c200;text-align:center;padding:10px;box-sizing:border-box`,
+    `<div style="font-size:30px;font-weight:900;color:#8a5a00">HREF = <span style="color:#e06a1b">H</span>ypertext <span style="color:#e06a1b">REF</span>erence</div><div style="font-size:18px;font-weight:700">the address of the page the link points to</div>`);pop(hr);
+  say(`${HREFW} means <b>hypertext reference</b>: the address of the page the link points to. 📍`);await w(3000);
+  const B=browser(250,350,460,160,{url:SITE+'index.html',title:"Chip's Cheese Club"});pop(B.el);
+  B.page.innerHTML='<p style="font-size:26px;margin-top:14px"><a class="lk">My photos</a></p>';
+  const lk=B.page.querySelector('.lk');const cur=mk('',`left:640px;top:470px;font-size:34px;z-index:5`,'👆');
+  await an(cur,[{transform:'none'},{transform:'translate(-150px,-40px)'}],{duration:900});
+  lk.style.color='#e04848';beep(800,.06);await w(400);
+  B.go(SITE+'photos.html','My photos');B.page.innerHTML='<h2 style="margin-top:6px">My photos 📸</h2>';yay();
+  say(`The browser reads the ${HREFW}, then opens that page. 🚀`);await w(2400);}},
+
+/* 2 */ {t:'Internal and external links',run:async w=>{
+  const site=mk('',`left:13px;top:10px;width:560px;height:310px;border-radius:24px;background:#e8f8ec;border:4px solid #18a058`,`<div style="margin:8px 16px;font-size:22px;font-weight:900;color:#127a43">🏠 My website: chipscheese.com</div>`);pop(site);
+  const P=[['index.html','🏠',40,70],['photos.html','📸',220,150],['games.html','🎮',390,70]];
+  const pg=P.map(([n,e,x,y],i)=>mk('',`left:${x}px;top:${y}px;width:130px;height:96px;border-radius:14px;background:#fff;border:3px solid #18a058;text-align:center;box-shadow:0 4px 0 #bfe7d2`,`<div style="font-size:40px">${e}</div><div style="font-size:15px;font-weight:800">${n}</div>`,site));
+  pg.forEach((p,i)=>pop(p,200+i*150));
+  const sv=mk('',`left:0;top:0;width:960px;height:340px;pointer-events:none;z-index:3`,`<svg width="960" height="340">${markers(['#18a058','#e06a1b'])}
+    ${arrowSVG(13+170,10+130,13+225,10+195,'#18a058',1)}${arrowSVG(13+350,10+195,13+405,10+130,'#18a058',1)}${arrowSVG(13+170,10+100,13+385,10+100,'#18a058',1)}
+    ${arrowSVG(13+525,10+110,690,120,'#e06a1b')}${arrowSVG(13+355,10+225,690,250,'#e06a1b')}</svg>`);
+  const paths=[...sv.querySelectorAll('path[stroke]')].filter(p=>!p.closest('marker'));paths.forEach(p=>p.style.opacity=0);
+  say(`There are <b>two types</b> of linking. Here's my website, with three pages of my own.`);await w(2600);
+  paths.slice(0,3).forEach((p,i)=>p.animate([{opacity:0},{opacity:1}],{duration:500,delay:i*300,fill:'forwards'}));
+  const il=mk('',`left:30px;top:270px;width:520px;text-align:center;font-size:22px;font-weight:900;color:#127a43`,'🟢 internal links: inside my own website');pop(il,600);
+  say(`Links between pages of <b>my own website</b> are <b>internal links</b>. Internal means <b>inside</b>. They can even jump to another part of the <b>same page</b>, like "back to the top".`);await w(3800);
+  const ext=mk('',`left:640px;top:10px;width:307px;height:310px;border-radius:24px;background:#fff1e6;border:4px solid #e06a1b`,`<div style="margin:8px 14px;font-size:20px;font-weight:900;color:#b4500f">🌍 Other websites</div>`);pop(ext);
+  [['wikipedia.org','📚',60],['bbc.co.uk','📰',190]].forEach(([n,e,y],i)=>pop(mk('',`left:50px;top:${y}px;width:200px;height:96px;border-radius:14px;background:#fff;border:3px solid #e06a1b;text-align:center;box-shadow:0 4px 0 #f6cfae`,`<div style="font-size:40px">${e}</div><div style="font-size:15px;font-weight:800">www.${n}</div>`,ext),200+i*150));
+  paths.slice(3).forEach((p,i)=>p.animate([{opacity:0},{opacity:1}],{duration:500,delay:400+i*300,fill:'forwards'}));
+  const el=mk('',`left:560px;top:322px;width:400px;text-align:center;font-size:20px;font-weight:900;color:#b4500f`,'🟠 external links: out to other websites');pop(el,700);
+  say(`Links that go <b>out</b> to a different website are <b>external links</b>. External means <b>outside</b>. 🌍`);await w(3200);
+  const dot=mk('',`left:0;top:0;width:22px;height:22px;border-radius:50%;background:#ffd84d;box-shadow:0 0 12px #ffd84d;z-index:6`);
+  for(const [x,y] of [[96,128],[296,208],[466,128],[740,118],[740,250]]){await an(dot,[{transform:`translate(${x}px,${y}px)`}],{duration:500});beep(700,.04);}
+  dot.remove();
+  wsCard('left:13px;top:362px;width:934px',{src:'Worksheet · MCQ 7',q:'Which of the following is a type of linking?&nbsp; (a) Internal linking &nbsp;(b) External linking &nbsp;(c) Both (a) and (b)',a:'✔ (c) Both (a) and (b)'});
+  say(`Worksheet: which is a type of linking? Internal and external are <b>both</b> types. So the answer is <b>(c) Both (a) and (b)</b>.`);await w(3400);
+  stage.innerHTML='';
+  wsCard('left:110px;top:14px;width:740px',{src:'Worksheet · True/False 7',q:'Internal linking is used to link a page to another page.',a:'✔ T (True)'});
+  say(`True or false? Internal linking is used to link a page to another page. In the exam, write <b>T, true</b>. ✔`);await w(3000);
+  const ex=mk('',`left:110px;top:150px;width:740px;height:150px;border-radius:20px;background:#e8f8ec;border:3px solid #18a058`);pop(ex);
+  const a=mk('',`left:60px;top:28px;width:160px;height:96px;border-radius:14px;background:#fff;border:3px solid #18a058;text-align:center`,`<div style="font-size:40px">🏠</div><div style="font-size:15px;font-weight:800">index.html</div>`,ex);
+  const b=mk('',`left:520px;top:28px;width:160px;height:96px;border-radius:14px;background:#fff;border:3px solid #18a058;text-align:center`,`<div style="font-size:40px">📸</div><div style="font-size:15px;font-weight:800">photos.html</div>`,ex);
+  const ar=mk('',`left:240px;top:40px;width:260px;text-align:center;font-size:18px;font-weight:900;color:#127a43`,'internal link<br><span style="font-size:40px">➡️</span><br>same website',ex);
+  loop(ar,[{transform:'translateX(-10px)'},{transform:'translateX(10px)'}],600,{direction:'alternate'});
+  say(`That's because internal links join the pages <b>of your own website</b>: one page to another page.`);await w(2800);
+  const n=mk('ca-note',`left:110px;top:318px;width:740px;box-sizing:border-box`,'📘 Good to know: in the exam, write <b>T</b>. In many books, <b>internal</b> links jump to another page of the <b>same website</b>, or another part of the same page; <b>external</b> links go to a <b>different website</b>.');pop(n);
+  say(`Good to know: in the exam, write T. In many books, internal links jump to another page of the same website, or another part of the same page, and external links go to a different website.`);await w(3600);}},
+
+/* 3 */ {t:'TARGET: where the link opens',run:async w=>{
+  const E=editor(13,10,934,84,{title:'games.html - Notepad',size:24,menu:null});setCode(E,'<A HREF="games.html">Games</A>');pop(E.el);
+  const B=browser(13,112,600,270,{url:SITE+'index.html',title:'Home'});pop(B.el,150);
+  const home=()=>{B.page.innerHTML=`<h2>Chip's Cheese Club</h2><p style="font-size:26px"><a class="lk">Games</a></p>`;return B.page.querySelector('.lk');};
+  let lk=home();
+  const tabs=B.bar;const t1=tabs.querySelector('.cw-tab');
+  const side=mk('',`left:640px;top:112px;width:307px;height:270px;border-radius:20px;background:#fff;border:3px solid #9fdfe6;padding:14px;box-sizing:border-box;font-size:19px;font-weight:700;line-height:1.35`,
+    `<div style="font-size:22px;font-weight:900;color:#0e5f75">🎯 TARGET</div>says <b>where</b> the link opens.<div class="st" style="margin-top:12px;font-size:18px;color:#4a5570">No TARGET: the new page <b>replaces</b> this one, in the <b>same tab</b>.</div>`);pop(side,300);
+  say(`Links have another attribute: <b>TARGET</b>. It says <b>where</b> the new page opens. First, a link with <b>no</b> target…`);await w(3000);
+  const click=async()=>{const c=mk('',`left:${13+30+lk.offsetLeft+lk.offsetWidth/2}px;top:${112+34+35+lk.offsetTop+20}px;font-size:34px;z-index:5`,'👆');pop(c);await w(500);lk.style.color='#e04848';beep(800,.06);await w(400);c.remove();};
+  await click();
+  await an(B.page,[{opacity:1},{opacity:0}],{duration:250});B.go(SITE+'games.html','Games');t1.textContent='Games';B.page.innerHTML='<h2>Games 🎮</h2><p>Chess, puzzles and cheese quizzes!</p>';an(B.page,[{opacity:0},{opacity:1}],{duration:250});
+  say(`The Games page opened in the <b>same tab</b>, and our home page has gone. 😕`);await w(2600);
+  await an(B.page,[{opacity:1},{opacity:0}],{duration:250});B.go(SITE+'index.html','Home');t1.textContent='Home';lk=home();an(B.page,[{opacity:0},{opacity:1}],{duration:250});
+  say(`Now you add a TARGET! Tap the button to put ${C('TARGET="_blank"','target equals blank')} into the code.`);
+  let added=false;const ab=btn('cb-del',`left:660px;top:400px;width:270px;font-size:19px;font-weight:800`,'➕ Add TARGET',()=>{added=true;});pop(ab);point(ab);
+  window.AUTOPLAY=()=>{added=true;};await w.until(()=>added);window.AUTOPLAY=null;ab.remove();unpoint();
+  E.src='<A HREF="games.html"';await typeCode(w,E,' TARGET="_blank"',{speed:40});await typeCode(w,E,'>Games</A>',{speed:5});
+  side.querySelector('.st').innerHTML=`${C('TARGET="_blank"','target equals blank')}: the page opens in a <b>new tab</b>, and this one stays open. 🆕`;
+  say(`${BLANKW} means: open the page in a <b>new, blank tab</b>. Now tap the <b>Games</b> link!`);point(lk);
+  let go=false;lk.onclick=()=>{go=true;};window.AUTOPLAY=()=>{go=true;};await w.until(()=>go);window.AUTOPLAY=null;unpoint();
+  lk.style.color='#e04848';beep(800,.06);await w(300);
+  t1.style.opacity='.55';const t2=t1.cloneNode();t2.textContent='Games';t2.style.opacity='1';t2.style.marginLeft='4px';tabs.appendChild(t2);
+  an(t2,[{transform:'translateY(30px) scale(.4)',opacity:0},{transform:'none',opacity:1}],{duration:500,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  B.go(SITE+'games.html');B.page.innerHTML='<h2>Games 🎮</h2><p>Chess, puzzles and cheese quizzes!</p>';yay();
+  const hl2=t1.animate([{background:'#fff'},{background:'#bfe7d2'},{background:'#fff'}],{duration:900,iterations:3});point(t1);
+  say(`A <b>new tab</b> popped up! 🆕 And look: our Home tab is still there, waiting for us.`);await w(3000);unpoint();
+  wsCard('left:13px;top:398px;width:610px',{src:'Worksheet · Blank 8',q:'The ________ attribute is used to specify a target.',a:'✔ target'});
+  say(`Worksheet: the <b>target</b> attribute is used to specify a target: where the link opens.`);await w(3000);}},
+
+/* 4 */ {t:'Absolute and relative URLs',run:async w=>{
+  say(`Every page has an address, called a <b>URL</b>. A <b>full</b> address looks like this.`);
+  const U=[['https://','#6a45d8','how to fetch it','H T T P S'],['www.chipscheese.com','#2c66cf','which website','W W W dot chips cheese dot com'],['/photos/','#e06a1b','which folder','photos folder'],['cat.html','#18a058','which file','cat dot H T M L']];
+  const line=mk('code',`left:13px;top:14px;width:934px;text-align:center;background:#1e2433;border-radius:16px;padding:12px 0;font-size:34px;font-weight:700;box-sizing:border-box;box-shadow:0 6px 0 #0e7490`,
+    U.map(([t,c],i)=>`<span class="u${i}" style="color:${c==='#2c66cf'?'#7cc4ff':c==='#6a45d8'?'#c9b6f4':c==='#e06a1b'?'#ffb27a':'#9be38f'};opacity:0">${t}</span>`).join(''));pop(line);
+  await w(800);
+  for(let i=0;i<4;i++){const [t,c,lab,sp]=U[i];const s=line.querySelector('.u'+i);an(s,[{opacity:0,transform:'translateY(-20px)'},{opacity:1,transform:'none'}],{duration:400});s.style.display='inline-block';
+    await w(60);const l=mk('',`left:${13+s.offsetLeft+s.offsetWidth/2-95}px;top:100px;width:190px;text-align:center;font-size:18px;font-weight:900;color:${c}`,'⬆<br>'+lab);pop(l);beep(600+i*70,.05);
+    say(`<span data-say="${sp}">${t}</span>: ${lab}.`);await w(1900);}
+  const ab=mk('',`left:13px;top:170px;width:455px;height:190px;border-radius:20px;background:#fff;border:3px solid #6a45d8;box-shadow:0 5px 0 #ddd3fb;padding:10px 16px;box-sizing:border-box`,
+    `<div style="font-size:24px;font-weight:900;color:#6a45d8">🏠 Absolute URL</div><div style="font-size:17px;font-weight:700;margin:4px 0 8px">The <b>complete</b> address: website, folder and file.</div>
+     <div class="env" style="background:#fff8e6;border:2px dashed #f2c200;border-radius:10px;padding:6px 10px;font-size:16px;font-weight:800;line-height:1.35">✉️ House 7, Cheese Street,<br>Salmiya, Kuwait</div>`);pop(ab);
+  loop(ab.querySelector('.env'),[{transform:'rotate(-1.5deg)'},{transform:'rotate(1.5deg)'}],600,{direction:'alternate'});
+  say(`This is an <b>absolute URL</b>: the <b>complete</b> path to the file. Like a full home address on a letter ✉️: anyone, anywhere, can find it.`);await w(3600);
+  const rb=mk('',`left:492px;top:170px;width:455px;height:190px;border-radius:20px;background:#fff;border:3px solid #18a058;box-shadow:0 5px 0 #bfe7d2;padding:10px 16px;box-sizing:border-box`,
+    `<div style="font-size:24px;font-weight:900;color:#18a058">👉 Relative URL</div><div style="font-size:17px;font-weight:700;margin:4px 0 8px">A <b>short</b> address, from where you are now.</div>
+     <div style="display:flex;align-items:center;gap:12px"><span class="cd" style="font-size:22px">cat.html</span><span style="font-size:16px;font-weight:800">"It's next door!" 🏡🏡</span></div>`);pop(rb);
+  say(`A <b>relative URL</b> is just the short part, like cat dot H T M L. It's like saying "next door": it only works from inside the same website.`);await w(3600);
+  const tr=mk('ca-trick',`left:13px;top:378px;width:934px;box-sizing:border-box;text-align:center;font-size:20px`,'💡 <b>Absolute</b> = <b>A</b>ll of it: the complete address. <b>Relative</b> = just the nearby part.');pop(tr);
+  say(`Memory trick: <b>Absolute</b> starts with A, for <b>All of it</b>: the complete address!`);await w(2800);
+  stage.innerHTML='';
+  const big=mk('',`left:13px;top:14px;width:934px;text-align:center;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:26px;font-weight:800;color:#6a45d8`,`🏠 https://www.chipscheese.com/photos/cat.html`);pop(big);
+  loop(big,[{transform:'scale(1)'},{transform:'scale(1.03)'}],700,{direction:'alternate'});
+  wsCard('left:60px;top:76px;width:840px',{src:'Worksheet · Blank 9',q:'________ includes a complete description of the file.',a:'✔ Absolute URL'});
+  say(`Worksheet: the <b>absolute URL</b> includes a <b>complete description</b> of the file.`);await w(3000);
+  wsCard('left:60px;top:214px;width:840px',{src:'Worksheet · True/False 8',q:'An absolute URL refers to the complete path of a file.',a:'✔ T (True)'});
+  const le=mk('',`left:180px;top:380px;font-size:60px`,'✉️'),ho=mk('',`left:700px;top:370px;font-size:76px`,'🏠');pop(ho);
+  mk('',`left:250px;top:470px;width:460px;text-align:center;font-size:18px;font-weight:800;color:#6a45d8`,'The complete address always gets there!');
+  loop(le,[{transform:'translateX(0) rotate(0)'},{transform:'translateX(480px) rotate(10deg)',offset:.8},{transform:'translateX(500px) scale(.3)',opacity:0}],2200);
+  say(`True or false? An absolute URL refers to the <b>complete path</b> of a file. <b>True!</b> All of it.`);await w(3000);}},
+
+/* 5 */ {t:'Link colours',run:async w=>{
+  const code=mk('code',`left:13px;top:10px;width:934px;text-align:center;background:#1e2433;border-radius:16px;padding:10px 0;font-size:25px;font-weight:700;box-sizing:border-box;color:#e8ecf5`,
+    hl('<BODY LINK="blue" ALINK="red" VLINK="purple">'));pop(code);
+  say(`Links change <b>colour</b>, and you choose the colours with three attributes of the ${C('<BODY>')}.`);await w(3000);
+  const B=browser(13,84,500,280,{url:SITE+'index.html',title:'Home'});pop(B.el,100);
+  const home=c=>{B.page.innerHTML=`<h2>Chip's Cheese Club</h2><p style="font-size:28px"><a class="lk" style="color:${c}">Cheese facts</a></p>`;return B.page.querySelector('.lk');};
+  let lk=home('#0000ee');
+  const R=[['🔵','LINK','blue','A link you have <b>not visited</b> yet.','#0000ee'],['🔴','ALINK','red','<b>Active</b>: the moment you click it.','#e00000'],['🟣','VLINK','purple','<b>Visited</b>: you have been there.','#7a1fa2']];
+  const rows=R.map(([e,n,c,d,col],i)=>{const r=mk('',`left:535px;top:${84+i*96}px;width:412px;height:86px;border-radius:16px;background:#fff;border:3px solid ${col};display:flex;align-items:center;gap:12px;padding:0 14px;box-sizing:border-box`,
+    `<span style="font-size:36px">${e}</span><div><div style="font-family:'SF Mono',Menlo,Consolas,monospace;font-size:22px;font-weight:900;color:${col}">${n}</div><div style="font-size:16px;font-weight:700;line-height:1.25">${d}</div></div>`);r.style.opacity=0;return r;});
+  pop(rows[0]);point(lk);
+  say(`<b>LINK</b> sets the colour of a link you <b>haven't visited</b> yet. Blue here. Now tap the link, and watch its colour!`);
+  let go=false;lk.onclick=()=>{go=true;};window.AUTOPLAY=()=>{go=true;};await w.until(()=>go);window.AUTOPLAY=null;unpoint();
+  lk.style.color='#e00000';lk.style.display='inline-block';an(lk,[{transform:'scale(1)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:500});beep(800,.06);pop(rows[1]);
+  say(`<b>Red!</b> 🔴 While you click, the link is <b>active</b>. <b>ALINK</b> sets that colour: A for <b>active</b>.`);await w(3000);
+  await an(B.page,[{opacity:1},{opacity:0}],{duration:250});B.go(SITE+'facts.html','Cheese facts');B.page.innerHTML='<h2>Cheese facts 🧀</h2><p>There are over 1,000 kinds of cheese!</p><p><a class="bk">⬅ Back</a></p>';an(B.page,[{opacity:0},{opacity:1}],{duration:250});
+  say(`Here's the cheese facts page. Now let's go <b>back</b>…`);await w(2000);
+  const bk=B.addr.querySelector('.nb');bk.animate([{transform:'scale(1)'},{transform:'scale(1.6)'},{transform:'scale(1)'}],{duration:500});
+  await an(B.page,[{opacity:1},{opacity:0}],{duration:250});B.go(SITE+'index.html','Home');lk=home('#7a1fa2');an(B.page,[{opacity:0},{opacity:1}],{duration:250});pop(rows[2]);point(lk);
+  say(`Look! The link is <b>purple</b> now. 🟣 We've <b>visited</b> it. <b>VLINK</b> sets that colour: V for <b>visited</b>.`);await w(3200);unpoint();
+  wsCard('left:13px;top:384px;width:934px',{src:'Worksheet · MCQ 9',q:'Which of the following is used to change the colour of a link?&nbsp; (a) Alink &nbsp;(b) Vlink &nbsp;(c) All of these',a:'✔ (c) All of these'});
+  say(`Worksheet: which is used to change the colour of a link? Alink and vlink both do, so the answer is <b>(c) All of these</b>.`);await w(3400);
+  stage.innerHTML='';
+  [['#0000ee','not visited yet'],['#e00000','clicking now'],['#7a1fa2','visited']].forEach(([c,t],i)=>{const e=mk('',`left:${40+i*300}px;top:240px;width:280px;text-align:center;font-family:'Times New Roman',serif`,
+    `<div style="font-size:34px;color:${c};text-decoration:underline">Cheese facts</div><div style="font-family:system-ui;font-size:18px;font-weight:800;color:${c}">${t}</div>`);pop(e,300+i*250);});
+  const tr=mk('ca-trick',`left:80px;top:60px;width:800px;box-sizing:border-box;text-align:center;font-size:26px;line-height:1.6`,
+    '💡 <span style="color:#0000ee">LINK</span> = not visited yet<br><span style="color:#e00000">A</span>LINK = <b>A</b>ctive (clicking now!)<br><span style="color:#7a1fa2">V</span>LINK = <b>V</b>isited (been there)');pop(tr);
+  say(`Memory trick: A link is for <b>Active</b>, V link is for <b>Visited</b>, and plain LINK is a link you haven't tried yet.`);await w(3400);}},
+
+/* 6 */ {t:'Absolute or relative?',run:async w=>{
+  const r=await sortGame(w,{bins:['🏠 Absolute URL (complete)','👉 Relative URL (short)'],colors:['#6a45d8','#18a058'],top:170,
+    items:[['https://www.bbc.co.uk/news.html',0],['https://www.chipscheese.com/index.html',0],['https://www.wikipedia.org/cats.html',0],['photos.html',1],['games/chess.html',1],['contact.html',1]],
+    intro:`Your turn! 🖱️ Tap an address, then tap its group. Is it a <b>complete</b> absolute URL, or a short relative one?`});
+  say(r.ok===r.total?`Perfect! 🎉 Addresses with the whole website in them are <b>absolute</b>. The short ones are <b>relative</b>.`
+    :`Nearly! If the address has the <b>whole</b> website name in it, it's absolute. Short addresses like photos dot H T M L are relative.`);await w(3200);}},
+
+/* 7 */ {t:'Build a link',run:async w=>{
+  say(`Last challenge! Build a link to <b>games.html</b> that opens in a <b>new tab</b>. The link text is <b>Games</b>.`);
+  const r=await buildCode(w,{src:'Build it',q:'Build a link to <b>games.html</b> that opens in a <b>new tab</b>, with the link text <b>Games</b>.',top:14,
+    tiles:['<A','HREF="games.html"','TARGET="_blank"','>','Games','</A>','<IMG','ALT="Games"'],
+    answer:[['<A','HREF="games.html"','TARGET="_blank"','>','Games','</A>'],['<A','TARGET="_blank"','HREF="games.html"','>','Games','</A>']]});
+  say(r.ok?`Brilliant link! 🔗 ${HREFW} says where to go, and TARGET ${BLANKW} opens a new tab.`:`Nearly! Open with ${C('<A','A tag')}, add ${HREFW} and TARGET, close the bracket, write the link text, then ${C('</A>')}.`);
+  const y=Math.min(r.y+(r.ok?4:76),330);
+  const B=browser(250,y,460,510-y,{url:SITE+'index.html',title:'Home'});pop(B.el);
+  B.page.innerHTML='<p style="font-size:26px;margin-top:4px"><a class="lk">Games</a></p>';
+  await w(1500);const lk=B.page.querySelector('.lk');lk.style.color='#e00000';beep(800,.06);await w(400);
+  const t1=B.bar.querySelector('.cw-tab');t1.style.opacity='.55';const t2=t1.cloneNode();t2.textContent='Games';t2.style.opacity='1';t2.style.marginLeft='4px';B.bar.appendChild(t2);
+  an(t2,[{transform:'translateY(30px) scale(.4)',opacity:0},{transform:'none',opacity:1}],{duration:500});B.go(SITE+'games.html');B.page.innerHTML='<h2 style="margin-top:2px">Games 🎮</h2>';yay();
+  await w(2600);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · MCQ 7',q:'Which of the following is a type of linking?',o:['Internal linking','External linking','Both (a) and (b)'],a:2,cols:3,
+      why:'There are <b>two</b> types of linking: internal and external.',
+      whyNot:{0:'internal linking is one type, but external linking is a type too.',1:'external linking is one type, but internal linking is a type too.'}},
+    {src:'Worksheet · MCQ 9',q:'Which of the following is used to change the colour of a link?',o:['Alink','Vlink','All of these'],a:2,cols:3,
+      why:'LINK, ALINK (active) and VLINK (visited) all set link colours, so the answer is <b>All of these</b>.',
+      whyNot:{0:'ALINK does change a link colour (while it is clicked), but VLINK does too.',1:'VLINK does change a link colour (after a visit), but ALINK does too.'}},
+    {src:'Worksheet · Blank 8',q:'The ________ attribute is used to specify a target.',o:['target','alt','src'],a:0,cols:3,
+      why:'The <b>target</b> attribute says where the link opens, for example TARGET equals blank for a new tab.',
+      whyNot:{1:'ALT gives the alternate text for a picture.',2:'SRC says which picture file an image tag shows.'}},
+    {src:'Worksheet · Blank 9',q:'________ includes a complete description of the file.',o:['Absolute URL','Relative URL','Alt text'],a:0,cols:3,
+      why:'An <b>absolute URL</b> is the complete address: website, folder and file.',
+      whyNot:{1:'a relative URL is only the short part, from where you are now.',2:'alt text describes a picture that cannot be shown; it is not an address.'}},
+    {src:'Worksheet · True/False 7',q:'Internal linking is used to link a page to another page.',o:['T (True)','F (False)'],a:0,
+      why:'<b>True</b> for the exam: internal links join one page of your website to another. (In many books, internal links also jump to another part of the same page.)',
+      whyNot:{1:'the worksheet answer is T: internal linking links a page to another page of the same website.'}},
+    {src:'Worksheet · True/False 8',q:'An absolute URL refers to the complete path of a file.',o:['T (True)','F (False)'],a:0,
+      why:'<b>True.</b> Absolute: <b>A</b>ll of it, the complete path.',whyNot:{1:'an absolute URL is the complete path; the short one is a relative URL.'}},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'Links: internal, external and URLs',next:`<b>CSS</b>! How to give your web pages colours and style.`,badges:[
+    ['⚓','&lt;A HREF&gt; makes a link','The A tag, the anchor, with H ref makes a hyperlink.'],
+    ['🏠','<b>Internal</b>: inside my website','Internal links join pages of your own website.'],
+    ['🌍','<b>External</b>: to another website','External links go out to a different website.'],
+    ['🔗','MCQ 7: <b>both</b> are types','Internal and external are both types of linking.'],
+    ['🆕','<b>TARGET</b> = where it opens','The target attribute says where the link opens. Blank means a new tab.'],
+    ['✉️','<b>Absolute URL</b> = complete path','An absolute URL is the complete path of a file.'],
+    ['🎨','LINK · ALINK · VLINK','Link colours: not visited, active and visited.'],
+    ['✅','MCQ 9: <b>All of these</b>','Alink and vlink both change link colours: all of these.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

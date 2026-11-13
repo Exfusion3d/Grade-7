@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grade 7 Computer: Exam Review</title>
+<meta name="description" content="Grade 7 Computer Science exam review: animated lessons with Chip the Mouse on HTML, CSS, Python and GIMP, Computer Quest, the Answer Trainer and a study guide.">
+<meta name="apple-mobile-web-app-title" content="Grade 7 Computer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="stylesheet" href="site.css">
+<script src="subjects.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero computer">
+    <div class="atom">🖱️</div>
+    <div class="who"><a class="back" href="index.html">← All subjects</a><span style="flex:1"></span>👋 Hi, <b data-nickname></b> <a href="#" data-signout>Sign out</a></div>
+    <small>Grade 7 · Computer Science · 2nd Term worksheet</small>
+    <h1>Computer 💻</h1>
+    <p>Animated lessons with Chip the Mouse for every question on your worksheet: HTML, CSS, Python and GIMP. Watch code turn into web pages, run Python and paint!</p>
+    <div class="prog"><i id="bar"></i></div>
+    <div class="progtxt" id="ptxt"></div>
+  </div>
+
+  <div id="revise" hidden></div>
+  <div id="units"></div>
+
+  <h2 class="sec">🎯 Practise</h2>
+  <div class="cards" id="practise"></div>
+
+  <div class="tip">
+    🔊 <b>Turn the sound on</b> (flip off silent mode): Chip explains everything out loud. Tap the speech bubble to hear a line again.<br>
+    ✍️ The exam has <b>25 written questions</b>. In every lesson Chip builds the model answer line by line: <b>learn it, cover it, write it, check it</b>.<br>
+    🧠 Do the <b>Answer Trainer</b> every day: ten answers, and the hard ones come back sooner.<br>
+    🔎 Look for the <b>keyword</b> in each question (HTML, CSS, IDLE, clone tool…): it tells you which answer to write.<br>
+    🎮 <b>Computer Quest</b> tests the tick, fill-in and true/false questions. Practise your mistakes until you get 3 stars.<br>
+    ↔️ Lessons work best with the phone <b>sideways</b>. A ✅ appears when you finish a lesson.
+  </div>
+  <footer>Good luck in the exam! 🍀</footer>
+</div>
+<script>
+renderSubject('computer',cachedOverview());
+</script>
+<script type="module">
+import { Account } from "./src/account.js";
+const load = () => Account.overview().then((ov) => { if (ov) renderSubject("computer", ov); });
+load();
+addEventListener("g7-synced", load);
+</script>
+</body>
+</html>

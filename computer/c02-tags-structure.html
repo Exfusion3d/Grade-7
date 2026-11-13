@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>HTML tags and page structure</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script>
+/* Computer Lesson 2 · Web pages with HTML · Worksheet Q6, Q7, MCQ 1.
+   Tags and angular brackets, opening and closing tags (container tags), the page skeleton HTML › HEAD › BODY
+   as boxes inside boxes, nesting (close the inner one first), build the skeleton, change a tag live. */
+
+/* a big code chip */
+const bigC=(t,size,css='')=>{const e=mk('',css,C(t));e.firstChild.style.fontSize=size+'px';return e;};
+/* a row of code chips; arcs() joins opening and closing tags with curves */
+function tagRow(x,y,tags,{size=22,parent}={}){
+  const r=mk('',`left:${x}px;top:${y}px;display:flex;gap:10px;white-space:nowrap;align-items:center`,tags.map(t=>C(t)).join(''),parent);
+  r.querySelectorAll('.cd').forEach(e=>{e.style.fontSize=size+'px';e.style.padding='3px 9px';});return r;}
+function arcs(row,pairs,color){
+  const ch=[...row.querySelectorAll('.cd')];
+  const s=`<svg width="${row.offsetWidth}" height="56" style="position:absolute;left:0;top:-54px;overflow:visible">`+pairs.map(([i,j])=>{
+    const a=ch[i].offsetLeft+ch[i].offsetWidth/2,b=ch[j].offsetLeft+ch[j].offsetWidth/2,h=12+(j-i)*8;
+    return `<path d="M${a} 52 C${a} ${52-h*1.33} ${b} ${52-h*1.33} ${b} 52" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="700" stroke-dashoffset="700"/>`;}).join('')+'</svg>';
+  row.insertAdjacentHTML('beforeend',s);
+  row.querySelectorAll('svg path').forEach((p,i)=>p.animate([{strokeDashoffset:700},{strokeDashoffset:0}],{duration:900,delay:i*250,fill:'forwards'}));}
+const redChip=(row,i)=>{const c=row.querySelectorAll('.cd')[i];c.style.boxShadow='0 0 0 3px #e04848';c.style.background='#5a1f2a';shake(c);};
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c02', num:2, part:'Web pages with HTML', emoji:'🏷️', title:'HTML tags and page structure',
+  intro:`Hi, it's <b>Chip</b> again! 🖱️ Today: <b>HTML tags</b>, and how every web page is built like boxes inside boxes. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Labels for the browser',run:async w=>{
+  const E=editor(13,10,452,280,{title:'index.html - Notepad',size:18});pop(E.el);
+  const B=browser(495,10,452,280,{url:'file:///C:/Users/Student/index.html',title:'index.html'});pop(B.el,150);
+  say(`Here's a page with <b>no tags</b> at all, just plain words. Let's see what the browser does with it…`);
+  await typeCode(w,E,`Chip's Cheese Club\nI love cheese!`,{lang:'text',speed:30});await w(600);
+  B.page.innerHTML=`<p>Chip's Cheese Club I love cheese!</p>`;beep(400,.1);
+  an(B.page.firstChild,[{opacity:0},{opacity:1}],{duration:400});
+  say(`Hmm. 🤔 It's all squashed onto one line, in the same small writing. The browser doesn't know which part is the <b>heading</b>!`);await w(2800);
+  say(`Let's add some <b>tags</b>. Watch the browser this time…`);
+  await typeCode(w,E,`<H1>Chip's Cheese Club</H1>\n<P>I love <B>cheese</B>!</P>`,{speed:24,append:false});await w(300);
+  B.page.innerHTML=`<h1>Chip's Cheese Club</h1><p>I love <b>cheese</b>!</p>`;
+  an(B.page.firstChild,[{transform:'scale(.4)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:500,easing:'cubic-bezier(.3,1.5,.5,1)'});yay();
+  say(`Now it's a proper page! The tags tell the browser what each part <b>is</b>: a heading, a paragraph, a bold word.`);await w(3000);
+  const T=[['<H1>','big heading'],['<P>','paragraph'],['<B>','bold'],['<TITLE>','name on the tab'],['<BODY>','the page'],['<IMG>','a picture']];
+  T.forEach(([t,c],i)=>{const g=mk('',`left:${13+i*157}px;top:312px;width:145px;height:120px;border-radius:14px 14px 18px 18px;background:#fff;border:3px solid #22b8c9;box-shadow:0 5px 0 #9fdfe6;text-align:center;transform-origin:50% -20px`,
+    `<div style="width:14px;height:14px;border-radius:50%;border:3px solid #22b8c9;margin:8px auto 8px;background:#eef8fa"></div>${C(t)}<div style="font-size:16px;font-weight:800;color:#0e5f75;margin-top:10px">${c}</div>`);
+    g.querySelector('.cd').style.fontSize='21px';
+    an(g,[{transform:'translateY(-340px)',opacity:0},{transform:'translateY(0)',opacity:1}],{duration:650,delay:i*140,easing:'cubic-bezier(.3,1.5,.5,1)'}).then(()=>loop(g,[{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'}],900+i*80,{direction:'alternate'}));});
+  const cap=mk('',`left:13px;top:452px;width:933px;text-align:center;font-size:26px;font-weight:900;color:#0e5f75`,'🏷️ Tags are the labels of HTML');pop(cap,900);
+  say(`HTML has lots of tags, like little <b>labels</b> 🏷️ stuck on each part of the page. Today you'll learn how they work!`);await w(3200);}},
+
+/* 1 */ {t:'Pointy brackets',run:async w=>{
+  const big=(ch,x,fromX,lab,ex)=>{const e=mk('',`left:${x}px;top:10px;width:220px;text-align:center;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:150px;font-weight:900;color:#0e7490;line-height:1.1`,ch);
+    an(e,[{transform:`translateX(${fromX}px) rotate(${fromX>0?40:-40}deg)`,opacity:0},{transform:'none',opacity:1}],{duration:700,easing:'cubic-bezier(.3,1.4,.5,1)'});
+    const l=mk('',`left:${x}px;top:190px;width:220px;text-align:center;font-size:24px;font-weight:900;color:#1f2433`,lab);pop(l,500);
+    const m=mk('',`left:${x}px;top:226px;width:220px;text-align:center;font-size:19px;font-weight:700;color:#4a5570`,ex);pop(m,800);return [e,l,m];};
+  say(`You know these two signs from maths! 📐`);await w(1200);
+  const L=big('&lt;',150,-500,'less than','3 &lt; 5 · 3 is less than 5');
+  say(`This one is the <b>less than</b> sign. Three is less than five.`);await w(2500);
+  const R=big('&gt;',590,500,'greater than','9 &gt; 2 · 9 is greater than 2');
+  say(`And this one is the <b>greater than</b> sign. Nine is greater than two.`);await w(2500);
+  say(`In HTML, they have a special job. Every tag <b>begins</b> with the less than sign, and <b>ends</b> with the greater than sign.`);
+  [...L.slice(1),...R.slice(1)].forEach(e=>an(e,[{opacity:1},{opacity:0}],{duration:400}));
+  an(L[0],[{transform:'none'},{transform:'translateX(80px)'}],{duration:700,delay:300});
+  an(R[0],[{transform:'none'},{transform:'translateX(-80px)'}],{duration:700,delay:300});
+  const word=mk('',`left:330px;top:40px;width:300px;text-align:center;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:96px;font-weight:900;color:#e06a1b`,'BODY');
+  an(word,[{transform:'translateY(-300px)',opacity:0},{transform:'none',opacity:1}],{duration:600,delay:1000,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  await w(2800);beep(700,.08);
+  const br=mk('',`left:180px;top:200px;width:600px;height:150px`,`<svg width="600" height="150"><path d="M70 6 Q70 40 300 46 Q530 40 530 6" stroke="#22b8c9" stroke-width="5" fill="none"/><path d="M300 46 L300 70" stroke="#22b8c9" stroke-width="5"/></svg>`);
+  an(br,[{opacity:0},{opacity:1}],{duration:500});
+  const ab=mk('',`left:230px;top:276px;width:500px;text-align:center;font-size:34px;font-weight:900;color:#0e5f75`,'angular brackets');pop(ab);
+  loop(L[0],[{transform:'translateX(80px) rotate(0)'},{transform:'translateX(80px) rotate(-8deg)'}],500,{direction:'alternate'});
+  loop(R[0],[{transform:'translateX(-80px) rotate(0)'},{transform:'translateX(-80px) rotate(8deg)'}],500,{direction:'alternate'});
+  say(`Together they're called <b>angular brackets</b>, because they're pointy, like angles. The tag's name sits inside, like the filling in a sandwich. 🥪`);await w(3400);
+  const ex=['<HTML>','<HEAD>','<TITLE>','<P>','<H1>'].map((t,i)=>{const e=bigC(t,26,`left:${70+i*170}px;top:350px`);pop(e,i*120);return e;});
+  say(`Every tag looks like that: pointy bracket, name, pointy bracket. Tags are <b>elements</b> that set out the <b>structure</b> of an HTML document.`);await w(3400);
+  ex.forEach((e,i)=>an(e,[{transform:'none'},{transform:'translateY(-10px)'},{transform:'none'}],{duration:400,delay:i*120}));
+  const st=mk('',`left:180px;top:420px;width:600px;text-align:center;font-size:22px;font-weight:800;color:#1f2433`,'🦴 Tags = the <b>structure</b> (the skeleton) of a page');pop(st);
+  say(`Structure means how the page is put together, like a skeleton. 🦴 Let's learn the worksheet answer.`);await w(2600);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q6',q:'What do you know about HTML tags?',
+    keys:[['HTML tags',`The keyword is <b>HTML tags</b>. Say what they are, and what they begin and end with.`]],
+    lines:[{t:'Tags are <b>elements</b> that are used to specify the <b>structure</b> of an HTML document.'},
+      {t:'HTML tags begin with the <b>less than</b> character (&lt;) and end with the <b>greater than</b> symbol (&gt;),',say:'HTML tags begin with the <b>less than</b> character, and end with the <b>greater than</b> symbol,'},
+      {t:'which are called <b>angular brackets</b>.'}],
+    trick:'A tag is a pointy sandwich 🥪: &lt; bread, the name, &gt; bread. Pointy (angle) bread = <b>angular brackets</b>. Tags give the page its <b>structure</b>.'});}},
+
+/* 2 */ {t:'Opening and closing tags',run:async w=>{
+  const line=mk('code',`left:130px;top:24px;width:700px;text-align:center;background:#1e2433;color:#e8ecf5;border-radius:18px;padding:16px 0;font-size:44px;font-weight:700;box-shadow:0 6px 0 #0e7490`,
+    `<span class="op">${hl('<B>')}</span>Hello<span class="cl">${hl('<')}<span class="sl" style="color:#ffd84d;display:inline-block">/</span>${hl('B>')}</span> world`);pop(line);
+  const op=line.querySelector('.op'),cl=line.querySelector('.cl'),sl=line.querySelector('.sl');
+  const B=browser(250,250,460,180,{url:'file:///C:/Users/Student/hello.html',title:'hello.html'});pop(B.el,200);
+  B.page.innerHTML='<p style="font-size:34px">Hello world</p>';
+  say(`Most tags come in <b>pairs</b>. Here's the bold tag, working on the word Hello.`);await w(2400);
+  op.style.cssText='border-radius:10px;box-shadow:0 0 0 4px #18a058;display:inline-block';
+  const lo=mk('',`left:120px;top:130px;width:250px;text-align:center;font-size:20px;font-weight:900;color:#18a058`,'⬆ opening tag<br>💡 bold ON');pop(lo);
+  B.page.innerHTML='<p style="font-size:34px"><b class="hb">Hello</b> world</p>';
+  an(B.page.querySelector('.hb'),[{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:600});B.page.querySelector('.hb').style.display='inline-block';
+  say(`The <b>opening tag</b> switches bold <b>on</b>. 💡`);await w(2200);
+  cl.style.cssText='border-radius:10px;box-shadow:0 0 0 4px #e04848;display:inline-block';
+  const lc=mk('',`left:500px;top:130px;width:260px;text-align:center;font-size:20px;font-weight:900;color:#e04848`,'⬆ closing tag<br>🌑 bold OFF');pop(lc);
+  say(`The <b>closing tag</b> switches it <b>off</b>, so "world" is not bold.`);await w(2400);
+  loop(sl,[{transform:'scale(1) rotate(0)'},{transform:'scale(1.5) rotate(-15deg)'}],420,{direction:'alternate'});
+  say(`Spot the difference? The closing tag has a <b>slash</b> after the first bracket. That slash means "stop here". ✋`);await w(3000);
+  say(`What if we <b>forget</b> the closing tag? Watch…`);await w(1200);
+  await an(cl,[{transform:'none',opacity:1},{transform:'translateY(-120px) rotate(40deg)',opacity:0}],{duration:600});boo();lc.remove();
+  B.page.innerHTML='<p style="font-size:34px"><b>Hello world… and everything after it!</b></p>';shake(B.el);
+  say(`Oops! 😬 Bold never switches off. Everything after it goes bold!`);await w(2600);
+  an(cl,[{transform:'translateY(-120px) rotate(40deg)',opacity:0},{transform:'none',opacity:1}],{duration:600});
+  B.page.innerHTML='<p style="font-size:34px"><b>Hello</b> world</p>';yay();await w(1200);
+  stage.innerHTML='';
+  /* container tag = a lunchbox */
+  const box=mk('',`left:60px;top:60px;width:400px;height:290px`);pop(box);
+  const lid=mk('',`left:0;top:0;width:400px;height:64px;border-radius:18px 18px 8px 8px;background:#22b8c9;border:3px solid #0e7490;display:flex;align-items:center;justify-content:center`,C('<P>'),box);
+  const mid=mk('',`left:14px;top:66px;width:372px;height:150px;background:#fff8e6;border:3px solid #0e7490;border-top:0;border-bottom:0;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#1f2433;font-family:'Times New Roman',serif`,'Hello! 🥪🍎',box);
+  const bot=mk('',`left:0;top:216px;width:400px;height:64px;border-radius:8px 8px 18px 18px;background:#22b8c9;border:3px solid #0e7490;display:flex;align-items:center;justify-content:center`,C('</P>'),box);
+  [lid,bot].forEach(e=>e.querySelector('.cd').style.fontSize='28px');
+  an(lid,[{transform:'translateY(-90px) rotate(-8deg)'},{transform:'none'}],{duration:700,delay:300,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  const ct=mk('',`left:20px;top:370px;width:480px;text-align:center;font-size:28px;font-weight:900;color:#0e5f75`,'🍱 a container tag');pop(ct,600);
+  say(`A tag with an opening <b>and</b> a closing tag is called a <b>container tag</b>. Like a lunchbox: a lid, a bottom, and your words inside. 🍱`);await w(3600);
+  const eg=mk('',`left:530px;top:60px;width:390px;height:290px;border-radius:20px;background:#fff;border:3px dashed #9aa7bd;padding:14px 18px;box-sizing:border-box`,
+    `<div style="font-size:20px;font-weight:900;color:#4a5570">A few tags are on their own:</div><div style="margin-top:14px">${C('<BR>')} <b style="font-size:18px">line break</b></div><div style="margin-top:12px">${C('<IMG>')} <b style="font-size:18px">a picture</b></div>
+     <div class="pg" style="margin-top:18px;background:#f4f6fa;border-radius:12px;padding:8px 12px;font-family:'Times New Roman',serif;font-size:21px">Roses are red<br>Violets are blue</div>`);pop(eg);
+  eg.querySelectorAll('.cd').forEach(e=>e.style.fontSize='22px');
+  say(`Just a few tags, like the line break tag, don't need a closing tag: nothing goes inside them. They just do one job, like starting a new line.`);await w(3400);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q7',q:'What is the difference between opening and closing tags?',
+    keys:[['difference',`<b>Difference</b>: say what each one is, with an example.`],['opening and closing tags',`Opening and closing tags, and what we call tags that have both.`]],
+    lines:[{t:'In HTML, most tags have an <b>opening</b> and a <b>closing</b> tag.'},
+      {t:`For example, ${C('<HTML>')} is the <b>opening tag</b> and ${C('</HTML>')} is the <b>closing tag</b>.`},
+      {t:'The tags which have both opening and ending tags are called <b>container tags</b>.'}],
+    trick:'The closing tag is the same tag with a <b>slash /</b>, like a door shutting 🚪. A tag with both = a <b>container</b> 🍱: a lid and a bottom.'});}},
+
+/* 3 */ {t:'Boxes inside boxes',run:async w=>{
+  const E=editor(500,10,447,420,{title:'index.html - Notepad',size:21});pop(E.el);
+  const box=(x,y,wd,ht,col,label,end,parent)=>{const b=mk('',`left:${x}px;top:${y}px;width:${wd}px;height:${ht}px;border-radius:16px;border:4px solid ${col};background:${col}14`,
+    `<div style="position:absolute;left:8px;top:4px">${C(label)}</div>`+(end?`<div style="position:absolute;right:8px;bottom:4px">${C(end)}</div>`:''),parent);
+    b.querySelectorAll('.cd').forEach(e=>e.style.fontSize='17px');pop(b);beep(500+x,.06);return b;};
+  say(`Every web page has the same <b>skeleton</b>. Let's type it and build it as boxes, side by side.`);await w(1500);
+  await typeCode(w,E,'<HTML>\n',{speed:30});
+  const H=box(13,10,470,420,'#e06a1b','<HTML>','</HTML>');
+  say(`First the big outside box: the <b>HTML</b> tag. The whole page lives inside it.`);await w(2400);
+  await typeCode(w,E,'  <HEAD>\n',{speed:30});
+  const Hd=box(16,40,430,130,'#2c66cf','<HEAD>','</HEAD>',H);
+  say(`Inside it, the <b>HEAD</b>. It holds information <b>about</b> the page.`);await w(2200);
+  await typeCode(w,E,'    <TITLE>My page</TITLE>\n',{speed:30});
+  const Ti=box(16,36,280,58,'#6a45d8','<TITLE>',null,Hd);Ti.insertAdjacentHTML('beforeend','<div style="position:absolute;left:112px;top:12px;font-size:20px;font-weight:800">My page</div>');
+  say(`Inside the head, the <b>TITLE</b>: the name of the page.`);await w(2000);
+  await typeCode(w,E,'  </HEAD>\n',{speed:30});
+  say(`Then we close the head.`);await w(1000);
+  await typeCode(w,E,'  <BODY>\n',{speed:30});
+  const Bo=box(16,184,430,186,'#18a058','<BODY>','</BODY>',H);
+  say(`Next comes the <b>BODY</b>: everything you see on the page.`);await w(2000);
+  await typeCode(w,E,'    <H1>Hello!</H1>\n',{speed:30});
+  const h1=mk('',`left:60px;top:58px;font-family:'Times New Roman',serif;font-size:42px;font-weight:900`,'Hello! 👋',Bo);pop(h1);
+  await typeCode(w,E,'  </BODY>\n</HTML>',{speed:30});await w(400);
+  [H,Hd,Ti,Bo].forEach((b,i)=>an(b,[{transform:'scale(1)'},{transform:'scale(1.03)'},{transform:'scale(1)'}],{duration:400,delay:i*200}));
+  say(`Done! <b>Boxes inside boxes</b>. HEAD and BODY sit inside HTML, and TITLE sits inside HEAD. 📦`);await w(3200);
+  stage.innerHTML='';
+  const B=browser(390,20,557,330,{url:'file:///C:/Users/Student/index.html',title:'My page'});pop(B.el);
+  B.page.innerHTML=`<h1>Hello! 👋</h1><p>Everything in the body shows here.</p>`;
+  const hc=mk('',`left:13px;top:20px;width:350px;height:150px;border-radius:20px;background:#fff;border:3px solid #2c66cf;box-shadow:0 5px 0 #c7d8f6;padding:12px 16px;box-sizing:border-box`,
+    `<div style="font-size:26px;font-weight:900;color:#2c66cf">🧠 HEAD</div><div style="font-size:18px;font-weight:700;margin-top:6px">Information about the page. The <b>TITLE</b> shows on the <b>tab</b>.</div>`);pop(hc);
+  const tab=B.bar.querySelector('.cw-tab');tab.animate([{background:'#fff'},{background:'#ffe680'},{background:'#fff'}],{duration:1100,iterations:3});point(tab);
+  say(`Open it in a browser. The <b>HEAD</b> is like your head 🧠: it knows the page's name. The title shows up on the <b>tab</b>.`);await w(3400);
+  const bc=mk('',`left:13px;top:190px;width:350px;height:160px;border-radius:20px;background:#fff;border:3px solid #18a058;box-shadow:0 5px 0 #bfe7d2;padding:12px 16px;box-sizing:border-box`,
+    `<div style="font-size:26px;font-weight:900;color:#18a058">💪 BODY</div><div style="font-size:18px;font-weight:700;margin-top:6px">Everything you <b>see</b> on the page: words, pictures, links.</div>`);pop(bc);
+  B.page.animate([{background:'#fff'},{background:'#dff5e8'},{background:'#fff'}],{duration:1100,iterations:3});point(B.page);
+  say(`The <b>BODY</b> is like your body 💪: it's what everyone sees. Words, pictures and links all go in the body.`);await w(3400);unpoint();
+  const tr=mk('ca-trick',`left:13px;top:380px;width:934px;box-sizing:border-box;text-align:center;font-size:21px`,'💡 Like you! Your <b>head</b> knows your name, your <b>body</b> is what people see.');pop(tr);
+  await w(2400);}},
+
+/* 4 */ {t:'Close the inner one first',run:async w=>{
+  const D=[110,80,52].map((s,i)=>{const e=mk('',`left:${150+i*150}px;top:20px;font-size:${s}px;line-height:1`,'🪆');pop(e,i*150);return e;});
+  say(`When one tag sits inside another, they fit together like <b>Russian dolls</b>. 🪆`);await w(2400);
+  await Promise.all(D.map((e,i)=>an(e,[{transform:'none'},{transform:`translateX(${-i*150+(i?14*i:0)}px) translateY(${i*16}px)`,opacity:i?0:1}],{duration:800,delay:i*200})));
+  say(`The little doll goes in first and comes out first. The <b>last</b> tag you open is the <b>first</b> one you close.`);await w(3000);
+  const r1=tagRow(80,200,['<B>','<I>','Hi','</I>','</B>'],{size:26});pop(r1);await w(300);
+  arcs(r1,[[0,4],[1,3]],'#18a058');
+  const ok=mk('',`left:560px;top:196px;font-size:30px;font-weight:900;color:#18a058`,'✔ inside each other');pop(ok,900);
+  say(`Here, the italic tag opens inside the bold tag, so it closes first. The curves sit <b>inside</b> each other, like rainbows. 🌈 Correct!`);await w(3400);
+  const r2=tagRow(80,360,['<B>','<I>','Hi','</B>','</I>'],{size:26});pop(r2);await w(300);
+  arcs(r2,[[0,3],[1,4]],'#e04848');
+  await w(900);redChip(r2,3);redChip(r2,4);boo();
+  const bad=mk('',`left:560px;top:356px;font-size:30px;font-weight:900;color:#e04848`,'✘ the curves cross');pop(bad);
+  say(`But here the bold tag closes too early. The curves <b>cross</b> over. ❌ That's tangled, like a knot.`);await w(3200);
+  stage.innerHTML='';
+  /* the worksheet MCQ, option by option */
+  const qc=mk('ca-q',`left:13px;top:6px;width:934px;box-sizing:border-box;padding:6px 18px`,`<div class="src">Worksheet · MCQ 1</div><div class="q" style="font-size:21px">Which of the following is the correct structure of HTML tags?</div>`);pop(qc);
+  say(`Now a worksheet question: which of these is the correct structure of HTML tags? Let's test each one.`);await w(2600);
+  const lab=(y,t,col)=>mk('',`left:16px;top:${y}px;font-size:26px;font-weight:900;color:${col||'#1f2433'}`,t);
+  const A=['<HTML>','<HTML>','</HEAD>','<HEAD>','</BODY>','</BODY>'],Bq=['<HTML>','</HTML>','<HEAD>','</HEAD>','<BODY>','</BODY>'],Cq=['<HTML>','<HEAD>','</HEAD>','<BODY>','</BODY>','</HTML>'];
+  lab(150,'(a)');const ra=tagRow(70,150,A,{size:21});pop(ra);
+  const na=mk('',`left:70px;top:196px;width:870px;font-size:18px;font-weight:800;color:#c02c2c;opacity:0`,'✘ HTML opens twice, HEAD closes before it opens, BODY never opens.');
+  await w(500);[1,2,4,5].forEach(i=>redChip(ra,i));boo();an(na,[{opacity:0},{opacity:1}],{duration:400});
+  say(`<b>(a)</b> is a muddle. HTML opens twice, the head closes before it even opens, and the body never opens. ❌`);await w(3400);
+  lab(290,'(b)');const rb=tagRow(70,290,Bq,{size:21});pop(rb);await w(300);arcs(rb,[[0,1],[2,3],[4,5]],'#e06a1b');
+  const nb=mk('',`left:70px;top:336px;width:870px;font-size:18px;font-weight:800;color:#c02c2c;opacity:0`,'✘ HTML closes straight away, so HEAD and BODY are left outside it.');
+  await w(1100);redChip(rb,1);boo();an(nb,[{opacity:0},{opacity:1}],{duration:400});
+  say(`<b>(b)</b> closes the HTML tag straight away! The head and body are left outside, like dolls that never went in. ❌`);await w(3400);
+  lab(430,'(c)','#18a058');const rc=tagRow(70,430,Cq,{size:21});pop(rc);await w(300);arcs(rc,[[0,5],[1,2],[3,4]],'#18a058');
+  const nc=mk('',`left:70px;top:476px;width:870px;font-size:18px;font-weight:800;color:#127a43;opacity:0`,'✔ HEAD and BODY both sit inside HTML, and every tag closes in the right order.');
+  await w(1100);an(nc,[{opacity:0},{opacity:1}],{duration:400});yay();
+  rc.querySelectorAll('.cd').forEach((c,i)=>c.animate([{transform:'none'},{transform:'translateY(-8px)'},{transform:'none'}],{duration:400,delay:i*100}));
+  say(`<b>(c)</b> is perfect! HTML opens first and closes last, with HEAD and BODY inside it. ✅`);await w(3200);
+  stage.innerHTML='';
+  const op=t=>`<span style="font-family:'SF Mono',Menlo,Consolas,monospace;font-size:16px">${escC(t)}</span>`;
+  wsCard('left:90px;top:20px;width:780px;font-size:18px',{src:'Worksheet · MCQ 1',q:`Which of the following is the correct structure of HTML tags?<br>(a) ${op(A.join(' '))}<br>(b) ${op(Bq.join(' '))}<br>(c) ${op(Cq.join(' '))}`,a:`✔ (c) ${op(Cq.join(' '))}`});
+  const rr=tagRow(120,330,Cq,{size:24});pop(rr,600);await w(700);arcs(rr,[[0,5],[1,2],[3,4]],'#18a058');
+  mk('',`left:120px;top:400px;width:720px;text-align:center;font-size:22px;font-weight:900;color:#127a43`,'🪆 HTML opens first and closes last');
+  say(`So the answer is <b>(c)</b>: H T M L, head, closing head, body, closing body, closing H T M L.`);await w(3400);}},
+
+/* 5 */ {t:'Build the skeleton',run:async w=>{
+  say(`Your turn! 🖱️ Build the skeleton of a web page. Remember: <b>HTML</b> on the outside, then the <b>HEAD</b>, then the <b>BODY</b>.`);
+  const r=await buildCode(w,{src:'Build it',q:'Tap the tags in order to build the skeleton of a web page.',top:14,
+    tiles:['<HTML>','</HTML>','<HEAD>','</HEAD>','<BODY>','</BODY>','<IMG>'],answer:[['<HTML>','<HEAD>','</HEAD>','<BODY>','</BODY>','</HTML>']]});
+  say(r.ok?`Perfect skeleton! 🦴 HTML opens first and closes last, with the head and body inside.`:`Nearly! HTML opens first and closes <b>last</b>. The head comes before the body, and each one closes before the next opens.`);await w(2800);
+  /* show it as nested boxes */
+  const y=Math.min(r.y+(r.ok?0:70),330);
+  const H=mk('',`left:250px;top:${y}px;width:460px;height:${510-y}px;border-radius:16px;border:4px solid #e06a1b;background:#e06a1b14`,`<div style="position:absolute;left:8px;top:2px;font-weight:900;color:#e06a1b">HTML</div>`);pop(H);
+  const hh=(510-y-40)/2-6;
+  const Hd=mk('',`left:16px;top:26px;width:420px;height:${hh}px;border-radius:12px;border:4px solid #2c66cf;background:#2c66cf14;display:flex;align-items:center;justify-content:center;font-weight:900;color:#2c66cf;font-size:20px`,'🧠 HEAD',H);pop(Hd,250);
+  const Bo=mk('',`left:16px;top:${26+hh+8}px;width:420px;height:${hh}px;border-radius:12px;border:4px solid #18a058;background:#18a05814;display:flex;align-items:center;justify-content:center;font-weight:900;color:#18a058;font-size:20px`,'💪 BODY',H);pop(Bo,500);
+  say(`Here it is as boxes: the <b>head</b> and the <b>body</b>, both inside the <b>HTML</b> box. 📦`);await w(2600);}},
+
+/* 6 */ {t:'Change a tag, change the page',run:async w=>{
+  const code=(tag,title)=>`<HTML>\n<HEAD>\n<TITLE>${title}</TITLE>\n</HEAD>\n<BODY>\n<${tag}>I love cheese!</${tag}>\n</BODY>\n</HTML>`;
+  const R={H1:'<h1>I love cheese!</h1>',H2:'<h2>I love cheese!</h2>',H3:'<h3 style="font-size:22px;margin:6px 0">I love cheese!</h3>',B:'<b>I love cheese!</b>',I:'<i>I love cheese!</i>',P:'<p>I love cheese!</p>'};
+  const SAY={H1:'Heading 1: the biggest heading.',H2:'Heading 2: a smaller heading.',H3:'Heading 3: smaller again.',B:'Bold: thick, dark letters.',I:'Italic: sloping letters.',P:'P: a normal paragraph.'};
+  const TT=['My page','Cheese Club','Chip\'s page'];
+  let tag='H1',ti=0,taps=0,done=false;
+  const E=editor(13,10,452,300,{title:'index.html - Notepad',size:18});setCode(E,code(tag,TT[ti]));pop(E.el);
+  const B=browser(495,10,452,300,{url:'file:///C:/Users/Student/index.html',title:TT[ti]});pop(B.el,150);
+  const draw=()=>{B.page.innerHTML=R[tag];an(B.page.firstChild,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'scale(1)'}],{duration:400});};draw();
+  const flash=n=>{const l=E.code.innerHTML.split('\n');l[n]=`<span style="background:#fff3a6;border-radius:4px">${l[n]}</span>`;E.code.innerHTML=l.join('\n');};
+  const set=t=>{tag=t;taps++;setCode(E,code(tag,TT[ti]));flash(5);draw();beep(600,.06);say(SAY[t]);
+    TB.forEach(b=>b.style.borderColor=b.dataset.t===t?'#ffd84d':'#22b8c9');if(taps>=2&&!dn.parentNode)stage.appendChild(dn);};
+  const TB=Object.keys(R).map((t,i)=>{const b=btn('cb-tile',`left:${30+i*112}px;top:338px;width:100px;box-sizing:border-box;padding:0`,hl('<'+t+'>'),()=>{if(!done)set(t);});b.dataset.t=t;pop(b,i*60);return b;});
+  TB[0].style.borderColor='#ffd84d';
+  const tb=btn('cb-del',`left:712px;top:338px;width:220px;font-size:18px;font-weight:800`,'🏷️ Change the title',()=>{if(done)return;ti=(ti+1)%TT.length;taps++;setCode(E,code(tag,TT[ti]));flash(2);B.go('file:///C:/Users/Student/index.html',TT[ti]);
+    B.bar.querySelector('.cw-tab').animate([{background:'#ffe680'},{background:'#fff'}],{duration:900});beep(700,.06);say(`The title changed, so the <b>tab</b> changed too!`);if(taps>=2&&!dn.parentNode)stage.appendChild(dn);});pop(tb,400);
+  const dn=btn('ex-btn green',`left:370px;top:430px;width:220px`,'I\'m done ✔',()=>{done=true;});dn.remove();
+  say(`Now you're the web designer! 🎨 Tap a tag to swap it in the code, and watch the browser change the page. Try changing the title too!`);
+  let auto=0;window.AUTOPLAY=()=>{auto++;if(auto===1)set('H2');else if(auto===2)set('I');else if(auto===3)tb.onclick();else if(dn.parentNode)done=true;};
+  await w.until(()=>done);window.AUTOPLAY=null;
+  TB.forEach(b=>b.remove());tb.remove();dn.remove();
+  const tr=mk('ca-trick',`left:13px;top:340px;width:934px;box-sizing:border-box;text-align:center;font-size:21px`,'💡 Change the <b>tag</b> and the browser draws the page differently. Tags give the page its <b>structure</b>!');pop(tr);yay();
+  say(`Great designing! The words stayed the same, but changing the <b>tag</b> changed how the page looks.`);await w(3000);}},
+
+/* 7 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  const mono=t=>`<span style="font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.88em">${t}</span>`;
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · MCQ 1',q:'Which of the following is the correct structure of HTML tags?',
+      o:[mono('&lt;HTML&gt; &lt;HTML&gt; &lt;/HEAD&gt; &lt;HEAD&gt; &lt;/BODY&gt; &lt;/BODY&gt;'),mono('&lt;HTML&gt; &lt;/HTML&gt; &lt;HEAD&gt; &lt;/HEAD&gt; &lt;BODY&gt; &lt;/BODY&gt;'),mono('&lt;HTML&gt; &lt;HEAD&gt; &lt;/HEAD&gt; &lt;BODY&gt; &lt;/BODY&gt; &lt;/HTML&gt;')],a:2,cols:1,
+      why:'HTML opens first and closes last, with HEAD and BODY inside it, each closed in the right order.',
+      whyNot:{0:'HTML opens twice, HEAD closes before it opens, and BODY never opens.',1:'HTML closes straight away, so HEAD and BODY are left outside it.'}},
+    {src:'Worksheet · Q6',q:'What do you know about HTML tags?',model:'Tags are elements that are used to specify the structure of an HTML document. HTML tags begin with the less than character (<span data-say="">&lt;</span>) and end with the greater than symbol (<span data-say="">&gt;</span>), which are called angular brackets.'},
+    {src:'Worksheet · Q7',q:'What is the difference between opening and closing tags?',model:'In HTML, most tags have an opening and a closing tag. For example &lt;HTML&gt; is the opening tag and &lt;/HTML&gt; is the closing tag. The tags which have both opening and ending tags are called container tags.'},
+  ]);}},
+
+/* 8 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'HTML tags and page structure',next:`<b>pictures</b>! How to put photos and images on a web page.`,badges:[
+    ['🏷️','Tags set out the <b>structure</b>','Tags are elements that specify the structure of an HTML document.'],
+    ['📐','&lt; and &gt; are <b>angular brackets</b>','Tags begin with less than and end with greater than: angular brackets.'],
+    ['🚪','Closing tags have a <b>slash /</b>','The closing tag is the same tag with a slash.'],
+    ['🍱','Both tags = a <b>container tag</b>','Tags with an opening and a closing tag are container tags.'],
+    ['📦','HTML › HEAD › BODY','Boxes inside boxes: head and body inside HTML.'],
+    ['🧠','TITLE in the HEAD shows on the tab','The title goes in the head and shows on the tab.'],
+    ['🪆','Close the inner tag first','The last tag you open is the first one you close.'],
+    ['✅','MCQ 1: answer <b>(c)</b>','The correct structure is answer c.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

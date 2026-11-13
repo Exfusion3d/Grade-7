@@ -147,4 +147,15 @@ describe("progress", () => {
     const all = await ctx.t.query(api.parent.students, { token: ctx.parent.token });
     expect(all.find((x) => x.username === "zaid")?.trainer).toEqual({ mastered: 1, seen: 3, total: 46 });
   });
+
+  test("each subject's answer trainer reaches the overview separately", async () => {
+    const s = await ctx.addStudent("yusuf");
+    expect((await ctx.t.query(api.progress.myOverview, { token: s.token })).trainers).toEqual({});
+    await ctx.t.mutation(api.progress.saveQuizState, { token: s.token, mode: "ctrainer", state: JSON.stringify({ v: 1, mastered: 2, seen: 5, total: 25 }) });
+    const ov = await ctx.t.query(api.progress.myOverview, { token: s.token });
+    expect(ov.trainers).toEqual({ ctrainer: { mastered: 2, seen: 5, total: 25 } });
+    expect(ov.trainer).toBeNull();
+    const all = await ctx.t.query(api.parent.students, { token: ctx.parent.token });
+    expect(all.find((x) => x.username === "yusuf")?.trainers?.ctrainer).toEqual({ mastered: 2, seen: 5, total: 25 });
+  });
 });

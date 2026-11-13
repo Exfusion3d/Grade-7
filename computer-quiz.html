@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Computer Quest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+
+<title>Computer Quest: Grade 7 Exam Quiz</title>
+<style>
+:root{
+  --ink:#1f2433; --muted:#626a80; --line:#e3e6ef; --bg:#eefaf9;
+  --p:#0e7490; --pl:#dcf5f7; --pd:#0b5a70; --pb:#22b8c9; --ok:#18a058; --okl:#e3f7ec; --bad:#e04848; --badl:#fde8e8; --y:#ffd84d;
+  --mono:"SF Mono",Menlo,Consolas,"Courier New",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif; color:var(--ink); background:var(--bg); min-height:100vh;
+  background-image:radial-gradient(circle at 10% 10%,#c9f0f3 0,transparent 35%),radial-gradient(circle at 90% 80%,#d9ecff 0,transparent 40%)}
+button{font:inherit; color:inherit; cursor:pointer}
+.wrap{max-width:780px; margin:0 auto; padding:18px 16px 60px}
+.hidden{display:none!important}
+/* code chips (dark, monospace) */
+code,.cd{font-family:var(--mono); font-weight:700; background:#1e2433; color:#e8ecf5; border-radius:7px; padding:1px 7px; font-size:.9em; white-space:pre-wrap; word-break:break-word}
+
+/* ---------- menu ---------- */
+.hero{background:linear-gradient(135deg,#0b5a70,#0e7490 50%,#22b8c9); color:#fff; border-radius:26px; padding:24px 26px 22px; position:relative; overflow:hidden}
+.hero h1{margin:0; font-size:clamp(30px,6vw,46px); font-weight:800; letter-spacing:-.01em; padding-right:80px}
+.hero p{margin:6px 0 0; opacity:.95; font-size:17px; padding-right:70px}
+.hero svg{position:absolute; right:14px; top:14px; width:86px; height:86px; transform:rotate(8deg)}
+@media(max-width:420px){.hero svg{width:64px;height:64px;right:8px}.hero h1{padding-right:56px}.hero p{padding-right:0}}
+.modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:18px}
+.mode{border:none; text-align:left; border-radius:20px; padding:18px; color:#fff; box-shadow:0 6px 0 rgba(0,0,0,.15); transition:transform .12s, box-shadow .12s; position:relative}
+.mode:hover{transform:translateY(-3px); box-shadow:0 9px 0 rgba(0,0,0,.15)}
+.mode:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.mode .lv{font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.9}
+.mode h3{margin:4px 0 4px; font-size:21px; padding-right:38px}
+.mode .meta{font-size:14px; opacity:.95}
+.mode .best{margin-top:10px; font-size:13px; font-weight:700; background:rgba(255,255,255,.22); display:inline-block; padding:3px 10px; border-radius:20px}
+.mode .emo{position:absolute; right:14px; top:12px; font-size:34px}
+.mode.soon{opacity:.5;cursor:default;filter:grayscale(.3)} .mode.soon:hover{transform:none}
+.l1c{background:linear-gradient(140deg,#0e7490,#22b8c9)} .l2c{background:linear-gradient(140deg,#6a45d8,#9b7cf0)} .l3c{background:linear-gradient(140deg,#17935b,#45c288)}
+.l4c{background:linear-gradient(140deg,#e06a1b,#f7ad5f)} .fbc{background:linear-gradient(140deg,#0b5a70,#b0207a)}
+.menu-foot{display:flex; justify-content:space-between; align-items:center; margin-top:16px; color:var(--muted); font-size:14px; flex-wrap:wrap; gap:10px}
+.resume{margin-top:16px;background:#fff;border-radius:20px;padding:12px 16px 6px;box-shadow:0 6px 18px rgba(14,116,144,.10)}
+.resume h3{margin:0 0 6px;font-size:17px;color:var(--pd)}
+.rrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:2px solid var(--line)}
+.rrow .rt{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.rrow .rt span{font-size:13.5px;color:var(--muted);font-weight:700}
+.rrow .go{width:auto;margin:0;padding:10px 16px;font-size:16px;flex:none}
+.rx{border:2px solid var(--line);background:#fff;border-radius:12px;width:40px;height:40px;font-weight:800;color:var(--muted);flex:none}
+.pill{border:2px solid var(--line); background:#fff; border-radius:30px; padding:7px 14px; font-weight:700; font-size:14px}
+
+/* ---------- HUD ---------- */
+.hud{display:flex; align-items:center; gap:8px; margin-bottom:12px}
+.hud .home{background:#fff; border:2px solid var(--line); border-radius:14px; padding:6px 10px; font-weight:800}
+.bar{flex:1; height:16px; background:#fff; border-radius:20px; overflow:hidden; border:2px solid var(--line)}
+.bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#0e7490,#22b8c9); border-radius:20px; transition:width .4s}
+.stat{background:#fff; border:2px solid var(--line); border-radius:14px; padding:5px 10px; font-weight:800; font-size:15px; white-space:nowrap}
+.streak.hot{background:#fff3d6; border-color:#f2b200; animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+@media(max-width:420px){.hud{gap:5px}.stat{padding:5px 7px;font-size:14px}}
+
+/* ---------- card ---------- */
+.card{background:#fff; border-radius:24px; padding:20px 20px 18px; box-shadow:0 10px 30px rgba(14,90,112,.12); position:relative}
+@media(max-width:420px){.card{padding:16px 14px 16px}}
+.qtop{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
+.tag{font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:20px}
+.tl1{background:#dcf5f7;color:#0e7490} .tl2{background:#efe9ff;color:#6a45d8} .tl3{background:#e4f6ec;color:#17935b} .tl4{background:#fdeedf;color:#c2560f}
+.tt{background:#f1f3f8; color:#3a4256}
+.qnum{margin-left:auto; color:var(--muted); font-weight:700; font-size:14px}
+.prompt{font-size:21px; font-weight:700; line-height:1.4; margin:4px 0 12px}
+@media(max-width:420px){.prompt{font-size:19px}}
+.hint{color:var(--muted); font-size:14.5px; margin-bottom:8px}
+
+/* options */
+.opts{display:grid; gap:10px}
+.opts.grid2{grid-template-columns:1fr 1fr}
+.opt{display:flex; align-items:center; gap:12px; text-align:left; background:#fff; border:2.5px solid var(--line); border-radius:16px; padding:12px 14px; font-size:17px; font-weight:600; transition:transform .1s, border-color .15s, background .15s; box-shadow:0 3px 0 var(--line); min-width:0}
+.opt>span:last-child{min-width:0}
+.opt:hover:not(:disabled){border-color:#8fd6de; transform:translateY(-1px)}
+.opt .k{flex:none; width:32px; height:32px; border-radius:10px; background:var(--pl); color:var(--p); display:flex; align-items:center; justify-content:center; font-weight:800}
+.opt.ok{border-color:var(--ok); background:var(--okl); box-shadow:0 3px 0 #9fdcbb}
+.opt.ok .k{background:var(--ok); color:#fff}
+.opt.bad{border-color:var(--bad); background:var(--badl); box-shadow:0 3px 0 #f2b0b0; animation:shake .35s}
+.opt.bad .k{background:var(--bad); color:#fff}
+.opt:disabled{cursor:default; color:var(--ink)}
+.tf .opt{justify-content:center; font-size:20px; padding:16px 10px; gap:10px}
+.tf .opt .big{font-size:30px; font-weight:900; width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:#fff}
+.tf .opt .big.t{background:#18a058} .tf .opt .big.f{background:#e04848}
+/* which tool? (icon cards) */
+.tools{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.tools.n4{grid-template-columns:repeat(4,1fr)} @media(max-width:560px){.tools.n4{grid-template-columns:1fr 1fr}}
+.tools .opt{flex-direction:column; justify-content:center; text-align:center; gap:6px; padding:14px 6px; font-size:16px; font-weight:800; position:relative}
+.tools .opt .k{position:absolute; left:7px; top:7px; width:26px; height:26px; font-size:14px; border-radius:8px}
+.tools .ic{font-size:40px; line-height:1; width:64px; height:64px; display:flex; align-items:center; justify-content:center; background:#f1f6f9; border-radius:16px; border:2px solid #d7e3ea}
+.tools .opt.ok .ic{background:#fff}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* fill the blank */
+.sent{font-size:21px; font-weight:700; line-height:1.9; margin:4px 0 14px}
+@media(max-width:420px){.sent{font-size:19px}}
+.blank{display:inline-block; min-width:110px; border-bottom:3px dashed var(--pb); background:#f0fbfc; border-radius:8px 8px 0 0; padding:0 10px; text-align:center; color:var(--pd)}
+.blank.ok{border-bottom-style:solid; border-color:var(--ok); background:var(--okl); color:#0f7a40} .blank.bad{border-bottom-style:solid; border-color:var(--bad); background:var(--badl); color:#b02a2a}
+.bts{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.bt{min-height:52px; padding:6px 16px; border:3px solid var(--p); border-radius:14px; background:#fff; font-size:19px; font-weight:800; color:var(--pd); box-shadow:0 4px 0 #b9e6ec}
+.bt.ok{border-color:var(--ok); background:var(--okl)} .bt.bad{border-color:var(--bad); background:var(--badl); animation:shake .35s}
+.bt:disabled{cursor:default}
+
+/* match */
+.match{display:grid; grid-template-columns:1fr 1fr; gap:10px 12px}
+.mcol{display:flex; flex-direction:column; gap:9px; min-width:0}
+.mi{border:2.5px solid var(--line); background:#fff; border-radius:14px; padding:9px 10px; font-size:15.5px; font-weight:600; text-align:left; min-height:52px; display:flex; align-items:center; gap:8px; box-shadow:0 3px 0 var(--line); min-width:0}
+.mi>span:last-child{min-width:0}
+.mi.sel{border-color:var(--p); background:var(--pl)}
+.mi .dot{flex:none; width:14px; height:14px; border-radius:50%; background:var(--line)}
+.mi.ok{border-color:var(--ok); background:var(--okl)} .mi.bad{border-color:var(--bad); background:var(--badl)}
+.mi .fix{display:block; font-size:12.5px; color:var(--ok); font-weight:700}
+@media(max-width:420px){.mi{font-size:14.5px;padding:8px 8px}}
+
+/* footer / feedback */
+.actions{display:flex; justify-content:flex-end; margin-top:16px; gap:10px}
+.go{border:none; border-radius:16px; padding:13px 26px; font-size:18px; font-weight:800; color:#fff; background:var(--p); box-shadow:0 5px 0 var(--pd); transition:transform .1s}
+.go:active{transform:translateY(3px); box-shadow:0 2px 0 var(--pd)}
+.go:disabled{background:#b9cdd3; box-shadow:0 5px 0 #9fb4ba; cursor:not-allowed}
+.go.green{background:var(--ok); box-shadow:0 5px 0 #0f7a41}
+.fb{margin-top:14px; border-radius:18px; padding:14px 16px; animation:pop .3s}
+.fb.ok{background:var(--okl); border:2.5px solid #9fdcbb}
+.fb.bad{background:#fff4e5; border:2.5px solid #f6c37a}
+.fb h3{margin:0 0 4px; font-size:20px}
+.fb.ok h3{color:var(--ok)} .fb.bad h3{color:#c26a00}
+.fb p{margin:0; font-size:16px; line-height:1.5}
+.fb .not{margin:0 0 6px;font-weight:700}
+.fb .exam{margin-top:8px; background:#fff8e6; border-radius:10px; padding:6px 10px; font-size:15px}
+.plus{position:absolute; right:22px; top:16px; font-weight:800; color:var(--ok); font-size:22px; animation:float 1.1s forwards}
+@keyframes float{to{transform:translateY(-40px); opacity:0}}
+@keyframes pop{from{transform:scale(.9);opacity:0}}
+
+/* end */
+.end{text-align:center}
+.stars{font-size:64px; letter-spacing:8px; margin:6px 0}
+.stars span{display:inline-block; animation:pop .5s backwards; filter:grayscale(1); opacity:.35}
+.stars span.on{filter:none; opacity:1}
+.bigscore{font-size:46px; font-weight:800; color:var(--p)}
+.endgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0}
+.endgrid div{background:#f1f8f9; border-radius:16px; padding:10px; font-weight:700; color:var(--muted); font-size:14px}
+.endgrid b{display:block; font-size:26px; color:var(--ink)}
+.endbtns{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+.revise{background:#f1f8f9; border-radius:16px; padding:12px 14px; margin:0 0 16px; text-align:left}
+.revise h4{margin:0 0 8px; font-size:16px}
+.revise a{display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--line); border-radius:12px; padding:9px 12px; margin-top:6px; color:var(--ink); text-decoration:none; font-weight:700; font-size:15px}
+.revise .n{flex:none; background:var(--pl); color:var(--pd); border-radius:8px; padding:2px 8px; font-size:13px; font-weight:800}
+.revise .t{flex:1; min-width:0}
+.revise .c{flex:none; color:var(--muted); font-size:13px; white-space:nowrap}
+.ghostbtn{border:2.5px solid var(--line); background:#fff; border-radius:16px; padding:12px 20px; font-size:17px; font-weight:800; box-shadow:0 4px 0 var(--line)}
+canvas#fx{position:fixed; inset:0; pointer-events:none; z-index:100}
+
+/* build the code (tiles) */
+.slot{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;min-height:66px;border:3px dashed #3c8da0;border-radius:16px;background:#1e2433;padding:10px 12px;margin-bottom:12px;font-family:var(--mono);font-size:20px;font-weight:700;color:#e8ecf5;white-space:pre-wrap;word-break:break-word;text-align:center}
+.slot i{font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;font-size:15px;font-style:normal;color:#8a93ab;font-weight:700}
+.slot.ok{border-style:solid;border-color:var(--ok);box-shadow:0 0 0 3px #9fdcbb} .slot.bad{border-style:solid;border-color:var(--bad);box-shadow:0 0 0 3px #f2b0b0}
+.slot .model{display:block;width:100%;margin-top:8px;font-size:16px;color:#9be38f}
+.tiles{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tile{min-width:52px;min-height:50px;padding:4px 14px;border:3px solid var(--p);border-radius:14px;background:#fff;font-size:19px;font-weight:800;color:var(--pd);box-shadow:0 4px 0 #b9e6ec}
+.tile.code{font-family:var(--mono);background:#1e2433;color:#e8ecf5;border-color:#3c8da0;box-shadow:0 4px 0 #0b5a70;font-size:18px}
+.tile:disabled{opacity:.3}
+/* spot the mistake */
+.codeline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;background:#1e2433;border-radius:16px;padding:14px 12px;margin-bottom:6px}
+.tok{font-family:var(--mono);font-size:20px;font-weight:700;color:#e8ecf5;background:#2c3448;border:2.5px solid #4a5570;border-radius:10px;padding:6px 10px;min-height:46px;white-space:pre}
+.tok:hover:not(:disabled){border-color:#22b8c9}
+.tok.bad{background:#5b2330;border-color:#ff7b7b;animation:shake .35s} .tok.wrong{background:#5b4a14;border-color:#ffd84d}
+.tok:disabled{cursor:default;color:#e8ecf5}
+.fixline{margin-top:8px;text-align:center;font-weight:800;color:#0f7a40}
+.fixline code{display:inline-block;margin-top:4px;font-size:17px;padding:3px 9px}
+@media(max-width:420px){.tok{font-size:16px;padding:5px 7px}.slot{font-size:17px}.tile.code{font-size:16px}}
+/* put in order */
+.ord{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.ord .row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;min-height:48px;border:2.5px dashed var(--line);border-radius:14px;padding:6px 12px;font-size:18px;font-weight:800}
+.ord .row .n{flex:none;width:28px;height:28px;border-radius:8px;background:var(--pl);color:var(--pd);display:flex;align-items:center;justify-content:center;font-size:15px}
+.ord .row.ok{border-style:solid;border-color:var(--ok);background:var(--okl)} .ord .row.bad{border-style:solid;border-color:var(--bad);background:var(--badl)}
+.ord .row .fx{margin-left:auto;font-size:15px;color:#0f7a40}
+.ord~.tiles .tile{font-size:17px}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+
+  <!-- MENU -->
+  <section id="menu">
+    <div class="hero">
+      <svg viewBox="0 0 80 80" aria-hidden="true"><ellipse cx="40" cy="77" rx="20" ry="3" fill="#1f2433" opacity=".12"/>
+        <path d="M40 15 C40 5 54 3 57 9 C60 15 69 12 71 4" stroke="#1f2433" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <rect x="15" y="14" width="50" height="61" rx="25" fill="#22b8c9" stroke="#0e7490" stroke-width="2.5"/>
+        <path d="M16 37 H64 M40 15 V37" stroke="#0e7490" stroke-width="2"/>
+        <rect x="37" y="20" width="6" height="12" rx="3" fill="#ffd84d" stroke="#e0a800" stroke-width="1.2"/>
+        <circle cx="31" cy="49" r="6.2" fill="#fff"/><circle cx="49" cy="49" r="6.2" fill="#fff"/>
+        <circle cx="32" cy="50" r="3.6" fill="#1f2433"/><circle cx="50" cy="50" r="3.6" fill="#1f2433"/>
+        <circle cx="33.3" cy="48.6" r="1.3" fill="#fff"/><circle cx="51.3" cy="48.6" r="1.3" fill="#fff"/>
+        <circle cx="23.5" cy="59" r="3.2" fill="#ff9f9f" opacity=".75"/><circle cx="56.5" cy="59" r="3.2" fill="#ff9f9f" opacity=".75"/>
+        <path d="M34 61 Q40 67 46 61" stroke="#1f2433" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>
+      <h1>Computer Quest 💻</h1>
+      <p>Grade 7 Computer revision with Chip the Mouse 🖱️. Pick a level, build the code, spot the mistakes and collect stars!</p>
+    </div>
+    <div class="resume" id="resume"></div>
+    <div class="modes" id="modes"></div>
+    <div class="menu-foot">
+      <a class="pill" href="computer.html" style="text-decoration:none;color:inherit">🏠 Computer lessons</a>
+      <button class="pill" id="soundBtn">🔊 Sound: on</button>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="hidden">
+    <div class="hud">
+      <button class="home" id="homeBtn" title="Back to menu">✕</button>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="stat streak" id="streak">🔥 0</div>
+      <div class="stat" id="score">⭐ 0</div>
+    </div>
+    <div class="card" id="card"></div>
+  </section>
+
+  <!-- END -->
+  <section id="end" class="hidden">
+    <div class="card end" id="endCard"></div>
+  </section>
+</div>
+
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s);
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+/* ================= sound ================= */
+let soundOn=store.get('sq_sound',true), actx=null;
+function tone(f,t0,dur,type='sine',vol=.18){if(!soundOn)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+  const t=actx.currentTime+t0;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.start(t);o.stop(t+dur);}catch(e){}}
+const sfx={ok(){tone(660,0,.12,'triangle');tone(990,.1,.22,'triangle');},bad(){tone(200,0,.25,'sawtooth',.08);tone(150,.12,.3,'sawtooth',.08);},
+  tap(){tone(520,0,.05,'sine',.08);},win(){[523,659,784,1047].forEach((f,i)=>tone(f,i*.12,.3,'triangle'));}};
+
+/* ================= confetti ================= */
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];
+function resize(){cv.width=innerWidth;cv.height=innerHeight;}addEventListener('resize',resize);resize();
+function confetti(n=80,x=innerWidth/2,y=innerHeight/3){const cols=['#0e7490','#22b8c9','#ffd84d','#18a058','#6a45d8','#e06a1b'];
+  for(let i=0;i<n;i++)parts.push({x,y,vx:(Math.random()-.5)*12,vy:Math.random()*-11-3,r:Math.random()*6+4,c:cols[i%cols.length],a:Math.random()*6,va:(Math.random()-.5)*.3,life:120});
+  if(parts.length===n)requestAnimationFrame(loop);}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;p.life--;
+  cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.globalAlpha=Math.max(0,Math.min(1,p.life/40));cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cx.restore();});
+  parts=parts.filter(p=>p.life>0&&p.y<cv.height+40);if(parts.length)requestAnimationFrame(loop);else cx.clearRect(0,0,cv.width,cv.height);}
+
+/* ================= text and code ================= */
+/* esc(): show raw text as it is. fmt(): text is HTML, but anything in `backticks` is code, escaped and shown as a dark code chip
+   (so write `<IMG>` in options, items, why and whyNot). q is plain HTML: write code there as <code>&lt;IMG&gt;</code>
+   (the parent page strips tags and turns &lt; &gt; back into < >). */
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmt=s=>String(s).replace(/`([^`]+)`/g,(_,c)=>`<code>${esc(c)}</code>`);
+/* "build the code": tiles joined with spaces, tidied around brackets: ["<IMG",'SRC="a.jpg"',">"] → <IMG SRC="a.jpg"> */
+const joinCode=a=>a.join(' ').replace(/\( /g,'(').replace(/ \)/g,')').replace(/ >/g,'>').replace(/> /g,'>').replace(/ </g,'<');
+/* GIMP tool icons for "Which tool?" questions */
+const ICON={'Bucket fill':'🪣','Gradient':'🌈','Paintbrush':'🖌️','Pencil':'✏️','Eraser':'🧽','Airbrush':'💨','Ink tool':'✒️','Ink':'✒️','Smudge':'👆',
+  'Clone':'🐑','Heal':'🩹','Dodge':'☀️','Burn':'🔥','Filters':'✨','Fuzzy Select':'🪄','Shear':'📐','Blur':'💧'};
+
+/* ================= question bank =================
+   Every question has a permanent id (p1-01 …): progress is saved against it, so never renumber; add new ones at the end of their level.
+   Keep q: on the same line as id: (the parent page reads the wording from this file), in single quotes.
+   lv: level 1–4 (p1 HTML, p2 CSS, p3 Python, p4 GIMP); l: the lesson that teaches it; src: 'Worksheet · A1' for the worksheet's own questions.
+   why: the explanation; exam: an extra "in the exam" note.
+   mcq / tool (GIMP icons from ICON): o, a, whyNot = {option: why it is wrong}. tf: ans 'T' or 'F', no = what to learn if wrong.
+   blank: q has ___; o = word tiles, a, whyNot. match: pairs [left, right]. order: items in the right order.
+   build: answers (tile lists, any one is right), extra (wrong tiles), model (= the first answer joined).
+   spot: code (tokens), bad (index of the wrong token), fix (what it should be). */
+const BANK=[
+/* ---------- Level 1 · HTML (c01–c04) ---------- */
+{id:'p1-01',lv:1,l:'c02',src:'Worksheet · A1',type:'mcq',q:'Which of the following is the correct structure of HTML tags?',
+  o:['`<HTML> <HTML> </HEAD> <HEAD> </BODY> </BODY>`','`<HTML> </HTML> <HEAD> </HEAD> <BODY> </BODY>`','`<HTML> <HEAD> </HEAD> <BODY> </BODY> </HTML>`'],a:2,
+  whyNot:{0:'the tags are muddled: a closing tag comes before its opening tag.',1:'`</HTML>` closes the page straight away, so the head and body are left outside it.'},
+  why:'`<HTML>` opens first and `</HTML>` closes last. The head and the body sit inside it, each opened and then closed.'},
+{id:'p1-02',lv:1,l:'c03',src:'Worksheet · A6',type:'mcq',q:'Which of the following is not an image file format?',o:['.jpg','.gif','.xlsx'],a:2,
+  whyNot:{0:'.jpg is a picture format (photos).',1:'.gif is a picture format.'},why:'<b>.xlsx</b> is an Excel spreadsheet, not a picture. Picture formats include .jpg, .gif and .png.'},
+{id:'p1-03',lv:1,l:'c04',src:'Worksheet · A7',type:'mcq',q:'Which of the following is a type of linking?',o:['Internal linking','External linking','Both (a) and (b)'],a:2,
+  whyNot:{0:'internal linking is one type, but there is another one too.',1:'external linking is one type, but there is another one too.'},why:'There are two types of linking: <b>internal</b> and <b>external</b>. So the answer is <b>both</b>.'},
+{id:'p1-04',lv:1,l:'c03',src:'Worksheet · A8',type:'mcq',q:'Which of the following is not an attribute of the <code>&lt;IMG&gt;</code> tag?',o:['Height','Width','Target'],a:2,
+  whyNot:{0:'HEIGHT sets how tall the picture is: it is an `<IMG>` attribute.',1:'WIDTH sets how wide the picture is: it is an `<IMG>` attribute.'},
+  why:'<b>Target</b> belongs to links (where the link opens), not to pictures. `<IMG>` has SRC, ALT, HEIGHT and WIDTH.'},
+{id:'p1-05',lv:1,l:'c04',src:'Worksheet · A9',type:'mcq',q:'Which of the following is used to change the colour of a link?',o:['Alink','Vlink','All of these'],a:2,
+  whyNot:{0:'ALINK is one of them (the active link colour), but not the only one.',1:'VLINK is one of them (the visited link colour), but not the only one.'},
+  why:'LINK, ALINK (active) and VLINK (visited) all set link colours in the `<BODY>` tag, so the answer is <b>all of these</b>.'},
+{id:'p1-06',lv:1,l:'c01',src:'Worksheet · B1',type:'blank',q:'___ is an organization which sets international standards for the World Wide Web.',o:['W3C','HTML','CSS'],a:0,
+  whyNot:{1:'HTML is the language for making web pages, not an organization.',2:'CSS is the language for styling web pages.'},
+  why:'<b>W3C</b> (the World Wide Web Consortium) sets the rules for the web.'},
+{id:'p1-07',lv:1,l:'c01',src:'Worksheet · B3',type:'blank',q:'___ documents can be viewed on any type of web browser.',o:['HTML','Python','GIMP'],a:0,
+  whyNot:{1:'Python programs run in Python, not in a web browser.',2:'GIMP is a drawing program.'},why:'<b>HTML</b> pages open in any web browser: Edge, Chrome, Safari…'},
+{id:'p1-08',lv:1,l:'c03',src:'Worksheet · B6',type:'blank',q:'The ___ tag is used to add a picture to a web page.',o:['`<IMG>`','`<A>`','`<BODY>`'],a:0,
+  whyNot:{1:'`<A>` makes a link.',2:'`<BODY>` holds everything you see on the page.'},why:'`<IMG>` = <b>image</b>. It adds a picture.'},
+{id:'p1-09',lv:1,l:'c03',src:'Worksheet · B7',type:'blank',q:'The ___ attribute is used to specify an alternate text.',o:['alt','src','target'],a:0,
+  whyNot:{1:'src gives the picture file (the source).',2:'target says where a link opens.'},why:'<b>alt</b> = <b>alt</b>ernate text, shown if the picture cannot be displayed.'},
+{id:'p1-10',lv:1,l:'c04',src:'Worksheet · B8',type:'blank',q:'The ___ attribute is used to specify a target.',o:['target','alt','height'],a:0,
+  whyNot:{1:'alt gives the alternate text of a picture.',2:'height sets how tall a picture is.'},why:'The <b>target</b> attribute says where a link opens (for example in a new tab).'},
+{id:'p1-11',lv:1,l:'c04',src:'Worksheet · B9',type:'blank',q:'___ includes a complete description of the file.',o:['Absolute URL','Relative URL','Alt text'],a:0,
+  whyNot:{1:'a relative URL gives only part of the path.',2:'alt text describes a picture, not where a file is.'},
+  why:'An <b>absolute URL</b> gives the complete address, for example <code>https://www.site.com/pages/home.html</code>.'},
+{id:'p1-12',lv:1,l:'c01',src:'Worksheet · C2',type:'tf',q:'You can create HTML documents with Notepad, WordPad, or any other text editor.',ans:'T',
+  no:'HTML files are just text, so any text editor can make them.',why:'<b>T</b>: HTML documents are simple text files. Notepad is the one you use at school.'},
+{id:'p1-13',lv:1,l:'c03',src:'Worksheet · C6',type:'tf',q:'You cannot insert .png images on a web page.',ans:'F',
+  no:'.png is a picture format, so it can go on a web page.',why:'<b>F</b>: you <b>can</b> insert .png pictures (and .jpg and .gif) with `<IMG>`.'},
+{id:'p1-14',lv:1,l:'c04',src:'Worksheet · C7',type:'tf',q:'Internal linking is used to link a page to another page.',ans:'T',
+  no:'the answer key says True.',why:'<b>T</b>: internal linking links one page to another page.',
+  exam:'In the exam write <b>T</b>. Many books say internal links go to another page of the same website, or another part of the same page.'},
+{id:'p1-15',lv:1,l:'c04',src:'Worksheet · C8',type:'tf',q:'An absolute URL refers to the complete path of a file.',ans:'T',
+  no:'absolute = complete.',why:'<b>T</b>: an absolute URL is the full address of a file.'},
+{id:'p1-16',lv:1,l:'c03',src:'Worksheet · C9',type:'tf',q:'Alt attribute is used to specify the text if an image is not displayed on a web page.',ans:'T',
+  no:'that is exactly what alt does.',why:'<b>T</b>: if the picture cannot load, the browser shows the alt text instead.'},
+{id:'p1-17',lv:1,l:'c01',type:'blank',q:'HTML was developed in the year ___.',o:['1990','1991','2000'],a:0,
+  whyNot:{1:'1991 is the year Python was developed.',2:'HTML is older than that.'},why:'HTML was developed in <b>1990</b>. Python came one year later, in 1991.'},
+{id:'p1-18',lv:1,l:'c01',type:'mcq',q:'Which scientist developed HTML?',o:['Tim Berners-Lee','Isaac Newton','Albert Einstein'],a:0,
+  whyNot:{1:'Newton is famous for gravity.',2:'Einstein is famous for physics (E = mc²).'},why:'<b>Tim Berners-Lee</b> developed HTML in 1990. He also invented the World Wide Web.'},
+{id:'p1-19',lv:1,l:'c01',type:'mcq',q:'What does HTML stand for?',o:['Hypertext Markup Language','High Text Making Language','Hyperlink Text Main Language'],a:0,
+  whyNot:{1:'not quite: H is for Hypertext.',2:'not quite: M is for Markup.'},why:'<b>H</b>yper<b>t</b>ext <b>M</b>arkup <b>L</b>anguage.'},
+{id:'p1-20',lv:1,l:'c01',type:'match',q:'Match each word to what it is.',
+  pairs:[['Notepad','a text editor'],['Dreamweaver','an HTML editor'],['W3C','sets the rules for the web'],['Hyperlinks','connections to other pages'],['Ctrl + O','opens a file in Edge']],
+  why:'Notepad and Notepad++ are <b>text editors</b>; Adobe Dreamweaver, Ultra-Edit and TextMate are <b>HTML editors</b>.'},
+{id:'p1-21',lv:1,l:'c01',type:'tf',q:'HTML is a case sensitive language.',ans:'F',
+  no:'HTML does not mind capitals: &lt;BODY&gt; and &lt;body&gt; are the same.',why:'<b>F</b>: HTML is <b>not</b> case sensitive. That is one of the features of HTML.'},
+{id:'p1-22',lv:1,l:'c02',type:'order',q:'Put the tags in order to make the skeleton of an HTML page.',items:['`<HTML>`','`<HEAD>`','`</HEAD>`','`<BODY>`','`</BODY>`','`</HTML>`'],
+  why:'Open HTML, then the head (open and close), then the body (open and close), and close HTML last.'},
+{id:'p1-23',lv:1,l:'c02',type:'mcq',q:'HTML tags begin with &lt; and end with &gt;. What are these called?',o:['Angular brackets','Curly brackets','Round brackets'],a:0,
+  whyNot:{1:'curly brackets are { }. CSS uses those.',2:'round brackets are ( ). Python uses those.'},why:'&lt; and &gt; are <b>angular brackets</b>: the less than and greater than signs.'},
+{id:'p1-24',lv:1,l:'c02',type:'mcq',q:'Tags that have both an opening and a closing tag are called…',o:['container tags','empty tags','link tags'],a:0,
+  whyNot:{1:'empty tags have no closing tag.',2:'that is not a name for this kind of tag.'},why:'Tags like `<HTML>` … `</HTML>` <b>contain</b> things, so they are <b>container tags</b>.'},
+{id:'p1-25',lv:1,l:'c03',type:'build',q:'Build the tag that shows the picture cat.jpg, with the alternate text A cat.',
+  answers:[['<IMG','SRC="cat.jpg"','ALT="A cat"','>'],['<IMG','ALT="A cat"','SRC="cat.jpg"','>']],extra:['</IMG>','SCR="cat.jpg"'],model:'<IMG SRC="cat.jpg" ALT="A cat">',
+  why:'`<IMG SRC="cat.jpg" ALT="A cat">`: SRC is the picture file, ALT is the alternate text. `<IMG>` has no closing tag.'},
+{id:'p1-26',lv:1,l:'c03',type:'spot',q:'Spot the mistake! This tag should show the picture dog.jpg. Tap the wrong part.',code:['<IMG','SCR="dog.jpg"','ALT="A dog">'],bad:1,fix:'SRC="dog.jpg"',
+  why:'It is <b>SRC</b> (short for <b>source</b>), not SCR.'},
+{id:'p1-27',lv:1,l:'c02',type:'spot',q:'Spot the mistake! The word Hello should be bold. Tap the wrong tag.',code:['<B>','Hello','<B>'],bad:2,fix:'</B>',
+  why:'A closing tag has a slash: `</B>`. Without it the bold never stops.'},
+{id:'p1-28',lv:1,l:'c04',type:'build',q:'Build a link to the page page2.html that shows the word Next.',
+  answers:[['<A','HREF="page2.html">','Next','</A>']],extra:['<IMG','</B>'],model:'<A HREF="page2.html">Next</A>',
+  why:'`<A HREF="page2.html">Next</A>`: HREF is the page to go to, and the word between the tags is what you click.'},
+
+/* ---------- Level 2 · CSS (c05–c06) ---------- */
+{id:'p2-01',lv:2,l:'c05',src:'Worksheet · A2',type:'mcq',q:'Which of the following is a full form of CSS?',o:['Cascading Style Sheets','Common Style Sheet','Common Selector Sheet'],a:0,
+  whyNot:{1:'C is for Cascading, not Common.',2:'C is for Cascading and S is for Style.'},why:'CSS = <b>C</b>ascading <b>S</b>tyle <b>S</b>heets.'},
+{id:'p2-02',lv:2,l:'c06',src:'Worksheet · A3',type:'mcq',q:'Which of the following is not a type of style sheet?',o:['External','Internal','Inside'],a:2,
+  whyNot:{0:'external is a type of style sheet.',1:'internal is a type of style sheet.'},why:'The three types are <b>inline</b>, <b>internal</b> and <b>external</b>. There is no "inside" style sheet.'},
+{id:'p2-03',lv:2,l:'c06',src:'Worksheet · A4',type:'mcq',q:'___ is used to set the font of a text.',o:['Font family','Font name','Font style'],a:0,
+  whyNot:{1:'there is no font-name property in CSS.',2:'font-style makes text italic or normal; it does not choose the font.'},why:'<b>font-family</b> chooses the font, for example `font-family: Arial;`'},
+{id:'p2-04',lv:2,l:'c06',src:'Worksheet · A5',type:'mcq',q:'Which of the following is used to specify the position of an image on the web page?',o:['Background-image','Background','Background-position'],a:2,
+  whyNot:{0:'background-image chooses the picture, not where it goes.',1:'background is a short way to set many background things at once.'},
+  why:'<b>background-position</b> says <b>where</b> the background picture goes (position = place).'},
+{id:'p2-05',lv:2,l:'c06',src:'Worksheet · B2',type:'blank',q:'The ___ property is used to set the indentation of the first line of text.',o:['text-indent','font-family','text-align'],a:0,
+  whyNot:{1:'font-family sets the font.',2:'text-align lines text up left, right or centre.'},why:'<b>text-indent</b> moves the first line in, like starting a new paragraph.'},
+{id:'p2-06',lv:2,l:'c05',src:'Worksheet · B4',type:'blank',q:'A CSS rule is made up of three parts, a selector, property and ___.',o:['value','tag','colour'],a:0,
+  whyNot:{1:'a tag is part of HTML.',2:'a colour can be a value, but the part is called the value.'},why:'Selector, property, <b>value</b>. In `h1 { color: red; }` the value is red.'},
+{id:'p2-07',lv:2,l:'c05',src:'Worksheet · B5',type:'blank',q:'CSS files are saved with a ___ extension.',o:['.CSS','.HTML','.PY'],a:0,
+  whyNot:{1:'.HTML is for web pages.',2:'.PY is for Python programs.'},why:'CSS files end in <b>.css</b>, for example style.css.'},
+{id:'p2-08',lv:2,l:'c05',src:'Worksheet · C1',type:'tf',q:'CSS is used to create web pages.',ans:'F',
+  no:'HTML creates web pages; CSS styles them.',why:'<b>F</b>: <b>HTML</b> creates web pages. CSS is used to <b>style</b> them.'},
+{id:'p2-09',lv:2,l:'c05',src:'Worksheet · C3',type:'tf',q:'It is easy to format large websites using CSS.',ans:'T',
+  no:'one CSS file can style every page, which makes big websites easy.',why:'<b>T</b>: one style sheet can style hundreds of pages at once.'},
+{id:'p2-10',lv:2,l:'c05',src:'Worksheet · C4',type:'tf',q:'CSS selectors are used to manipulate the HTML elements in a web page.',ans:'T',
+  no:'selectors pick the HTML elements to style.',why:'<b>T</b>: the selector picks which elements the rule changes, like `h1` or `p`.'},
+{id:'p2-11',lv:2,l:'c06',src:'Worksheet · C5',type:'tf',q:'The internal style sheet style is defined in the head section of a web page.',ans:'T',
+  no:'internal styles go in a `<STYLE>` tag in the head.',why:'<b>T</b>: an internal style sheet is written inside `<STYLE>` in the <b>head</b> of the page.'},
+{id:'p2-12',lv:2,l:'c05',type:'blank',q:'CSS stands for Cascading Style ___.',o:['Sheets','Systems','Symbols'],a:0,
+  whyNot:{1:'not Systems: think of a sheet of paper with styles on it.',2:'not Symbols.'},why:'Cascading Style <b>Sheets</b>.'},
+{id:'p2-13',lv:2,l:'c05',type:'mcq',q:'What is CSS used for?',o:['To style HTML pages','To write Python programs','To edit photos'],a:0,
+  whyNot:{1:'Python programs are written in Python.',2:'photos are edited in GIMP.'},why:'CSS is used to <b>style HTML pages</b>: it says how HTML elements are displayed.'},
+{id:'p2-14',lv:2,l:'c05',type:'build',q:'Build a CSS rule that makes every h1 heading red.',
+  answers:[['h1','{','color:','red;','}']],extra:['color=','<h1>'],model:'h1 { color: red; }',
+  why:'Selector `h1`, then curly brackets, then property `color:` and value `red;`. CSS uses the American spelling color.'},
+{id:'p2-15',lv:2,l:'c05',type:'match',q:'In the rule <code>p { color: blue; }</code>, match each part to its name.',pairs:[['`p`','selector'],['`color`','property'],['`blue`','value']],
+  why:'<b>Selector</b> (what to style) → <b>property</b> (what to change) → <b>value</b> (what to change it to).'},
+{id:'p2-16',lv:2,l:'c05',type:'mcq',q:'In <code>h1 { color: red; }</code>, which part is the selector?',o:['h1','color','red'],a:0,
+  whyNot:{1:'color is the property.',2:'red is the value.'},why:'The <b>selector</b> comes first: `h1` picks all the h1 headings.'},
+{id:'p2-17',lv:2,l:'c05',type:'spot',q:'Spot the mistake in this CSS rule. Tap the wrong part.',code:['p','{','color=','blue;','}'],bad:2,fix:'color:',
+  why:'CSS uses a <b>colon</b> between the property and the value: `color: blue;`'},
+{id:'p2-18',lv:2,l:'c06',type:'match',q:'Match each type of style sheet to where it goes.',
+  pairs:[['Inline','in the style attribute of one element'],['Internal','in the head section of the page'],['External','in a separate .css file']],
+  why:'Inline = one element, internal = one page (in the head), external = a separate file that many pages can share.'},
+{id:'p2-19',lv:2,l:'c06',type:'mcq',q:'Which style sheet applies a style to a single HTML element using the style attribute?',o:['Inline','Internal','External'],a:0,
+  whyNot:{1:'internal styles go in the head and style the whole page.',2:'external styles are in a separate .css file.'},
+  why:'The <b>inline</b> style sheet styles one element, <b>in line</b> with it: `<P STYLE="color: blue">`.'},
+{id:'p2-20',lv:2,l:'c06',type:'tf',q:'There are three types of style sheet: inline, internal and external.',ans:'T',no:'those are the three.',
+  why:'<b>T</b>: 1 inline, 2 internal, 3 external.'},
+{id:'p2-21',lv:2,l:'c06',type:'match',q:'Match each CSS property to its job.',
+  pairs:[['`font-family`','sets the font'],['`text-indent`','indents the first line'],['`background-position`','places the background picture'],['`color`','sets the text colour']],
+  why:'font-family = the font, text-indent = the first line moves in, background-position = where the picture goes, color = text colour.'},
+{id:'p2-22',lv:2,l:'c06',type:'blank',q:'An internal style sheet is written in the ___ section of a web page.',o:['head','body','title'],a:0,
+  whyNot:{1:'the body holds what you see on the page.',2:'the title is the name in the browser tab.'},why:'Internal styles go in the <b>head</b>, inside `<STYLE>` … `</STYLE>`.'},
+{id:'p2-23',lv:2,l:'c06',type:'order',q:'Put the style sheets in order, from the one that styles the least to the one that styles the most.',
+  items:['Inline (one element)','Internal (one page)','External (many pages)'],why:'Inline styles one element, internal styles one page, and external can style a whole website.'},
+{id:'p2-24',lv:2,l:'c05',type:'tf',q:'CSS makes it harder to format large websites.',ans:'F',no:'CSS makes it <b>easier</b>.',
+  why:'<b>F</b>: it is <b>easy</b> to format large websites using CSS.'},
+{id:'p2-25',lv:2,l:'c06',type:'build',q:'Build the rule that puts the page\'s background picture in the centre.',
+  answers:[['body','{','background-position:','center;','}']],extra:['background-image:','font-family:'],model:'body { background-position: center; }',
+  why:'`background-position` says where the background picture goes. CSS writes centre the American way: center.'},
+
+/* ---------- Level 3 · Python and programming (c07–c08) ---------- */
+{id:'p3-01',lv:3,l:'c07',type:'mcq',q:'A sequence of instructions given to the computer to perform a particular task is called a…',o:['program','language','translator'],a:0,
+  whyNot:{1:'programs are written <b>in</b> a programming language.',2:'a translator turns code into machine code.'},why:'A <b>program</b> is a list of instructions for the computer.'},
+{id:'p3-02',lv:3,l:'c07',type:'blank',q:'The process of creating a program is known as ___.',o:['programming','translating','drawing'],a:0,
+  whyNot:{1:'translating turns code into machine code.',2:'drawing is what GIMP is for.'},why:'Creating programs is called <b>programming</b>.'},
+{id:'p3-03',lv:3,l:'c07',type:'mcq',q:'How many main types of computer programming language are there?',o:['3','2','5'],a:0,
+  whyNot:{1:'there is one more.',2:'that is too many.'},why:'There are <b>three</b> main types: machine level, assembly level and high level.'},
+{id:'p3-04',lv:3,l:'c07',type:'order',q:'Put the three types of programming language in order, from closest to the computer to closest to people.',
+  items:['Machine level language','Assembly level language','High level language'],why:'Machine language is just 0s and 1s, assembly is a little easier, and high level (like Python) is closest to English.'},
+{id:'p3-05',lv:3,l:'c07',type:'match',q:'Match each word to what it means.',
+  pairs:[['Program','instructions for the computer'],['Programming','creating a program'],['Compiler','a language translator'],['Machine language','the only language a computer understands'],['Python','a high level language']],
+  why:'A program is made by programming. A translator such as a compiler turns it into machine language, the only language a computer understands.'},
+{id:'p3-06',lv:3,l:'c07',type:'mcq',q:'What converts high level language code into machine code?',o:['A language translator','A web browser','A text editor'],a:0,
+  whyNot:{1:'a web browser shows web pages.',2:'a text editor is where you type code.'},why:'A <b>language translator</b>, such as a compiler or an interpreter.'},
+{id:'p3-07',lv:3,l:'c07',type:'tf',q:'A computer understands only machine language.',ans:'T',no:'everything must become machine language first.',
+  why:'<b>T</b>: that is why we need a translator.'},
+{id:'p3-08',lv:3,l:'c07',type:'mcq',q:'Which of these is a language translator?',o:['Interpreter','Notepad','GIMP'],a:0,
+  whyNot:{1:'Notepad is a text editor.',2:'GIMP is a drawing program.'},why:'Compilers and <b>interpreters</b> are language translators.'},
+{id:'p3-09',lv:3,l:'c07',type:'tf',q:'A compiler is a kind of language translator.',ans:'T',no:'compilers and interpreters are both translators.',
+  why:'<b>T</b>: a compiler turns high level code into machine code.'},
+{id:'p3-10',lv:3,l:'c08',type:'tf',q:'Python is a machine level language.',ans:'F',no:'Python is a <b>high</b> level language.',
+  why:'<b>F</b>: Python is a <b>high level</b> programming language.'},
+{id:'p3-11',lv:3,l:'c08',type:'blank',q:'Python is a ___ level programming language.',o:['high','low','machine'],a:0,
+  whyNot:{1:'Python is easy for people to read, so it is high level.',2:'machine language is 0s and 1s.'},why:'Python is a <b>high level</b> language with simple syntax.'},
+{id:'p3-12',lv:3,l:'c08',type:'blank',q:'Python was developed in the year ___.',o:['1991','1990','2010'],a:0,
+  whyNot:{1:'1990 is the year HTML was developed.',2:'Python is much older than that.'},why:'Python: <b>1991</b>. (HTML came one year earlier, in 1990.)'},
+{id:'p3-13',lv:3,l:'c08',type:'mcq',q:'In which country was Python developed?',o:['The Netherlands','The USA','Kuwait'],a:0,
+  whyNot:{1:'not the USA.',2:'not Kuwait.'},why:'At the National Research Institute for Mathematics and Computer Science in <b>the Netherlands</b>.'},
+{id:'p3-14',lv:3,l:'c08',type:'mcq',q:'Why is Python easy to read and write?',o:['It has simple syntax','It has no rules','It uses pictures instead of words'],a:0,
+  whyNot:{1:'Python does have rules; they are just simple.',2:'Python uses words and symbols, not pictures.'},why:'Python has <b>simple syntax</b> (simple rules for writing code).'},
+{id:'p3-15',lv:3,l:'c08',type:'tf',q:'Python can perform complex tasks using less code.',ans:'T',no:'this is one of its features.',
+  why:'<b>T</b>: a feature of Python. It is also easy to learn and use.'},
+{id:'p3-16',lv:3,l:'c08',type:'blank',q:'Python supports an ___ procedure, which helps the programmer write reusable code.',o:['Object Oriented','Assembly','Image'],a:0,
+  whyNot:{1:'assembly is a type of language.',2:'that is not a procedure.'},why:'<b>Object Oriented</b> procedure: reusable code and less code.'},
+{id:'p3-17',lv:3,l:'c08',type:'mcq',q:'In which mode do you get the output straight after you type a command and press Enter?',o:['Interactive mode','Script mode'],a:0,
+  whyNot:{1:'in script mode you save the file and then run it.'},why:'<b>Interactive mode</b>: type, press Enter, and the output appears in the very next step.'},
+{id:'p3-18',lv:3,l:'c08',type:'mcq',q:'Which mode saves the file with a .py extension?',o:['Script mode','Interactive mode'],a:0,
+  whyNot:{1:'interactive mode runs each line straight away and does not save a file.'},why:'In <b>script mode</b> the code is written in the editor and saved as a .py file.'},
+{id:'p3-19',lv:3,l:'c08',type:'match',q:'Match each one to its description.',
+  pairs:[['Interactive mode','output straight after Enter'],['Script mode','long programs, saved as .py'],['IDLE','creates, edits and runs programs']],
+  why:'Interactive = short lines, instant output. Script = long programs saved as .py. IDLE is where you create, edit and run them.'},
+{id:'p3-20',lv:3,l:'c08',type:'blank',q:'IDLE stands for Integrated Development and ___ Environment.',o:['Learning','Language','Linking'],a:0,
+  whyNot:{1:'not Language: you are learning in it!',2:'not Linking.'},why:'IDLE = <b>I</b>ntegrated <b>D</b>evelopment and <b>L</b>earning <b>E</b>nvironment.'},
+{id:'p3-21',lv:3,l:'c08',type:'build',q:'Build the Python line that shows the word Hello.',answers:[['print(','"Hello"',')']],extra:['Print[',']'],model:'print("Hello")',
+  why:'`print("Hello")`: print in small letters, round brackets, and the words in quotation marks.'},
+{id:'p3-22',lv:3,l:'c08',type:'spot',q:'Spot the mistake! This Python line should show Hi. Tap the wrong part.',code:['prnt','(','"Hi"',')'],bad:0,fix:'print',
+  why:'The command is spelt <b>print</b>. Python does not understand prnt.'},
+{id:'p3-23',lv:3,l:'c08',type:'order',q:'Put the steps in order to write and run a Python script.',
+  items:['Open Python IDLE','Click File, then New File','Type the code','Save it as hello.py','Click Run, then Run Module'],
+  why:'Open IDLE → new file → type → save as .py → run. You must save before you run.'},
+{id:'p3-24',lv:3,l:'c08',type:'tf',q:'Interactive mode is the best way to write long programs with many lines.',ans:'F',no:'long programs need script mode.',
+  why:'<b>F</b>: interactive mode is for <b>very short</b> lines of code. Long programs use <b>script mode</b>.'},
+{id:'p3-25',lv:3,l:'c08',type:'mcq',q:'Which of these files is a Python script?',o:['game.py','game.css','game.html'],a:0,
+  whyNot:{1:'.css is a style sheet.',2:'.html is a web page.'},why:'Python scripts are saved with a <b>.py</b> extension.'},
+
+/* ---------- Level 4 · GIMP (c09–c10) ---------- */
+{id:'p4-01',lv:4,l:'c09',src:'Worksheet · A10',type:'tool',q:'Which of the following is not a Painting Tool?',o:['Bucket fill','Airbrush','Shear'],a:2,
+  whyNot:{0:'the bucket fill tool paints colour into an area.',1:'the airbrush paints soft, sprayed colour.'},why:'<b>Shear</b> is a transform tool: it slants a picture. It does not paint.'},
+{id:'p4-02',lv:4,l:'c10',src:'Worksheet · A11',type:'tool',q:'Which of the following is used to copy a part of an image?',o:['Clone','Dodge','Both (a) and (b)'],a:0,
+  whyNot:{1:'dodge lightens the image.',2:'only one of them copies: dodge lightens.'},why:'The <b>clone</b> tool copies part of an image. Memory trick: Dolly the sheep was a clone (a copy).'},
+{id:'p4-03',lv:4,l:'c09',src:'Worksheet · A12',type:'tool',q:'Which of the following is similar to a calligraphic ink pen?',o:['Smudge','Airbrush','Ink tool'],a:2,
+  whyNot:{0:'smudge smears colour like a finger.',1:'the airbrush sprays soft colour.'},why:'The <b>ink tool</b> works like a calligraphy pen.'},
+{id:'p4-04',lv:4,l:'c10',src:'Worksheet · A13',type:'tool',q:'Which of the following is used to apply special effects to an image?',o:['Filters','Heal','Burn'],a:0,
+  whyNot:{1:'heal removes defects.',2:'burn darkens the image.'},why:'<b>Filters</b> add special effects, like blur or glow.'},
+{id:'p4-05',lv:4,l:'c10',src:'Worksheet · B10',type:'blank',q:'The ___ tool allows the selection of contiguous areas of a similar colour range.',o:['Fuzzy Select','Clone','Pencil'],a:0,
+  whyNot:{1:'clone copies parts of an image.',2:'pencil draws hard-edged lines.'},why:'<b>Fuzzy Select</b> (the magic wand 🪄) selects touching areas of a similar colour.'},
+{id:'p4-06',lv:4,l:'c09',src:'Worksheet · B11',type:'blank',q:'The ___ tool fills a mix of two colours in an area.',o:['Gradient','Eraser','Heal'],a:0,
+  whyNot:{1:'the eraser removes colour.',2:'heal removes defects.'},why:'The <b>gradient</b> tool blends two colours, like a sunset 🌈.'},
+{id:'p4-07',lv:4,l:'c09',src:'Worksheet · B12',type:'blank',q:'The ___ tool is used to remove areas of colour from an image.',o:['Eraser','Gradient','Dodge'],a:0,
+  whyNot:{1:'gradient fills two colours.',2:'dodge lightens.'},why:'The <b>eraser</b> removes colour, like a rubber.'},
+{id:'p4-08',lv:4,l:'c10',src:'Worksheet · B13',type:'blank',q:'The ___ tool is used to remove defects in images.',o:['Heal','Burn','Smudge'],a:0,
+  whyNot:{1:'burn darkens.',2:'smudge smears colour.'},why:'The <b>heal</b> tool fixes spots and scratches, like a plaster 🩹.'},
+{id:'p4-09',lv:4,l:'c09',src:'Worksheet · C10',type:'tf',q:'The Paintbrush tool is used to do freehand drawings.',ans:'T',no:'you draw freely with the paintbrush.',
+  why:'<b>T</b>: the paintbrush draws freehand with soft (fuzzy) strokes.'},
+{id:'p4-10',lv:4,l:'c09',src:'Worksheet · C11',type:'tf',q:'The Gradient tool is used to darken the image.',ans:'F',no:'gradient mixes two colours. The burn tool darkens.',
+  why:'<b>F</b>: the gradient tool fills a <b>mix of two colours</b>.'},
+{id:'p4-11',lv:4,l:'c10',src:'Worksheet · C12',type:'tf',q:'The Dodge tool is used to lighten the image.',ans:'T',no:'dodge lightens, burn darkens.',
+  why:'<b>T</b>: dodge lightens. Its partner, burn, darkens.'},
+{id:'p4-12',lv:4,l:'c10',src:'Worksheet · C13',type:'tf',q:'Filters are used to select objects in GIMP.',ans:'F',no:'filters add special effects. Select tools (like Fuzzy Select) select things.',
+  why:'<b>F</b>: filters apply <b>special effects</b>.'},
+{id:'p4-13',lv:4,l:'c09',type:'tool',q:'Which tool fills colour in an area?',o:['Bucket fill','Pencil','Smudge','Dodge'],a:0,
+  whyNot:{1:'the pencil draws lines.',2:'smudge smears colour.',3:'dodge lightens.'},why:'The <b>bucket fill</b> tool pours colour into an area 🪣.'},
+{id:'p4-14',lv:4,l:'c09',type:'tool',q:'Which tool draws free-hand lines with hard edges?',o:['Pencil','Paintbrush','Airbrush','Gradient'],a:0,
+  whyNot:{1:'the paintbrush makes fuzzy (soft) edges.',2:'the airbrush makes soft, sprayed edges.',3:'gradient fills two colours.'},
+  why:'The <b>pencil</b> makes hard edges. It is like the paintbrush, but with no fuzzy edges.'},
+{id:'p4-15',lv:4,l:'c09',type:'tool',q:'Which tool paints using fuzzy brush strokes?',o:['Paintbrush','Pencil','Eraser','Heal'],a:0,
+  whyNot:{1:'the pencil makes hard edges.',2:'the eraser removes colour.',3:'heal removes defects.'},why:'The <b>paintbrush</b> paints fuzzy strokes with the brush you have chosen.'},
+{id:'p4-16',lv:4,l:'c10',type:'tool',q:'Which tool copies the selected part of an image and pastes it in another part?',o:['Clone','Eraser','Filters','Gradient'],a:0,
+  whyNot:{1:'the eraser removes colour.',2:'filters add special effects.',3:'gradient fills two colours.'},why:'The <b>clone</b> tool reproduces the selected parts of an image.'},
+{id:'p4-17',lv:4,l:'c10',type:'tool',q:'Which tool lightens the image?',o:['Dodge','Burn','Ink tool','Pencil'],a:0,
+  whyNot:{1:'burn does the opposite: it darkens.',2:'the ink tool draws like a pen.',3:'the pencil draws lines.'},why:'<b>Dodge</b> lightens ☀️. Burn darkens 🔥.'},
+{id:'p4-18',lv:4,l:'c10',type:'tool',q:'Which tool darkens the image?',o:['Burn','Dodge','Gradient','Heal'],a:0,
+  whyNot:{1:'dodge lightens.',2:'gradient fills two colours.',3:'heal removes defects.'},why:'<b>Burn</b> darkens, like toast in a toaster 🔥.'},
+{id:'p4-19',lv:4,l:'c09',type:'match',q:'Match each drawing tool to its job.',
+  pairs:[['🪣 Bucket fill','fills colour in an area'],['🌈 Gradient','fills a mix of two colours'],['🖌️ Paintbrush','fuzzy brush strokes'],['✏️ Pencil','hard-edged lines'],['🧽 Eraser','removes colour']],
+  why:'These five are the common drawing tools in GIMP from the worksheet.'},
+{id:'p4-20',lv:4,l:'c10',type:'match',q:'Match each tool to what it does.',
+  pairs:[['🐑 Clone','copies part of an image'],['🩹 Heal','removes defects'],['☀️ Dodge','lightens'],['🔥 Burn','darkens'],['🪄 Fuzzy Select','selects a similar colour'],['✨ Filters','special effects']],
+  why:'Clone copies, heal fixes, dodge lightens, burn darkens, fuzzy select selects, filters add effects.'},
+{id:'p4-21',lv:4,l:'c09',type:'tf',q:'The pencil tool produces fuzzy edges.',ans:'F',no:'the pencil makes <b>hard</b> edges; the paintbrush makes fuzzy ones.',
+  why:'<b>F</b>: the pencil tool does <b>not</b> produce fuzzy edges.'},
+{id:'p4-22',lv:4,l:'c09',type:'mcq',q:'Why do we use GIMP for drawing?',o:['It has a large variety of painting tools','It makes web pages','It runs Python programs'],a:0,
+  whyNot:{1:'web pages are made with HTML.',2:'Python programs run in IDLE.'},why:'GIMP has a <b>large variety of painting tools</b> to draw, paint and change pictures.'},
+{id:'p4-23',lv:4,l:'c10',type:'blank',q:'The ___ tool reproduces the selected parts in an image.',o:['Clone','Pencil','Burn'],a:0,
+  whyNot:{1:'the pencil draws lines.',2:'burn darkens.'},why:'The <b>clone</b> tool reproduces (copies) parts of an image.'},
+{id:'p4-24',lv:4,l:'c09',type:'tf',q:'The eraser tool is an important tool for drawing.',ans:'T',no:'you need it to remove mistakes and colour.',
+  why:'<b>T</b>: it removes areas of colour from the image or from the selected part.'},
+{id:'p4-25',lv:4,l:'c09',type:'tf',q:'Paintbrush strokes are drawn with the currently selected brush type.',ans:'T',no:'the brush you choose decides how the stroke looks.',
+  why:'<b>T</b>: all strokes are rendered using the currently selected brush.'},
+];
+const LESSONS={c01:['c01-what-is-html','What is HTML?'],c02:['c02-tags-structure','HTML tags and page structure'],c03:['c03-pictures','Pictures on a web page'],
+  c04:['c04-links','Links: internal, external and URLs'],c05:['c05-what-is-css','What is CSS?'],c06:['c06-style-sheets','Three kinds of style sheet'],
+  c07:['c07-programs-languages','Programs and programming languages'],c08:['c08-meet-python','Meet Python: interactive and script mode'],
+  c09:['c09-gimp-painting','GIMP painting tools'],c10:['c10-gimp-fixing','GIMP fixing and effects tools']};
+
+/* ================= modes ================= */
+const MODES=[
+  {id:'p1',cls:'l1c',lv:'Level 1 · HTML',name:'Web pages with HTML',emo:'🌐',pick:()=>BANK.filter(q=>q.lv===1)},
+  {id:'p2',cls:'l2c',lv:'Level 2 · CSS',name:'Styling with CSS',emo:'🎨',pick:()=>BANK.filter(q=>q.lv===2)},
+  {id:'p3',cls:'l3c',lv:'Level 3 · Python',name:'Programs and Python',emo:'🐍',pick:()=>BANK.filter(q=>q.lv===3)},
+  {id:'p4',cls:'l4c',lv:'Level 4 · GIMP',name:'Drawing in GIMP',emo:'🖌️',pick:()=>BANK.filter(q=>q.lv===4)},
+  {id:'pboss',cls:'fbc',lv:'Final Boss',name:'Mixed Challenge',emo:'👑',boss:true,
+    pick:()=>{const lv=[...new Set(BANK.map(q=>q.lv))];const per=Math.ceil(25/lv.length);return shuffle(lv.flatMap(c=>shuffle(BANK.filter(q=>q.lv===c)).slice(0,per))).slice(0,25);}},
+];
+const RETRY='pretry'; /* "Practise my mistakes" (Science Quest uses 'retry', French Quest 'fretry') */
+const MYMODES=new Set([...MODES.map(m=>m.id),RETRY]);
+const TYPE={mcq:'🎯 Pick one',tf:'⚡ True or false',blank:'✏️ Fill the blank',match:'🔗 Match up',order:'🗂️ Put in order',build:'🧩 Build the code',spot:'🔍 Spot the mistake',tool:'🖌️ Which tool?'};
+const LVL={1:'HTML',2:'CSS',3:'Python',4:'GIMP'};
+const PRAISE=['Brilliant!','Super!','Excellent!','Well done!','Perfect!','Awesome! 🌟','Click-tastic! 🖱️','On fire! 🔥','Bug-free! 🐞'];
+const OOPS=['Nearly! Here\'s why:','Not quite. Here\'s how:','Good try! Here\'s why:','Oops, a bug! Learn this one:'];
+const pickr=a=>a[Math.floor(Math.random()*a.length)];
+
+/* ---------- continuing a level ----------
+   An unfinished level is saved after every answer (through src/account.js, so it follows the student between
+   devices) and listed on the menu as "Continue where you left off". Only Computer Quest's own levels are listed here. */
+function savedRuns(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const all=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes||{};
+  return Object.fromEntries(Object.entries(all).filter(([m])=>MYMODES.has(m)));}catch(e){return{};}}
+function saveRun(i){track('quizState',S.mode,{ids:S.qs.map(q=>q.id),i,score:S.score,streak:S.streak,best:S.best,right:S.right,wrong:S.wrong.map(q=>q.id)});}
+function resumeRun(mode,st){const byId=Object.fromEntries(BANK.map(q=>[q.id,q]));const qs=st.ids.map(id=>byId[id]).filter(Boolean);if(!qs.length)return;
+  S={mode,qs,i:Math.min(st.i,qs.length),score:st.score,streak:st.streak,best:st.best,right:st.right,wrong:st.wrong.map(id=>byId[id]).filter(Boolean)};
+  if(S.i>=qs.length){endGame();return;}show('game');renderQ();}
+const modeName=id=>{const m=MODES.find(x=>x.id===id);return m?`${m.emo} ${m.lv}: ${m.name}`:'🔁 Practise my mistakes';};
+function renderResume(){const box=$('#resume'),runs=Object.entries(savedRuns()).sort((a,b)=>(b[1].at||0)-(a[1].at||0));box.innerHTML='';
+  if(!runs.length){box.style.display='none';return;}box.style.display='';
+  box.appendChild(el('h3','','▶ Continue where you left off'));
+  runs.forEach(([mode,st])=>{const n=(st.ids||[]).length;const row=el('div','rrow',`<div class="rt"><b>${modeName(mode)}</b><span>${st.i>=n?'All answered: see your results':`Question ${st.i+1} of ${n}`} · ${st.score} pts</span></div>`);
+    const go=el('button','go','Continue ▶');go.onclick=()=>resumeRun(mode,st);
+    const x=el('button','rx','✕');x.title='Forget this level';x.setAttribute('aria-label','Forget this unfinished level');x.onclick=()=>{track('quizState',mode,null);renderMenu();};
+    row.appendChild(go);row.appendChild(x);box.appendChild(row);});}
+addEventListener('g7-resume',()=>{if(!$('#menu').classList.contains('hidden'))renderMenu();});
+function renderMenu(){
+  renderResume();
+  const box=$('#modes');box.innerHTML='';
+  MODES.forEach(m=>{const qs=m.pick(),ready=m.boss?MODES.every(x=>x.boss||x.pick().length>0):qs.length>0;const n=m.boss?25:qs.length;const best=store.get('sq_best_'+m.id,null);
+    const b=el('button','mode '+m.cls+(ready?'':' soon'),`<div class="emo">${m.emo}</div><div class="lv">${m.lv}</div><h3>${m.name}</h3><div class="meta">${ready?`${n} questions${m.boss?' from every level':''}`:'Coming soon'}</div>`+
+      (best?`<div class="best">Best: ${'⭐'.repeat(best.stars)}${'☆'.repeat(3-best.stars)} · ${best.pct}%</div>`:''));
+    if(ready)b.onclick=()=>start(m.id,m.boss?m.pick():shuffle(m.pick()));else b.disabled=true;box.appendChild(b);});
+  $('#soundBtn').textContent=soundOn?'🔊 Sound: on':'🔇 Sound: off';
+}
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;store.set('sq_sound',soundOn);renderMenu();};
+$('#homeBtn').onclick=()=>{if(confirm('Leave this level? You can continue it later from the menu.'))show('menu');};
+function show(id){['menu','game','end'].forEach(s=>$('#'+s).classList.toggle('hidden',s!==id));if(id==='menu')renderMenu();scrollTo(0,0);}
+
+/* ================= game state ================= */
+let S;
+/* Progress saving: handed to src/account.js, which may load after this script. */
+function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
+function start(mode,qs){S={mode,qs,i:0,score:0,streak:0,best:0,right:0,wrong:[]};saveRun(0);show('game');renderQ();}
+function hud(){$('#prog').style.width=(S.i/S.qs.length*100)+'%';const st=$('#streak');st.textContent='🔥 '+S.streak;st.classList.toggle('hot',S.streak>=3);$('#score').textContent='⭐ '+S.score;}
+
+function renderQ(){
+  hud();const q=S.qs[S.i];const card=$('#card');card.innerHTML='';
+  card.appendChild(el('div','qtop',`<span class="tag tl${q.lv}">${LVL[q.lv]}</span><span class="tag tt">${TYPE[q.type]}</span><span class="qnum">${S.i+1} / ${S.qs.length}</span>`));
+  if(q.src)card.appendChild(el('div','hint',`📄 ${q.src}`));
+  if(q.type!=='blank')card.appendChild(el('div','prompt',fmt(q.q)));
+  const body=el('div','body');card.appendChild(body);
+  const actions=el('div','actions');const checkBtn=el('button','go','Check ✔');actions.appendChild(checkBtn);card.appendChild(actions);
+  let api=null;
+  api=R[q.type](q,body,()=>{if(api)checkBtn.disabled=!api.ready();},(ok,note)=>finish(ok,note));
+  checkBtn.disabled=!api.ready();
+  if(api.instant)actions.classList.add('hidden');
+  checkBtn.onclick=()=>{if(!api.ready())return;const r=api.check();if(r==null)return;finish(r.ok,r.note);};
+  function finish(ok,note){
+    actions.classList.remove('hidden');checkBtn.disabled=false;
+    if(api.lock)api.lock();
+    if(ok){S.streak++;S.best=Math.max(S.best,S.streak);S.right++;const pts=100+Math.min(50,(S.streak-1)*10);S.score+=pts;sfx.ok();
+      card.appendChild(el('div','plus','+'+pts));if(S.streak%5===0)confetti(70);else confetti(25,innerWidth/2,innerHeight/2);}
+    else{S.streak=0;S.wrong.push(q);sfx.bad();}
+    track('answer',{questionId:q.id,lessonId:q.l,source:'quiz',correct:ok});saveRun(S.i+1);
+    hud();
+    const fb=el('div','fb '+(ok?'ok':'bad'),`<h3>${ok?'✅ '+pickr(PRAISE):'💡 '+pickr(OOPS)}</h3>${!ok&&note?`<p class="not">❌ ${fmt(note)}</p>`:''}<p>${fmt(q.why)}</p>${q.exam?`<p class="exam">📝 ${fmt(q.exam)}</p>`:''}`);
+    card.insertBefore(fb,actions);
+    checkBtn.textContent=S.i===S.qs.length-1?'See my results 🏁':'Next ➜';checkBtn.classList.add('green');
+    checkBtn.onclick=()=>{S.i++;if(S.i>=S.qs.length)endGame();else{renderQ();scrollTo({top:0,behavior:'smooth'});}};
+    fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
+
+/* ================= question renderers =================
+   Each returns {ready(), check() -> {ok, note}, lock()?, instant?}; instant ones call done(ok, note) themselves. */
+const R={};
+/* pick one (and "which tool?", with the GIMP tool icons) */
+R.mcq=(q,body,upd,done)=>{
+  const tool=q.type==='tool';const box=el('div',tool?'opts tools n'+q.o.length:'opts');body.appendChild(box);
+  const btns=q.o.map((t,i)=>{const b=el('button','opt',tool?`<span class="k">${'abcd'[i]}</span><span class="ic">${ICON[t]||'🤝'}</span><span>${fmt(t)}</span>`:`<span class="k">${'abcd'[i]}</span><span>${fmt(t)}</span>`);b.dataset.i=i;box.appendChild(b);return b;});
+  btns.forEach((b,i)=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);btns[q.a].classList.add('ok');if(i!==q.a)b.classList.add('bad');
+    const w=q.whyNot&&q.whyNot[i];done(i===q.a,w?`<b>(${'abcd'[i]}) ${tool?q.o[i]+' ':''}is not right:</b> ${w}`:'');});
+  return{instant:true,ready:()=>false};
+};
+R.tool=R.mcq;
+/* true or false, as on the sheet: T or F */
+R.tf=(q,body,upd,done)=>{
+  const box=el('div','opts tf grid2');body.appendChild(box);
+  const btns=['T','F'].map(v=>{const b=el('button','opt',`<span class="big ${v.toLowerCase()}">${v}</span><span>${v==='T'?'True':'False'}</span>`);b.dataset.v=v;box.appendChild(b);return b;});
+  btns.forEach(b=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);const ok=b.dataset.v===q.ans;btns.find(x=>x.dataset.v===q.ans).classList.add('ok');if(!ok)b.classList.add('bad');
+    done(ok,ok?'':`It is <b>${q.ans}</b>: ${q.no||''}`);});
+  return{instant:true,ready:()=>false};
+};
+/* fill the blank: tap the word that goes in the gap */
+R.blank=(q,body,upd,done)=>{
+  const sent=el('div','sent prompt',fmt(q.q).replace('___','<span class="blank">&nbsp;?&nbsp;</span>'));body.appendChild(sent);const gap=sent.querySelector('.blank');
+  const box=el('div','bts');body.appendChild(box);
+  const btns=shuffle(q.o.map((t,i)=>i)).map(i=>{const b=el('button','bt',fmt(q.o[i]));b.dataset.i=i;box.appendChild(b);return b;});
+  btns.forEach(b=>b.onclick=()=>{const i=+b.dataset.i;btns.forEach(x=>x.disabled=true);const ok=i===q.a;
+    gap.innerHTML=fmt(q.o[q.a]);gap.classList.add(ok?'ok':'bad');btns.find(x=>+x.dataset.i===q.a).classList.add('ok');if(!ok)b.classList.add('bad');
+    const w=q.whyNot&&q.whyNot[i];done(ok,w?`<b>${q.o[i]}</b> is not right: ${w}`:'');});
+  return{instant:true,ready:()=>false};
+};
+const PAIRC=['#0e7490','#6a45d8','#17935b','#e04848','#d4329a','#c9a000','#e06a1b'];
+R.match=(q,body,upd)=>{
+  body.appendChild(el('div','hint','👆 Tap a box on the left, then its partner on the right.'));
+  const wrap=el('div','match');body.appendChild(wrap);const L=el('div','mcol'),Rc=el('div','mcol');wrap.append(L,Rc);
+  const lefts=q.pairs.map((p,i)=>({i,t:fmt(p[0])}));const rights=shuffle(q.pairs.map((p,i)=>({i,t:fmt(p[1])})));
+  const link={};let selL=null;
+  const lb=lefts.map(o=>{const b=el('button','mi',`<span class="dot"></span><span>${o.t}</span>`);L.appendChild(b);return b;});
+  const rb=rights.map(o=>{const b=el('button','mi',`<span class="dot"></span><span>${o.t}</span>`);b.dataset.i=o.i;Rc.appendChild(b);return b;});
+  function paint(){lb.forEach((b,li)=>{const linked=link[li]!=null;b.classList.toggle('sel',selL===li);b.querySelector('.dot').style.background=linked?PAIRC[li%PAIRC.length]:'';b.style.borderColor=linked?PAIRC[li%PAIRC.length]:'';});
+    rb.forEach((b,ri)=>{const li=Object.keys(link).find(k=>link[k]===ri);b.querySelector('.dot').style.background=li!=null?PAIRC[li%PAIRC.length]:'';b.style.borderColor=li!=null?PAIRC[li%PAIRC.length]:'';});upd();}
+  lb.forEach((b,li)=>b.onclick=()=>{sfx.tap();if(link[li]!=null&&selL!==li){delete link[li];}selL=selL===li?null:li;paint();});
+  rb.forEach((b,ri)=>b.onclick=()=>{if(selL==null){const li=Object.keys(link).find(k=>link[k]===ri);if(li!=null){delete link[li];sfx.tap();paint();}return;}
+    sfx.tap();Object.keys(link).forEach(k=>{if(link[k]===ri)delete link[k];});link[selL]=ri;
+    selL=lb.findIndex((_,k)=>link[k]==null);if(selL<0)selL=null;paint();});
+  selL=0;paint();
+  return{ready:()=>Object.keys(link).length===lefts.length,
+    lock(){lb.concat(rb).forEach(b=>b.disabled=true);},
+    check(){let ok=true;lb.forEach((b,li)=>{const good=rights[link[li]].i===lefts[li].i;b.style.borderColor='';b.classList.remove('sel');b.classList.add(good?'ok':'bad');
+      if(!good){ok=false;b.querySelector('span:last-child').insertAdjacentHTML('beforeend',`<span class="fix">✔ ${fmt(q.pairs[li][1])}</span>`);}});return{ok};}};
+};
+/* tap the items in the right order */
+R.order=(q,body,upd)=>{
+  let seq=[],locked=false;const ord=el('div','ord');body.appendChild(ord);const tl=el('div','tiles');body.appendChild(tl);
+  const lab=i=>fmt(q.items[i]);
+  const rows=q.items.map((_,i)=>{const r=el('div','row',`<span class="n">${i+1}</span><span class="v"></span>`);ord.appendChild(r);return r;});
+  const btns=shuffle(q.items.map((_,i)=>i)).map(i=>{const b=el('button','tile',lab(i));b.dataset.i=i;b.onclick=()=>{if(locked||b.disabled)return;sfx.tap();seq.push(i);b.disabled=true;paint();upd();};tl.appendChild(b);return b;});
+  const undo=el('button','tile','⌫');undo.title='Undo';undo.onclick=()=>{if(locked||!seq.length)return;const i=seq.pop();btns.find(b=>+b.dataset.i===i).disabled=false;paint();upd();};tl.appendChild(undo);
+  function paint(){rows.forEach((r,k)=>r.querySelector('.v').innerHTML=seq[k]!=null?lab(seq[k]):'');}
+  return{ready:()=>seq.length===q.items.length,lock(){locked=true;tl.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){let ok=true;rows.forEach((r,k)=>{const good=seq[k]===k;r.classList.add(good?'ok':'bad');if(!good){ok=false;r.insertAdjacentHTML('beforeend',`<span class="fx">✔ ${lab(k)}</span>`);}});return{ok};}};
+};
+/* build the code: tap code tiles in order (each tile once; there are a couple of wrong ones) */
+R.build=(q,body,upd)=>{
+  let seq=[],locked=false;const slot=el('div','slot');body.appendChild(slot);const tl=el('div','tiles');body.appendChild(tl);
+  const all=[...q.answers[0],...q.extra];
+  const paint=()=>{slot.innerHTML=seq.length?`<span>${esc(joinCode(seq.map(i=>all[i])))}</span>`:'<i>Tap the code tiles in order to build it</i>';};
+  const btns=shuffle(all.map((_,i)=>i)).map(i=>{const b=el('button','tile code',esc(all[i]));b.dataset.k=all[i];b.dataset.i=i;
+    b.onclick=()=>{if(locked||b.disabled)return;sfx.tap();seq.push(i);b.disabled=true;paint();upd();};tl.appendChild(b);return b;});
+  const del=el('button','tile','⌫');del.title='Undo';del.onclick=()=>{if(locked||!seq.length)return;const i=seq.pop();btns.find(b=>+b.dataset.i===i).disabled=false;paint();upd();};tl.appendChild(del);paint();
+  return{ready:()=>seq.length>0,lock(){locked=true;tl.querySelectorAll('button').forEach(b=>b.disabled=true);},
+    check(){const got=joinCode(seq.map(i=>all[i]));const ok=q.answers.some(a=>joinCode(a)===got);slot.classList.add(ok?'ok':'bad');
+      if(!ok)slot.insertAdjacentHTML('beforeend',`<span class="model">✔ ${esc(q.model)}</span>`);return{ok};}};
+};
+/* spot the mistake: tap the wrong part of a line of code */
+R.spot=(q,body,upd,done)=>{
+  const line=el('div','codeline');body.appendChild(line);
+  const btns=q.code.map((t,i)=>{const b=el('button','tok',esc(t));b.dataset.i=i;line.appendChild(b);return b;});
+  btns.forEach((b,i)=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);const ok=i===q.bad;btns[q.bad].classList.add('wrong');if(!ok)b.classList.add('bad');
+    const fixed=q.code.map((t,k)=>k===q.bad?q.fix:t).join(q.code.some(t=>/^[(),]$/.test(t))?'':' ');
+    body.appendChild(el('div','fixline',`✔ Correct:<br><code>${esc(fixed)}</code>`));
+    done(ok,ok?'':`the mistake is <code>${esc(q.code[q.bad])}</code>; it should be <code>${esc(q.fix)}</code>.`);});
+  return{instant:true,ready:()=>false};
+};
+
+/* ================= end ================= */
+/* links to the lessons behind this level's mistakes, most mistakes first */
+function revise(){const cnt={};S.wrong.forEach(q=>{if(LESSONS[q.l])cnt[q.l]=(cnt[q.l]||0)+1;});
+  const ids=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b));if(!ids.length)return'';
+  return `<div class="revise"><h4>📖 Lessons to revise</h4>`+ids.map(id=>`<a href="computer/${LESSONS[id][0]}.html"><span class="n">Lesson ${+id.slice(1)}</span><span class="t">${LESSONS[id][1]}</span><span class="c">${cnt[id]} mistake${cnt[id]>1?'s':''}</span></a>`).join('')+'</div>';}
+function endGame(){
+  hud();const n=S.qs.length,pct=Math.round(S.right/n*100);const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  track('quizRun',{mode:S.mode,right:S.right,total:n,score:S.score,stars});track('quizState',S.mode,null);
+  const key='sq_best_'+S.mode;const prev=store.get(key,null);if(S.mode!==RETRY&&(!prev||pct>prev.pct))store.set(key,{pct,stars});
+  const msg=stars===3?'Brilliant! You\'re exam-ready! 🏆':stars===2?'Great work! A little more practice and you\'ll ace it!':stars===1?'Good start! Practise your mistakes to level up.':'Keep going! Every try makes you stronger! 💪';
+  const c=$('#endCard');c.innerHTML=`<div style="font-size:15px;font-weight:800;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">Level complete</div>
+    <div class="stars">${[0,1,2].map(i=>`<span class="${i<stars?'on':''}" style="animation-delay:${i*.2}s">⭐</span>`).join('')}</div>
+    <div class="bigscore">${S.score} pts</div><p style="font-size:18px;font-weight:700">${msg}</p>
+    <div class="endgrid"><div><b>${S.right}/${n}</b>correct</div><div><b>${pct}%</b>accuracy</div><div><b>🔥 ${S.best}</b>best streak</div></div>
+    ${revise()}<div class="endbtns"></div>`;
+  const bt=c.querySelector('.endbtns');
+  if(S.wrong.length){const r=el('button','go',`🔁 Practise my ${S.wrong.length} mistake${S.wrong.length>1?'s':''}`);r.onclick=()=>start(RETRY,shuffle(S.wrong));bt.appendChild(r);}
+  const again=el('button','ghostbtn','▶ Play again');const mode=S.mode;again.onclick=()=>{const m=MODES.find(x=>x.id===mode);start(mode,m?(m.boss?m.pick():shuffle(m.pick())):shuffle(S.qs));};bt.appendChild(again);
+  const home=el('button','ghostbtn','🏠 Menu');home.onclick=()=>show('menu');bt.appendChild(home);
+  show('end');sfx.win();if(stars>=2){confetti(150);setTimeout(()=>confetti(120,innerWidth*.25,innerHeight*.4),400);setTimeout(()=>confetti(120,innerWidth*.75,innerHeight*.4),800);}
+}
+renderMenu();
+</script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>What is HTML?</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script>
+/* Computer Lesson 1 · Web pages with HTML · Worksheet Q1–Q5, B1, B3, C2.
+   The approved pilot and style reference for the Computer lessons: an animation for every idea, the short
+   worksheet questions on wsCards, every written question taught with teachA, a hands-on "make your first page". */
+const PAGE=`<HTML>
+<HEAD>
+<TITLE>My page</TITLE>
+</HEAD>
+<BODY>
+<H1>Hello, world!</H1>
+<P>I made this web page myself.</P>
+</BODY>
+</HTML>`;
+/* a desktop file icon */
+const fileIcon=(x,y,name,emoji='📄')=>mk('',`left:${x}px;top:${y}px;width:120px;text-align:center;font-size:15px;font-weight:800;color:#1f2433`,
+  `<div style="font-size:58px;line-height:1">${emoji}</div><div style="background:#fff;border-radius:6px;padding:1px 4px;margin-top:4px">${name}</div>`);
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c01', num:1, part:'Web pages with HTML', emoji:'🌐', title:'What is HTML?',
+  intro:`Hi! I'm <b>Chip the Mouse</b> 🖱️ I'll click you through computers! Today: <b>what is HTML?</b> Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'The secret behind every web page',run:async w=>{
+  const B=browser(170,16,620,300,{url:'https://www.chipscheeseclub.com',title:"Chip's Cheese Club"});
+  B.page.innerHTML=`<h1>🧀 Chip's Cheese Club</h1><p>Welcome to my web page! I love cheese and computers.</p><p><a>See my photos</a> · <a>Join the club</a></p>`;
+  pop(B.el);
+  say(`Every web page you visit, like this one, is drawn by a <b>web browser</b>. 🌐 But what is the page really made of?`);await w(2600);
+  await an(B.el,[{transform:'rotateY(0)'},{transform:'rotateY(90deg)'}],{duration:500});
+  const E=editor(170,16,620,300,{title:'index.html - Notepad',size:17});
+  an(E.el,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0)'}],{duration:500});
+  say(`Let's flip it round and peek behind the page… 👀 It's just <b>text</b>! Special text called <b>HTML</b>.`);
+  await typeCode(w,E,`<HTML>
+<BODY>
+<H1>🧀 Chip's Cheese Club</H1>
+<P>Welcome to my web page!</P>
+<A HREF="photos.html">See my photos</A>
+</BODY>
+</HTML>`,{speed:14});
+  await w(1200);
+  an(E.el,[{transform:'translate(-237px,0) scale(.72)'}],{duration:700});
+  an(B.el,[{transform:'translate(237px,0) scale(.72) rotateY(90deg)'},{transform:'translate(237px,0) scale(.72) rotateY(0)'}],{duration:700,delay:400});
+  const ar=mk('big-emoji','left:456px;top:130px;font-size:42px;opacity:0;z-index:5','➡️');an(ar,[{opacity:0},{opacity:1}],{delay:900});loop(ar,[{transform:'translateX(-6px)'},{transform:'translateX(6px)'}],600,{direction:'alternate'});
+  say(`On the left, the <b>HTML code</b>. On the right, the <b>web page</b> the browser draws from it. Same page, two views!`);await w(3000);
+  const L=['H','T','M','L'].map((c,i)=>{const e=mk('',`left:${282+i*104}px;top:338px;width:90px;height:90px;border-radius:20px;background:linear-gradient(135deg,#0e7490,#22b8c9);color:#fff;font-size:58px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #0b5566`,c);pop(e,i*150);return e;});
+  L.forEach((e,i)=>loop(e,[{transform:'translateY(0)'},{transform:'translateY(-8px)'}],700,{direction:'alternate',delay:i*150}));
+  say(`Every web page on the internet is built with <b>HTML</b>. In this lesson you'll learn what it is, who made it, and how to make your own page!`);await w(2600);}},
+
+/* 1 */ {t:'H-T-M-L: what it stands for',run:async w=>{
+  const W=[['H','Hyper','🔗 jumps to other pages'],['T','Text','📝 words on the page'],['M','Markup','🏷️ tags that mark the text'],['L','Language','💬 rules the computer reads']];
+  const cols=W.map(([l,word,mean],i)=>{const x=40+i*224;
+    const c=mk('',`left:${x}px;top:24px;width:208px;height:250px;border-radius:22px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center`,
+      `<div class="L" style="font-size:86px;font-weight:900;color:#0e7490;line-height:1.2">${l}</div><div class="wd" style="font-size:31px;font-weight:900;color:#1f2433;opacity:0">${word}</div><div class="mn" style="font-size:17px;font-weight:700;color:#4a5570;margin:8px 10px 0;opacity:0">${mean}</div>`);
+    pop(c,i*120);return c;});
+  say(`So what does <b>HTML</b> stand for? Each letter is a word. Watch!`);await w(2200);
+  const lines=[`<b>H</b> is for <b>Hyper</b>…`,`and <b>T</b> is for <b>Text</b>. <b>Hypertext</b> is text with <b>links</b> that jump to other pages. 🔗`,
+    `<b>M</b> is for <b>Markup</b>: little <b>tags</b> that mark up the text, like labels. 🏷️`,`and <b>L</b> is for <b>Language</b>: a set of rules the computer understands.`];
+  for(let i=0;i<4;i++){const c=cols[i];an(c.querySelector('.L'),[{transform:'scale(1)'},{transform:'scale(.62) translateY(-30px)'}],{duration:500});
+    an(c.querySelector('.wd'),[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'translateY(-20px)'}],{duration:500});
+    an(c.querySelector('.mn'),[{opacity:0},{opacity:1,transform:'translateY(-20px)'}],{duration:500,delay:300});
+    point(c);beep(600+i*90,.1);say(lines[i]);await w(2300);}
+  unpoint();
+  const full=mk('',`left:40px;top:292px;width:880px;text-align:center;font-size:36px;font-weight:900;color:#0e5f75`,'Hypertext Markup Language');pop(full);
+  say(`Put together: <b>HTML stands for Hypertext Markup Language</b>.`);await w(2400);
+  const tim=mk('',`left:150px;top:358px;width:660px;height:132px;border-radius:22px;background:linear-gradient(135deg,#fff8d6,#ffe9a8);border:3px solid #f2c200;display:flex;align-items:center;gap:20px;padding:0 24px;box-sizing:border-box`,
+    `<div style="font-size:70px">👨‍🔬</div><div><div style="font-size:42px;font-weight:900;color:#8a5a00">1990</div><div style="font-size:21px;font-weight:800;color:#1f2433">developed by the scientist <b>Tim Berners-Lee</b></div></div><div class="pc" style="font-size:60px;margin-left:auto">🖥️</div>`);
+  pop(tim);loop(tim.querySelector('.pc'),[{transform:'rotate(-4deg)'},{transform:'rotate(4deg)'}],500,{direction:'alternate'});
+  say(`HTML was developed in the year <b>1990</b> by the scientist <b>Tim Berners-Lee</b>. He also invented the World Wide Web!`);await w(3000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q1',q:'What do you know about HTML?',
+    keys:[['HTML',`The keyword is <b>HTML</b>. Write what it <b>stands for</b>, <b>who</b> made it and <b>when</b>.`]],
+    lines:['HTML stands for <b>Hypertext Markup Language</b>.','It was developed in the year <b>1990</b> by the scientist <b>Tim Berners-Lee</b>.'],
+    trick:'Memory trick: <b>H</b>ey <b>T</b>im, <b>M</b>ake <b>L</b>inks! Tim Berners-Lee, 1990.'});}},
+
+/* 2 */ {t:'The World Wide Web',run:async w=>{
+  const P=[[90,70],[300,40],[470,150],[120,290],[330,330],[520,380],[40,190]];
+  const L=[[0,1],[1,2],[0,6],[6,3],[3,4],[4,2],[4,5],[2,5],[1,4]];
+  const svg=mk('',`left:0;top:0;width:660px;height:520px`,`<svg width="660" height="520">${L.map(([a,b])=>`<line x1="${P[a][0]+40}" y1="${P[a][1]+34}" x2="${P[b][0]+40}" y2="${P[b][1]+34}" stroke="#22b8c9" stroke-width="4" stroke-dasharray="400" stroke-dashoffset="400"/>`).join('')}</svg>`);
+  const pages=P.map(([x,y],i)=>{const p=mk('',`left:${x}px;top:${y}px;width:80px;height:68px;border-radius:12px;background:#fff;border:3px solid #0e7490;box-shadow:0 4px 0 #9fdfe6;font-size:34px;display:flex;align-items:center;justify-content:center`,['🏠','🐱','⚽','🍕','🎮','🌍','📚'][i]);pop(p,i*90);return p;});
+  say(`HTML is used to make <b>web pages</b>. Millions of them! 📄`);await w(2000);
+  const lines=[...svg.querySelectorAll('line')];
+  lines.forEach((l,i)=>l.animate([{strokeDashoffset:400},{strokeDashoffset:0}],{duration:900,delay:i*150,fill:'forwards'}));
+  say(`Each page has <b>connections</b> to other pages, called <b>hyperlinks</b>. 🔗 All those links make a giant web: the <b>World Wide Web</b>!`);await w(3200);
+  const dot=mk('',`left:0;top:0;width:22px;height:22px;border-radius:50%;background:#ffd84d;box-shadow:0 0 12px #ffd84d`);
+  const path=[0,1,4,5];for(let k=0;k<path.length;k++){const [x,y]=P[path[k]];await an(dot,[{transform:`translate(${x+29}px,${y+23}px)`}],{duration:k?600:1});beep(700+k*80,.06);pages[path[k]].animate([{transform:'scale(1.25)'},{transform:'scale(1)'}],{duration:400});}
+  say(`Click a link and you jump from page to page, like a spider running along its web. 🕸️`);await w(2400);
+  const g=mk('',`left:690px;top:24px;width:250px;height:220px;border-radius:22px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center`,
+    `<div class="gl" style="font-size:78px;margin-top:8px">🌍</div><div style="font-size:34px;font-weight:900;color:#0e7490">W3C</div><div style="font-size:15px;font-weight:700;color:#4a5570;margin:2px 10px">sets the rules for the whole Web 📏</div>`);
+  pop(g);loop(g.querySelector('.gl'),[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],6000,{easing:'linear'});
+  say(`Who makes sure every web page follows the same rules? An organisation called the <b>W3C</b>: the World Wide Web Consortium.`);await w(2800);
+  wsCard('left:680px;top:262px;width:268px',{src:'Worksheet · Blank 1',q:'________ is an organization which sets international standards for the World Wide Web.',a:'✔ W3C'});
+  say(`That's a worksheet question! <b>W3C</b> is an organisation which sets <b>international standards</b> for the World Wide Web.`);await w(3200);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q2',q:'What\u2019s the use of HTML?',read:`What's the use of HTML?`,
+    keys:[['use',`<b>Use</b> means: what do we use HTML <b>for</b>?`]],
+    lines:['HTML is mainly used to create <b>web pages</b> that are displayed on the <b>World Wide Web</b>.','Each page contains a series of connections to other pages called <b>hyperlinks</b>.'],
+    trick:'Think of the spider: HTML makes the <b>pages</b> 📄, <b>hyperlinks</b> join them into the <b>web</b> 🕸️.'});}},
+
+/* 3 */ {t:'Three features of HTML',run:async w=>{
+  say(`HTML has some special <b>features</b>. That means things that make it what it is. Here are three to learn.`);await w(2200);
+  const P=[0,1,2].map(i=>mk('',`left:${13+i*317}px;top:10px;width:300px;height:300px;border-radius:22px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;overflow:hidden`));
+  const head=(p,t)=>mk('',`left:0;top:10px;width:300px;text-align:center;font-size:22px;font-weight:900;color:#0e5f75`,t,p);
+  /* 1 simple text file */
+  pop(P[0]);head(P[0],'1 · Simple text files');
+  const f=fileIcon(90,58,'page.html');P[0].appendChild(f);
+  say(`<b>One:</b> HTML documents are <b>simple text files</b>. Open one and it's just letters and symbols. No pictures inside!`);await w(1200);
+  await an(f,[{transform:'scale(1)'},{transform:'scale(.6) translateY(-50px)'}],{duration:500});
+  const n=editor(20,140,260,140,{title:'page.html - Notepad',menu:null,size:15,parent:P[0]});setCode(n,'<P>Just text!</P>\n<B>Hello</B>');pop(n.el);await w(1800);
+  /* 2 not case sensitive */
+  pop(P[1]);head(P[1],'2 · Not case sensitive');
+  const a=mk('',`left:30px;top:84px;width:240px;text-align:center`,C('<HTML>'),P[1]);a.firstChild.style.fontSize='36px';
+  const eq=mk('',`left:0;top:146px;width:300px;text-align:center;font-size:34px;font-weight:900;color:#18a058`,'= same! ✔',P[1]);
+  const b=mk('',`left:30px;top:200px;width:240px;text-align:center`,C('<html>'),P[1]);b.firstChild.style.fontSize='36px';
+  say(`<b>Two:</b> HTML is <b>not case sensitive</b>. Capital letters or small letters, the computer reads them the same.`);
+  loop(a,[{transform:'rotate(-3deg)'},{transform:'rotate(3deg)'}],500,{direction:'alternate'});loop(b,[{transform:'rotate(3deg)'},{transform:'rotate(-3deg)'}],500,{direction:'alternate'});
+  pop(eq,300);await w(2800);
+  /* 3 many tags */
+  pop(P[2]);head(P[2],'3 · Many tags');
+  say(`<b>Three:</b> HTML has <b>many tags</b> to make web pages: tags for headings, pictures, links and more. 🏷️`);
+  const T=['<H1>','<P>','<IMG>','<A>','<B>','<I>','<BR>','<TITLE>','<BODY>'];
+  T.forEach((t,i)=>{const e=mk('',`left:${22+(i%3)*90}px;top:${66+Math.floor(i/3)*74}px`,C(t),P[2]);e.firstChild.style.fontSize='22px';
+    an(e,[{transform:'translateY(-260px)',opacity:0},{transform:'translateY(0)',opacity:1}],{duration:600,delay:i*140,easing:'cubic-bezier(.3,1.5,.5,1)'});});
+  await w(3000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q3',q:'Write any three features of HTML 5?',
+    keys:[['three features',`<b>Three features</b>: write <b>three</b> things that are special about HTML.`]],
+    lines:['1. HTML documents are <b>simple text files</b>.','2. HTML is <b>not a case sensitive</b> language.','3. HTML has <b>many tags</b> to make web pages.'],
+    trick:'Three features: <b>Text</b>, <b>Case</b>, <b>Tags</b>. Picture a <b>text</b> file in a suit<b>case</b> covered in <b>tags</b>! 🧳'});}},
+
+/* 4 */ {t:'Where do we write HTML?',run:async w=>{
+  say(`To write HTML, you need a program to type it in. There are two kinds: <b>HTML editors</b> and <b>text editors</b>.`);await w(2600);
+  const h=mk('',`left:20px;top:20px;width:450px;height:250px;border-radius:22px;background:#fff;border:3px solid #6a45d8;box-shadow:0 5px 0 #ddd3fb;padding:12px 18px;box-sizing:border-box`,
+    `<div style="font-size:24px;font-weight:900;color:#6a45d8">🛠️ HTML editors</div><div style="font-size:17px;font-weight:700;color:#4a5570;margin:4px 0 10px">Special programs made for building web pages, with buttons and colours.</div>
+     <div style="font-size:21px;font-weight:800;line-height:1.7">🟪 Adobe Dreamweaver<br>🟦 UltraEdit<br>🟩 TextMate</div>`);pop(h);point(h);
+  say(`<b>HTML editors</b> are special programs made for web pages: <b>Adobe Dreamweaver</b>, <b>UltraEdit</b> and <b>TextMate</b>.`);await w(3000);
+  const t=mk('',`left:490px;top:20px;width:450px;height:250px;border-radius:22px;background:#fff;border:3px solid #18a058;box-shadow:0 5px 0 #bfe7d2;padding:12px 18px;box-sizing:border-box`,
+    `<div style="font-size:24px;font-weight:900;color:#18a058">📝 Text editors</div><div style="font-size:17px;font-weight:700;color:#4a5570;margin:4px 0 10px">Simple programs for typing plain text.</div>
+     <div style="font-size:21px;font-weight:800;line-height:1.7">🗒️ Notepad<br>🗒️ Notepad++<br>🗒️ WordPad</div>`);pop(t);point(t);
+  say(`<b>Text editors</b> are simple typing programs, like <b>Notepad</b> and <b>Notepad++</b>. We can create our HTML documents using Notepad!`);await w(3000);unpoint();
+  wsCard('left:120px;top:296px;width:720px',{src:'Worksheet · True/False 2',q:'You can create HTML documents with Notepad, WordPad, or any other text editor.',a:'✔ T (True)'});
+  say(`True or false? You can create HTML documents with Notepad, WordPad, or any other text editor. <b>True!</b> HTML is just text.`);await w(3400);
+  stage.innerHTML='';
+  const r=await sortGame(w,{bins:['🛠️ HTML editors','📝 Text editors'],colors:['#6a45d8','#18a058'],top:140,
+    items:[['Adobe Dreamweaver',0],['UltraEdit',0],['TextMate',0],['Notepad',1],['Notepad++',1]],
+    intro:`Your turn! Tap a program, then tap its group. Which are <b>HTML editors</b> and which are <b>text editors</b>?`});
+  say(r.ok===r.total?`Perfect sort! 🎉 <b>Dreamweaver, UltraEdit, TextMate</b> are HTML editors. <b>Notepad and Notepad++</b> are text editors.`
+    :`Nearly! <b>Dreamweaver, UltraEdit and TextMate</b> are HTML editors. <b>Notepad and Notepad++</b> are text editors.`);await w(3000);}},
+
+/* 5 */ {t:'HTML editors and text editors',run:async w=>{
+  await teachA(w,{src:'Worksheet · Q4',q:'Define HTML Editors and Text Editors.',
+    keys:[['Define',`<b>Define</b> means: say what they are and give examples.`],['HTML Editors',`First the <b>HTML editors</b>…`],['Text Editors',`then the <b>text editors</b>.`]],
+    lines:['We can create an HTML document using an <b>HTML editor</b> or any <b>text editor</b>.','HTML editors are <b>Adobe Dreamweaver</b>, <b>UltraEdit</b>, <b>TextMate</b>.','Text editors are <b>Notepad</b>, <b>Notepad++</b>.','We can create our HTML documents using <b>Notepad</b>.'],
+    trick:'Fancy editors have fancy names (<b>Dream</b>weaver, <b>Ultra</b>Edit, Text<b>Mate</b>). Plain text editors have plain names: <b>Notepad</b>! 🗒️'});}},
+
+/* 6 */ {t:'Make your first web page!',run:async w=>{
+  say(`Let's make a real web page! First, open <b>Notepad</b> and type the HTML. Watch the code appear…`);
+  const E=editor(13,10,500,330,{title:'Untitled - Notepad',size:17});pop(E.el);
+  await typeCode(w,E,PAGE,{speed:22});await w(400);
+  say(`Now we must <b>save</b> it. The name must end in <b>.html</b> so the computer knows it's a web page. Tap <b>Save</b>!`);
+  let saved=false;const sb=btn('ex-btn green','left:120px;top:356px;width:290px','💾 Save as index.html',()=>{saved=true;});pop(sb);point(sb);
+  window.AUTOPLAY=()=>{saved=true;};await w.until(()=>saved);window.AUTOPLAY=null;sb.remove();unpoint();
+  const dlg=mk('',`left:110px;top:120px;width:320px;height:150px;border-radius:14px;background:#f4f6fa;border:2px solid #9aa7bd;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:12px 16px;box-sizing:border-box;font-size:16px;font-weight:700;z-index:30`,
+    `<div style="font-weight:900;margin-bottom:8px">💾 Save As</div>File name: <span style="background:#fff;border:1px solid #9aa7bd;padding:2px 8px;border-radius:5px;font-family:monospace">index.html</span><br><br>Save as type: All files`);
+  pop(dlg);beep(700,.08);await w(1500);dlg.remove();
+  E.bar.querySelector('.tt').textContent='index.html - Notepad';
+  const ic=fileIcon(150,360,'index.html','🌐');pop(ic);
+  say(`Saved! Here's our file, <b>index.html</b>. To <b>view</b> it, just <b>double-click</b> it. Try it!`);
+  let open=false;const ob=btn('ex-btn','left:300px;top:390px;width:240px','🖱️ Double-click it',()=>{open=true;});pop(ob);point(ob);
+  window.AUTOPLAY=()=>{open=true;};await w.until(()=>open);window.AUTOPLAY=null;ob.remove();unpoint();
+  ic.animate([{transform:'scale(1)'},{transform:'scale(.85)'},{transform:'scale(1)'},{transform:'scale(.85)'},{transform:'scale(1)'}],{duration:500});beep(800,.05);beep(800,.05,'triangle',.12,.15);
+  const B=browser(530,10,417,330,{url:'file:///C:/Users/Student/index.html',title:'My page'});
+  an(B.el,[{transform:'scale(.1)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:600});
+  B.page.innerHTML=`<h1>Hello, world!</h1><p>I made this web page myself.</p>`;
+  yay();confetti(70);
+  say(`Ta-da! 🎉 The browser opens and draws your page. The <b>TITLE</b> shows on the tab, and the <b>BODY</b> is the page itself!`);await w(3000);
+  const t=B.bar.querySelector('.cw-tab');t.animate([{background:'#fff'},{background:'#ffe680'},{background:'#fff'}],{duration:1200,iterations:2});point(t);
+  say(`See the tab? It says <b>My page</b>, from the title tag. You've just made a real web page!`);await w(2600);unpoint();}},
+
+/* 7 */ {t:'Opening it in a browser',run:async w=>{
+  say(`There's a second way to open an HTML file: start the browser first, then open the file inside it.`);
+  const desk=mk('',`left:13px;top:8px;width:600px;height:420px;border-radius:16px;background:linear-gradient(160deg,#2c66cf,#22b8c9);overflow:hidden`);pop(desk);
+  const ic=fileIcon(14,16,'index.html','🌐');desk.appendChild(ic);
+  const bar=mk('',`left:0;top:372px;width:600px;height:48px;background:rgba(20,24,38,.82);display:flex;align-items:center;justify-content:center;gap:16px;font-size:30px`,`<span>🪟</span><span>📁</span><span class="edge" style="display:inline-block">🌀</span><span>🎵</span>`,desk);
+  const ed=bar.querySelector('.edge');
+  await w(2200);
+  say(`<b>Step 1:</b> click the <b>Microsoft Edge</b> icon on the <b>desktop</b> or the <b>taskbar</b> at the bottom.`);
+  loop(ed,[{transform:'scale(1)'},{transform:'scale(1.35)'}],400,{direction:'alternate'});point(ed);await w(2600);unpoint();
+  const B=browser(70,40,460,300,{url:'edge://newtab',title:'New tab',parent:desk});pop(B.el);beep(600,.08);
+  B.page.innerHTML='<div style="text-align:center;margin-top:60px;font-family:system-ui;color:#888;font-size:18px">Microsoft Edge</div>';
+  await w(800);
+  say(`<b>Step 2:</b> press <b>Control + O</b> together. O is for <b>Open</b>!`);
+  const K=['Ctrl','O'].map((k,i)=>{const e=mk('',`left:${650+i*150}px;top:120px;width:${i?96:130}px;height:96px;border-radius:16px;background:#fff;border:3px solid #9aa7bd;box-shadow:0 8px 0 #9aa7bd;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;color:#1f2433`,k);pop(e,i*150);return e;});
+  mk('',`left:781px;top:136px;font-size:44px;font-weight:900;color:#0e7490`,'+');
+  await w(1400);
+  for(const e of K)an(e,[{transform:'translateY(0)',boxShadow:'0 8px 0 #9aa7bd'},{transform:'translateY(7px)',boxShadow:'0 1px 0 #9aa7bd'}],{duration:200});beep(400,.08);
+  await w(800);
+  const dlg=mk('',`left:110px;top:90px;width:300px;height:150px;border-radius:12px;background:#f4f6fa;border:2px solid #9aa7bd;box-shadow:0 10px 30px rgba(0,0,0,.3);padding:10px 14px;box-sizing:border-box;font-size:16px;font-weight:700;z-index:5`,
+    `<div style="font-weight:900;margin-bottom:6px">📂 Open</div><div class="row" style="padding:4px 8px;border-radius:6px">🌐 index.html</div><div style="padding:4px 8px;color:#888">📄 notes.txt</div>`,desk);pop(dlg);
+  await w(900);const row=dlg.querySelector('.row');row.style.background='#cfe6ff';beep(700,.06);
+  say(`<b>Step 3:</b> choose your file and open it. There's our page!`);await w(1500);dlg.remove();
+  K.forEach(e=>an(e,[{transform:'translateY(0)',boxShadow:'0 8px 0 #9aa7bd'}],{duration:200}));
+  B.go('file:///C:/Users/Student/index.html','My page');B.page.innerHTML=`<h1>Hello, world!</h1><p>I made this web page myself.</p>`;yay();
+  await w(2400);
+  stage.innerHTML='';
+  const br=[['🌀','Edge'],['🟡','Chrome'],['🦊','Firefox'],['🧭','Safari']];
+  br.forEach(([e,n],i)=>{const c=mk('',`left:${40+i*224}px;top:14px;width:208px;height:170px;border-radius:18px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center`,
+    `<div style="font-size:50px;margin-top:6px">${e}</div><div style="font-size:21px;font-weight:900">${n}</div><div style="font-family:Times New Roman,serif;font-size:19px;font-weight:700;margin-top:6px">Hello, world! ✅</div>`);pop(c,i*200);});
+  say(`And it doesn't matter which browser you use. Edge, Chrome, Firefox, Safari: they all show the same HTML page!`);await w(3000);
+  wsCard('left:120px;top:214px;width:720px',{src:'Worksheet · Blank 3',q:'________ documents can be viewed on any type of web browser.',a:'✔ HTML'});
+  say(`Worksheet: <b>HTML</b> documents can be viewed on <b>any type of web browser</b>.`);await w(3000);}},
+
+/* 8 */ {t:'How to view an HTML document',run:async w=>{
+  await teachA(w,{src:'Worksheet · Q5',q:'How can we view the HTML document?',
+    keys:[['view',`<b>View</b> means: how do we <b>open</b> it to see the page?`]],
+    lines:['After creating and saving an HTML document, we can view it by <b>double clicking</b> on the HTML document.',
+      'We can also open the HTML file by opening <b>Microsoft Edge</b> by clicking on its icon on the <b>desktop</b> or the <b>taskbar</b>,',
+      'and then pressing <b>Control + O</b> keys.'],
+    trick:'Two ways to view: <b>double-click</b> the file 🖱️🖱️, or open <b>Edge</b> and press <b>Ctrl + O</b> (O for <b>Open</b>).'});}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Blank 1',q:'________ is an organization which sets international standards for the World Wide Web.',o:['W3C','CSS','URL'],a:0,cols:3,
+      why:'The <b>W3C</b> (World Wide Web Consortium) sets the international standards for the Web.',
+      whyNot:{1:'CSS is a language for styling web pages, not an organisation.',2:'a URL is the address of a web page or file.'}},
+    {src:'Worksheet · Blank 3',q:'________ documents can be viewed on any type of web browser.',o:['HTML','Python','GIMP'],a:0,cols:3,
+      why:'Every web browser can show <b>HTML</b> documents.',whyNot:{1:'Python is a programming language; its programs run in IDLE, not in a browser.',2:'GIMP is a drawing and photo program.'}},
+    {src:'Worksheet · True/False 2',q:'You can create HTML documents with Notepad, WordPad, or any other text editor.',o:['T (True)','F (False)'],a:0,
+      why:'HTML documents are simple text files, so <b>any text editor</b> can make them.',whyNot:{1:'HTML is just text, so a text editor like Notepad is all you need.'}},
+    {src:'Worksheet · Q1',q:'What do you know about HTML?',model:'HTML stands for Hypertext Markup Language. It was developed in the year 1990 by the scientist Tim Berners-Lee.'},
+    {src:'Worksheet · Q2',q:'What’s the use of HTML?',model:'HTML is mainly used to create web pages that are displayed on the World Wide Web. Each page contains a series of connections to other pages called hyperlinks.'},
+    {src:'Worksheet · Q3',q:'Write any three features of HTML 5?',model:'1. HTML documents are simple text files.<br>2. HTML is not a case sensitive language.<br>3. HTML has many tags to make web pages.'},
+    {src:'Worksheet · Q4',q:'Define HTML Editors and Text Editors.',model:'We can create an HTML document using an HTML editor or any text editor. HTML editors are Adobe Dreamweaver, UltraEdit, TextMate. Text editors are Notepad, Notepad++. We can create our HTML documents using Notepad.'},
+    {src:'Worksheet · Q5',q:'How can we view the HTML document?',model:'After creating and saving an HTML document we can view it by double clicking on the HTML document. We can also open the HTML file by opening Microsoft Edge by clicking on its icon on the desktop or the taskbar and then pressing Control + O keys.'},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'What is HTML?',next:`<b>HTML tags</b> and how a web page is built, box inside box!`,badges:[
+    ['🔤','<b>HTML</b> = Hypertext Markup Language','HTML stands for Hypertext Markup Language.'],
+    ['👨‍🔬','<b>1990</b> · Tim Berners-Lee','Developed in 1990 by the scientist Tim Berners-Lee.'],
+    ['🕸️','Web pages joined by <b>hyperlinks</b>','HTML makes web pages, joined by hyperlinks into the World Wide Web.'],
+    ['🌍','<b>W3C</b> sets the Web\'s standards','The W3C sets international standards for the Web.'],
+    ['📄','Text files · not case sensitive · many tags','Three features: simple text files, not case sensitive, many tags.'],
+    ['🛠️','Dreamweaver, UltraEdit, TextMate · Notepad','HTML editors and text editors. Notepad works fine!'],
+    ['🖱️','View it: <b>double-click</b> or <b>Ctrl + O</b>','Double-click the file, or open Edge and press Control O.'],
+    ['🌐','Any browser shows HTML','HTML documents can be viewed on any type of web browser.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>GIMP painting tools</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script src="gimp.js"></script>
+<script>
+/* Computer Lesson 9 · Drawing in GIMP · Worksheet Q20–Q24, MCQ 10, MCQ 12, Blank 11, Blank 12, True/False 10, True/False 11.
+   Every tool is shown working on a real canvas (gimp.js); the student paints a picture tool by tool. */
+/* a side card on the right of a GIMP window */
+const side=(x,y,wd,html,col='#0e7490')=>mk('',`left:${x}px;top:${y}px;width:${wd}px;border-radius:18px;background:#fff;border:3px solid ${col};box-shadow:0 4px 0 ${col}55;padding:10px 14px;box-sizing:border-box;font-size:18px;font-weight:700;line-height:1.35;color:#1f2433`,html);
+/* green grass: three soft brush strokes across the bottom of the house picture */
+const grass=async(w,G,S,ms)=>{const g=S.ground;for(let y=g+14,d=0;y<G.H+12;y+=23,d=1-d)await G.stroke(w,d?gpWave(G.W+10,y,-10,4,5):gpWave(-10,y,G.W+10,4,5),{size:44,ms});};
+const chipL=(x,y,wd,html,bg='#e7f7f9',col='#0e7490')=>mk('',`left:${x}px;top:${y}px;width:${wd}px;height:46px;border-radius:14px;background:${bg};border:3px solid ${col};display:flex;align-items:center;gap:10px;padding:0 12px;box-sizing:border-box;font-size:18px;font-weight:800;color:#1f2433;white-space:nowrap;overflow:hidden`,html);
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c09', num:9, part:'Drawing in GIMP', emoji:'🖌️', title:'GIMP painting tools',
+  intro:`Hi, it's <b>Chip</b> 🖱️ Today we open <b>GIMP</b> and paint with its tools. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'Meet GIMP',run:async w=>{
+  const G=gimp(150,8,660,384,{tools:['brush','pencil','airbrush','ink','bucket','gradient','eraser','shear'],tw:100,cols:2});pop(G.el);
+  const S=G.pic('house');
+  say(`Meet <b>GIMP</b>! 🎨 It's a free program on the computer for drawing, painting and changing pictures.`);
+  await w(800);
+  await G.use(w,'bucket');G.color('#ffd84d');await G.fill(w,...S.wall,{ms:600});G.color('#e04848');await G.fill(w,...S.roof,{ms:600});unpoint();
+  await w(1200);
+  say(`GIMP stands for <b>GNU Image Manipulation Program</b>. On the left is its <b>toolbox</b>, full of painting tools. Watch them work!`);
+  await G.use(w,'gradient');await G.gradient(w,[0,0],[0,S.ground],{c1:'#4fa8e8',c2:'#e8f6ff',seed:S.sky,ms:1000});
+  await G.use(w,'brush');G.color('#2e9d4a');await grass(w,G,S,500);
+  await G.use(w,'bucket');G.color('#ff9f1a');await G.fill(w,...S.sun,{ms:400});
+  await G.use(w,'airbrush');await G.stroke(w,gpSpiral(G.W*.6,G.H*.22,30,3,110),{size:44,color:"#ffffff",ms:1100,flow:30});unpoint();
+  await w(1000);
+  say(`See? GIMP has a <b>large variety of painting tools</b>, so we can paint our drawings <b>beautifully</b>.`);await w(2800);
+  const C=[['✏️','Draw'],['🎨','Paint'],['🪄','Modify']].map(([e,t],i)=>{const c=mk('',`left:${150+i*230}px;top:408px;width:210px;height:96px;border-radius:20px;background:linear-gradient(135deg,#0e7490,#22b8c9);color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;font-size:30px;font-weight:900;box-shadow:0 5px 0 #0b5566`,`<span style="font-size:40px">${e}</span>${t}`);pop(c,i*250);return c;});
+  say(`Its tools can <b>draw</b>, <b>paint</b> and <b>modify</b> images. Modify means <b>change</b>: watch the picture turn old-fashioned!`);
+  await w(1400);await G.filter(w,'sepia',{ms:1000});C[2].animate([{transform:'scale(1)'},{transform:'scale(1.12)'},{transform:'scale(1)'}],{duration:600});
+  await w(2000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q20',q:'Why do we use GIMP for drawing?',
+    keys:[['Why',`<b>Why</b> means: give the <b>reason</b>. What makes GIMP good for drawing?`]],
+    lines:['There are a large <b>variety of painting tools</b> in GIMP which can be used to paint our drawings <b>beautifully</b>.','These tools can also be used to <b>draw</b>, <b>paint</b> and <b>modify</b> images.'],
+    trick:'GIMP has a giant paint box 🎨: lots of tools to <b>D</b>raw, <b>P</b>aint and <b>M</b>odify. <b>D-P-M</b>: <b>D</b>raw <b>P</b>retty <b>M</b>asterpieces!'});}},
+
+/* 1 */ {t:'Five common drawing tools',run:async w=>{
+  const G=gimp(13,8,600,420,{tools:['bucket','gradient','brush','pencil','eraser'],tw:150});pop(G.el);const S=G.pic('house');
+  const N=[['🪣','Bucket fill tool'],['🌈','Gradient tool'],['🖌️','Paintbrush tool'],['✏️','Pencil tool'],['🧽','Eraser tool']];
+  mk('',`left:630px;top:14px;width:318px;font-size:22px;font-weight:900;color:#0e5f75`,'Common drawing tools');
+  const L=N.map(([e,t],i)=>{const c=chipL(630,56+i*60,318,`<span style="font-size:24px">${e}</span>${i+1}. ${t}`);c.style.opacity=0;return c;});
+  const on=i=>{an(L[i],[{opacity:0,transform:'translateX(30px)'},{opacity:1,transform:'none'}],{duration:400});beep(600+i*80,.06);};
+  say(`GIMP has five <b>common tools</b> for drawing. Let's colour this house with them, one by one.`);await w(2400);
+  on(0);await G.use(w,'bucket','fills a closed area');G.color('#ffd84d');
+  say(`<b>One: the bucket fill tool.</b> 🪣 Click inside a shape, and it <b>fills colour in that area</b>, right up to the lines.`);
+  await G.fill(w,...S.wall);G.color('#e04848');await G.fill(w,...S.roof);G.color('#8a5a2b');await G.fill(w,...S.door);await w(1200);
+  on(3);await G.use(w,'pencil','hard edges');G.color('#1f2433');
+  say(`<b>Four: the pencil tool.</b> ✏️ It draws <b>freehand lines</b> with sharp, hard edges. Some birds in the sky…`);
+  for(const [bx,by] of [[G.W*.66,G.H*.42],[G.W*.78,G.H*.5],[G.W*.6,G.H*.6]])await G.stroke(w,[...gpArc(bx-9,by,9,200,340,10),...gpArc(bx+9,by,9,200,340,10)],{size:3,ms:400});
+  await w(1200);
+  on(4);await G.use(w,'eraser','removes colour');
+  say(`Oops, one bird is too low! <b>Five: the eraser tool.</b> It <b>removes</b> colour, so the mistake disappears.`);
+  await G.stroke(w,gpZig(G.W*.6-22,G.H*.6-14,44,16,3),{size:22,ms:900});await w(1200);
+  on(1);await G.use(w,'gradient','blends two colours');
+  say(`<b>Two: the gradient tool.</b> It fills an area with a smooth <b>mix of two colours</b>. A lovely sky!`);
+  await G.gradient(w,[0,0],[0,S.ground],{c1:'#2c66cf',c2:'#d8f1ff',seed:S.sky});await w(1200);
+  on(2);await G.use(w,'brush','soft, fuzzy edges');G.color('#2e9d4a');
+  say(`<b>Three: the paintbrush tool.</b> 🖌️ It paints soft, fuzzy strokes. Some green grass!`);
+  await grass(w,G,S,700);unpoint();await w(1600);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q21',q:'Enlist the names of some common tools used for drawings in GIMP?',
+    keys:[['Enlist',`<b>Enlist</b> means: write a <b>list</b>. Name the tools, one per line.`]],
+    lines:['1. The <b>bucket fill</b> tool (fills colour in an area)','2. <b>Gradient</b> tool','3. <b>Paintbrush</b> tool','4. <b>Pencil</b> tool','5. <b>Eraser</b> tool'].map(t=>({t,wait:1300})),
+    trick:'<b>B</b>ig <b>G</b>iraffes <b>P</b>aint <b>P</b>retty <b>E</b>lephants 🦒: <b>B</b>ucket fill, <b>G</b>radient, <b>P</b>aintbrush, <b>P</b>encil, <b>E</b>raser.'});}},
+
+/* 2 */ {t:'The paintbrush',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['brush','pencil','eraser'],tw:150});pop(G.el);G.pic('blank');
+  say(`Let's try the <b>paintbrush tool</b>. 🖌️ You move the mouse however you like, and it paints. That's called <b>freehand</b> drawing.`);
+  await w(600);await G.use(w,'brush','brush: soft round');G.color('#e04848');unpoint();
+  await G.stroke(w,[[30,60],[90,30],[150,80],[210,40],[270,90],[330,50],[G.W-30,70]],{size:22,ms:1600});
+  await w(1400);
+  side(630,8,318,`<div style="font-size:20px;font-weight:900;color:#0e5f75">✋ Freehand</div>No ruler, no shapes: you draw any line you like, just like with a real brush.`);
+  await w(2000);
+  const P=side(630,150,318,`<div style="font-size:20px;font-weight:900;color:#0e5f75;margin-bottom:6px">🖌️ Brush types</div>`);P.style.height='126px';
+  const B=[['●','soft round','soft'],['★','star','star'],['■','square','square']].map(([e,t],i)=>{const b=mk('',`left:${12+i*98}px;top:44px;width:88px;height:66px;border-radius:12px;background:#f2fbfc;border:3px solid #9fdfe6;text-align:center;font-size:30px;line-height:1.1;color:#1f2433`,`${e}<div style="font-size:13px;font-weight:800">${t}</div>`,P);return b;});
+  pop(P);
+  say(`GIMP has lots of <b>brush types</b>. Every stroke is painted using the brush type that's <b>selected</b> right now. Watch!`);await w(2400);
+  const cols=['#e04848','#2c66cf','#18a058'];
+  for(let i=0;i<3;i++){B.forEach((b,k)=>{b.style.borderColor=k===i?'#0e7490':'#9fdfe6';b.style.background=k===i?'#bdeff5':'#f2fbfc';});point(B[i]);beep(700,.05);
+    G.select('brush','brush: '+['soft round','star','square'][i]);G.color(cols[i]);
+    say([`A <b>soft round</b> brush: a smooth stroke with <b>fuzzy edges</b>.`,`Now the <b>star</b> brush: the stroke is made of <b>stars</b>!`,`And the <b>square</b> brush: square blocks of paint.`][i]);
+    await G.stroke(w,gpWave(30,G.H*(.42+i*.19),G.W-30,10,1.5),{size:[26,26,20][i],shape:['soft','star','square'][i],spacing:[0,1.1,1.2][i],ms:1300});await w(1500);}
+  unpoint();
+  wsCard('left:630px;top:300px;width:318px',{src:'Worksheet · True/False 10',q:'The Paintbrush tool is used to do freehand drawings.',a:'✔ T (True)'});
+  say(`True or false? The paintbrush tool is used to do <b>freehand drawings</b>. <b>True!</b>`);await w(3000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q22',q:'Why do we use the paintbrush tool in GIMP?',
+    keys:[['paintbrush tool',`The keyword is <b>paintbrush</b>. Write how it paints: its <b>strokes</b> and its <b>brush type</b>.`]],
+    lines:['The paintbrush tool allows us to paint using <b>fuzzy brush strokes</b>.','All strokes are rendered using the currently selected <b>brush type</b>.'],
+    trick:'Paint<b>brush</b> = fuzzy, like the <b>bristles</b> of a real brush 🖌️. <b>Rendered</b> means drawn on the screen.'});}},
+
+/* 3 */ {t:'The pencil: hard edges',run:async w=>{
+  const G=gimp(13,8,570,330,{tools:['brush','pencil'],tw:150});pop(G.el);G.pic('blank');
+  say(`Now the <b>pencil tool</b>. ✏️ It's a lot like the paintbrush. Let's draw the same line with both and compare.`);await w(800);
+  await G.use(w,'brush','soft round');G.color('#1f2433');await G.stroke(w,[[20,30],[G.W-20,90]],{size:18,ms:1000});
+  await G.use(w,'pencil','hard edges');await G.stroke(w,[[20,120],[G.W-20,180]],{size:18,ms:1000});unpoint();
+  await w(1600);
+  const xs=Math.round(G.W*.5),yb=Math.round(30+60*(xs-20)/(G.W-40)),yp=Math.round(120+60*(xs-20)/(G.W-40));
+  say(`They look alike from far away. Let's use a <b>magnifying glass</b> 🔍 and zoom right in to the edges!`);await w(1600);
+  const Z1=G.zoom(xs-14,yb-19,28,18,{x:600,y:8,scale:11,label:'🖌️ Paintbrush edge'});pop(Z1);await w(600);
+  say(`The paintbrush edge is <b>fuzzy</b>: the colour fades out softly into the white.`);await w(2600);
+  const Z2=G.zoom(xs-14,yp-19,28,18,{x:600,y:262,scale:11,label:'✏️ Pencil edge'});pop(Z2);await w(600);
+  say(`The pencil edge is <b>hard</b>: each square is fully coloured or not at all, like little steps. No fuzzy edges!`);await w(3000);
+  const a=chipL(13,352,570,'<span style="font-size:24px">🖌️</span> Paintbrush: soft, <b>fuzzy</b> edges','#fff8d6','#f2c200'),b=chipL(13,430,570,'<span style="font-size:24px">✏️</span> Pencil: <b>hard</b> edges, no fuzz','#e7f7f9','#0e7490');
+  a.style.height=b.style.height='66px';a.style.fontSize=b.style.fontSize='22px';pop(a);pop(b,250);
+  say(`So the pencil draws <b>freehand lines with hard edges</b>. Pencil for sharp outlines, paintbrush for soft painting.`);await w(3000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q23',q:'What is the use of the pencil tool in drawing?',
+    keys:[['pencil tool',`The keyword is <b>pencil</b>. Write what it draws, and how it is <b>different</b> from the paintbrush.`]],
+    lines:['The pencil tool is used to draw <b>free-hand lines</b> having <b>hard edges</b>.','It is similar to the paintbrush tool but the pencil tool does <b>not</b> produce <b>fuzzy edges</b>.'],
+    trick:'A pencil is <b>sharp</b> ✏️ so its lines have <b>hard</b> edges. A brush is <b>soft</b>, so its edges are fuzzy.'});}},
+
+/* 4 */ {t:'The eraser',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['brush','pencil','eraser','rect'],tw:192});pop(G.el);G.pic('blank');
+  say(`Every artist makes mistakes. That's why the <b>eraser tool</b> is so important! Let's paint a sunny picture first.`);await w(600);
+  await G.use(w,'brush');G.color('#ffb000');unpoint();const cx=G.W*.25,cy=G.H*.35;
+  await G.stroke(w,gpSpiral(cx,cy,34,4,90),{size:24,ms:1000});
+  for(let k=0;k<8;k++){const a=k*Math.PI/4;await G.stroke(w,[[cx+Math.cos(a)*50,cy+Math.sin(a)*50],[cx+Math.cos(a)*72,cy+Math.sin(a)*72]],{size:9,ms:120});}
+  G.color('#2c66cf');await G.stroke(w,gpWave(G.W*.5,G.H*.25,G.W-30,8,1.5),{size:12,ms:700});
+  await w(800);
+  await G.use(w,'pencil');G.color('#1f2433');unpoint();
+  say(`Oh no, a scribble! ✏️ Let's get rid of it.`);
+  const zz=[[G.W*.55,G.H*.62],[G.W*.62,G.H*.8],[G.W*.68,G.H*.6],[G.W*.75,G.H*.82],[G.W*.82,G.H*.62],[G.W*.88,G.H*.78]];
+  await G.stroke(w,zz,{size:5,ms:700});await w(1400);
+  await G.use(w,'eraser','removes colour');
+  say(`The <b>eraser tool</b> removes <b>areas of colour</b> from the image. Rub it over the scribble…`);
+  await G.stroke(w,gpZig(G.W*.5,G.H*.55,G.W*.44,G.H*.33,6),{size:40,ms:1800});unpoint();
+  pop(side(630,8,318,`<div style="font-size:20px;font-weight:900;color:#0e5f75">🧽 Eraser</div>Removes <b>areas of colour</b> from an image.`));await w(1600);
+  say(`Gone! Now the clever part: the eraser can also clear a <b>selected part</b> of an image. Let's select the blue wave.`);
+  await G.use(w,'rect','select a part');unpoint();await G.rectSel(w,Math.round(G.W*.48),Math.round(G.H*.25-24),Math.round(G.W*.52-16),48);await w(1800);
+  await G.use(w,'eraser','erase the selection');
+  say(`Now erase the selection, and everything inside it is removed at once. 🧽`);await G.eraseSel(w);G.noSel();unpoint();
+  pop(side(630,120,318,`<div style="font-size:20px;font-weight:900;color:#0e5f75">⬚ …or a selected part</div>Select a part first, and the eraser clears just that part.`));await w(1800);
+  wsCard('left:630px;top:262px;width:318px',{src:'Worksheet · Blank 12',q:'The ________ tool is used to remove areas of colour from an image.',a:'✔ Eraser'});
+  say(`Worksheet: the <b>Eraser</b> tool is used to remove areas of colour from an image.`);await w(3000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q24',q:'Is the Eraser tool important while drawing in GIMP?',
+    keys:[['important',`<b>Is it important?</b> Say <b>yes</b>, it's very important, and give the <b>reason</b>.`]],
+    lines:['The eraser tool is a <b>very important</b> tool for drawing','because it is used to <b>remove areas of colour</b> from an image or the <b>selected part</b> of an image.'],
+    trick:'Everyone makes mistakes 🙈 so the <b>eraser</b> is <b>very important</b>: it removes colour from the <b>image</b> or a <b>selected part</b>.'});}},
+
+/* 5 */ {t:'Bucket fill and gradient',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['bucket','gradient','brush'],tw:150});pop(G.el);const S=G.pic('house');
+  say(`The <b>bucket fill</b> tool 🪣 fills a closed area with colour. Click inside a shape and the paint spreads to the lines.`);await w(600);
+  await G.use(w,'bucket');unpoint();
+  for(const [k,c] of [['grass','#7cc464'],['wall','#ffd84d'],['roof','#e04848'],['door','#8a5a2b'],['window','#9fdfe6'],['sun','#ff9f1a']]){G.color(c);await G.fill(w,...S[k],{ms:500});}
+  await w(1400);
+  say(`Now the <b>gradient tool</b>. Pick two colours, drag a line, and it fills the area with a smooth <b>mix of the two</b>.`);
+  G.color('#ff7a59','#ffe680');await w(800);
+  await G.use(w,'gradient','orange → yellow');unpoint();
+  await G.gradient(w,[0,4],[0,S.ground-4],{seed:S.sky,c1:'#ff7a59',c2:'#ffe680',ms:1800});
+  const st=mk('',`left:630px;top:12px;width:318px;height:58px;border-radius:14px;background:linear-gradient(90deg,#ff7a59,#ffe680);border:3px solid #f2c200`,'');pop(st);
+  mk('',`left:630px;top:74px;width:318px;display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:#4a5570`,'<span>colour 1</span><span>mixed</span><span>colour 2</span>');
+  say(`A sunset sky! Orange at the top, yellow at the bottom, and every shade in between.`);await w(2400);
+  wsCard('left:630px;top:104px;width:318px',{src:'Worksheet · Blank 11',q:'The ________ tool fills a mix of two colours in an area.',a:'✔ Gradient'});
+  say(`Worksheet: the <b>Gradient</b> tool fills a mix of two colours in an area.`);await w(3000);
+  wsCard('left:630px;top:262px;width:318px',{src:'Worksheet · True/False 11',q:'The Gradient tool is used to darken the image.',a:'✘ F (False)'});
+  say(`True or false? The gradient tool is used to <b>darken</b> the image. <b>False!</b> It <b>mixes two colours</b>. Look: our sky is bright!`);await w(3600);
+  say(`Making a picture darker is the job of the <b>Burn</b> tool. You'll meet it in the next lesson. 🔥`);await w(2800);}},
+
+/* 6 */ {t:'Airbrush and ink',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['brush','airbrush','ink'],tw:150});pop(G.el);G.pic('blank');
+  say(`Two more painting tools. First the <b>airbrush</b> 💨: it <b>sprays</b> paint, like a spray can.`);await w(400);
+  await G.use(w,'airbrush','spray');unpoint();
+  await G.stroke(w,gpWave(24,G.H*.18,G.W-24,8,1),{size:40,color:'#6a45d8',ms:900});
+  await w(1200);
+  say(`Move it slowly and more paint builds up. Here's a fluffy pink cloud!`);
+  await G.stroke(w,gpSpiral(G.W*.5,G.H*.45,40,4,120),{size:40,color:'#ff5fa2',ms:2000,flow:22});await w(1600);
+  const pen=side(630,8,318,`<div style="display:flex;align-items:center;gap:12px"><span class="pn" style="font-size:54px;display:inline-block">🖋️</span><div><div style="font-size:20px;font-weight:900;color:#0e5f75">Calligraphic ink pen</div>A flat nib makes <b>thick</b> and <b>thin</b> lines.</div></div>`);pop(pen);
+  loop(pen.querySelector('.pn'),[{transform:'rotate(-8deg)'},{transform:'rotate(8deg)'}],600,{direction:'alternate'});
+  say(`Next the <b>ink tool</b>. 🖋️ It works like a <b>calligraphic ink pen</b>, the flat pen used for beautiful handwriting.`);await w(2600);
+  await G.use(w,'ink','calligraphy pen');unpoint();
+  say(`Watch the line: going one way it's <b>thick</b>, going the other way it's <b>thin</b>, just like a real calligraphy pen.`);
+  await G.stroke(w,gpArc(G.W*.2,G.H*.78,34,-90,270,70),{size:18,color:'#1f2433',ms:1300});
+  await G.stroke(w,gpWave(G.W*.36,G.H*.78,G.W-24,26,1.5),{size:18,color:'#1f2433',ms:1400});await w(1800);
+  wsCard('left:630px;top:150px;width:318px',{src:'Worksheet · MCQ 12',q:'Which of the following is similar to a calligraphic ink pen?<br>(a) Smudge (b) Airbrush (c) Ink tool',a:'✔ (c) Ink tool'});
+  say(`Worksheet: which is similar to a calligraphic ink pen? <b>The ink tool!</b> The airbrush sprays, and smudge smears.`);await w(3400);
+  const t=chipL(630,350,318,'<span style="font-size:24px">🖋️</span><span><b>Ink</b> = <b>I</b>nk pen, nice <b>I</b>talic letters</span>','#fff8d6','#f2c200');t.style.height='64px';t.style.whiteSpace='normal';pop(t);
+  say(`Memory trick: <b>Ink</b> tool, <b>ink</b> pen. Same word!`);await w(2400);}},
+
+/* 7 */ {t:'Painting tool or not?',run:async w=>{
+  const G=gimp(13,8,600,410,{tools:['bucket','airbrush','shear'],tw:150});pop(G.el);const S=G.pic('house');
+  say(`<b>Bucket fill</b> and <b>airbrush</b> are both <b>painting tools</b>: they put colour on the picture.`);
+  await G.use(w,'bucket');G.color('#ffd84d');await G.fill(w,...S.wall,{ms:500});G.color('#e04848');await G.fill(w,...S.roof,{ms:500});
+  await G.use(w,'airbrush');await G.stroke(w,gpWave(0,S.ground+30,G.W,10,3),{size:46,color:'#2e9d4a',ms:1000,flow:30});unpoint();await w(1600);
+  say(`But what does the <b>shear tool</b> do? Let's try it on our picture…`);await w(800);
+  await G.use(w,'shear','transform tool');unpoint();await G.shear(w,.35,{ms:1600});
+  say(`Whoa! The whole picture <b>slants</b> sideways. 😮 Shear adds <b>no paint</b> at all. It changes the picture's <b>shape</b>.`);await w(3000);
+  const s=side(630,12,318,`<div style="font-size:20px;font-weight:900;color:#0e5f75">🔧 Shear = a transform tool</div>It slants (tilts) the picture, like pushing the top of a pack of cards. It is <b>not</b> a painting tool.`);pop(s);
+  await w(2600);
+  wsCard('left:630px;top:186px;width:318px',{src:'Worksheet · MCQ 10',q:'Which of the following is not a Painting Tool?<br>(a) Bucket fill (b) Airbrush (c) Shear',a:'✔ (c) Shear'});
+  say(`Worksheet: which is <b>not</b> a painting tool? <b>Shear!</b> Bucket fill and airbrush both paint.`);await w(3000);
+  stage.innerHTML='';
+  const r=await sortGame(w,{bins:['🎨 Painting tools','🔧 Not painting tools'],colors:['#18a058','#e06a1b'],top:170,
+    items:[['🪣 Bucket fill',0],['💨 Airbrush',0],['🖌️ Paintbrush',0],['✏️ Pencil',0],['🖋️ Ink',0],['▱ Shear',1],['🔄 Rotate',1],['↔️ Scale',1]],
+    intro:`Your turn! Tap a tool, then tap its group. Does it <b>paint</b> colour, or does it <b>change the shape</b> of the picture?`});
+  say(r.ok===r.total?`Perfect! 🎉 <b>Shear</b>, rotate and scale are <b>transform</b> tools: they change the shape, they don't paint.`
+    :`Nearly! <b>Shear</b>, rotate and scale are <b>transform</b> tools. Bucket fill, airbrush, paintbrush, pencil and ink all paint.`);await w(3200);}},
+
+/* 8 */ {t:'Paint your own picture!',run:async w=>{
+  const G=gimp(13,8,700,504,{tools:['bucket','gradient','brush','airbrush','pencil','ink','eraser'],tw:150});pop(G.el);const S=G.pic('house');
+  const steps=[['🪣','Fill wall and roof'],['🌈','Gradient sky'],['🖌️','Paint the grass'],['💨','Spray a cloud'],['✏️','Draw a bird'],['🎨','Your own painting']];
+  mk('',`left:725px;top:10px;width:222px;font-size:20px;font-weight:900;color:#0e5f75`,'Your painting jobs');
+  const L=steps.map(([e,t],i)=>{const c=chipL(725,46+i*56,222,`<span class="tk" style="font-size:22px">${e}</span>${t}`,'#f4f6fa','#c5cdda');c.style.fontSize='16px';pop(c,i*80);return c;});
+  const tick=i=>{L[i].style.background='#e3f7ec';L[i].style.borderColor='#18a058';L[i].querySelector('.tk').textContent='✅';beep(900,.08);};
+  const now=i=>{L[i].style.borderColor='#ffb000';L[i].style.background='#fff8d6';L[i].animate([{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:400});};
+  const wrong=t=>say(`That's the <b>${GP_TOOLS[t].n}</b> tool. Look for the other one! 🔍`);
+  const notLine=(x,y)=>{const p=G.ctx.getImageData(Math.round(x),Math.round(y),1,1).data;return p[0]+p[1]+p[2]>200;};
+  /* 1 bucket */
+  now(0);say(`Let's paint a picture together! <b>Step 1:</b> tap the <b>Bucket Fill</b> tool 🪣 in the toolbox.`);
+  await G.pick(w,'bucket',{onWrong:wrong});G.color('#ffd84d');
+  say(`Great! Now tap <b>inside the wall</b> of the house to fill it with yellow.`);
+  const p1=await G.tap(w,{auto:S.wall,target:true,ok:notLine,miss:()=>say(`That's a black line. Tap in a white space!`)});
+  await G.fill(w,...p1,{ms:600});G.color('#e04848');
+  say(`Lovely! Now tap <b>inside the roof</b> to make it red.`);
+  const p1b=await G.tap(w,{auto:S.roof,target:true,ok:notLine,miss:()=>say(`That's a black line. Tap in a white space!`)});
+  await G.fill(w,...p1b,{ms:500});tick(0);await w(1000);
+  /* 2 gradient */
+  now(1);say(`<b>Step 2:</b> tap the <b>Gradient</b> tool, the striped square that blends colours.`);
+  await G.pick(w,'gradient',{onWrong:wrong});G.color('#2c66cf','#d8f1ff');
+  say(`Now tap the <b>sky</b>. The gradient will mix blue and pale blue.`);
+  const p2=await G.tap(w,{auto:S.sky,target:true,ok:notLine,miss:()=>say(`That's a black line. Tap in a white space!`)});
+  await G.gradient(w,[p2[0],0],[p2[0],S.ground],{seed:p2,c1:'#2c66cf',c2:'#d8f1ff',ms:1200});tick(1);await w(1000);
+  /* 3 brush */
+  now(2);say(`<b>Step 3:</b> choose the <b>Paintbrush</b> 🖌️ and tap the grass at the bottom.`);
+  await G.pick(w,'brush',{onWrong:wrong});G.color('#2e9d4a');
+  const p3=await G.tap(w,{auto:S.grass,target:true,ok:(x,y)=>y>S.ground,miss:()=>say(`The grass goes <b>below</b> the long black line. Tap down there!`)});
+  await grass(w,G,S,600);tick(2);await w(800);
+  /* 4 airbrush */
+  now(3);say(`<b>Step 4:</b> pick the <b>Airbrush</b> 💨 and tap the sky to spray a fluffy white cloud.`);
+  await G.pick(w,'airbrush',{onWrong:wrong});G.color('#ffffff');
+  const p4=await G.tap(w,{auto:[G.W*.68,G.H*.3],target:true,ok:(x,y)=>y<S.ground-20,miss:()=>say(`Clouds go in the <b>sky</b>. Tap higher up!`)});
+  await G.stroke(w,gpSpiral(p4[0],p4[1],28,3,90),{size:34,ms:1200,flow:24});tick(3);await w(800);
+  /* 5 pencil */
+  now(4);say(`<b>Step 5:</b> take the <b>Pencil</b> ✏️ and tap where a bird should fly.`);
+  await G.pick(w,'pencil',{onWrong:wrong});G.color('#1f2433');
+  const p5=await G.tap(w,{auto:[G.W*.86,G.H*.42],target:true});
+  await G.stroke(w,[...gpArc(p5[0]-11,p5[1],11,200,340,10),...gpArc(p5[0]+11,p5[1],11,200,340,10)],{size:3,ms:600});tick(4);
+  yay();confetti(60);await w(800);
+  /* 6 free painting */
+  now(5);G.select('brush','paint with your finger');G.color('#e04848');
+  say(`Beautiful! 🎉 Now it's all yours: <b>drag your finger</b> to paint anything you like. Tap a colour to change it, then tap <b>Done</b>.`);
+  const pal=['#e04848','#ff9f1a','#ffd84d','#18a058','#2c66cf','#6a45d8','#1f2433','#ffffff'];
+  pal.forEach((c,i)=>{const d=btn('',`left:${725+(i%4)*56}px;top:${386+Math.floor(i/4)*44}px;width:44px;height:36px;border-radius:10px;background:${c};border:3px solid #c5cdda`,'',()=>{G.color(c);beep(700,.04);});pop(d,i*40);});
+  const off=G.freePaint('brush',{size:14});let done=false;
+  const db=btn('ex-btn green','left:750px;top:478px;width:172px;padding:6px 10px;font-size:18px','Done ✔',()=>{done=true;});pop(db);
+  window.AUTOPLAY=()=>{done=true;};await w.until(()=>done);window.AUTOPLAY=null;off();db.remove();tick(5);
+  yay();confetti(120);
+  say(`What a masterpiece! 🖼️ You used the bucket fill, gradient, paintbrush, airbrush and pencil tools. You're a GIMP artist!`);await w(3000);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · MCQ 10',q:'Which of the following is not a Painting Tool?',o:['Bucket fill','Airbrush','Shear'],a:2,cols:3,
+      why:'<b>Shear</b> is a transform tool: it slants the whole picture and adds no paint.',
+      whyNot:{0:'bucket fill is a painting tool: it fills colour in an area.',1:'the airbrush is a painting tool: it sprays paint.'}},
+    {src:'Worksheet · MCQ 12',q:'Which of the following is similar to a calligraphic ink pen?',o:['Smudge','Airbrush','Ink tool'],a:2,cols:3,
+      why:'The <b>ink tool</b> works like a calligraphic ink pen, with thick and thin lines.',
+      whyNot:{0:'the smudge tool smears colours, like a finger in wet paint.',1:'the airbrush sprays paint, like a spray can.'}},
+    {src:'Worksheet · Blank 11',q:'The ________ tool fills a mix of two colours in an area.',o:['Gradient','Pencil','Eraser'],a:0,cols:3,
+      why:'The <b>gradient</b> tool blends two colours smoothly.',whyNot:{1:'the pencil draws freehand lines with hard edges.',2:'the eraser removes colour.'}},
+    {src:'Worksheet · Blank 12',q:'The ________ tool is used to remove areas of colour from an image.',o:['Eraser','Bucket fill','Airbrush'],a:0,cols:3,
+      why:'The <b>eraser</b> removes areas of colour from an image or a selected part.',whyNot:{1:'bucket fill adds colour to an area, it does not remove it.',2:'the airbrush sprays colour on.'}},
+    {src:'Worksheet · True/False 10',q:'The Paintbrush tool is used to do freehand drawings.',o:['T (True)','F (False)'],a:0,
+      why:'You move the paintbrush any way you like: <b>freehand</b>.',whyNot:{1:'the paintbrush is exactly for freehand drawing, with fuzzy strokes.'}},
+    {src:'Worksheet · True/False 11',q:'The Gradient tool is used to darken the image.',o:['T (True)','F (False)'],a:1,
+      why:'The gradient tool fills a <b>mix of two colours</b>. The <b>Burn</b> tool darkens.',whyNot:{0:'the gradient blends two colours; darkening is the burn tool\'s job.'}},
+    {src:'Worksheet · Q20',q:'Why do we use GIMP for drawing?',model:'There are a large variety of painting tools in GIMP which can be used to paint our drawings beautifully. These tools can also be used to draw, paint and modify images.'},
+    {src:'Worksheet · Q21',q:'Enlist the names of some common tools used for drawings in GIMP?',model:'1. The bucket fill tool (fills colour in an area)<br>2. Gradient tool<br>3. Paintbrush tool<br>4. Pencil tool<br>5. Eraser tool'},
+    {src:'Worksheet · Q22',q:'Why do we use the paintbrush tool in GIMP?',model:'The paintbrush tool allows us to paint using fuzzy brush strokes. All strokes are rendered using the currently selected brush type.'},
+    {src:'Worksheet · Q23',q:'What is the use of the pencil tool in drawing?',model:'The pencil tool is used to draw free-hand lines having hard edges. It is similar to the paintbrush tool but the pencil tool does not produce fuzzy edges.'},
+    {src:'Worksheet · Q24',q:'Is the Eraser tool important while drawing in GIMP?',model:'The eraser tool is a very important tool for drawing because it is used to remove areas of colour from an image or the selected part of an image.'},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'GIMP painting tools',next:`<b>fixing photos</b> with GIMP: clone, heal, dodge, burn and special effects!`,badges:[
+    ['🎨','GIMP: lots of tools to <b>draw, paint, modify</b>','GIMP has a large variety of painting tools to draw, paint and modify images.'],
+    ['🦒','Bucket fill · Gradient · Paintbrush · Pencil · Eraser','Big Giraffes Paint Pretty Elephants: the five common drawing tools.'],
+    ['🖌️','Paintbrush: <b>fuzzy</b> strokes, freehand','The paintbrush paints fuzzy strokes using the selected brush type.'],
+    ['✏️','Pencil: <b>hard</b> edges','The pencil draws freehand lines with hard edges.'],
+    ['🧽','Eraser removes <b>areas of colour</b>','The eraser removes colour from an image or a selected part.'],
+    ['🌈','Gradient: a <b>mix of two colours</b>','The gradient fills a mix of two colours. It does not darken.'],
+    ['🖋️','Ink = a <b>calligraphic ink pen</b>','The ink tool is like a calligraphic ink pen. The airbrush sprays.'],
+    ['▱','Shear is <b>not</b> a painting tool','Shear is a transform tool: it slants the picture.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

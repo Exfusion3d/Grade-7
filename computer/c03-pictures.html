@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Pictures on a web page</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script>
+/* Computer Lesson 3 · Web pages with HTML · Worksheet MCQ 6, MCQ 8, Blank 6, Blank 7, True/False 6, True/False 9.
+   The <IMG> tag and its attributes (SRC, WIDTH, HEIGHT, ALT; TARGET belongs to links), alt text for a missing
+   picture, image file formats (.jpg .gif .png, not .xlsx). Hands-on: resize a picture, sort file formats, build an IMG tag. */
+const SRCW=`<b data-say="source">SRC</b>`;
+/* a picture drawn on the page (no image files: a sky, grass and a big emoji) */
+const pic=(wd,ht,e='🐱')=>`<div class="pic" style="position:relative;display:inline-block;vertical-align:top;width:${wd}px;height:${ht}px;border-radius:4px;overflow:hidden;background:linear-gradient(#9fd8ff 0,#d8f0ff 64%,#7cd36b 64%,#58b84a 100%);transition:width .5s,height .5s">
+  <span style="position:absolute;right:6%;top:4%;font-size:${Math.round(Math.min(wd,ht)*.2)}px;transition:font-size .5s" class="sun">☀️</span>
+  <span class="pe" style="position:absolute;left:50%;bottom:4%;transform:translateX(-50%) scaleX(${(wd/ht*.75).toFixed(3)});transform-origin:50% 100%;font-size:${Math.round(ht*.62)}px;line-height:1;transition:font-size .5s,transform .5s">${e}</span></div>`;
+const sizePic=(el,wd,ht)=>{const p=el.querySelector('.pic');p.style.width=wd+'px';p.style.height=ht+'px';
+  const pe=p.querySelector('.pe');pe.style.fontSize=Math.round(ht*.62)+'px';pe.style.transform=`translateX(-50%) scaleX(${(wd/ht*.75).toFixed(3)})`;p.querySelector('.sun').style.fontSize=Math.round(Math.min(wd,ht)*.2)+'px';};
+/* how a browser shows a picture it cannot find: a little broken icon and the alt text */
+const broken=alt=>`<span style="display:inline-flex;align-items:center;gap:6px;border:1px solid #b8bfcc;padding:3px 8px;font-size:20px;font-family:'Times New Roman',serif"><span style="font-size:22px">🖼️</span><span style="color:#c02c2c;font-weight:900;font-family:system-ui">✕</span>${alt}</span>`;
+const fileIcon=(x,y,name,emoji='📄',parent)=>mk('',`left:${x}px;top:${y}px;width:120px;text-align:center;font-size:15px;font-weight:800;color:#1f2433`,
+  `<div style="font-size:58px;line-height:1">${emoji}</div><div style="background:#fff;border-radius:6px;padding:1px 4px;margin-top:4px">${name}</div>`,parent);
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c03', num:3, part:'Web pages with HTML', emoji:'🖼️', title:'Pictures on a web page',
+  intro:`Hi, it's <b>Chip</b>! 🖱️ Today we put <b>pictures</b> on a web page with the image tag. Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'A page needs a picture',run:async w=>{
+  const E=editor(13,10,452,250,{title:'cat.html - Notepad',size:18});setCode(E,`<HTML>\n<BODY>\n<H1>My cat Tom</H1>\n<P>He loves cheese!</P>\n`);pop(E.el);
+  const B=browser(495,10,452,350,{url:'file:///C:/Users/Student/cat.html',title:'My cat Tom'});pop(B.el,150);
+  B.page.innerHTML=`<h1>My cat Tom</h1><p>He loves cheese!</p>`;
+  say(`Here's a web page about my cat, Tom. 🐱 But something's missing… Where's Tom?`);await w(2600);
+  shake(B.el);say(`A web page with no pictures is a bit boring! Let's add one with the <b>image tag</b>.`);await w(2400);
+  await typeCode(w,E,`<IMG SRC="cat.jpg">\n`,{speed:40});await w(300);
+  const ln=E.code.innerHTML.split('\n');ln[4]=`<span style="background:#fff3a6;border-radius:4px">${ln[4]}</span>`;E.code.innerHTML=ln.join('\n');
+  B.page.insertAdjacentHTML('beforeend',pic(230,170));
+  an(B.page.querySelector('.pic'),[{transform:'scale(0) rotate(-20deg)'},{transform:'scale(1.1) rotate(3deg)'},{transform:'none'}],{duration:700});yay();confetti(40);
+  say(`Ta-da! 🎉 The image tag, ${C('<IMG>')}, puts a picture on the page. IMG is short for <b>image</b>.`);await w(3000);
+  wsCard('left:13px;top:282px;width:452px',{src:'Worksheet · Blank 6',q:'The ________ tag is used to add a picture to a web page.',a:'✔ &lt;IMG&gt;'});
+  say(`Worksheet: the <b>image tag</b> is used to add a picture to a web page.`);await w(3000);
+  const n=mk('',`left:495px;top:378px;width:452px;text-align:center;font-size:19px;font-weight:800;color:#0e5f75`,`Remember: ${C('<IMG>')} has <b>no closing tag</b>. It stands alone.`);pop(n);
+  say(`And remember from last time: the image tag stands alone. It has <b>no closing tag</b>.`);await w(2600);}},
+
+/* 1 */ {t:'Attributes: extra information',run:async w=>{
+  const big=mk('code',`left:13px;top:24px;width:934px;text-align:center;background:#1e2433;color:#e8ecf5;border-radius:18px;padding:16px 0;font-size:46px;font-weight:700;box-shadow:0 6px 0 #0e7490;box-sizing:border-box`,
+    `<span class="p1">${hl('<IMG')}</span> <span class="p2">${hl(' SRC')}</span>${hl('=')}<span class="p3">${hl('"cat.jpg"')}</span>${hl('>')}`);pop(big);
+  big.querySelector('.p2').innerHTML='<span class="t-att">SRC</span>';big.querySelector('.p3').innerHTML='<span class="t-str">"cat.jpg"</span>';
+  say(`How did the browser know <b>which</b> picture to show? Look inside the tag.`);await w(2400);
+  const lab=(cls,text,col,dy)=>{const el=big.querySelector(cls);const l=mk('',`left:0;top:${150+dy}px;width:240px;text-align:center;font-size:22px;font-weight:900;color:${col}`,'⬆<br>'+text);
+    l.style.left=(13+el.offsetLeft+el.offsetWidth/2-120)+'px';pop(l);el.style.cssText+=`;border-radius:8px;box-shadow:0 0 0 4px ${col}`;return l;};
+  lab('.p1','tag name','#7cc4ff',0);say(`First, the <b>tag name</b>: IMG.`);await w(1800);
+  lab('.p2','attribute','#e0a800',0);say(`Then an <b>attribute</b>: ${SRCW}. An attribute gives the tag <b>extra information</b>.`);await w(2800);
+  lab('.p3','value','#18a058',0);say(`And its <b>value</b>, in quotation marks: cat dot J P G. That's the picture file!`);await w(2600);
+  const f=mk('',`left:360px;top:300px;width:240px;height:150px;border-radius:16px;background:#fff;border:3px solid #9fdfe6;text-align:center`,`<div style="font-size:15px;font-weight:800;color:#4a5570;margin-top:6px">📁 My folder</div>`);pop(f);
+  fileIcon(60,32,'cat.jpg','🐱',f);
+  say(`${SRCW} stands for <b>source</b>: where the picture comes from. The browser goes and fetches the file called cat dot J P G. 📁`);await w(3400);
+  stage.innerHTML='';
+  const parts=[['<IMG',''],[' SRC="cat.jpg"','src'],[' WIDTH="200"','w'],[' HEIGHT="150"','h'],[' ALT="My cat Tom"','alt'],['>','']];
+  const line=mk('code',`left:13px;top:14px;width:934px;text-align:center;background:#1e2433;color:#e8ecf5;border-radius:16px;padding:12px 0;font-size:25px;font-weight:700;box-sizing:border-box;min-height:64px`,'');pop(line);
+  const CARDS={src:['📁','SRC','which <b>picture file</b> to show','source'],w:['↔️','WIDTH','how <b>wide</b> the picture is','width'],h:['↕️','HEIGHT','how <b>tall</b> the picture is','height'],alt:['💬','ALT','<b>alternate text</b>: words shown if the picture can\'t be','alt']};
+  const LINES={src:`${SRCW}: which picture file to show.`,w:`<b>WIDTH</b>: how wide the picture is.`,h:`<b>HEIGHT</b>: how tall it is.`,alt:`and <b>ALT</b>: the alternate text, words shown if the picture can't be displayed.`};
+  say(`An image tag can have <b>more</b> attributes. Let's add them one at a time.`);await w(2000);
+  let src='',k=0;
+  for(const [p,key] of parts){src+=p;line.innerHTML=hl(src);beep(600+k*60,.05);
+    if(key){const [e,n,d]=CARDS[key];const c=mk('',`left:${13+k*237}px;top:110px;width:222px;height:230px;border-radius:20px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center;padding:10px 12px;box-sizing:border-box`,
+      `<div style="font-size:54px">${e}</div><div style="font-size:28px;font-weight:900;color:#b45309;font-family:'SF Mono',Menlo,Consolas,monospace">${n}</div><div style="font-size:18px;font-weight:700;color:#1f2433;margin-top:6px;line-height:1.3">${d}</div>`);
+      pop(c);point(c);k++;say(LINES[key]);await w(2400);}else await w(500);}
+  unpoint();
+  const tip=mk('ca-trick',`left:13px;top:362px;width:934px;box-sizing:border-box;text-align:center;font-size:21px`,'💡 An attribute goes <b>inside</b> the opening tag: <b>name="value"</b>. Like settings for the tag! ⚙️');pop(tip);
+  say(`Attributes always go <b>inside</b> the tag: a name, an equals sign, and a value in quotation marks. Like settings! ⚙️`);await w(3200);}},
+
+/* 2 */ {t:'Make it bigger, make it smaller',run:async w=>{
+  let W=200,H=150,taps=0,done=false;
+  const code=()=>`<IMG SRC="cat.jpg"\n     WIDTH="${W}"\n     HEIGHT="${H}">`;
+  const E=editor(13,10,452,190,{title:'cat.html - Notepad',size:22});setCode(E,code());pop(E.el);
+  const B=browser(495,10,452,400,{url:'file:///C:/Users/Student/cat.html',title:'My cat Tom'});pop(B.el,150);
+  B.page.innerHTML=pic(W,H);
+  const upd=(which)=>{setCode(E,code());const l=E.code.innerHTML.split('\n');const i=which==='w'?1:2;l[i]=`<span style="background:#fff3a6;border-radius:4px">${l[i]}</span>`;E.code.innerHTML=l.join('\n');
+    sizePic(B.page,W,H);beep(500+W,.05);taps++;if(taps>=2&&!done&&!dn.parentNode){stage.appendChild(dn);pop(dn);}};
+  const B4=[['↔️ Wider',()=>{W=Math.min(400,W+50);upd('w');say(`WIDTH ${W}: wider!`);}],['↔️ Narrower',()=>{W=Math.max(50,W-50);upd('w');say(`WIDTH ${W}: narrower.`);}],
+    ['↕️ Taller',()=>{H=Math.min(280,H+50);upd('h');say(`HEIGHT ${H}: taller!`);}],['↕️ Shorter',()=>{H=Math.max(50,H-50);upd('h');say(`HEIGHT ${H}: shorter.`);}]];
+  const bt=B4.map(([t,f],i)=>{const b=btn('cb-del',`left:${13+(i%2)*232}px;top:${224+Math.floor(i/2)*72}px;width:220px;height:60px;font-size:21px;font-weight:800;box-sizing:border-box`,t,()=>{if(!done)f();});pop(b,i*80);return b;});
+  const dn=btn('ex-btn green',`left:130px;top:384px;width:220px`,'I\'m done ✔',()=>{done=true;});dn.remove();
+  say(`Your turn! 🖱️ Tap the buttons to change the <b>WIDTH</b> and <b>HEIGHT</b> numbers. Watch the code and the picture.`);
+  let a=0;window.AUTOPLAY=()=>{a++;if(a===1)bt[0].onclick();else if(a===2)bt[2].onclick();else if(a===3)bt[3].onclick();else if(dn.parentNode)done=true;};
+  await w.until(()=>done);window.AUTOPLAY=null;bt.forEach(b=>b.remove());dn.remove();
+  const n=mk('ca-trick',`left:13px;top:224px;width:452px;box-sizing:border-box;font-size:19px`,'💡 <b>WIDTH</b> = how wide ↔️<br><b>HEIGHT</b> = how tall ↕️<br>The numbers are in <b>pixels</b>: the tiny dots on a screen.');pop(n);
+  say(`Brilliant! WIDTH sets how <b>wide</b> the picture is, and HEIGHT sets how <b>tall</b>. The numbers are <b>pixels</b>: tiny dots on the screen.`);await w(3400);
+  W=380;H=90;upd('w');upd('h');await w(900);
+  say(`Careful though! If the numbers don't match the picture's shape, poor Tom gets squashed. 😹`);await w(2600);
+  W=240;H=180;upd('w');upd('h');await w(800);}},
+
+/* 3 */ {t:'ALT: when the picture is missing',run:async w=>{
+  const E=mk('code',`left:13px;top:10px;width:520px;background:#1e2433;color:#e8ecf5;border-radius:14px;padding:10px 16px;font-size:21px;font-weight:700;box-sizing:border-box`,hl('<IMG SRC="cat.jpg" ALT="My cat Tom">'));pop(E);
+  const B=browser(13,74,520,250,{url:'file:///C:/Users/Student/cat.html',title:'My cat Tom'});pop(B.el,150);
+  B.page.innerHTML=pic(220,165);
+  const fold=mk('',`left:560px;top:10px;width:387px;height:314px;border-radius:18px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6`,`<div style="font-size:17px;font-weight:900;color:#4a5570;margin:8px 14px">📁 My folder</div>`);pop(fold,250);
+  const cat=fileIcon(40,60,'cat.jpg','🐱',fold);const bin=mk('',`left:250px;top:170px;font-size:80px`,'🗑️',fold);
+  say(`This image tag has an <b>ALT</b> attribute: ALT equals "My cat Tom". What's it for? Watch what happens if the picture goes missing…`);await w(3000);
+  point(cat);await w(600);
+  await an(cat,[{transform:'none'},{transform:'translate(100px,-40px) rotate(-30deg)'},{transform:'translate(210px,120px) scale(.2) rotate(-200deg)',opacity:0}],{duration:1100});unpoint();
+  shake(bin);boo();
+  say(`Oh no! 😱 The picture file was deleted. Let's reload the page…`);await w(1800);
+  B.addr.querySelector('.nb:nth-child(3)').animate([{transform:'rotate(0)'},{transform:'rotate(360deg)'}],{duration:600});
+  await an(B.page,[{opacity:1},{opacity:0}],{duration:300});
+  B.page.innerHTML=broken('My cat Tom');an(B.page,[{opacity:0},{opacity:1}],{duration:300});
+  const t=B.page.firstChild;t.animate([{boxShadow:'0 0 0 0 #ffd84d'},{boxShadow:'0 0 0 8px #ffd84d'},{boxShadow:'0 0 0 0 #ffd84d'}],{duration:900,iterations:3});point(t);
+  say(`The picture can't be shown, so the browser shows the <b>ALT text</b> instead: "My cat Tom". Now you still know what should be there!`);await w(3400);unpoint();
+  an(bin,[{opacity:1},{opacity:0}],{duration:300});
+  const sr=mk('',`left:15px;top:50px;width:357px;text-align:center`,`<div style="font-size:60px">🔊</div><div style="font-size:18px;font-weight:800;color:#1f2433;line-height:1.35">People who can't see the screen use a <b>screen reader</b>. It reads the ALT text out loud!</div>`,fold);pop(sr);
+  say(`ALT text also helps people who can't see well: a screen reader reads it out loud. 🔊 ALT is short for <b>alternate</b> text.`);await w(3400);
+  wsCard('left:13px;top:342px;width:455px',{src:'Worksheet · Blank 7',q:'The ________ attribute is used to specify an alternate text.',a:'✔ alt'});
+  say(`Worksheet: the <b>alt</b> attribute is used to specify an <b>alternate text</b>.`);await w(2800);
+  wsCard('left:492px;top:342px;width:455px',{src:'Worksheet · True/False 9',q:'Alt attribute is used to specify the text if an image is not displayed on a web page.',a:'✔ T (True)'});
+  say(`True or false? The alt attribute gives the text shown if an image is not displayed. <b>True!</b> Just like we saw.`);await w(3200);}},
+
+/* 4 */ {t:'TARGET is not an IMG attribute',run:async w=>{
+  const ib=mk('',`left:13px;top:150px;width:560px;height:220px;border-radius:22px;border:4px dashed #22b8c9;background:#22b8c912`,`<div style="margin:8px 14px">${C('<IMG>')} <b style="font-size:20px;color:#0e5f75">attributes</b></div>`);pop(ib);
+  const ab=mk('',`left:640px;top:150px;width:307px;height:220px;border-radius:22px;border:4px dashed #6a45d8;background:#6a45d812`,`<div style="margin:8px 14px">${C('<A>')} <b style="font-size:20px;color:#6a45d8">link attributes</b></div>`);pop(ab,150);
+  [ib,ab].forEach(b=>b.querySelector('.cd').style.fontSize='22px');
+  const A=['SRC','ALT','WIDTH','HEIGHT','TARGET'].map((t,i)=>{const e=mk('',`left:${40+i*180}px;top:30px;width:160px;height:60px;border-radius:14px;background:#1e2433;border:3px solid #22b8c9;box-shadow:0 4px 0 #0e7490;color:#ffd27a;font-family:'SF Mono',Menlo,Consolas,monospace;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center`,t);pop(e,i*100);return e;});
+  say(`Here are five attribute names. Which ones belong to the <b>image tag</b>? Let's drop them in.`);await w(2600);
+  const spots=[[40,70],[300,70],[40,145],[300,145]];
+  for(let i=0;i<4;i++){const e=A[i],[x,y]=spots[i];await an(e,[{transform:'none'},{transform:`translate(${13+x-(40+i*180)}px,${150+y-30}px)`}],{duration:600,easing:'cubic-bezier(.3,1.3,.5,1)'});beep(600+i*80,.06);}
+  say(`${SRCW}, <b>ALT</b>, <b>WIDTH</b> and <b>HEIGHT</b> all belong to the image tag. ✔`);await w(2400);
+  const T=A[4];const dx=13+220-(40+4*180),dy=150+100-30;
+  await an(T,[{transform:'none'},{transform:`translate(${dx}px,${dy}px)`}],{duration:600});shake(ib);boo();
+  await an(T,[{transform:`translate(${dx}px,${dy}px)`},{transform:`translate(${dx}px,${dy-90}px) rotate(-15deg)`},{transform:`translate(${640+70-(40+4*180)}px,${150+90-30}px)`}],{duration:900,easing:'ease-in-out'});yay();
+  say(`But <b>TARGET</b> bounces off! 🚫 It isn't an image attribute. TARGET belongs to <b>links</b>: it says where a link opens. You'll meet it next lesson.`);await w(3600);
+  wsCard('left:130px;top:388px;width:700px',{src:'Worksheet · MCQ 8',q:'Which of the following is not an attribute of the &lt;IMG&gt; tag?<br>(a) Height &nbsp; (b) Width &nbsp; (c) Target',a:'✔ (c) Target'});
+  say(`Worksheet: which is <b>not</b> an attribute of the image tag? <b>(c) Target</b>. Height and width are image attributes.`);await w(3200);}},
+
+/* 5 */ {t:'Picture file formats',run:async w=>{
+  say(`Picture files come in different <b>formats</b>. You can tell by the letters after the dot: the <b>extension</b>.`);await w(2600);
+  const F=[['.jpg','📷','Photos','#e06a1b'],['.gif','🎞️','Simple pictures and little animations','#6a45d8'],['.png','🖼️','Sharp pictures, even see-through ones','#2c66cf']];
+  const cards=F.map(([x,e,d,c],i)=>{const k=mk('',`left:${13+i*237}px;top:10px;width:222px;height:230px;border-radius:20px;background:#fff;border:3px solid ${c};box-shadow:0 5px 0 ${c}55;text-align:center;padding:8px 10px;box-sizing:border-box`,
+    `<div class="ic" style="width:120px;height:90px;margin:4px auto 0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:56px">${e}</div><div style="font-size:34px;font-weight:900;color:${c};font-family:'SF Mono',Menlo,Consolas,monospace">${x}</div><div style="font-size:17px;font-weight:700;color:#1f2433;line-height:1.3">${d}</div><div style="font-size:24px;margin-top:2px">✅</div>`);pop(k);return k;});
+  cards[0].querySelector('.ic').style.background='linear-gradient(#ffcf8a,#ff9a6b)';
+  say(`<b>.jpg</b> is great for <b>photos</b>. 📷`);await w(2000);
+  const gi=cards[1].querySelector('.ic');gi.style.background='#efe9ff';
+  const fr=['🐱','😺','😸','😹'];let q=0;const iv=setInterval(()=>{gi.textContent=fr[q++%4];},300);
+  say(`<b>.gif</b> is for simple pictures, and it can even <b>move</b>, like a tiny cartoon.`);await w(2400);
+  const pi=cards[2].querySelector('.ic');pi.style.background='repeating-conic-gradient(#d9dee8 0 25%,#fff 0 50%) 0 0/20px 20px';
+  say(`<b>.png</b> makes sharp pictures, and the background can be <b>see-through</b>. And yes, you <b>can</b> put .png pictures on a web page!`);await w(3400);
+  const x=mk('',`left:724px;top:10px;width:222px;height:230px;border-radius:20px;background:#fff;border:3px solid #e04848;box-shadow:0 5px 0 #e0484855;text-align:center;padding:8px 10px;box-sizing:border-box`,
+    `<div style="width:120px;height:90px;margin:4px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#18a058;border:2px solid #18a058">${'<span style="background:#fff;font-size:11px;font-weight:800;line-height:1.9">7</span>'.repeat(16)}</div><div style="font-size:34px;font-weight:900;color:#e04848;font-family:'SF Mono',Menlo,Consolas,monospace">.xlsx</div><div style="font-size:17px;font-weight:700;color:#1f2433;line-height:1.3">An <b>Excel</b> spreadsheet: a table of numbers</div><div class="no" style="font-size:24px;margin-top:2px">❌</div>`);pop(x);shake(x);
+  say(`But <b>.xlsx</b> is an <b>Excel spreadsheet</b>: a table of numbers. 📊 It's <b>not</b> a picture, so the image tag can't show it.`);await w(3400);
+  clearInterval(iv);gi.textContent='😸';
+  wsCard('left:13px;top:262px;width:455px',{src:'Worksheet · MCQ 6',q:'Which of the following is not an image file format?<br>(a) .jpg &nbsp; (b) .gif &nbsp; (c) .xlsx',a:'✔ (c) .xlsx'});
+  say(`Worksheet: which is <b>not</b> an image file format? <b>(c) .xlsx</b>, the spreadsheet.`);await w(3000);
+  wsCard('left:492px;top:262px;width:455px',{src:'Worksheet · True/False 6',q:'You cannot insert .png images on a web page.',a:'✔ F (False)'});
+  say(`True or false? You <b>cannot</b> insert .png images on a web page. <b>False!</b> You <b>can</b> use .png pictures.`);await w(3200);
+  const tr=mk('ca-trick',`left:13px;top:440px;width:934px;box-sizing:border-box;text-align:center;font-size:19px;padding:6px 14px`,'💡 Picture words: <b>J</b>ust <b>G</b>reat <b>P</b>ictures: .jpg, .gif, .png. But .xlsx is an <b>Excel</b> spreadsheet, not a picture.');pop(tr);
+  say(`Memory trick: <b>Just Great Pictures</b>: J P G, gif, P N G. And x l s x is for Excel numbers.`);await w(3200);}},
+
+/* 6 */ {t:'Sort the files',run:async w=>{
+  const r=await sortGame(w,{bins:['🖼️ Picture files','🚫 Not pictures'],colors:['#18a058','#e04848'],top:150,
+    items:[['cat.jpg',0],['dance.gif',0],['logo.png',0],['sunset.bmp',0],['marks.xlsx',1],['story.docx',1],['song.mp3',1]],
+    intro:`Your turn! 🖱️ Tap a file, then tap its group. Which files are <b>pictures</b> you could show with the image tag?`});
+  say(r.ok===r.total?`Perfect! 🎉 .jpg, .gif, .png and .bmp are pictures. .xlsx is Excel, .docx is Word, and .mp3 is music.`
+    :`Nearly! .jpg, .gif, .png and .bmp are pictures. .xlsx is an Excel spreadsheet, .docx is a Word document and .mp3 is music.`);await w(3400);}},
+
+/* 7 */ {t:'Build an image tag',run:async w=>{
+  say(`Last challenge! Build an image tag that shows the picture <b>dog.png</b>, with the alternate text <b>My dog</b>.`);
+  const r=await buildCode(w,{src:'Build it',q:'Build the tag that shows the picture <b>dog.png</b> with the alternate text <b>My dog</b>.',top:14,
+    tiles:['<IMG','SRC="dog.png"','ALT="My dog"','TARGET="_blank"','>','</A>'],
+    answer:[['<IMG','SRC="dog.png"','ALT="My dog"','>'],['<IMG','ALT="My dog"','SRC="dog.png"','>']]});
+  say(r.ok?`Woof! 🐶 Perfect image tag. ${SRCW} picks the picture, ALT gives the alternate text.`:`Nearly! Start with ${C('<IMG','image tag')}, add ${SRCW} and ALT, then close the bracket. TARGET is for links, not pictures.`);
+  const y=Math.min(r.y+(r.ok?4:76),330);
+  const B=browser(250,y,460,510-y,{url:'file:///C:/Users/Student/dog.html',title:'My dog'});pop(B.el);
+  B.page.innerHTML=pic(Math.min(170,(510-y-110)*4/3),Math.min(128,510-y-110),'🐶');
+  an(B.page.querySelector('.pic'),[{transform:'scale(0)'},{transform:'scale(1)'}],{duration:600,delay:300});
+  await w(3200);}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · Blank 6',q:'The ________ tag is used to add a picture to a web page.',o:['&lt;IMG&gt;','&lt;A&gt;','&lt;BODY&gt;'],a:0,cols:3,
+      why:'The <b>image tag</b> adds a picture. IMG is short for image.',
+      whyNot:{1:'the A tag makes a link, not a picture.',2:'the BODY tag holds everything you see on the page; it does not add a picture by itself.'}},
+    {src:'Worksheet · Blank 7',q:'The ________ attribute is used to specify an alternate text.',o:['alt','src','width'],a:0,cols:3,
+      why:'<b>ALT</b> is short for alternate text: the words shown if the picture cannot be displayed.',
+      whyNot:{1:'SRC (source) tells the browser which picture file to show.',2:'WIDTH sets how wide the picture is.'}},
+    {src:'Worksheet · MCQ 6',q:'Which of the following is not an image file format?',o:['.jpg','.gif','.xlsx'],a:2,cols:3,
+      why:'<b>.xlsx</b> is an Excel spreadsheet, not a picture.',
+      whyNot:{0:'.jpg is a picture format, great for photos.',1:'.gif is a picture format, for simple pictures and little animations.'}},
+    {src:'Worksheet · MCQ 8',q:'Which of the following is not an attribute of the &lt;IMG&gt; tag?',o:['Height','Width','Target'],a:2,cols:3,
+      why:'<b>Target</b> belongs to links: it says where a link opens.',
+      whyNot:{0:'HEIGHT is an image attribute: it sets how tall the picture is.',1:'WIDTH is an image attribute: it sets how wide the picture is.'}},
+    {src:'Worksheet · True/False 6',q:'You cannot insert .png images on a web page.',o:['T (True)','F (False)'],a:1,
+      why:'<b>False.</b> .png is a picture format, so you <b>can</b> insert .png images.',whyNot:{0:'.png is a picture format, like .jpg and .gif, so it works on a web page.'}},
+    {src:'Worksheet · True/False 9',q:'Alt attribute is used to specify the text if an image is not displayed on a web page.',o:['T (True)','F (False)'],a:0,
+      why:'<b>True.</b> If the picture cannot be shown, the browser shows the ALT text instead.',whyNot:{1:'that is exactly what ALT does: it gives the text shown when the picture is missing.'}},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'Pictures on a web page',next:`<b>links</b>! Jumping from page to page, and the difference between internal and external links.`,badges:[
+    ['🖼️','&lt;IMG&gt; adds a picture','The image tag adds a picture to a web page.'],
+    ['📁','<b>SRC</b> = which picture file','SRC, the source, says which picture file to show.'],
+    ['↔️','<b>WIDTH</b> and <b>HEIGHT</b>','Width and height set the size of the picture.'],
+    ['💬','<b>ALT</b> = alternate text','The alt attribute gives the text shown if the picture is missing.'],
+    ['🚫','<b>TARGET</b> is not an IMG attribute','Target belongs to links, not to the image tag.'],
+    ['📷','.jpg · .gif · .png are pictures','J P G, gif and P N G are image formats. You can use P N G!'],
+    ['📊','.xlsx is a spreadsheet','X L S X is an Excel spreadsheet, not an image.'],
+    ['🐶','You built an image tag!','You built your own image tag.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

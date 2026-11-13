@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="gate.js" data-account></script>
+<script type="module" src="src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-title" content="Answer Trainer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<title>Answer Trainer: Grade 7 Computer</title>
+<style>
+:root{--ink:#1f2433;--muted:#626a80;--line:#e3e6ef;--p:#0e7490;--p2:#22b8c9;--pl:#e2f6f8;--pd:#0b5566;--ok:#18a058;--okl:#e3f7ec;--bad:#e04848;--badl:#fde8e8;--mid:#e0a800}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:var(--ink);background:#eef7f8;min-height:100vh;
+  background-image:radial-gradient(circle at 10% 10%,#cdeff3 0,transparent 35%),radial-gradient(circle at 90% 80%,#e5eefc 0,transparent 40%)}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:780px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 60px max(14px,env(safe-area-inset-left))}
+.hidden{display:none!important}
+.hero{background:linear-gradient(135deg,#0b4f5e,#0e7490 45%,#22b8c9);color:#fff;border-radius:26px;padding:22px 24px;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px}
+.hero h1{margin:0;font-size:clamp(27px,6vw,40px);font-weight:800}
+.hero p{margin:6px 0 0;opacity:.95;font-size:16px;line-height:1.4}
+.hero svg{flex:none;width:76px;height:76px}
+.panel{background:#fff;border-radius:22px;padding:16px 18px;margin-top:14px;box-shadow:0 8px 24px rgba(14,116,144,.09)}
+.panel h2{margin:0 0 8px;font-size:19px}
+.big{display:flex;align-items:center;gap:16px}
+.ring{flex:none;width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:var(--pd)}
+.ring span{background:#fff;width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1.05}
+.ring small{font-size:11px;color:var(--muted)}
+.go{border:none;border-radius:16px;padding:13px 20px;font-size:17.5px;font-weight:800;color:#fff;background:var(--p);box-shadow:0 5px 0 var(--pd);transition:transform .1s}
+.go:active{transform:translateY(3px);box-shadow:0 2px 0 var(--pd)}
+.go.green{background:var(--ok);box-shadow:0 5px 0 #0f7a41}.go.amber{background:var(--mid);box-shadow:0 5px 0 #a87d00}.go.red{background:var(--bad);box-shadow:0 5px 0 #a82e2e}
+.go:disabled{opacity:.5}
+a.ghost{color:inherit;text-decoration:none}
+.ghost{border:2.5px solid var(--line);background:#fff;border-radius:16px;padding:11px 16px;font-size:16px;font-weight:800;box-shadow:0 4px 0 var(--line)}
+.secs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.sec{border:2.5px solid var(--line);background:#fff;border-radius:16px;padding:10px 12px;text-align:left;box-shadow:0 3px 0 var(--line)}
+.sec b{display:block;font-size:15px}.sec span{font-size:13px;color:var(--muted);font-weight:700}
+.bar{height:10px;border-radius:6px;background:#dff1f3;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#22b8c9,#18a058)}
+.pill{border:2px solid var(--line);background:#fff;border-radius:30px;padding:7px 14px;font-weight:700;font-size:14px;text-decoration:none;color:inherit}
+.foot{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-top:14px}
+.how{font-size:15px;line-height:1.55;color:#4a4f60}
+/* card */
+.hud{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.hud .x{background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px 11px;font-weight:800}
+.prog{flex:1;height:14px;border-radius:10px;background:#fff;border:2px solid var(--line);overflow:hidden}.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0e7490,#22b8c9);transition:width .4s}
+.stat{background:#fff;border:2px solid var(--line);border-radius:14px;padding:5px 10px;font-weight:800;font-size:15px;white-space:nowrap}
+.card{background:#fff;border-radius:24px;padding:16px 16px 16px;box-shadow:0 10px 30px rgba(14,116,144,.12)}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:var(--pl);color:var(--pd)}
+.box{margin-left:auto;font-size:13px;font-weight:800;color:var(--muted)}
+.q{font-size:25px;font-weight:800;line-height:1.5}
+.q .w{border-radius:8px;padding:0 2px;transition:background .2s}
+.q.spot .w{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.q.spot .w:hover{background:#eef7f8}
+.q .w.kw,.kw{background:#ffe680;border-radius:7px;box-shadow:0 0 0 2px #ffd84d}
+.q .w.no{animation:no .35s;background:#fde8e8}
+@keyframes no{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.found{margin-top:8px;font-size:15.5px;font-weight:700;color:var(--pd);min-height:1em}
+.hintline{margin-top:10px;background:#fff8e6;border-radius:12px;padding:8px 12px;font-weight:700;font-size:15.5px;color:#7a4a00}
+.step{margin-top:14px;font-size:14.5px;font-weight:800;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.ans{margin-top:8px;background:#f2fbfc;border:2.5px dashed #22b8c9;border-radius:18px;padding:12px 14px;font-size:18.5px;line-height:1.5;font-weight:600}
+.ans ol{margin:0;padding-left:24px}
+.ans mark{background:#c9f0e0;color:#0b5130;border-radius:5px;padding:0 3px;font-weight:800}
+.ans.cover{background:#e6f1f3;border:2.5px solid #c4e3e8;color:#5b8a94;font-weight:800;font-size:18px;padding:22px;text-align:center}
+.trick{margin-top:10px;background:#fff8e6;border:2.5px solid #f2c200;border-radius:16px;padding:9px 13px;font-size:16px;font-weight:600;line-height:1.4}
+.trick b{font-weight:900;color:#8a5a00}
+.note{margin-top:10px;background:#eef4ff;border:2.5px solid #9cbcf2;border-radius:16px;padding:8px 13px;font-size:15px;font-weight:700;line-height:1.4;color:#1d3f8a}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+textarea{width:100%;margin-top:10px;min-height:150px;border:3px dashed #22b8c9;border-radius:18px;background:#fbfeff;padding:12px 14px;font:600 17px/1.45 "Avenir Next","Nunito","Segoe UI",system-ui,sans-serif;color:var(--ink);resize:vertical}
+textarea:focus{outline:none;border-style:solid}
+.paper{margin-top:8px;font-size:14.5px;color:var(--muted);font-weight:700;text-align:center}
+.kp{margin-top:10px;border-radius:16px;padding:10px 14px;background:#f6f8fc;border:2px solid var(--line)}
+.kp h3{margin:0 0 6px;font-size:16px}
+.kp ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.kp li{border-radius:12px;padding:4px 10px;font-weight:800;font-size:15px}
+.kp li.y{background:var(--okl);color:#0f6b3b;border:2px solid #9fdcbb}.kp li.n{background:#fff;color:#a0a7b8;border:2px dashed #cfd5e2}
+.mine{margin-top:8px;font-size:15px;color:#4a4f60;white-space:pre-wrap;background:#fff;border-left:4px solid #9aa7bd;padding:4px 10px}
+.done{text-align:center}
+.done .em{font-size:64px}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:100}
+@media (max-width:430px){.q{font-size:22px}.ans{font-size:17px}.go{padding:12px 16px;font-size:16.5px}.hero{padding:18px}.hero svg{width:60px;height:60px}}
+@media (max-height:500px) and (orientation:landscape){.hero{padding:14px 20px}.hero p{font-size:15px}.q{font-size:22px}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <section id="menu">
+    <div class="hero"><svg viewBox="0 0 80 80" aria-hidden="true" id="chip"></svg>
+      <div><h1>Answer Trainer 🧠</h1>
+      <p>Ten written answers a day from your Computer sheet. Spot the keyword, remember the answer, then write it. The ones you find hard come back sooner.</p></div></div>
+    <div class="panel">
+      <div class="big"><div class="ring" id="ring"><span><b id="mN">0</b><small>of 25</small></span></div>
+        <div><h2 id="mTxt">answers mastered</h2><div class="how" id="dueTxt"></div><div class="row" style="justify-content:flex-start"><button class="go" id="startBtn">▶ Start today's 10</button></div></div></div>
+    </div>
+    <div class="panel"><h2>🎯 Practise one topic</h2><div class="secs" id="secs"></div></div>
+    <div class="panel how">
+      <b>How it works.</b> Each card has 4 steps: 🔑 <b>spot</b> the keyword (tap it: it tells you which answer to write),
+      🧠 <b>remember</b> the answer in your head, then look at it, ✍️ <b>cover and write</b> it (on paper, or type it), and ✔ <b>check</b> it.
+      Then be honest: ✔ <b>Got it</b> moves the card up a box and you see it again later; 〰 <b>Nearly</b> keeps it where it is;
+      ✗ <b>Not yet</b> sends it back to box 1, so it comes back tomorrow (and once more today). An answer is <b>mastered</b> when it reaches box 4.
+    </div>
+    <div class="foot"><a class="pill" href="computer.html">🏠 Back to Computer</a></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="hud"><button class="x" id="quit" title="Back">✕</button><div class="prog"><i id="pbar"></i></div><div class="stat" id="cnt"></div></div>
+    <div class="card" id="card"></div>
+  </section>
+
+  <section id="end" class="hidden"><div class="card done" id="endCard"></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* Chip the Mouse (the same drawing as computer/computer.js) */
+$('#chip').innerHTML=`<rect x="15" y="14" width="50" height="61" rx="25" fill="#22b8c9" stroke="#fff" stroke-width="2.5"/>
+  <path d="M40 15 C40 5 54 3 57 9 C60 15 69 12 71 4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M16 37 H64 M40 15 V37" stroke="#0e7490" stroke-width="2"/><rect x="37" y="20" width="6" height="12" rx="3" fill="#ffd84d" stroke="#e0a800" stroke-width="1.2"/>
+  <circle cx="31" cy="49" r="6.2" fill="#fff"/><circle cx="49" cy="49" r="6.2" fill="#fff"/><circle cx="32" cy="50" r="3.6" fill="#1f2433"/><circle cx="50" cy="50" r="3.6" fill="#1f2433"/>
+  <circle cx="33.3" cy="48.6" r="1.3" fill="#fff"/><circle cx="51.3" cy="48.6" r="1.3" fill="#fff"/>
+  <circle cx="23.5" cy="59" r="3.2" fill="#ff9f9f" opacity=".75"/><circle cx="56.5" cy="59" r="3.2" fill="#ff9f9f" opacity=".75"/>
+  <path d="M34 61 Q40 67 46 61" stroke="#1f2433" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+
+/* ================= the cards: the 25 written questions of the sheet =================
+   id: permanent (progress is saved against it); s: worksheet question; l: lesson;
+   q: the question, with the keyword(s) in [square brackets] (the student taps them);
+   a: the model answer (the sheet's, typos fixed), key phrases in {curly brackets} (highlighted), lines split by |;
+   k: the key phrases checked in a typed answer: "label|other way to write it|…" (matched without case, spaces or punctuation);
+   hint: a nudge; t: the memory trick. */
+const QS=[
+ {id:'q1',s:'Q1',l:'c01',q:'What do you know about [HTML]?',
+  a:'HTML stands for {Hypertext Markup Language}. It was developed in the year {1990} by the scientist {Tim Berners-Lee}.',
+  k:['Hypertext Markup Language|hyper text markup language','1990','Tim Berners-Lee|berners lee|bernerslee'],
+  hint:'👨‍🔬 What it stands for, when, and who', t:'<b>H</b>ey <b>T</b>im, <b>M</b>ake <b>L</b>inks! Tim Berners-Lee, 1990.'},
+ {id:'q2',s:'Q2',l:'c01',q:'What\'s the [use] of [HTML]?',
+  a:'HTML is mainly used to {create web pages} that are displayed on the {World Wide Web}. Each page contains a series of {connections to other pages} called {hyperlinks}.',
+  k:['create web pages|make web pages|web pages','World Wide Web','connections to other pages|connections|links to other pages','hyperlinks|hyperlink'],
+  hint:'🕸️ Pages, the web, and what joins them', t:'Think of the spider: HTML makes the <b>pages</b> 📄, <b>hyperlinks</b> join them into the <b>web</b> 🕸️.'},
+ {id:'q3',s:'Q3',l:'c01',q:'Write any three [features] of [HTML 5]?',
+  a:'1. HTML documents are {simple text files}.|2. HTML is {not a case sensitive} language.|3. HTML has {many tags} to make web pages.',
+  k:['simple text files|text file|text files','not case sensitive|not a case sensitive|isnt case sensitive|isnot case sensitive','many tags|tags'],
+  hint:'🧳 Text, Case, Tags', t:'Three features: <b>Text</b>, <b>Case</b>, <b>Tags</b>. Picture a <b>text</b> file in a suit<b>case</b> covered in <b>tags</b>! 🧳'},
+ {id:'q4',s:'Q4',l:'c01',q:'Define [HTML Editors] and [Text Editors].',
+  a:'We can create an HTML document using an {HTML editor} or any {text editor}.|HTML editors are {Adobe Dreamweaver}, {UltraEdit}, {TextMate}.|Text editors are {Notepad}, {Notepad++}.|We can create our HTML documents using Notepad.',
+  k:['HTML editor','text editor','Dreamweaver','UltraEdit|ultra edit|ultraedit','TextMate|text mate','Notepad'],
+  hint:'🗒️ Two kinds of editor, with names', t:'Fancy editors have fancy names (<b>Dream</b>weaver, <b>Ultra</b>Edit, Text<b>Mate</b>). Plain text editors have plain names: <b>Notepad</b>! 🗒️'},
+ {id:'q5',s:'Q5',l:'c01',q:'How can we [view] the HTML document?',
+  a:'After creating and saving an HTML document we can view it by {double clicking} on the HTML document.|We can also open an HTML file by opening {Microsoft Edge} by clicking on its icon on the desktop or the taskbar and then pressing {Control + O} keys.',
+  k:['double clicking|double click|doubleclick','Microsoft Edge|edge','Control + O|ctrl + o|ctrlo|controlo','icon|desktop|taskbar'],
+  hint:'🖱️🖱️ Two ways to open it', t:'Two ways to view: <b>double-click</b> the file 🖱️🖱️, or open <b>Edge</b> and press <b>Ctrl + O</b> (O for <b>Open</b>).'},
+ {id:'q6',s:'Q6',l:'c02',q:'What do you know about [HTML tags]?',
+  a:'Tags are {elements} that are used to specify the {structure} of an HTML document. HTML tags begin with the {less than} character (&lt;) and end with the {greater than} symbol (&gt;), which are called {angular brackets}.',
+  k:['elements|element','structure','less than|<','greater than|>','angular brackets|angle brackets|angular bracket'],
+  hint:'🥪 What tags do, and the two signs around them', t:'A tag is a word in a pointy sandwich 🥪: <b>&lt;</b> (<b>L</b>ess than) at the start, <b>&gt;</b> (<b>G</b>reater than) at the end. Both together are <b>angular brackets</b>: they have angles! 📐'},
+ {id:'q7',s:'Q7',l:'c02',q:'What is the difference between [opening] and [closing tags]?',
+  a:'In HTML, most tags have an {opening} and a {closing tag}. For example {&lt;HTML&gt;} is the opening tag and {&lt;/HTML&gt;} is the closing tag. The tags which have both opening and ending tags are called {container tags}.',
+  k:['opening tag|opening','closing tag|closing','<HTML>','</HTML>|</','container tags|container tag|container'],
+  hint:'🚪 The slash, and the name for tags that come in pairs', t:'The closing tag has a <b>/</b>: a door shutting 🚪. A box with a top and a bottom holds things inside: a <b>container</b> 📦. Both tags = <b>container tags</b>.'},
+ {id:'q8',s:'Q8',l:'c05',q:'What do you know about [CSS]?',
+  a:'CSS stands for {Cascading Style Sheets}. CSS is used to {style HTML pages} and it\'s used to specify {how HTML elements are displayed}.',
+  k:['Cascading Style Sheets|cascading style sheet','style HTML pages|style web pages|style','how elements are displayed|displayed|display'],
+  hint:'🎨 What it stands for, and what it does to pages', t:'HTML builds the house 🏠, CSS paints and decorates it 🎨. A <b>cascade</b> is a waterfall: the styles flow down onto every page.'},
+ {id:'q9',s:'Q9',l:'c06',q:'List down the different [types of CSS]?',
+  a:'1. {Inline} style sheet|2. {Internal} style sheet|3. {External} style sheet',
+  k:['Inline','Internal','External'],
+  hint:'📑 Three kinds: in a line, in the head, in a file', t:'Small, medium, large: <b>In</b>line (one line), <b>In</b>ternal (one page, in the head), <b>Ex</b>ternal (a whole website, in a separate .css file). In, In, Ex! 📏'},
+ {id:'q10',s:'Q10',l:'c06',q:'Define [inline] style sheet.',
+  a:'The inline style sheet is used to apply the style to a {single HTML element} using the {style attribute}.',
+  k:['single HTML element|single element|one element|one html element|single','style attribute','apply the style|apply style|style'],
+  hint:'☝️ How many elements, and with which attribute', t:'<b>In</b>line = <b>in</b> the <b>line</b> of ONE element ☝️: the <b>style attribute</b> sits right inside that one tag.'},
+ {id:'q11',s:'Q11',l:'c07',q:'What do you know about [computer programming]?',
+  a:'A {sequence of instructions} given to the computer to perform a {particular task} is called a {program}. These programs are created using {programming languages}. The process of creating a program is also known as {programming}.',
+  k:['sequence of instructions|instructions','particular task|task','program','programming languages|programming language','process of creating|creating a program'],
+  hint:'📋 Instructions → program → language → programming', t:'A program is a recipe 📋: a <b>sequence of instructions</b> for one <b>task</b>. The language you write it in is a <b>programming language</b>; writing it is <b>programming</b>.'},
+ {id:'q12',s:'Q12',l:'c07',q:'Write the names of [types] of computer [programming languages]?',
+  a:'There are three main types:|1. {Machine} level language|2. {Assembly} level language|3. {High} level language',
+  k:['Machine level|machine','Assembly level|assembly','High level|high'],
+  hint:'🪜 From 0s and 1s up to almost English', t:'Climb the ladder 🪜: <b>M</b>achine (0s and 1s), <b>A</b>ssembly (short codes), <b>H</b>igh (almost English). <b>M-A-H</b>: "Ma, help!"'},
+ {id:'q13',s:'Q13',l:'c07',q:'Describe a [language translator]?',
+  a:'A language translator such as a {compiler} or {interpreter} is needed to {convert} the {high level language} code into {machine code}. A computer understands only machine language.',
+  k:['compiler','interpreter','convert|change|translate','high level','machine code|machine language'],
+  hint:'🗣️ Two names, and from what to what', t:'A translator turns <b>High</b> into <b>Machine</b> 🗣️➡️0101. Its two names: <b>C</b>ompiler and <b>I</b>nterpreter, "<b>C</b>an <b>I</b> translate?"'},
+ {id:'q14',s:'Q14',l:'c08',q:'What do you know about [Python]?',
+  a:'Python is a {high level programming language}. It has {simple syntax} which makes it {easy to read and write}. It was developed in {1991} at the {National Research Institute for Mathematics and Computer Science} in the {Netherlands}.',
+  k:['high level','simple syntax','easy to read and write|read and write','1991','National Research Institute|research institute','Netherlands|holland'],
+  hint:'🐍 What kind of language, why easy, when and where', t:'Python 🐍 hatched in <b>1991</b> (one year after HTML\'s 1990) in the <b>Netherlands</b> 🇳🇱 (think tulips 🌷). <b>Simple syntax</b> = easy to read and write.'},
+ {id:'q15',s:'Q15',l:'c08',q:'Write any 2 [features of Python]?',
+  a:'Python is {easy to learn and use} as compared to other programming languages.|Python can perform {complex tasks} using {less code}.',
+  k:['easy to learn|easy to use|easy','complex tasks|complex','less code'],
+  hint:'2️⃣ Easy … and small', t:'<b>Easy in, little out</b>: easy to learn and use; <b>less code</b> for complex tasks. ✌️'},
+ {id:'q16',s:'Q16',l:'c08',q:'What is an [Object Oriented] procedure?',
+  a:'Python supports Object Oriented procedure. An Object Oriented procedure helps the programmer to write {reusable code} and {develop applications} using {less code} as compared to other programming languages.',
+  k:['reusable code|reusable|reuse','develop applications|applications|application','less code','programmer'],
+  hint:'🧱 Use it again and again', t:'Object Oriented = LEGO bricks 🧱: build a brick once and <b>reuse</b> it everywhere, so you build apps with <b>less code</b>.'},
+ {id:'q17',s:'Q17',l:'c08',q:'Describe [Interactive Mode] of Python while writing a code.',
+  a:'In the Interactive Mode when we type a command and {press Enter}, in the {very next step} we get the {output}. Interactive Mode is very convenient for writing {very short lines of code}.',
+  k:['press Enter|enter','next step','output','short lines|short'],
+  hint:'💬 Type, Enter, and…', t:'Interactive = chatting 💬: you type, press <b>Enter</b>, and Python answers <b>straight away</b>. Chats are short, so it suits <b>short lines</b>.'},
+ {id:'q18',s:'Q18',l:'c08',q:'Describe the [script mode] of Python language.',
+  a:'To write {long} Python codes or programs having {multiple lines}, script mode is the appropriate way. In this mode the code is written in the {Python editor} and saved with a {".py"} extension. In this mode we can {save and edit} the file.',
+  k:['long','multiple lines|many lines','Python editor|editor','.py','save and edit|save'],
+  hint:'🎬 Long programs, saved in a file', t:'A <b>script</b> is a film script 🎬: <b>long</b>, many lines, written down and <b>saved</b> (as <b>.py</b>) so you can edit it later.'},
+ {id:'q19',s:'Q19',l:'c08',q:'What do you know about [Python IDLE]?',
+  a:'The {installer for Windows} installs an IDLE module {by default}. IDLE is an acronym for {Integrated Development and Learning Environment}. It is used in {script mode} for {creating, editing and executing} Python programs.',
+  k:['installer|windows|by default','Integrated Development and Learning Environment','script mode','creating, editing and executing|create edit and execute|editing|executing'],
+  hint:'🔤 What the 4 letters stand for, and what it does', t:'IDLE is never idle! It <b>I</b>ntegrates, <b>D</b>evelops, <b>L</b>earns in an <b>E</b>nvironment, and it <b>C</b>reates, <b>E</b>dits and <b>E</b>xecutes scripts (C, E, E).'},
+ {id:'q20',s:'Q20',l:'c09',q:'Why do we use [GIMP] for [drawing]?',
+  a:'There are a {large variety of painting tools} in GIMP which can be used to {paint our drawings beautifully}. These tools can also be used to {draw, paint and modify images}.',
+  k:['large variety|variety|many','painting tools|paint tools','beautifully','draw','modify'],
+  hint:'🎨 Lots of tools, and three things they do', t:'GIMP is a giant art box 🎨: <b>lots of painting tools</b> to <b>draw, paint and modify</b>. D-P-M: "<b>D</b>raw <b>P</b>retty <b>M</b>asterpieces".'},
+ {id:'q21',s:'Q21',l:'c09',q:'Enlist the names of some [common tools] used for [drawings] in GIMP?',
+  a:'1. The {bucket fill} tool (fills colour in an area)|2. {Gradient} tool|3. {Paintbrush} tool|4. {Pencil} tool|5. {Eraser} tool',
+  k:['Bucket fill|bucket','Gradient','Paintbrush|paint brush','Pencil','Eraser'],
+  hint:'🪣 Five tools: B, G, P, P, E', t:'<b>B</b>ig <b>G</b>reen <b>P</b>encils <b>P</b>aint <b>E</b>asily: <b>B</b>ucket fill 🪣, <b>G</b>radient 🌈, <b>P</b>aintbrush 🖌️, <b>P</b>encil ✏️, <b>E</b>raser 🧽.'},
+ {id:'q22',s:'Q22',l:'c09',q:'Why do we use the [paintbrush tool] in GIMP?',
+  a:'The paintbrush tool allows us to {paint} using {fuzzy brush strokes}. All strokes are rendered using the {currently selected brush} type.',
+  k:['paint','fuzzy','brush strokes|strokes','selected brush|brush type'],
+  hint:'🖌️ Soft edges, and which brush', t:'A paintbrush is soft and <b>fuzzy</b> 🖌️ like a fluffy tail. Every stroke uses the brush <b>you selected</b>.'},
+ {id:'q23',s:'Q23',l:'c09',q:'What is the use of the [pencil tool] in drawing?',
+  a:'The pencil tool is used to draw {free-hand lines} having {hard edges}. It is similar to the {paintbrush tool} but the pencil tool {does not produce fuzzy edges}.',
+  k:['free-hand lines|freehand|free hand','hard edges|hard edge|hard','paintbrush|paint brush','not fuzzy|no fuzzy|doesnt produce fuzzy|does not produce fuzzy|fuzzy'],
+  hint:'✏️ Sharp like its tip', t:'A pencil has a <b>sharp</b> point ✏️, so its lines have <b>hard edges</b>. The brush is the fuzzy one; the pencil is <b>not</b>.'},
+ {id:'q24',s:'Q24',l:'c09',q:'Is the [Eraser tool] important while drawing in GIMP?',
+  a:'The eraser tool is a {very important} tool for drawing because it is used to {remove areas of colour} from an image or the {selected part} of an image.',
+  k:['very important|important','remove','areas of colour|colour|color','selected part|selection'],
+  hint:'🧽 Yes! Because it…', t:'Everyone makes mistakes, so yes, it\'s <b>very important</b> 🧽: it <b>removes areas of colour</b> from the image or the selected part.'},
+ {id:'q25',s:'Q25',l:'c10',q:'What is the use of the [clone tool] in GIMP?',
+  a:'In GIMP the clone tool {reproduces} the {selected parts} in an image. It {copies} the selected parts of the image and {pastes} them in {any other part} of the image.',
+  k:['reproduces|reproduce','selected parts|selected part|selected','copies|copy','pastes|paste','other part|another part'],
+  hint:'🐑 Copy here, paste there', t:'A <b>clone</b> is an identical twin 🐑🐑: the clone tool <b>copies</b> the selected part and <b>pastes</b> it somewhere else in the same image.'},
+];
+const SECTIONS=[['🌐','HTML','Q1–Q7',['c01','c02']],['🎨','CSS','Q8–Q10',['c05','c06']],['🤖','Programming','Q11–Q13',['c07']],['🐍','Python','Q14–Q19',['c08']],['🖌️','GIMP','Q20–Q25',['c09','c10']]];
+
+/* typed answers: which key phrases are in it (no case, spaces or punctuation, so "Ctrl + O" = "ctrl o") */
+const norm=s=>s.toLowerCase().replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/colour/g,'color').replace(/[^a-z0-9.<>\/]/g,'').replace(/\.(?![a-z])/g,'');
+function phrases(c,typed){const t=norm(typed);return c.k.map(p=>{const alts=p.split('|');return{label:alts[0],ok:alts.some(a=>{const n=norm(a);return n&&t.includes(n);})};});}
+
+/* ================= spaced repetition (Leitner boxes) =================
+   Box 1 comes back the next day, box 2 after 2 days, box 3 after 4, box 4 after 7, box 5 after 14. Got it: up a box;
+   Nearly: same box; Not yet: back to box 1 (and once more in today's session). Mastered = box 4 or 5.
+   The state is saved like a quiz level (mode 'ctrainer') through src/account.js, so it follows the student between
+   devices, and the parent page shows "answers mastered". */
+const MODE='ctrainer',GAP=[0,1,2,4,7,14],MASTER=4,PER_DAY=10;
+const today=()=>Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/86400000);
+function track(method,...args){(window.__track=window.__track||[]).push([method,args]);}
+let B={}; /* id -> [box, next day] */
+function loadState(){try{const me=JSON.parse(localStorage.getItem('g7_me'));const st=JSON.parse(localStorage.getItem('g7_resume_'+me.username)).quizzes[MODE];if(st&&st.b){B=st.b;return;}}catch(e){}
+  B=store.get('comp_trainer_local',{});}
+function mastered(){return QS.filter(c=>(B[c.id]||[0])[0]>=MASTER).length;}
+function saveState(){store.set('comp_trainer_local',B);
+  track('quizState',MODE,{v:1,b:B,mastered:mastered(),seen:Object.keys(B).length,total:QS.length});}
+const due=c=>B[c.id]&&B[c.id][1]<=today();
+function todays(){const d=QS.filter(due).sort((a,b)=>B[a.id][0]-B[b.id][0]);const fresh=QS.filter(c=>!B[c.id]);
+  return d.slice(0,PER_DAY).concat(fresh.slice(0,Math.max(0,PER_DAY-d.length)));}
+
+/* ================= little sounds and confetti ================= */
+let actx=null;function tone(f,d=.12){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+  g.gain.setValueAtTime(.15,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[];function rs(){cv.width=innerWidth;cv.height=innerHeight;}addEventListener('resize',rs);rs();
+function confetti(n=90){const cols=['#0e7490','#22b8c9','#18a058','#ffd84d','#6a45d8'];for(let i=0;i<n;i++)parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,r:Math.random()*6+4,c:cols[i%5],a:0,l:110});
+  if(parts.length===n)requestAnimationFrame(fx);}
+function fx(){cx.clearRect(0,0,cv.width,cv.height);parts.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=.1;p.l--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.globalAlpha=Math.max(0,p.l/40);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cx.restore();});
+  parts=parts.filter(p=>p.l>0);if(parts.length)requestAnimationFrame(fx);else cx.clearRect(0,0,cv.width,cv.height);}
+
+/* ================= menu ================= */
+function show(id){['menu','game','end'].forEach(s=>$('#'+s).classList.toggle('hidden',s!==id));if(id==='menu')renderMenu();scrollTo(0,0);}
+function renderMenu(){loadState();const n=mastered(),pct=n/QS.length*100;
+  $('#mN').textContent=n;$('#ring').style.background=`conic-gradient(#18a058 ${pct}%,#dff1f3 ${pct}%)`;
+  $('#mTxt').textContent=n===QS.length?'answers mastered 🏆':'answers mastered';
+  const dueN=QS.filter(due).length,fresh=QS.filter(c=>!B[c.id]).length;
+  $('#dueTxt').innerHTML=dueN?`<b>${dueN}</b> answer${dueN>1?'s':''} to review today${fresh?` · ${fresh} not started yet`:''}.`:fresh?`Nothing to review today. ${fresh} new answers are waiting.`:'All caught up for today! Come back tomorrow, or practise one topic below.';
+  const t=todays();$('#startBtn').disabled=!t.length;$('#startBtn').textContent=t.length?`▶ Start today's ${t.length}`:'✔ Done for today';
+  $('#secs').innerHTML='';
+  SECTIONS.forEach(([e,name,qs,ls])=>{const cs=QS.filter(c=>ls.includes(c.l)),m=cs.filter(c=>(B[c.id]||[0])[0]>=MASTER).length;
+    const b=el('button','sec',`<b>${e} ${name} · ${qs}</b><span>${m} of ${cs.length} mastered</span><div class="bar"><i style="width:${m/cs.length*100}%"></i></div>`);
+    b.onclick=()=>start(cs.slice());$('#secs').appendChild(b);});}
+$('#startBtn').onclick=()=>start(todays());
+$('#quit').onclick=()=>show('menu');
+addEventListener('g7-resume',()=>{if(!$('#menu').classList.contains('hidden'))renderMenu();});
+
+/* ================= a session ================= */
+/* the model answer: {key phrases} highlighted, numbered lines (1. 2. …) as a list, other lines as paragraphs */
+function ansHTML(c,hl){let h='',ol='';
+  c.a.split('|').forEach(x=>{x=x.replace(/\{([^}]*)\}/g,hl?'<mark>$1</mark>':'$1');
+    if(/^\d\.\s*/.test(x))ol+='<li>'+x.replace(/^\d\.\s*/,'')+'</li>';else{if(ol){h+='<ol>'+ol+'</ol>';ol='';}h+='<div>'+x+'</div>';}});
+  return h+(ol?'<ol>'+ol+'</ol>':'');}
+const qHTML=c=>{let g=0;return c.q.replace(/\[([^\]]*)\]|([^\s\[\]]+)/g,(m,k,w)=>k!=null?k.split(' ').map(x=>`<span class="w" data-g="${g}">${esc(x)}</span>`).join(' ')+(g++,''):`<span class="w">${esc(w)}</span>`);};
+let S;
+function start(list){if(!list.length)return;S={list,i:0,got:0,n:list.length,again:new Set()};show('game');card();}
+function card(){const c=S.list[S.i],bx=(B[c.id]||[0])[0];
+  $('#pbar').style.width=(S.i/S.list.length*100)+'%';$('#cnt').textContent=`${S.i+1} / ${S.list.length}`;
+  const k=$('#card');k.innerHTML='';
+  k.appendChild(el('div','top',`<span class="tag">Worksheet · ${c.s}</span><span class="box">${bx?'📦 Box '+bx:'🆕 New'}</span>`));
+  const q=el('div','q spot',qHTML(c));k.appendChild(q);
+  const found=el('div','found','');k.appendChild(found);
+  const step=el('div','step','Step 1 · 🔑 Tap the keyword: it tells you which answer to write');k.appendChild(step);
+  const ans=el('div','ans cover','❔ What is the answer?');k.appendChild(ans);
+  const row=el('div','row');k.appendChild(row);
+  const groups=new Set([...q.querySelectorAll('.w[data-g]')].map(w=>w.dataset.g));const lit=new Set();
+  const light=g=>{q.querySelectorAll(`.w[data-g="${g}"]`).forEach(w=>w.classList.add('kw'));lit.add(g);};
+  const kwText=()=>[...groups].map(g=>[...q.querySelectorAll(`.w[data-g="${g}"]`)].map(w=>w.textContent).join(' ')).join(' + ');
+  const spotted=(byMe)=>{q.classList.remove('spot');groups.forEach(light);
+    found.innerHTML=(byMe?'✅ Yes! ':'🔑 ')+`The keyword${groups.size>1?'s are':' is'} <span class="kw">${esc(kwText())}</span>. Now say the answer in your head.`;
+    step.textContent='Step 2 · 🧠 Remember: think of the answer first';row.innerHTML='';
+    const hint=el('button','ghost','💡 Hint');hint.onclick=()=>{hint.replaceWith(el('div','hintline','💡 '+c.hint));};
+    const showB=el('button','go','👀 Show the answer');row.append(hint,showB);
+    showB.onclick=()=>{ans.className='ans';ans.innerHTML=ansHTML(c,true);const tr=el('div','trick','💡 <b>Memory trick:</b> '+c.t);ans.after(tr);
+      step.textContent='Step 2 · 👀 Read it. The green words are the ones that score marks';row.innerHTML='';k.querySelector('.hintline')?.remove();
+      const cover=el('button','go','✍️ Cover it and write it');row.appendChild(cover);
+      cover.onclick=()=>{tr.remove();ans.className='ans cover';ans.innerHTML='🙈 Covered! Write it on paper, or type it below.';step.textContent='Step 3 · ✍️ Write it from memory';
+        const ta=el('textarea');ta.placeholder='Type your answer here… (or write it on paper)';ta.setAttribute('autocapitalize','sentences');ta.spellcheck=false;k.insertBefore(ta,row);
+        row.innerHTML='';const chk=el('button','go','✔ Check my answer');row.append(chk);
+        chk.onclick=()=>{const typed=ta.value.trim();ta.remove();step.textContent='Step 4 · ✔ Check it, then be honest: how did you do?';
+          ans.className='ans';ans.innerHTML=ansHTML(c,true);
+          if(typed){const ps=phrases(c,typed),n=ps.filter(p=>p.ok).length;
+            const kp=el('div','kp',`<h3>${n===ps.length?'🌟':n>=ps.length/2?'👍':'🔁'} You wrote ${n} of ${ps.length} key phrases</h3><ul>${ps.map(p=>`<li class="${p.ok?'y':'n'}">${p.ok?'✔':'○'} ${esc(p.label)}</li>`).join('')}</ul><div class="mine">✍️ ${esc(typed)}</div>`);
+            ans.before(kp);kp.dataset.n=n;kp.dataset.of=ps.length;}
+          else ans.before(el('div','paper','📄 Compare your paper with the answer, word by word.'));
+          row.innerHTML='';
+          const y=el('button','go green','✔ Got it'),n=el('button','go amber','〰 Nearly'),x=el('button','go red','✗ Not yet');row.append(y,n,x);
+          y.onclick=()=>mark(c,2);n.onclick=()=>mark(c,1);x.onclick=()=>mark(c,0);};};};};
+  q.addEventListener('click',e=>{const w=e.target.closest('.w');if(!w||!q.classList.contains('spot'))return;
+    if(w.dataset.g!=null){light(w.dataset.g);tone(880,.08);if(lit.size===groups.size)spotted(true);
+      else found.textContent=`👍 Good! ${groups.size-lit.size} more keyword${groups.size-lit.size>1?'s':''} to find.`;}
+    else{w.classList.remove('no');void w.offsetWidth;w.classList.add('no');setTimeout(()=>w.classList.remove('no'),400);tone(220,.08);found.textContent='🤔 Not that word. Which word tells you the topic?';}});
+  const skip=el('button','ghost','🙋 Show me the keyword');skip.onclick=()=>spotted(false);row.appendChild(skip);}
+function mark(c,how){const t=today();const cur=B[c.id]||[0,t];let box=cur[0]||1;
+  if(how===2){box=Math.min(5,(cur[0]||0)+1);if(!S.again.has(c.id))S.got++;tone(880);}else if(how===1){box=Math.max(1,cur[0]||1);tone(600);}else{box=1;tone(220);
+    if(!S.again.has(c.id)){S.again.add(c.id);S.list.push(c);}} /* once more today */
+  B[c.id]=[box,t+GAP[box]];saveState();
+  S.i++;if(S.i>=S.list.length)end();else{card();scrollTo({top:0,behavior:'smooth'});}}
+function end(){const n=mastered();
+  $('#endCard').innerHTML=`<div class="em">${S.got>=S.n*.8?'🏆':'💪'}</div><h2>Session done!</h2><p style="font-size:18px;font-weight:700">You got <b>${S.got}</b> right first time out of ${S.n}.</p>
+    <p style="font-size:17px">🧠 <b>${n} of ${QS.length}</b> answers mastered.</p><p class="how">The ones you missed come back tomorrow. Read them once more before you sleep! 🌙</p>
+    <div class="row"><button class="go" id="again">🏠 Back to the trainer</button><a class="ghost" href="computer.html" style="text-decoration:none">💻 Computer lessons</a></div>`;
+  $('#again').onclick=()=>show('menu');show('end');confetti();tone(660);setTimeout(()=>tone(990),120);}
+renderMenu();
+</script>
+</body>
+</html>

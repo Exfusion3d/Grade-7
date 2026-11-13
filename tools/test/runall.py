@@ -1,14 +1,14 @@
 """Play every scene of every lesson (or the ones named) in headless Chrome and report problems.
 
 usage:  python3 tools/test/runall.py                 # all lessons of every subject
-        python3 tools/test/runall.py l03 m01 f02     # only these lessons (l = Science, m = Maths, f = French, i = Islamic Studies)
+        python3 tools/test/runall.py l03 m01 f02     # only these lessons (l = Science, m = Maths, f = French, i = Islamic Studies, c = Computer)
         QS=en=1 python3 tools/test/runall.py f01     # French lessons with everything translated (shots end in -en)
 Needs: Google Chrome installed, and `pip install websocket-client`.
 Screenshots of each scene's final frame go to tools/test/shots/<lesson>-s<scene>.png (git-ignored)."""
 import subprocess, json, sys, os, concurrent.futures as cf
 here = os.path.dirname(os.path.abspath(__file__))
 root = os.path.normpath(os.path.join(here, '..', '..'))
-DIRS = {'lessons': 'l', 'maths': 'm', 'french': 'f', 'islamic': 'i'}  # lesson folder -> lesson id letter
+DIRS = {'lessons': 'l', 'maths': 'm', 'french': 'f', 'islamic': 'i', 'computer': 'c'}  # lesson folder -> lesson id letter
 only = sys.argv[1:]
 where = {f: os.path.join(root, d) for d, letter in DIRS.items() for f in os.listdir(os.path.join(root, d))
          if f.startswith(letter) and f[1:3].isdigit() and f.endswith('.html') and (not only or f[:3] in only)}

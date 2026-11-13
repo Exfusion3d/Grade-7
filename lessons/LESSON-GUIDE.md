@@ -64,6 +64,12 @@ The questions each lesson must cover are in `../source/worksheet-by-lesson.md`.
   blocks), then let the student `buildAR` and `traceAR` the answers. Exam check items: `q`/`o`/`model` in Arabic with `en`, `oe`,
   `otr` (sounds) and `men`. The keywords taught for a question light up in yellow in its Exam check: add its `src` to
   `EXAM_KEYS` in `islamic.js` (`[[[arabic, sounds]…], [english…]]`, the same keywords as its clue card), or give the item `keys`/`ekeys`. Style reference: `islamic/i02-angels.html`. Test with and without `QS=en=1`.
+- **Computer (`computer.js`, tutor Chip the Mouse 🖱️):** copy `computer/c01-what-is-html.html` (the approved pilot). Never put a raw `<TAG>`
+  in `say()`, `q`, options or `why` (the engine strips tags from speech): write `&lt;IMG&gt;` (read "image tag") or `C('<IMG>')`; give code
+  with attributes a spoken form, `C('<IMG SRC="cat.jpg">','image tag with source cat dot J P G')`. Show code with `editor()`/`typeCode()`,
+  the result with `browser()` (`.page`), Python with `idle()` (`.run(w,cmd,out)`), GIMP with `gimp.js`. Short worksheet questions go on
+  `wsCard`s after their animation; every written question (Q1–Q25) is taught with `teachA(w,{src,q,keys,lines,trick})`, one per screen.
+  Finish with `recap(w,{title,badges,next})`. `nap(w,ms)` pauses without waiting for the voice (for typing while Chip talks).
 - `w(ms)` — wait at least ms AND until the voice finishes the current line. Always `await w(...)` after `say(...)`
   before the next `say` (typical 2500–4000 ms). Cancel-safe when the student changes scene.
 - `w.until(()=>cond)` — wait for an interactive condition (e.g. a button was tapped).

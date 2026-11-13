@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>Programs and programming languages</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script>
+/* Computer Lesson 7 · Programming and Python · Worksheet Q11, Q12, Q13.
+   A robot that follows instructions (and gets them wrong in the wrong order), "program the robot" on a grid,
+   the same instruction in machine, assembly and high level language, a sort game, the language translator,
+   and compiler vs interpreter side by side. */
+
+/* a short "quick check" pick inside a teaching scene (not saved as an exam answer) */
+async function quick(w,{q,o,a,why,top=40}){
+  const box=mk('ex-q',`top:${top}px`,`<span class="src">🤔 Quick check</span>${q}`);pop(box);
+  say(`${q} ${o.map((t,i)=>`<b>${'ABC'[i]}:</b> ${t}`).join(', ')}?`);
+  await w(60);const y0=top+box.offsetHeight+16,n=o.length,cw=(880-(n-1)*14)/n;let picked=-1;
+  const opts=o.map((t,i)=>{const e=mk('ex-opt',`left:${40+i*(cw+14)}px;top:${y0}px;width:${cw}px;min-height:62px`,`<span class="k">${'ABC'[i]}</span><span>${t}</span>`);pop(e,i*90);
+    e.onclick=()=>{if(picked<0){picked=i;stopVoice();}};return e;});
+  await w(1500);if(picked<0)say('Tap your answer!');
+  await w.until(()=>picked>=0);
+  const ok=picked===a;opts.forEach(e=>e.classList.add('locked'));opts[a].classList.add('ok');
+  if(ok){yay();confetti(40);}else{opts[picked].classList.add('bad');shake(opts[picked]);boo();}
+  const hgt=Math.max(...opts.map(e=>e.offsetHeight));
+  const wb=mk('ex-why',`top:${y0+hgt+16}px`,(ok?'✅ <b>Correct!</b> ':`❌ <b>Not quite.</b> The answer is <b>${'ABC'[a]}</b>. `)+why);pop(wb);
+  say((ok?'Correct! ':`Not quite. The answer is ${'ABC'[a]}. `)+why);await w(2800);return ok;}
+
+/* a robot emoji with a little shadow */
+const robot=(x,y,size=96)=>mk('',`left:${x}px;top:${y}px;font-size:${size}px;line-height:1;z-index:6`,'🤖');
+/* a chip of code that can fly around */
+const codeChip=(x,y,html,css='')=>mk('',`left:${x}px;top:${y}px;background:#1e2433;color:#e8ecf5;border-radius:10px;padding:6px 12px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:17px;font-weight:700;white-space:pre;z-index:8;${css}`,html);
+/* a CPU chip */
+function cpu(x,y,size=150,parent){
+  const c=mk('',`left:${x}px;top:${y}px;width:${size}px;height:${size}px;border-radius:16px;background:linear-gradient(135deg,#3a4256,#1e2433);border:5px dashed #9aa7bd;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#e8ecf5;font-weight:900;z-index:4`,
+    `<div style="font-size:${size/4}px">CPU</div><div class="face" style="font-size:${size/5}px;line-height:1.1">😐</div>`,parent);return c;}
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c07', num:7, part:'Programming and Python', emoji:'🤖', title:'Programs and programming languages',
+  intro:`Hi! I'm <b>Chip the Mouse</b> 🖱️ Today: how we <b>talk to computers</b>. Programs, programming languages and translators! Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'A robot that follows instructions',run:async w=>{
+  const kitchen=mk('',`left:13px;top:10px;width:560px;height:420px;border-radius:22px;background:linear-gradient(#fff8e6,#ffe9c2);border:3px solid #f2c200`);pop(kitchen);
+  mk('',`left:0;top:300px;width:560px;height:120px;background:linear-gradient(#c98a4b,#a86b33);border-radius:0 0 19px 19px`,'',kitchen);
+  const R=robot(30,180,110);pop(R);
+  const plate=mk('',`left:250px;top:250px;width:230px;height:60px;border-radius:50%;background:#fff;border:3px solid #d5dbe6;z-index:2`);pop(plate);
+  const bread=mk('',`left:440px;top:40px;font-size:58px;z-index:3`,'🍞');const jam=mk('',`left:490px;top:120px;font-size:52px;z-index:3`,'🍓');
+  pop(bread,200);pop(jam,300);
+  const list=mk('',`left:590px;top:10px;width:357px;height:330px;border-radius:22px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;padding:12px 16px;box-sizing:border-box`,
+    `<div style="font-size:21px;font-weight:900;color:#0e5f75">📋 Instructions: make a sandwich</div>`);pop(list);
+  const steps=['Take two slices of bread.','Spread jam on one slice.','Put the other slice on top.','Serve the sandwich.'];
+  const L=steps.map((s,i)=>mk('',`position:relative;margin-top:10px;padding:8px 10px;border-radius:12px;background:#f2fbfc;font-size:18px;font-weight:800;color:#1f2433;opacity:0`,`<b style="color:#0e7490">${i+1}.</b> ${s}`,list));
+  say(`Meet <b>Robo</b>! 🤖 Robo is very clever, but he can't think for himself. He only does <b>exactly</b> what he's told.`);await w(2600);
+  for(const e of L){an(e,[{opacity:0,transform:'translateX(30px)'},{opacity:1,transform:'none'}],{duration:400});await nap(w,250);}
+  say(`Let's give Robo a list of <b>instructions</b>, one step at a time, to make a jam sandwich. 🥪`);await w(2400);
+  const hi=e=>{L.forEach(x=>x.style.background=x===e?'#ffe680':'#f2fbfc');point(e);beep(700,.06);};
+  /* 1 */ hi(L[0]);await an(R,[{transform:'translate(110px,-30px)'}],{duration:700});
+  const s1=mk('',`left:280px;top:228px;font-size:62px;z-index:3`,'🍞'),s2=mk('',`left:380px;top:228px;font-size:62px;z-index:3`,'🍞');
+  an(s1,[{transform:'translate(160px,-190px)'},{transform:'none'}],{duration:600});an(s2,[{transform:'translate(60px,-190px)'},{transform:'none'}],{duration:600});
+  say(`Step 1: take two slices of bread.`);await w(1500);
+  /* 2 */ hi(L[1]);an(R,[{transform:'translate(110px,10px)'}],{duration:600});
+  await an(jam,[{transform:'translate(-200px,80px) rotate(-30deg)'},{transform:'none'}],{duration:900});
+  const blob=mk('',`left:290px;top:250px;width:50px;height:34px;border-radius:50%;background:#d6264f;opacity:.85;z-index:4`);pop(blob);
+  say(`Step 2: spread jam on one slice. 🍓`);await w(1500);
+  /* 3 */ hi(L[2]);await an(s2,[{transform:'translate(-100px,-6px)'}],{duration:700});s1.remove();s2.remove();blob.remove();
+  const sw=mk('',`left:300px;top:218px;font-size:76px;z-index:3`,'🥪');pop(sw);
+  say(`Step 3: put the other slice on top.`);await w(1500);
+  /* 4 */ hi(L[3]);await an(sw,[{transform:'translate(20px,-100px) scale(1.3)'}],{duration:600});
+  const sp=mk('',`left:420px;top:90px;font-size:40px;z-index:7`,'✨');loop(sp,[{transform:'scale(.7) rotate(0)'},{transform:'scale(1.2) rotate(30deg)'}],500,{direction:'alternate'});yay();
+  say(`Step 4: serve! It worked, because every step was in the <b>right order</b>.`);await w(2400);unpoint();
+  /* the wrong order */
+  sp.remove();sw.remove();an(R,[{transform:'none'}],{duration:500});
+  const order=[2,0,1,3];L.forEach((e,k)=>{e.style.background='#f2fbfc';});
+  say(`Now watch what happens if we <b>mix up the order</b>…`);
+  for(let k=0;k<4;k++){const e=L[order[k]];list.appendChild(e);e.querySelector('b').textContent=(k+1)+'.';an(e,[{transform:'translateX(40px)',opacity:.3},{transform:'none',opacity:1}],{duration:400});await nap(w,200);}
+  await w(1800);
+  hi(L[2]);await an(R,[{transform:'translate(110px,-30px)'}],{duration:700});
+  say(`Step 1 now says: put the other slice on top. But there's no bread yet! Robo is stuck.`);
+  const err=mk('',`left:190px;top:14px;width:350px;padding:8px 12px;border-radius:16px;background:#fde3e3;border:3px solid #e04848;font-size:22px;font-weight:900;color:#b42318;text-align:center;z-index:9`,'❌ ERROR: no slice to put on top! 🐞');pop(err);
+  R.animate([{transform:'translate(110px,-30px) rotate(0)'},{transform:'translate(110px,-30px) rotate(-12deg)'},{transform:'translate(110px,-30px) rotate(12deg)'},{transform:'translate(110px,-30px) rotate(0)'}],{duration:500,iterations:3});boo();
+  await w(2600);unpoint();
+  const big=mk('',`left:13px;top:442px;width:934px;height:66px;border-radius:18px;background:linear-gradient(135deg,#0e7490,#22b8c9);color:#fff;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 16px;box-sizing:border-box`,
+    'A computer is like Robo: it needs clear instructions, in the right order. 📋');pop(big);
+  say(`A computer is just like Robo. It needs <b>clear instructions</b> in the <b>right order</b>. That list of instructions has a special name: a <b>program</b>!`);await w(3000);}},
+
+/* 1 */ {t:'Programs and programming',run:async w=>{
+  say(`Every app you use is a <b>program</b>. Games, the calculator, the web browser: all programs! 📱`);
+  const apps=[['🎮','Games'],['🧮','Calculator'],['🌐','Web browser'],['🎵','Music player']];
+  const A=apps.map(([e,n],i)=>{const c=mk('',`left:${13+i*237}px;top:10px;width:222px;height:140px;border-radius:20px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center`,
+    `<div class="e" style="font-size:58px;margin-top:10px">${e}</div><div style="font-size:20px;font-weight:900;color:#0e5f75">${n}</div><div style="font-size:14px;font-weight:800;color:#18a058">a program ✔</div>`);pop(c,i*150);
+    loop(c.querySelector('.e'),[{transform:'translateY(0)'},{transform:'translateY(-6px)'}],600+i*90,{direction:'alternate'});return c;});
+  await w(2600);
+  /* program = sequence of instructions */
+  const prog=mk('',`left:13px;top:170px;width:440px;height:260px;border-radius:22px;background:#fff;border:3px solid #6a45d8;box-shadow:0 5px 0 #ddd3fb;padding:12px 16px;box-sizing:border-box`,
+    `<div style="font-size:22px;font-weight:900;color:#6a45d8">📜 A program</div><div style="font-size:16px;font-weight:700;color:#4a5570">a <b>sequence of instructions</b> for a <b>task</b></div>`);pop(prog);
+  const ins=['1. Get the two numbers','2. Add them together','3. Show the answer'];
+  for(let i=0;i<3;i++){const e=mk('',`left:16px;top:${80+i*52}px;width:400px;padding:8px 12px;border-radius:12px;background:#f3efff;font-size:19px;font-weight:800;box-sizing:border-box`,ins[i],prog);
+    an(e,[{opacity:0,transform:'translateY(-20px)'},{opacity:1,transform:'none'}],{duration:400,delay:i*350});}
+  say(`A <b>program</b> is a <b>sequence of instructions</b> given to the computer to perform a <b>particular task</b>. This one adds two numbers.`);await w(3400);
+  /* programmer -> language -> program */
+  const pr=mk('',`left:478px;top:170px;width:469px;height:260px;border-radius:22px;background:#fff;border:3px solid #18a058;box-shadow:0 5px 0 #bfe7d2`);pop(pr);
+  const who=mk('',`left:14px;top:60px;font-size:70px`,'👩‍💻',pr);mk('',`left:4px;top:146px;width:110px;text-align:center;font-size:15px;font-weight:800;color:#18a058`,'programmer',pr);
+  const E=editor(128,20,200,150,{title:'Python',dark:true,menu:null,size:15,parent:pr});
+  mk('',`left:128px;top:178px;width:200px;text-align:center;font-size:15px;font-weight:800;color:#18a058`,'programming language',pr);
+  const box=mk('',`left:350px;top:56px;width:100px;height:100px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:48px;display:flex;align-items:center;justify-content:center;opacity:0`,'📦',pr);
+  mk('',`left:350px;top:162px;width:100px;text-align:center;font-size:15px;font-weight:800;color:#6a45d8`,'program',pr);
+  loop(who,[{transform:'rotate(-3deg)'},{transform:'rotate(3deg)'}],300,{direction:'alternate'});
+  say(`People called <b>programmers</b> write programs using a <b>programming language</b>, like Python.`);
+  await typeCode(w,E,'a = 4\nb = 5\nprint(a + b)',{lang:'py',speed:40});await w(1200);
+  await an(box,[{opacity:0,transform:'translateX(-120px) scale(.3)'},{opacity:1,transform:'none'}],{duration:700});beep(800,.1);
+  const lab=mk('',`left:20px;top:206px;width:430px;text-align:center;font-size:21px;font-weight:900;color:#1f2433`,'Creating a program = <span style="color:#18a058">programming</span>',pr);pop(lab);
+  say(`And the process of creating a program has a name too: <b>programming</b>! 💻`);await w(2600);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q11',q:'What do you know about computer programming?',
+    keys:[['computer programming',`The keyword is <b>computer programming</b>. Say what a <b>program</b> is, what it's made <b>with</b>, and what <b>programming</b> means.`]],
+    lines:['A <b>sequence of instructions</b> given to the computer to perform a <b>particular task</b> is called a <b>program</b>.',
+      'These programs are created using <b>programming languages</b>.','The process of creating a program is also known as <b>programming</b>.'],
+    trick:'Think of Robo\'s sandwich 🥪: <b>steps in order</b> for <b>one task</b> = a program. Written in a <b>language</b>, made by <b>programming</b>.'});}},
+
+/* 2 */ {t:'Program the robot!',run:async w=>{
+  const COLS=5,ROWS=4,S=84,GX=20,GY=36,WALL=['1,3','1,2','3,1','3,2'],START=[0,3],GOAL=[4,0];
+  const SOL=['up','up','right','right','up','right','right'];
+  mk('',`left:${GX}px;top:6px;width:${COLS*S}px;text-align:center;font-size:18px;font-weight:900;color:#0e5f75`,'Get Robo to the battery 🔋');
+  const grid=mk('',`left:${GX}px;top:${GY}px;width:${COLS*S}px;height:${ROWS*S}px;border-radius:14px;background:#e7f7f9;border:3px solid #22b8c9;box-sizing:content-box`);pop(grid);
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const wl=WALL.includes(c+','+r);
+    mk('',`left:${c*S+3}px;top:${r*S+3}px;width:${S-6}px;height:${S-6}px;border-radius:10px;background:${wl?'#b5651d':'#fff'};font-size:44px;display:flex;align-items:center;justify-content:center`,wl?'🧱':'',grid);}
+  const goal=mk('',`left:${GOAL[0]*S}px;top:${GOAL[1]*S}px;width:${S}px;height:${S}px;font-size:48px;display:flex;align-items:center;justify-content:center`,'🔋',grid);
+  loop(goal,[{transform:'scale(1)'},{transform:'scale(1.15)'}],500,{direction:'alternate'});
+  const R=mk('',`left:0;top:0;width:${S}px;height:${S}px;font-size:54px;display:flex;align-items:center;justify-content:center;z-index:5`,'🤖',grid);
+  const place=(c,r,ms=1)=>an(R,[{transform:`translate(${c*S}px,${r*S}px)`}],{duration:ms});
+  await place(...START);
+  /* program panel */
+  const P=mk('',`left:470px;top:10px;width:477px;height:250px;border-radius:20px;background:#1e2433;border:3px solid #22b8c9;padding:10px 14px;box-sizing:border-box`,
+    `<div style="font-size:17px;font-weight:900;color:#9fdfe6">📜 My program</div>`);pop(P);
+  const list=mk('',`left:14px;top:40px;width:445px;display:flex;flex-wrap:wrap;gap:8px`,'',P);
+  const ARW={up:'⬆️',down:'⬇️',left:'⬅️',right:'➡️'},MV={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};
+  let prog=[],busy=false,state='edit';
+  const draw=(cur=-1)=>{list.innerHTML=prog.length?prog.map((p,i)=>`<span style="display:inline-block;padding:5px 10px;border-radius:10px;background:${i===cur?'#ffd84d':'#2f3850'};color:${i===cur?'#1f2433':'#e8ecf5'};font-family:monospace;font-size:17px;font-weight:800">${i+1}. ${ARW[p]} ${p}</span>`).join('')
+    :'<span style="color:#9aa7bd;font-size:17px;font-weight:700">Tap the arrows to add instructions…</span>';};draw();
+  const pad=mk('',`left:470px;top:272px;width:477px;height:150px`);
+  const B=Object.keys(ARW).map((k,i)=>btn('cb-tile',`left:${i*100}px;top:0;width:94px;padding:0;font-size:17px`,`${ARW[k]} ${k}`,()=>{if(busy||state!=='edit'||prog.length>=12)return;prog.push(k);beep(560+prog.length*30,.05);draw();}));
+  B.forEach(b=>pad.appendChild(b));
+  const del=btn('cb-del',`left:404px;top:0`,'⌫',()=>{if(busy||state!=='edit')return;prog.pop();beep(300,.05);draw();});pad.appendChild(del);
+  const go=btn('ex-btn green',`left:0;top:76px;width:230px`,'▶ Run it',()=>{if(!busy&&prog.length)state='run';});pad.appendChild(go);
+  const clr=btn('ex-btn',`left:246px;top:76px;width:230px`,'🗑️ Clear',()=>{if(busy)return;prog=[];draw();});pad.appendChild(clr);
+  [P,pad].forEach((e,i)=>pop(e,i*150));
+  const msg=mk('',`left:20px;top:392px;width:420px;min-height:40px;padding:8px 12px;border-radius:14px;background:#fff;border:3px solid #9fdfe6;font-size:17px;font-weight:800;box-sizing:border-box;line-height:1.3`,'A program = instructions in order. 🧠');
+  say(`Your turn to be the <b>programmer</b>! Tap the arrows to write a program that moves Robo to the battery 🔋. Avoid the walls!`);await w(2400);
+  let tries=0,done=false,showBtn=null;
+  window.AUTOPLAY=()=>{if(state==='edit'&&!busy){prog=SOL.slice();draw();state='run';}};
+  while(!done){
+    await w.until(()=>state==='run');busy=true;if(showBtn){showBtn.remove();showBtn=null;}
+    await place(...START,300);let [c,r]=START,crash=false;
+    for(let i=0;i<prog.length;i++){draw(i);const [dc,dr]=MV[prog[i]];const nc=c+dc,nr=r+dr;
+      if(nc<0||nr<0||nc>=COLS||nr>=ROWS||WALL.includes(nc+','+nr)){await an(R,[{transform:`translate(${c*S+dc*22}px,${r*S+dr*22}px)`}],{duration:200});shake(R);boo();crash=true;break;}
+      c=nc;r=nr;beep(500+i*40,.06);await an(R,[{transform:`translate(${c*S}px,${r*S}px)`}],{duration:420});await nap(w,120);}
+    if(!crash&&c===GOAL[0]&&r===GOAL[1]){done=true;yay();confetti(120);goal.textContent='⚡';
+      msg.innerHTML='✅ It works! Robo is charged up! ⚡';say(`Brilliant! 🎉 Your program worked: <b>${prog.length} instructions</b>, in the right order. You're a programmer!`);await w(2800);break;}
+    tries++;msg.innerHTML=crash?'🐞 Bump! A bug in the program. Fix it and run again.':'🤔 Robo stopped before the battery. Add more steps!';
+    say(crash?`Bump! 🐞 That's a <b>bug</b>: a mistake in the program. Change your instructions and run it again.`:`Robo did every step, but he isn't at the battery yet. Add more instructions!`);
+    busy=false;state='edit';
+    if(tries>=2&&!showBtn){showBtn=btn('ex-btn',`left:150px;top:448px;width:200px`,'💡 Show me',()=>{if(busy)return;prog=SOL.slice();draw();state='run';});pop(showBtn);}
+  }
+  window.AUTOPLAY=null;
+  say(`See? The computer did <b>exactly</b> what the program said, step by step. That's why the <b>order</b> of instructions matters so much.`);await w(2800);}},
+
+/* 3 */ {t:'Computers only speak 0 and 1',run:async w=>{
+  const C0=cpu(390,40,180);pop(C0);
+  say(`Deep inside every computer is a chip called the <b>CPU</b>. It's very fast, but it only understands two things: <b>0</b> and <b>1</b>.`);
+  const rain=[];for(let i=0;i<22;i++){const d=mk('',`left:${60+Math.random()*840}px;top:-40px;font-family:monospace;font-size:${18+Math.random()*12}px;font-weight:900;color:${i%2?'#0e7490':'#22b8c9'};z-index:2`,Math.random()<.5?'0':'1');
+    rain.push(d);d.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(300px)',opacity:0}],{duration:1800+Math.random()*1400,delay:Math.random()*1500,iterations:Infinity});}
+  await w(3400);rain.forEach(d=>d.remove());
+  C0.querySelector('.face').textContent='🙂';
+  say(`Why only 0 and 1? Because the computer is made of millions of tiny <b>switches</b>. <b>1</b> means <b>on</b>, <b>0</b> means <b>off</b>. 💡`);
+  const bits='0100100001101001';const bulbs=[];
+  for(let i=0;i<16;i++){const x=60+i*54+(i>=8?24:0);
+    const b=mk('',`left:${x}px;top:260px;width:44px;text-align:center`,`<div class="bl" style="font-size:34px;filter:grayscale(1);opacity:.4">💡</div><div style="font-family:monospace;font-size:26px;font-weight:900;color:#1f2433">0</div>`);pop(b,i*40);bulbs.push(b);}
+  await w(2800);
+  for(let i=0;i<16;i++){const on=bits[i]==='1';bulbs[i].lastChild.textContent=bits[i];if(on){const bl=bulbs[i].querySelector('.bl');bl.style.filter='none';bl.style.opacity=1;bl.animate([{transform:'scale(1.4)'},{transform:'scale(1)'}],{duration:300});beep(500+i*30,.04);}await nap(w,110);}
+  const out=[['H',60],['i',516]].map(([ch,x])=>{const e=mk('',`left:${x}px;top:370px;width:424px;height:120px;border-radius:20px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;display:flex;align-items:center;justify-content:center;gap:14px;font-size:20px;font-weight:800;color:#4a5570`,
+    `means the letter <span style="font-size:72px;font-weight:900;color:#0e7490">${ch}</span>`);pop(e);return e;});
+  say(`This pattern of switches, <b>0 1 0 0 1 0 0 0</b>, means the letter <b>H</b>. The next pattern means <b>i</b>. Together: <b>Hi</b>! 👋`);await w(3400);
+  C0.querySelector('.face').textContent='😃';an(C0,[{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:500});
+  say(`Instructions written in 0s and 1s are called <b>machine language</b>. It's the <b>only</b> language a computer really understands.`);await w(3000);
+  say(`But writing everything in 0s and 1s is very hard for people! 😵 So we invented <b>easier</b> languages. Let's meet them.`);await w(2600);}},
+
+/* 4 */ {t:'Three types of programming language',run:async w=>{
+  say(`There are <b>three main types</b> of programming language. Let's build them like a house, starting at the bottom.`);await w(2400);
+  const F=[
+    {n:'3 · High level language',c:'#18a058',bg:'#e3f7ec',code:`<div>${C('x = 2 + 3','x equals 2 plus 3','py')}</div>`,note:'English-like words: easy for people 🧑',y:20},
+    {n:'2 · Assembly level language',c:'#e06a1b',bg:'#fff0e3',code:`<div><code class="cd">MOV AL, 2</code></div><div><code class="cd">ADD AL, 3</code></div>`,note:'short codes like MOV and ADD',y:166},
+    {n:'1 · Machine level language',c:'#1f2433',bg:'#e8ebf2',code:`<div><code class="cd">10110000 00000010</code></div><div><code class="cd">00000100 00000011</code></div>`,note:'only 0s and 1s: what the computer understands 💻',y:312}];
+  const els=F.map(f=>{const e=mk('',`left:13px;top:${f.y}px;width:640px;height:132px;border-radius:20px;background:${f.bg};border:4px solid ${f.c};box-sizing:border-box;opacity:0`,
+    `<div style="position:absolute;left:14px;top:10px;width:260px;font-size:21px;font-weight:900;color:${f.c};line-height:1.2">${f.n}</div>
+     <div style="position:absolute;left:14px;top:66px;width:260px;font-size:15px;font-weight:700;color:#4a5570;line-height:1.3">${f.note}</div>
+     <div class="cc" style="position:absolute;left:290px;top:0;width:330px;height:124px;display:flex;flex-direction:column;justify-content:center;gap:12px;font-size:21px;line-height:1.3">${f.code}</div>`);return e;});
+  const side=mk('',`left:670px;top:20px;width:277px;height:424px;border-radius:20px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center;padding:12px;box-sizing:border-box`,
+    `<div style="font-size:19px;font-weight:900;color:#0e5f75">The same job on every floor:</div><div style="font-size:30px;font-weight:900;margin:8px 0;color:#1f2433">add 2 and 3 ➕</div>
+     <div class="up" style="font-size:16px;font-weight:800;color:#18a058;margin-top:20px">⬆️ easier for people</div><div style="font-size:70px;margin:14px 0">🏠</div><div style="font-size:16px;font-weight:800;color:#1f2433">⬇️ closer to the computer</div>`);pop(side);
+  await w(1500);
+  const lines=[`<b>One: machine level language.</b> The bottom floor: only <b>0s and 1s</b>. These two lines tell the CPU to add 2 and 3.`,
+    `<b>Two: assembly level language.</b> Short codes instead of numbers: <b>MOV</b> means move a number in, <b>ADD</b> means add.`,
+    `<b>Three: high level language.</b> The top floor! It looks almost like <b>English</b> and maths, like Python. Much easier to read and write!`];
+  for(let k=2;k>=0;k--){const e=els[k];await an(e,[{opacity:0,transform:'translateY(-120px)'},{opacity:1,transform:'none'}],{duration:600,easing:'cubic-bezier(.3,1.4,.5,1)'});beep(400+(2-k)*150,.1);
+    point(e.querySelector('.cc'));say(lines[2-k]);await w(3000);}
+  unpoint();
+  say(`Same job, three languages! Machine language for the computer, high level language for people.`);
+  els.forEach((e,i)=>e.querySelector('.cc').animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:500,delay:i*250}));await w(2800);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q12',q:'Write the names of types of computer programming languages?',
+    keys:[['types',`<b>Types</b>: write the <b>three</b> kinds of programming language, in order.`]],
+    lines:['There are three main types of computer programming languages:','1. <b>Machine</b> level language','2. <b>Assembly</b> level language','3. <b>High</b> level language'],
+    trick:'Climb the house from the bottom: <b>M</b>achine, <b>A</b>ssembly, <b>H</b>igh. <b>M-A-H</b>: "<b>M</b>ice <b>A</b>re <b>H</b>ungry!" 🐭🧀'});}},
+
+/* 5 */ {t:'Sort the code',run:async w=>{
+  const mono=s=>`<span style="font-family:'SF Mono',Menlo,Consolas,monospace">${s}</span>`;
+  const r=await sortGame(w,{bins:['💻 Machine level','⚙️ Assembly level','🧑 High level'],colors:['#1f2433','#e06a1b','#18a058'],top:160,
+    items:[[mono('10110000'),0],[mono('0100 1101'),0],[mono('11001010'),0],[mono('MOV AL, 2'),1],[mono('ADD AL, 3'),1],[mono('SUB BL, 1'),1],
+      [mono('print("Hello")'),2],[mono('x = 5 + 3'),2],[mono('if age &gt; 12:'),2]],
+    intro:`Sort the code! Tap a piece of code, then tap its language type: <b>machine</b>, <b>assembly</b> or <b>high level</b>.`});
+  say(r.ok===r.total?`Perfect! 🎉 0s and 1s are <b>machine</b> language, short codes like MOV are <b>assembly</b>, English-like code is <b>high level</b>.`
+    :`Nearly! Remember: 0s and 1s are <b>machine</b> language, short codes like MOV are <b>assembly</b>, English-like code is <b>high level</b>.`);await w(3200);
+  stage.innerHTML='';
+  await quick(w,{q:'Which language does a computer understand directly?',o:['High level language','Assembly level language','Machine level language'],a:2,
+    why:'A computer understands only <b>machine language</b>: 0s and 1s. Every other language must be translated first.'});}},
+
+/* 6 */ {t:'The language translator',run:async w=>{
+  const E=editor(13,40,300,150,{title:'add.py',dark:true,menu:null,size:20});pop(E.el);setCode(E,'x = 2 + 3\nprint(x)','py');
+  mk('',`left:13px;top:198px;width:300px;text-align:center;font-size:16px;font-weight:800;color:#18a058`,'high level language 🧑');
+  const CP=cpu(770,40,170);pop(CP);
+  const mon=mk('',`left:770px;top:240px;width:170px;height:96px;border-radius:12px;background:#1e2433;border:5px solid #9aa7bd;box-sizing:border-box;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:44px;font-weight:900;color:#9be38f`,'');pop(mon);
+  say(`Here's a program in a <b>high level language</b>, Python. Let's send it straight to the CPU and see what happens…`);await w(2400);
+  const ch=codeChip(30,90,hl('x = 2 + 3','py'));await an(ch,[{transform:'translate(0,0)'},{transform:'translate(740px,10px) scale(.8)'}],{duration:1100});
+  CP.querySelector('.face').textContent='😵';shake(CP);boo();
+  const bub=mk('',`left:520px;top:200px;width:230px;padding:10px 12px;border-radius:16px;background:#fff;border:3px solid #e04848;font-size:17px;font-weight:800;color:#b42318;z-index:9`,'❓ x = what? I only understand <b>0 and 1</b>!');pop(bub);
+  say(`Uh-oh! 😵 The CPU doesn't understand it. A computer understands <b>only machine language</b>.`);await w(3000);
+  ch.remove();bub.remove();CP.querySelector('.face').textContent='😐';
+  /* the translator machine */
+  const M=mk('',`left:350px;top:40px;width:380px;height:190px;border-radius:24px;background:linear-gradient(135deg,#6a45d8,#2c66cf);box-shadow:0 6px 0 #3b2a8a;color:#fff;text-align:center;z-index:5`,
+    `<div style="font-size:22px;font-weight:900;margin-top:12px">🔄 Language translator</div><div style="font-size:15px;font-weight:700;opacity:.9">compiler or interpreter</div>
+     <div style="display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:54px"><span class="g" style="display:inline-block">⚙️</span><span class="g" style="display:inline-block">⚙️</span><span class="g" style="display:inline-block">⚙️</span></div>`);
+  an(M,[{transform:'translateY(-300px)'},{transform:'none'}],{duration:700,easing:'cubic-bezier(.3,1.4,.5,1)'});
+  say(`So we need a helper: a <b>language translator</b>. It converts high level code into <b>machine code</b>.`);await w(2400);
+  const G=[...M.querySelectorAll('.g')].map((g,i)=>loop(g,[{transform:'rotate(0)'},{transform:`rotate(${i%2?-360:360}deg)`}],1400,{easing:'linear'}));
+  const c1=codeChip(30,90,hl('x = 2 + 3','py')),c2=codeChip(30,128,hl('print(x)','py'));
+  an(c1,[{transform:'translate(400px,30px) scale(.5)',opacity:0}],{duration:900});await an(c2,[{transform:'translate(400px,0) scale(.5)',opacity:0}],{duration:900,delay:200});
+  M.animate([{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(0)'}],{duration:200,iterations:5});beep(300,.15,'square');
+  say(`In goes the Python… the gears turn… ⚙️`);await w(1800);
+  const bin=codeChip(600,110,'10110000 00000010\n00000100 00000011',`font-size:13px;color:#9be38f`);
+  await an(bin,[{transform:'translate(0,0) scale(.5)',opacity:0},{transform:'translate(40px,0) scale(1)',opacity:1},{transform:'translate(180px,-30px) scale(.7)',opacity:0}],{duration:1500});
+  CP.querySelector('.face').textContent='😃';CP.animate([{boxShadow:'0 0 0 0 #9be38f'},{boxShadow:'0 0 30px 10px #9be38f'},{boxShadow:'0 0 0 0 #9be38f'}],{duration:900});
+  mon.textContent='5';pop(mon);yay();
+  say(`…and out comes <b>machine code</b>: 0s and 1s! Now the CPU understands, and the answer, <b>5</b>, appears on the screen. 🎉`);await w(3200);
+  G.forEach(g=>g.cancel());
+  const T=[['📚','Compiler','translates the <b>whole program</b> at once'],['🗣️','Interpreter','translates <b>one line at a time</b>']];
+  T.forEach(([e,n,d],i)=>{const c=mk('',`left:${13+i*310}px;top:360px;width:296px;height:148px;border-radius:20px;background:#fff;border:3px solid #6a45d8;box-shadow:0 5px 0 #ddd3fb;text-align:center;padding:8px;box-sizing:border-box`,
+    `<div style="font-size:44px">${e}</div><div style="font-size:23px;font-weight:900;color:#6a45d8">${n}</div><div style="font-size:16px;font-weight:700;color:#4a5570">${d}</div>`);pop(c,i*300);});
+  mk('',`left:635px;top:360px;width:312px;height:148px;border-radius:20px;background:#fff8e6;border:3px solid #f2c200;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;box-sizing:border-box;font-size:18px;font-weight:800;line-height:1.35`,
+    'Two kinds of translator. Both turn high level code into machine code. ✔');
+  say(`There are two kinds of language translator: a <b>compiler</b> and an <b>interpreter</b>. You'll see the difference next!`);await w(3000);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q13',q:'Describe a language translator?',
+    keys:[['language translator',`The keyword is <b>language translator</b>. Say <b>what</b> it converts, <b>name</b> two kinds, and <b>why</b> we need it.`]],
+    lines:['A language translator such as a <b>compiler</b> or <b>interpreter</b> is needed','to convert the <b>high level language</b> code into <b>machine code</b>.','A computer understands <b>only machine language</b>.'],
+    trick:'Like a human translator 🗣️: <b>High</b> level in ➜ <b>machine</b> code out, because the computer only speaks <b>0 and 1</b>. Two names: <b>compiler</b>, <b>interpreter</b>.'});}},
+
+/* 7 */ {t:'Compiler or interpreter?',run:async w=>{
+  const PROG=['print("Ready")','print("Steady")','print("Go!")'],OUT=['Ready','Steady','Go!'];
+  const lane=(x,title,col)=>{const p=mk('',`left:${x}px;top:10px;width:460px;height:330px;border-radius:20px;background:#fff;border:3px solid ${col};box-shadow:0 5px 0 ${col}55`,
+      `<div style="position:absolute;left:0;top:8px;width:460px;text-align:center;font-size:21px;font-weight:900;color:${col}">${title}</div>`);pop(p);
+    const lines=PROG.map((s,i)=>mk('',`left:12px;top:${56+i*46}px;background:#1e2433;color:#e8ecf5;border-radius:9px;padding:5px 10px;font-family:monospace;font-size:15px;font-weight:700;white-space:pre;z-index:3`,hl(s,'py'),p));
+    const m=mk('',`left:186px;top:60px;width:96px;height:120px;border-radius:18px;background:linear-gradient(135deg,#6a45d8,#2c66cf);color:#fff;font-size:40px;display:flex;align-items:center;justify-content:center;z-index:2`,'<span style="display:inline-block">⚙️</span>',p);
+    const o=mk('',`left:300px;top:52px;width:146px;height:180px;border-radius:12px;background:#1e2433;border:3px solid #9aa7bd;box-sizing:border-box;padding:8px;font-family:monospace;font-size:19px;font-weight:800;color:#9be38f;line-height:1.5`,'',p);
+    mk('',`left:300px;top:236px;width:146px;text-align:center;font-size:14px;font-weight:800;color:#4a5570`,'output',p);
+    const cap=mk('',`left:12px;top:262px;width:436px;text-align:center;font-size:16px;font-weight:800;color:#1f2433;line-height:1.3`,'',p);
+    return{p,lines,m,o,cap};};
+  const Cm=lane(13,'📚 Compiler','#6a45d8'),In=lane(487,'🗣️ Interpreter','#18a058');
+  say(`Here's a little Python program with <b>three lines</b>. Let's translate it two ways. Tap a <b>Run</b> button to watch!`);
+  const spin=m=>loop(m.firstChild,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],600,{easing:'linear'});
+  let busy=false;const tried=[false,false];
+  async function compile(){busy=true;const sp=spin(Cm.m);
+    say(`The <b>compiler</b> takes the <b>whole program at once</b> and translates all of it before anything runs.`);
+    await Promise.all(Cm.lines.map((l,i)=>an(l,[{transform:`translate(${190-12}px,${20-i*46+i*20}px) scale(.4)`,opacity:0}],{duration:800,delay:i*80})));
+    beep(300,.2,'square');await w(1600);
+    const pk=mk('',`left:200px;top:196px;padding:4px 8px;border-radius:9px;background:#1e2433;color:#9be38f;font-family:monospace;font-size:13px;font-weight:800;z-index:4`,'010110…',Cm.p);pop(pk);
+    say(`Done! The whole program is now machine code. 📦 Then it runs, all in one go:`);await w(1600);sp.cancel();
+    Cm.o.innerHTML=OUT.join('<br>');Cm.o.animate([{opacity:0},{opacity:1}],{duration:400});yay();
+    Cm.cap.innerHTML='Translates the <b>whole program at once</b>, like translating a whole book 📚';await w(2200);tried[0]=true;busy=false;}
+  async function interpret(){busy=true;const sp=spin(In.m);
+    say(`The <b>interpreter</b> translates <b>one line at a time</b>: translate a line, run it, then the next line.`);await w(1200);
+    for(let i=0;i<3;i++){const l=In.lines[i];In.lines.forEach(x=>x.style.boxShadow=x===l?'0 0 0 3px #ffd84d':'none');
+      await an(l,[{transform:`translate(178px,${20-i*46+16}px) scale(.4)`,opacity:0}],{duration:600});beep(400+i*80,.08);
+      await nap(w,350);In.o.innerHTML+=(i?'<br>':'')+OUT[i];In.o.lastChild&&beep(800,.05);await nap(w,500);}
+    sp.cancel();yay();
+    In.cap.innerHTML='Translates <b>one line at a time</b>, like a live interpreter at a speech 🗣️';
+    say(`Line by line! Python uses an <b>interpreter</b>, which is why you see each answer straight away.`);await w(2400);tried[1]=true;busy=false;}
+  const b1=btn('ex-btn',`left:73px;top:356px;width:340px`,'▶ Run: compiler',()=>{if(!busy&&!tried[0])compile();});
+  const b2=btn('ex-btn green',`left:547px;top:356px;width:340px`,'▶ Run: interpreter',()=>{if(!busy&&!tried[1])interpret();});
+  pop(b1);pop(b2);
+  window.AUTOPLAY=()=>{if(busy)return;if(!tried[0])compile();else if(!tried[1])interpret();};
+  await w.until(()=>tried[0]&&tried[1]&&!busy);window.AUTOPLAY=null;b1.remove();b2.remove();
+  const sum=mk('',`left:13px;top:356px;width:934px;height:150px;border-radius:20px;background:#fff8e6;border:3px solid #f2c200;padding:12px 18px;box-sizing:border-box;font-size:19px;font-weight:800;line-height:1.5`,
+    '📚 <b style="color:#6a45d8">Compiler</b>: the whole program at once, then it runs.<br>🗣️ <b style="color:#18a058">Interpreter</b>: one line at a time, translate and run.<br>🎯 <b>Both</b> convert high level code into machine code.');pop(sum);
+  say(`Both are <b>language translators</b>. They both turn high level code into <b>machine code</b>, the only language the computer understands.`);await w(3200);
+  stage.innerHTML='';
+  await quick(w,{q:'Which translator converts a program one line at a time?',o:['A compiler','An interpreter','A printer'],a:1,
+    why:'An <b>interpreter</b> translates one line at a time. A <b>compiler</b> translates the whole program at once.'});}},
+
+/* 8 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! The written questions are the real ones from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Check · Languages',q:'Which language does a computer understand directly?',o:['Machine level language','High level language','Assembly level language'],a:0,cols:3,
+      why:'A computer understands <b>only machine language</b>: 0s and 1s.',whyNot:{1:'high level code must be translated into machine code first.',2:'assembly codes like MOV and ADD still have to be turned into 0s and 1s.'}},
+    {src:'Check · Languages',q:'Which of these is written in a high level language?',o:['print("Hello")','MOV AL, 2','10110000'],a:0,cols:3,
+      why:'<b>print("Hello")</b> is Python, a high level language: it looks like English.',whyNot:{1:'MOV AL, 2 is a short code: assembly level language.',2:'0s and 1s are machine level language.'}},
+    {src:'Check · Translators',q:'Which translator converts the whole program at once?',o:['A compiler','An interpreter','A keyboard'],a:0,cols:3,
+      why:'A <b>compiler</b> translates the whole program at once; an interpreter goes one line at a time.',whyNot:{1:'an interpreter translates one line at a time.',2:'a keyboard is an input device, not a translator.'}},
+    {src:'Worksheet · Q11',q:'What do you know about computer programming?',model:'A sequence of instructions given to the computer to perform a particular task is called a program. These programs are created using programming languages. The process of creating a program is also known as programming.'},
+    {src:'Worksheet · Q12',q:'Write the names of types of computer programming languages?',model:'There are three main types of computer programming languages:<br>1. Machine level language<br>2. Assembly level language<br>3. High level language'},
+    {src:'Worksheet · Q13',q:'Describe a language translator?',model:'A language translator such as a compiler or interpreter is needed to convert the high level language code into machine code. A computer understands only machine language.'},
+  ]);}},
+
+/* 9 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'Programs and programming languages',next:`<b>Python</b>! Interactive mode, script mode and IDLE.`,badges:[
+    ['📜','<b>Program</b> = instructions for a task','A program is a sequence of instructions to perform a particular task.'],
+    ['👩‍💻','Creating a program = <b>programming</b>','Programs are made with programming languages. Creating them is programming.'],
+    ['🤖','Order matters!','The computer follows the instructions exactly, in order.'],
+    ['💻','<b>Machine</b> language: 0s and 1s','Machine level language is only 0s and 1s.'],
+    ['⚙️','<b>Assembly</b>: MOV, ADD','Assembly level language uses short codes.'],
+    ['🧑','<b>High level</b>: English-like','High level languages, like Python, are easy for people.'],
+    ['🔄','<b>Translator</b>: high level ➜ machine code','A language translator converts high level code into machine code.'],
+    ['📚','<b>Compiler</b> all at once · <b>interpreter</b> line by line','A compiler translates all at once, an interpreter line by line.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

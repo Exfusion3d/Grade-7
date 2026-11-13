@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="../gate.js" data-account></script>
+<script type="module" src="../src/account.js" data-account></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0e7490">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<link rel="icon" href="../icon-180.png">
+<title>What is CSS?</title>
+<link rel="stylesheet" href="../lessons/engine.css">
+<style>
+/* the pages restyle smoothly when a CSS value changes */
+.cw-page,.cw-page *{transition:color .6s,background-color .6s,font-size .6s,border-color .6s}
+.mini,.mini *{transition:color .5s,background-color .5s}
+/* value buttons for the hands-on scene */
+.pick{position:absolute;display:flex;align-items:center;justify-content:center;height:50px;border-radius:14px;background:#fff;border:3px solid #22b8c9;box-shadow:0 4px 0 #0e7490;
+  font-size:19px;font-weight:800;color:#1f2433;cursor:pointer;user-select:none;-webkit-user-select:none;font-family:"SF Mono",Menlo,Consolas,monospace}
+.pick:active{transform:translateY(3px);box-shadow:0 1px 0 #0e7490}
+.pick.on{background:#22b8c9;color:#fff}
+.go-on{position:absolute;border-radius:16px;padding:10px 22px;font-size:19px;font-weight:800;color:#fff;background:#0e7490;box-shadow:0 5px 0 #0b5566;cursor:pointer}
+.lbl{position:absolute;width:184px;text-align:center;border-radius:16px;padding:6px 6px 8px;font-size:15px;font-weight:700;color:#1f2433;background:#fff;border:3px solid}
+.lbl b{display:block;font-size:22px}
+.anat{font-family:"SF Mono",Menlo,Consolas,monospace;font-weight:800;white-space:pre}
+.ctile{position:absolute;width:96px;height:96px;border-radius:20px;background:linear-gradient(135deg,#0e7490,#22b8c9);color:#fff;font-size:62px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #0b5566}
+</style>
+</head>
+<body>
+<script src="../lessons/engine.js"></script>
+<script src="computer.js"></script>
+<script>
+/* Computer Lesson 5 · Styling with CSS · Worksheet Q8, MCQ 2, Blank 4, Blank 5, True/False 1, 3, 4.
+   Built like the pilot (c01): every idea animated, short questions on wsCards, Q8 taught with teachA,
+   hands-on: tap values to restyle a page live, build a CSS rule, sort selector / property / value. */
+const PLAIN=`<h1>Chip's Cheese Club</h1><p>Welcome to my web page! I love cheese and computers.</p><p>Cheddar · Brie · Gouda</p>`;
+/* where an element sits on the stage (like point() does) */
+function at(el){let l=0,t=0,e=el;while(e&&e!==stage){l+=e.offsetLeft;t+=e.offsetTop;e=e.offsetParent;}return{x:l,y:t,w:el.offsetWidth,h:el.offsetHeight};}
+/* a sparkle on an element that has just changed */
+function sparkle(el){const p=at(el);const s=mk('',`left:${p.x+p.w/2-20}px;top:${p.y-10}px;font-size:34px;z-index:30;pointer-events:none`,'✨');
+  an(s,[{transform:'scale(0) rotate(0)',opacity:1},{transform:'scale(1.3) rotate(90deg)',opacity:1,offset:.5},{transform:'scale(.6) rotate(180deg)',opacity:0}],{duration:900}).then(()=>s.remove());}
+/* glow the coloured value in an editor */
+function glowVal(E,val){const s=[...E.code.querySelectorAll('.t-val,.t-sel')].find(x=>x.textContent.trim()===val);
+  if(s)s.animate([{background:'transparent'},{background:'#ffd84d66'},{background:'transparent'}],{duration:1200});}
+/* a file icon with its name; ext is lit up */
+const fileIcon=(x,y,name,ext,emoji)=>mk('',`left:${x}px;top:${y}px;width:170px;text-align:center;font-size:19px;font-weight:800;color:#1f2433`,
+  `<div style="font-size:74px;line-height:1">${emoji}</div><div style="background:#fff;border-radius:8px;padding:2px 6px;margin-top:6px;border:2px solid #9fdfe6">${name}<span class="ext" style="border-radius:6px;padding:0 2px">${ext}</span></div>`);
+/* a small web page for the "whole website" scene */
+function mini(x,y,title){const m=mk('mini',`left:${x}px;top:${y}px;width:176px;height:120px;border-radius:12px;background:#fff;border:2px solid #9aa7bd;box-shadow:0 5px 14px rgba(31,36,51,.15);overflow:hidden`);
+  m.innerHTML=`<div class="bar" style="height:20px;background:#e3e8f0;font-size:11px;font-weight:800;color:#3a4256;padding:2px 8px;box-sizing:border-box">● ● ● ${title}</div>
+   <div class="h" style="font-family:Times New Roman,serif;font-size:22px;font-weight:900;color:#111;margin:8px 10px 6px">${title}</div>
+   <div style="height:8px;background:#e3e8f0;border-radius:4px;margin:6px 10px"></div><div style="height:8px;background:#e3e8f0;border-radius:4px;margin:6px 10px;width:60%"></div>`;
+  return m;}
+
+Lesson.start(Object.assign({},COMPUTER,{
+  id:'c05', num:5, part:'Styling with CSS', emoji:'🎨', title:'What is CSS?',
+  intro:`Hi, it's <b>Chip the Mouse</b> 🖱️ HTML builds web pages. Today we make them <b>beautiful</b>. What is <b>CSS</b>? Press <b>Start</b>!`,
+  scenes:[
+/* 0 */ {t:'From plain to stylish',run:async w=>{
+  const B=browser(170,14,620,330,{url:'https://www.chipscheeseclub.com',title:"Chip's Cheese Club"});
+  B.page.innerHTML=PLAIN;pop(B.el);
+  say(`Here's a web page made with <b>HTML</b> only. It works… but look: black text on a white page. A bit boring! 😐`);await w(3000);
+  an(B.el,[{transform:'translateX(157px)'}],{duration:700});
+  const E=editor(13,14,305,330,{title:'style.css - Notepad',dark:true,size:16,menu:null});
+  an(E.el,[{transform:'translateX(-340px)',opacity:0},{transform:'none',opacity:1}],{duration:700});await w(700);
+  const h1=B.page.querySelector('h1'),ps=[...B.page.querySelectorAll('p')];
+  const R=[[`body {\n  background: lightyellow;\n}\n`,()=>{B.page.style.background='#fff8d6';sparkle(B.page);},`First, a <b>yellow background</b> for the whole page…`],
+    [`h1 {\n  color: darkorange;\n  font-family: Arial;\n}\n`,()=>{h1.style.color='#e06a1b';h1.style.fontFamily='Arial,Helvetica,sans-serif';sparkle(h1);},`then an <b>orange heading</b> in a new font…`],
+    [`p {\n  color: teal;\n  font-size: 23px;\n}`,()=>{ps.forEach(p=>{p.style.color='#0e7490';p.style.fontSize='23px';});sparkle(ps[0]);},`and <b>bigger teal paragraphs</b>.`]];
+  say(`Now watch. I'll type a few lines of a <b>different</b> language into a new file…`);await w(1800);
+  for(const [code,fx,line] of R){say(line);await typeCode(w,E,code,{lang:'css',speed:13});fx();beep(880,.08);await w(1700);}
+  say(`Same HTML, but now it looks great! ✨ Those lines are called <b>CSS</b>.`);await w(2600);
+  const T=['C','S','S'].map((c,i)=>{const e=mk('ctile',`left:${300+i*112}px;top:374px`,c);pop(e,i*150);return e;});
+  T.forEach((e,i)=>loop(e,[{transform:'translateY(0)'},{transform:'translateY(-8px)'}],700,{direction:'alternate',delay:i*150}));
+  const cap=mk('',`left:640px;top:384px;width:300px;font-size:24px;font-weight:900;color:#0e5f75;line-height:1.25`,'makes web pages look good 🎨');pop(cap,500);
+  say(`<b>CSS</b> makes web pages look good. In this lesson you'll learn what it is, how a CSS rule works, and why it saves so much time!`);await w(3000);}},
+
+/* 1 */ {t:'C-S-S: what it stands for',run:async w=>{
+  const W=[['C','Cascading','🌊','styles flow down onto everything inside, like a waterfall'],['S','Style','🎨','colours, fonts, sizes and spacing'],['S','Sheets','📄','a list of style rules']];
+  const cols=W.map(([l,word,em,mean],i)=>{const c=mk('',`left:${13+i*317}px;top:14px;width:300px;height:250px;border-radius:22px;background:#fff;border:3px solid #9fdfe6;box-shadow:0 5px 0 #9fdfe6;text-align:center;overflow:hidden`,
+      `<div class="L" style="font-size:90px;font-weight:900;color:#0e7490;line-height:1.2">${l}</div><div class="wd" style="font-size:32px;font-weight:900;color:#1f2433;opacity:0">${word} <span class="em" style="display:inline-block">${em}</span></div><div class="mn" style="font-size:18px;font-weight:700;color:#4a5570;margin:8px 16px 0;opacity:0">${mean}</div>`);
+    pop(c,i*120);return c;});
+  say(`So what does <b>CSS</b> stand for? Three letters, three words. Watch!`);await w(2200);
+  const lines=[`<b>C</b> is for <b>Cascading</b>. A cascade is a waterfall: the styles flow down onto everything inside the page. 🌊`,
+    `<b>S</b> is for <b>Style</b>: how things look. Colours, fonts and sizes.`,`and the last <b>S</b> is for <b>Sheets</b>: a sheet, or list, of style rules.`];
+  for(let i=0;i<3;i++){const c=cols[i];an(c.querySelector('.L'),[{transform:'scale(1)'},{transform:'scale(.6) translateY(-34px)'}],{duration:500});
+    an(c.querySelector('.wd'),[{opacity:0,transform:'translateY(20px)'},{opacity:1,transform:'translateY(-26px)'}],{duration:500});
+    an(c.querySelector('.mn'),[{opacity:0},{opacity:1,transform:'translateY(-26px)'}],{duration:500,delay:300});
+    loop(c.querySelector('.em'),i===0?[{transform:'translateY(-4px)'},{transform:'translateY(4px)'}]:[{transform:'rotate(-10deg)'},{transform:'rotate(10deg)'}],600,{direction:'alternate'});
+    point(c);beep(600+i*90,.1);say(lines[i]);await w(2600);}
+  unpoint();
+  /* a little waterfall of drops in the Cascading card */
+  for(let k=0;k<6;k++){const d=mk('',`left:${30+k*44}px;top:196px;font-size:18px;opacity:0`,'💧',cols[0]);loop(d,[{transform:'translateY(-20px)',opacity:0},{transform:'translateY(10px)',opacity:1,offset:.4},{transform:'translateY(60px)',opacity:0}],1200,{delay:k*180,easing:'linear'});}
+  const full=mk('',`left:13px;top:276px;width:933px;text-align:center;font-size:36px;font-weight:900;color:#0e5f75`,'Cascading Style Sheets');pop(full);
+  say(`Put together: <b>CSS stands for Cascading Style Sheets</b>.`);await w(2600);
+  wsCard('left:13px;top:338px;width:933px',{src:'Worksheet · MCQ 2',q:'Which of the following is a full form of CSS?<br>(a) Cascading Style Sheets &nbsp; (b) Common Style Sheet &nbsp; (c) Common Selector Sheet',a:'✔ (a) Cascading Style Sheets'});
+  say(`A worksheet question! The full form of CSS is <b>Cascading Style Sheets</b>. Not "common": the C is for <b>Cascading</b>, like a waterfall.`);await w(3600);}},
+
+/* 2 */ {t:'HTML builds, CSS decorates',run:async w=>{
+  const H=mk('',`left:13px;top:10px;width:450px;height:330px;border-radius:22px;background:#eaf8fb;border:3px solid #9fdfe6`);pop(H);
+  H.innerHTML=`<svg width="450" height="330" style="position:absolute;left:0;top:0">
+    <rect class="hp chim" x="290" y="46" width="34" height="60" fill="#fff" stroke="#8a93ab" stroke-width="3" stroke-dasharray="8 6" opacity="0"/>
+    <polygon class="hp roof" points="70,140 225,40 380,140" fill="#fff" stroke="#8a93ab" stroke-width="3" stroke-dasharray="8 6" opacity="0"/>
+    <rect class="hp wall" x="95" y="140" width="260" height="160" fill="#fff" stroke="#8a93ab" stroke-width="3" stroke-dasharray="8 6" opacity="0"/>
+    <rect class="hp door" x="195" y="210" width="60" height="90" rx="6" fill="#fff" stroke="#8a93ab" stroke-width="3" stroke-dasharray="8 6" opacity="0"/>
+    <rect class="hp win1" x="118" y="168" width="54" height="48" fill="#fff" stroke="#8a93ab" stroke-width="3" stroke-dasharray="8 6" opacity="0"/>
+    <rect class="hp win2" x="278" y="168" width="54" height="48" fill="#fff" stroke="#8a93ab" stroke-width="3" stroke-dasharray="8 6" opacity="0"/></svg>`;
+  const P=k=>H.querySelector('.'+k);
+  const c1=mk('',`left:483px;top:14px;width:463px;border-radius:18px;background:#fff;border:3px solid #8a93ab;padding:10px 16px;box-sizing:border-box;opacity:0`,
+    `<div style="font-size:23px;font-weight:900;color:#3a4256">🧱 HTML <u>builds</u> the page</div><div style="font-size:17px;font-weight:700;color:#4a5570">the structure: headings, paragraphs, pictures</div>`);
+  say(`Think of a web page like a <b>house</b>. 🏠 <b>HTML</b> builds it: the walls, the roof, the door and windows.`);
+  an(c1,[{opacity:0,transform:'translateX(40px)'},{opacity:1,transform:'none'}],{duration:500});
+  for(const k of ['wall','roof','chim','door','win1','win2']){await an(P(k),[{opacity:0,transform:'translateY(-30px)'},{opacity:1,transform:'none'}],{duration:450});beep(420,.05);}
+  await w(1600);
+  const c2=mk('',`left:483px;top:110px;width:463px;border-radius:18px;background:#fff;border:3px solid #22b8c9;padding:10px 16px;box-sizing:border-box;opacity:0`,
+    `<div style="font-size:23px;font-weight:900;color:#0e7490">🎨 CSS <u>decorates</u> it</div><div style="font-size:17px;font-weight:700;color:#4a5570">the style: colours, fonts, sizes, spacing</div>`);
+  an(c2,[{opacity:0,transform:'translateX(40px)'},{opacity:1,transform:'none'}],{duration:500});
+  say(`But a house of bare walls is not much fun. <b>CSS</b> is the <b>paint</b> and the <b>decoration</b>!`);
+  const brush=mk('',`left:0;top:0;font-size:46px;z-index:10`,'🖌️');
+  const paint=[['wall','#ffd84d'],['roof','#e04848'],['chim','#b45309'],['door','#8a5a00'],['win1','#7cc4ff'],['win2','#7cc4ff']];
+  for(const [k,col] of paint){const b=P(k).getBBox();await an(brush,[{transform:`translate(${13+b.x+b.width/2-6}px,${10+b.y+b.height/2-40}px)`}],{duration:380});
+    P(k).animate([{fill:'#fff'},{fill:col}],{duration:450,fill:'forwards'});P(k).style.stroke='#1f2433';P(k).style.strokeDasharray='none';beep(700,.05);await nap(w,260);}
+  brush.remove();
+  ['🌷','🌼','🌷','🌼'].forEach((f,i)=>{const e=mk('',`left:${[22,58,358,394][i]}px;top:282px;font-size:34px`,f,H);pop(e,i*120);});
+  const sun=mk('',`left:30px;top:20px;font-size:44px`,'☀️',H);pop(sun);loop(sun,[{transform:'rotate(0)'},{transform:'rotate(360deg)'}],5000,{easing:'linear'});
+  yay();await w(2400);
+  say(`So: <b>HTML creates</b> the web page. <b>CSS styles</b> it: it says <b>how</b> each part is <b>displayed</b>.`);await w(2800);
+  wsCard('left:483px;top:214px;width:463px',{src:'Worksheet · True/False 1',q:'CSS is used to create web pages.',a:'✔ F (False)'});
+  say(`True or false? CSS is used to create web pages. <b>False!</b> HTML creates the web pages. CSS only <b>styles</b> them.`);await w(3600);
+  stage.innerHTML='';
+  await teachA(w,{src:'Worksheet · Q8',q:'What do you know about CSS?',
+    keys:[['CSS',`The keyword is <b>CSS</b>. Write what it <b>stands for</b>, and what it is <b>used for</b>.`]],
+    lines:['CSS stands for <b>Cascading Style Sheets</b>.','CSS is used to <b>style HTML pages</b>,','and it\u2019s used to specify <b>how HTML elements are displayed</b>.'],
+    trick:'HTML <b>builds</b> the house 🏠, CSS <b>paints</b> it 🎨. And remember the waterfall: <b>C</b>ascading <b>S</b>tyle <b>S</b>heets.'});}},
+
+/* 3 */ {t:'The three parts of a CSS rule',run:async w=>{
+  const box=mk('anat',`left:13px;top:14px;width:600px;height:120px;border-radius:20px;background:#1e2433;color:#e8ecf5;font-size:50px;line-height:120px;padding-left:30px;box-sizing:border-box`,
+    `<span class="s t-sel">h1</span><span class="t-pun"> { </span><span class="p t-prop">color</span><span class="t-pun">: </span><span class="v t-val">red</span><span class="t-pun">; }</span>`);pop(box);
+  const B=browser(630,14,316,250,{url:'file:///C:/Users/Student/index.html',title:'My page'});pop(B.el);
+  B.page.innerHTML='<h1>Hello!</h1><p>I love cheese.</p>';const h1=B.page.querySelector('h1');
+  say(`Here is a <b>CSS rule</b>. It makes the main heading red. Every rule has <b>three parts</b>. Let's take it apart!`);await w(2800);
+  const parts=[['s','Selector','🎯 which element','#e06a1b',`<b>One: the selector.</b> It picks which element to style. Here, ${C('h1','h 1')}, the main heading.`],
+    ['p','Property','🔧 what to change','#2c66cf',`<b>Two: the property.</b> What do we want to change? Its <b>color</b>.`],
+    ['v','Value','🎨 how to change it','#18a058',`<b>Three: the value.</b> Which colour? <b>Red</b>!`]];
+  for(const [k,name,mean,col,line] of parts){const s=box.querySelector('.'+k);
+    const cx=13+s.offsetLeft+s.offsetWidth/2,x=[13,215,417][parts.findIndex(q=>q[0]===k)];
+    const ar=mk('',`left:${cx-14}px;top:132px;font-size:28px;color:${col};font-weight:900`,'▲');pop(ar);
+    const l=mk('lbl',`left:${x}px;top:166px;border-color:${col}`,`<b style="color:${col}">${name}</b>${mean}`);pop(l);
+    s.animate([{background:'transparent'},{background:col+'88'},{background:'transparent'}],{duration:1400,iterations:2});point(l);say(line);
+    if(k==='v'){await w(900);h1.style.color='#e04848';sparkle(h1);}
+    await w(2600);}
+  unpoint();
+  const v=box.querySelector('.v');
+  say(`Change the <b>value</b>, and the page changes too. Blue… green… red again!`);
+  for(const [val,col] of [['blue','#2c66cf'],['green','#18a058'],['red','#e04848']]){await nap(w,900);v.textContent=val;h1.style.color=col;v.animate([{transform:'scale(1.4)'},{transform:'scale(1)'}],{duration:400});beep(700,.06);}
+  await w(1200);
+  const pn=mk('',`left:13px;top:290px;width:600px;border-radius:16px;background:#fff;border:3px solid #c9b6f4;padding:8px 16px;box-sizing:border-box;font-size:17px;font-weight:700;line-height:1.5`,
+    `<span class="cd">{ }</span> hold the rule &nbsp;·&nbsp; <span class="cd">:</span> after the property &nbsp;·&nbsp; <span class="cd">;</span> ends it`);pop(pn);
+  say(`Curly brackets hold the rule. A colon goes after the property, and a semicolon ends it.`);await w(2800);
+  const tr=mk('',`left:630px;top:282px;width:316px;border-radius:16px;background:#fff8e6;border:3px solid #f2c200;padding:8px 14px;box-sizing:border-box;font-size:18px;font-weight:800;line-height:1.35`,
+    `🐧 <b>S</b>illy <b>P</b>enguins <b>V</b>ote<br><span style="font-weight:700">Selector · Property · Value</span>`);pop(tr);
+  loop(tr,[{transform:'rotate(-1deg)'},{transform:'rotate(1deg)'}],500,{direction:'alternate'});
+  say(`Memory trick: <b>Silly Penguins Vote</b>. Selector, Property, Value! 🐧`);await w(2600);
+  wsCard('left:13px;top:362px;width:933px',{src:'Worksheet · Blank 4',q:'A CSS rule is made up of three parts, a selector, property and ________.',a:'✔ value'});
+  say(`Worksheet: a CSS rule is made up of three parts: a selector, property and <b>value</b>.`);await w(3200);}},
+
+/* 4 */ {t:'Selectors pick the elements',run:async w=>{
+  const E=editor(13,14,380,140,{title:'style.css',dark:true,size:24,menu:null});pop(E.el);setCode(E,'p { color: blue; }','css');
+  const B=browser(410,14,536,330,{url:'file:///C:/Users/Student/pets.html',title:'My pets'});pop(B.el);
+  B.page.innerHTML='<h1>My pets</h1><p>I have a cat. 🐱</p><p>I have a dog. 🐶</p><p>I have a fish. 🐟</p>';
+  const h1=B.page.querySelector('h1'),ps=[...B.page.querySelectorAll('p')];
+  say(`The <b>selector</b> is like a target. 🎯 It tells the browser <b>which</b> HTML elements to style.`);await w(2600);
+  const tg=mk('',`left:0;top:0;font-size:44px;z-index:20;opacity:0`,'🎯');
+  const aim=async el=>{const p=at(el);await an(tg,[{opacity:1,transform:`translate(${p.x+p.w-60}px,${p.y+p.h/2-28}px)`}],{duration:500});
+    el.animate([{background:'transparent'},{background:'#ffe680'},{background:'transparent'}],{duration:900});beep(760,.06);await nap(w,350);};
+  say(`This rule's selector is ${C('p','P')}. So the target finds <b>every</b> paragraph on the page…`);
+  for(const p of ps)await aim(p);
+  ps.forEach(p=>p.style.color='#2c66cf');sparkle(ps[1]);await w(1600);
+  say(`and they all turn blue! The heading stays black: the selector didn't pick it.`);await w(2800);
+  setCode(E,'h1 { color: orange; }','css');glowVal(E,'h1');
+  say(`Now change the selector to ${C('h1','h 1')}. The target jumps to the heading instead.`);await aim(h1);h1.style.color='#e06a1b';sparkle(h1);await w(2600);
+  an(tg,[{opacity:0}],{duration:300});
+  wsCard('left:13px;top:172px;width:380px',{src:'Worksheet · True/False 4',q:'CSS selectors are used to manipulate the HTML elements in a web page.',a:'✔ T (True)'});
+  say(`True or false? CSS selectors are used to <b>manipulate</b> the HTML elements in a web page. <b>True!</b>`);await w(3200);
+  const n=mk('ca-note',`left:13px;top:360px;width:933px;box-sizing:border-box`,'🕹️ <b>Manipulate</b> means to <b>control</b> or <b>change</b>. The selector picks the elements, then the rule changes how they look.');pop(n);
+  say(`<b>Manipulate</b> means control or change. The selector picks the elements, and the rule changes how they look.`);await w(3200);}},
+
+/* 5 */ {t:'Your turn: change the values',run:async w=>{
+  const st={color:'black',size:'32px',bg:'white'};
+  const src=()=>`h1 {\n  color: ${st.color};\n  font-size: ${st.size};\n}\nbody {\n  background-color: ${st.bg};\n}`;
+  const E=editor(13,14,430,250,{title:'style.css',dark:true,size:19,menu:null});pop(E.el);setCode(E,src(),'css');
+  const B=browser(460,14,486,250,{url:'file:///C:/Users/Student/index.html',title:'My page'});pop(B.el);
+  B.page.innerHTML='<h1>Hello, world!</h1><p>I styled this page myself.</p>';const h1=B.page.querySelector('h1');h1.style.fontSize='32px';
+  const CL={black:'#111',red:'#e04848',blue:'#2c66cf',green:'#18a058',purple:'#6a45d8',white:'#fff',lightyellow:'#fff8d6',lightblue:'#dbeeff',pink:'#ffe0ec'};
+  const steps=[['color',['red','blue','green','purple'],v=>{st.color=v;h1.style.color=CL[v];},`<b>Step 1:</b> tap a <b>value</b> for the heading's ${C('color','color')}. Watch the code and the page!`],
+    ['font-size',['20px','32px','48px','60px'],v=>{st.size=v;h1.style.fontSize=v;},`<b>Step 2:</b> now the ${C('font-size','font size')}. Tap a size: 20 pixels is small, 60 is huge!`],
+    ['background-color',['white','lightyellow','lightblue','pink'],v=>{st.bg=v;B.page.style.background=CL[v];},`<b>Step 3:</b> pick a ${C('background-color','background color')} for the whole page.`]];
+  for(let si=0;si<steps.length;si++){const [prop,vals,fx,line]=steps[si];
+    const head=mk('',`left:13px;top:282px;width:933px;text-align:center;font-size:22px;font-weight:900;color:#0e5f75`,`Step ${si+1} of 3 · ${prop}: tap a value`);pop(head);
+    let picked=false,moveOn=false,nx=null;
+    const P=vals.map((v,i)=>{const b=btn('pick',`left:${93+i*200}px;top:326px;width:180px`,v,()=>{fx(v);setCode(E,src(),'css');glowVal(E,v);P.forEach(x=>x.classList.toggle('on',x===b));beep(620+i*60,.06);sparkle(si===2?B.page:h1);
+      if(!picked){picked=true;nx=btn('go-on',`left:390px;top:410px;width:180px;text-align:center`,si<2?'Next step ➜':'All done ✔',()=>{moveOn=true;});pop(nx);}});pop(b,i*80);return b;});
+    say(line);point(P[0]);
+    window.AUTOPLAY=()=>{if(!picked)P[(si+1)%4].onclick();else if(nx)nx.onclick();};
+    await w.until(()=>picked);unpoint();
+    say(si<2?`Nice! Try another value if you like, then tap <b>Next step</b>.`:`Lovely! Tap another one, or tap <b>All done</b>.`);
+    await w.until(()=>moveOn);window.AUTOPLAY=null;
+    head.remove();P.forEach(b=>b.remove());nx.remove();}
+  yay();confetti(80);
+  const done=mk('',`left:13px;top:300px;width:933px;text-align:center;font-size:26px;font-weight:900;color:#0e5f75`,'🎨 You changed three <span style="color:#18a058">values</span> and restyled the page!');pop(done);
+  say(`You're a web designer! 🎉 You only changed the <b>values</b>, and the browser restyled the page straight away.`);await w(3000);}},
+
+/* 6 */ {t:'Saving a CSS file',run:async w=>{
+  say(`CSS is written in its own file. Open <b>Notepad</b> and type the rules…`);
+  const E=editor(13,14,460,260,{title:'Untitled - Notepad',size:20});pop(E.el);
+  await typeCode(w,E,`h1 {\n  color: orange;\n}\np {\n  font-size: 20px;\n}`,{lang:'css',speed:24});await w(500);
+  say(`Now save it. A web page ends in <b>.html</b>, but a style sheet ends in <b>.css</b>. Tap <b>Save</b>!`);
+  let saved=false;const sb=btn('ex-btn green','left:98px;top:296px;width:290px','💾 Save as style.css',()=>{saved=true;});pop(sb);point(sb);
+  window.AUTOPLAY=()=>{saved=true;};await w.until(()=>saved);window.AUTOPLAY=null;sb.remove();unpoint();
+  const dlg=mk('',`left:70px;top:90px;width:340px;height:150px;border-radius:14px;background:#f4f6fa;border:2px solid #9aa7bd;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:12px 16px;box-sizing:border-box;font-size:17px;font-weight:700;z-index:30`,
+    `<div style="font-weight:900;margin-bottom:8px">💾 Save As</div>File name: <span style="background:#fff;border:1px solid #9aa7bd;padding:2px 8px;border-radius:5px;font-family:monospace">style.css</span><br><br>Save as type: All files`);
+  pop(dlg);beep(700,.08);await w(1500);dlg.remove();
+  E.bar.querySelector('.tt').textContent='style.css - Notepad';
+  const f1=fileIcon(520,30,'index','.html','🌐'),f2=fileIcon(740,30,'style','.css','🎨');pop(f1);pop(f2,300);
+  say(`Here are the two files side by side: the web page, <b>index.html</b>, and the style sheet, <b>style.css</b>.`);await w(2600);
+  const ex=f2.querySelector('.ext');ex.animate([{background:'#fff'},{background:'#ffd84d'},{background:'#ffe680'}],{duration:900,fill:'forwards'});
+  loop(f2.querySelector('div'),[{transform:'scale(1)'},{transform:'scale(1.12)'}],600,{direction:'alternate'});point(f2);
+  say(`See the ending? <b>CSS files are saved with a .css extension.</b>`);await w(2800);unpoint();
+  wsCard('left:500px;top:220px;width:446px',{src:'Worksheet · Blank 5',q:'CSS files are saved with a ________ extension.',a:'✔ .CSS'});
+  say(`Worksheet: CSS files are saved with a <b>.CSS</b> extension.`);await w(3000);}},
+
+/* 7 */ {t:'One file styles the whole website',run:async w=>{
+  const names=['🏠 Home','📷 Photos','🧀 Cheese','🎮 Games','✉️ Contact'];
+  const M=names.map((n,i)=>{const m=mini(13+i*188,10,n);pop(m,i*90);return m;});
+  say(`A real website has lots of pages. Here are five. Say we want every heading to be <b>green</b>…`);await w(2800);
+  const slow=mk('',`left:13px;top:160px;width:933px;text-align:center;font-size:24px;font-weight:900;color:#b45309`,'');
+  say(`Without a shared CSS file, we'd have to change <b>every page</b>, one at a time. So slow! 🐢`);
+  const hand=mk('',`left:0;top:0;font-size:44px;z-index:20`,'👆');
+  for(let i=0;i<5;i++){await an(hand,[{transform:`translate(${13+i*188+70}px,95px)`}],{duration:i?650:1});M[i].querySelector('.h').style.color='#18a058';beep(500,.06);
+    slow.textContent=`✋ one page at a time… ${i+1} change${i?'s':''} 🐢`;await nap(w,550);}
+  hand.remove();await w(1600);
+  say(`Now the CSS way. 🎨 All five pages link to <b>one</b> file: <b>style.css</b>.`);slow.remove();
+  const svg=mk('',`left:0;top:0;width:960px;height:520px`,`<svg width="960" height="520">${M.map((m,i)=>`<line x1="480" y1="210" x2="${13+i*188+88}" y2="132" stroke="#22b8c9" stroke-width="4" stroke-dasharray="6 6"/>`).join('')}</svg>`);
+  svg.querySelectorAll('line').forEach((l,i)=>l.animate([{opacity:0},{opacity:1}],{duration:400,delay:i*100,fill:'both'}));
+  const E=editor(310,200,340,110,{title:'🎨 style.css',dark:true,size:24,menu:null});pop(E.el);setCode(E,'h1 { color: green; }','css');
+  await w(2600);
+  say(`Change <b>one word</b> in style.css… and watch every page change <b>at once</b>! ⚡`);await w(1200);
+  for(const [val,col] of [['purple','#6a45d8'],['orange','#e06a1b']]){
+    setCode(E,`h1 { color: ${val}; }`,'css');glowVal(E,val);beep(880,.08);
+    M.forEach((m,i)=>{const d=mk('',`left:470px;top:200px;width:20px;height:20px;border-radius:50%;background:#ffd84d;box-shadow:0 0 12px #ffd84d;z-index:5`);
+      an(d,[{transform:'none'},{transform:`translate(${13+i*188+88-480}px,-78px)`}],{duration:500}).then(()=>{d.remove();m.querySelector('.h').style.color=col;m.querySelector('.bar').style.background=col+'33';});});
+    await nap(w,1500);}
+  const fast=mk('',`left:13px;top:322px;width:933px;text-align:center;font-size:24px;font-weight:900;color:#18a058`,'⚡ one file · one change · every page restyled');pop(fast);
+  say(`Five pages, or five hundred: still <b>one change</b>. That's why CSS makes big websites easy to format.`);await w(3200);
+  wsCard('left:130px;top:370px;width:700px',{src:'Worksheet · True/False 3',q:'It is easy to format large websites using CSS.',a:'✔ T (True)'});
+  say(`True or false? It is easy to format large websites using CSS. <b>True!</b> One CSS file can style every page.`);await w(3400);}},
+
+/* 8 */ {t:'Build a rule, sort the parts',run:async w=>{
+  say(`Your turn to write CSS! Build a rule that makes every <b>paragraph blue</b>. Tap the tiles in order.`);
+  const r=await buildCode(w,{q:'Build a CSS rule: selector <b>p</b>, property <b>color</b>, value <b>blue</b>.',
+    tiles:['color','}','p',';','blue','{',':','colour','<P>'],answer:[['p','{','color',':','blue',';','}']],lang:'css'});
+  say(r.ok?`Perfect rule! 🎉 Selector ${C('p','P')}, then curly brackets, property, colon, value and a semicolon.`
+    :`Nearly! It goes: selector ${C('p','P')}, curly bracket, ${C('color','color')}, colon, ${C('blue','blue')}, semicolon, curly bracket.`);await w(3200);
+  const n=mk('ca-note',`left:60px;top:${r.y+(r.ok?10:80)}px;width:840px;box-sizing:border-box`,'🇺🇸 Careful: CSS spells it <b>color</b>, with no <b>u</b>. And the selector is just <b>p</b>, with no angle brackets.');pop(n);
+  say(`Careful! CSS spells <b>color</b> the American way, with no U. And the selector is just P, with no angle brackets.`);await w(3400);
+  stage.innerHTML='';
+  const g=await sortGame(w,{bins:['🎯 Selector','🔧 Property','🎨 Value'],colors:['#e06a1b','#2c66cf','#18a058'],top:170,
+    items:[['h1',0],['p',0],['body',0],['color',1],['font-size',1],['background-color',1],['red',2],['40px',2],['yellow',2]],
+    intro:`Now sort these. Is each one a <b>selector</b>, a <b>property</b> or a <b>value</b>? Tap a word, then tap its box.`});
+  say(g.ok===g.total?`Brilliant sorting! 🎉 Selectors pick elements, properties say what to change, values say how.`
+    :`Good try! Selectors are element names like h1. Properties are like color. Values are like red or 40 pixels.`);await w(3200);}},
+
+/* 9 */ {t:'Exam check',run:async w=>{
+  say(`Time for the <b>Exam check</b>! These are the real questions from your worksheet.`);
+  await w(2200);
+  /* literal strings so the parent page can show the wording of a missed question */
+  await examCheck(w,[
+    {src:'Worksheet · MCQ 2',q:'Which of the following is a full form of CSS?',o:['Cascading Style Sheets','Common Style Sheet','Common Selector Sheet'],a:0,
+      why:'CSS stands for <b>Cascading Style Sheets</b>: styles flow down like a waterfall.',
+      whyNot:{1:'the C is not for "common". It is for Cascading.',2:'there is no "Common Selector Sheet". The S is for Style, the other S for Sheets.'}},
+    {src:'Worksheet · Blank 4',q:'A CSS rule is made up of three parts, a selector, property and ________.',o:['value','colour','tag'],a:0,cols:3,
+      why:'The three parts are <b>selector, property and value</b>. Silly Penguins Vote!',
+      whyNot:{1:'colour is one example of a property, not a part of every rule.',2:'tags belong to HTML, not to a CSS rule.'}},
+    {src:'Worksheet · Blank 5',q:'CSS files are saved with a ________ extension.',o:['.html','.CSS','.py'],a:1,cols:3,
+      why:'Style sheets are saved with a <b>.css</b> extension, like style.css.',
+      whyNot:{0:'.html is for web pages, not style sheets.',2:'.py is for Python programs.'}},
+    {src:'Worksheet · True/False 1',q:'CSS is used to create web pages.',o:['T (True)','F (False)'],a:1,
+      why:'<b>HTML</b> creates web pages. CSS <b>styles</b> them.',whyNot:{0:'CSS only decorates the page. HTML builds it.'}},
+    {src:'Worksheet · True/False 3',q:'It is easy to format large websites using CSS.',o:['T (True)','F (False)'],a:0,
+      why:'One CSS file can restyle <b>every page</b> of a website with one change.',whyNot:{1:'remember the five pages: one change in style.css restyled them all at once.'}},
+    {src:'Worksheet · True/False 4',q:'CSS selectors are used to manipulate the HTML elements in a web page.',o:['T (True)','F (False)'],a:0,
+      why:'Selectors <b>pick</b> the HTML elements so the rule can change (manipulate) them.',whyNot:{1:'the selector is the target 🎯: it picks the elements to change.'}},
+    {src:'Worksheet · Q8',q:'What do you know about CSS?',model:'CSS stands for Cascading Style Sheets. CSS is used to style HTML pages and it\u2019s used to specify how HTML elements are displayed.'},
+  ]);}},
+
+/* 10 */ {t:'You did it!',run:async w=>{
+  await recap(w,{title:'What is CSS?',next:`the <b>three kinds of style sheet</b>: inline, internal and external!`,badges:[
+    ['🌊','<b>CSS</b> = Cascading Style Sheets','CSS stands for Cascading Style Sheets.'],
+    ['🎨','CSS <b>styles</b> HTML pages','CSS styles HTML pages and says how elements are displayed.'],
+    ['🏠','HTML builds, CSS decorates','HTML creates the web page. CSS does not: it decorates it.'],
+    ['🐧','<b>Selector · Property · Value</b>','A CSS rule has three parts: selector, property and value.'],
+    ['🎯','Selectors pick the elements','Selectors are used to manipulate the HTML elements.'],
+    ['💾','Saved as <b>.css</b>','CSS files are saved with a dot C S S extension.'],
+    ['⚡','One file styles every page','It is easy to format large websites using CSS.'],
+    ['🖌️','You restyled a page live!','You changed values and watched the page restyle.']]});}},
+  ]
+}));
+</script>
+</body>
+</html>

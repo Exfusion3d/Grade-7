@@ -9,9 +9,9 @@ const pages = (dir) =>
   readdirSync(join(root, dir))
     .filter((name) => name.endsWith(".html") && !/^[_.]/.test(name))
     .map((name) => resolve(root, dir, name));
-// Vite doesn't pick these up: gate.js, subjects.js, engine.js, maths.js, french.js and islamic.js are classic scripts and the PDF is a
+// Vite doesn't pick these up: gate.js, subjects.js, engine.js, maths.js, french.js, islamic.js, computer.js and gimp.js are classic scripts and the PDF is a
 // plain link, so they are copied into dist as they are.
-const copied = ["gate.js", "subjects.js", "lessons/engine.js", "maths/maths.js", "french/french.js", "islamic/islamic.js", "study-guide.pdf", "maths-study-guide.pdf", "french-study-guide.pdf", "islamic-study-guide.pdf", "source"];
+const copied = ["gate.js", "subjects.js", "lessons/engine.js", "maths/maths.js", "french/french.js", "islamic/islamic.js", "computer/computer.js", "computer/gimp.js", "study-guide.pdf", "maths-study-guide.pdf", "french-study-guide.pdf", "islamic-study-guide.pdf", "computer-study-guide.pdf", "source"];
 
 export default defineConfig({
   root,
@@ -22,7 +22,7 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: true,
   },
-  build: { rollupOptions: { input: [...pages("."), ...pages("lessons"), ...pages("maths"), ...pages("french"), ...pages("islamic")] } },
+  build: { rollupOptions: { input: [...pages("."), ...pages("lessons"), ...pages("maths"), ...pages("french"), ...pages("islamic"), ...pages("computer")] } },
   plugins: [
     {
       name: "copy-unbundled-files",
